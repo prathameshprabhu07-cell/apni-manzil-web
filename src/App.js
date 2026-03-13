@@ -2,23 +2,23 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './Home';
 
-// Placeholder Components (हे आपण नंतर टप्प्याटप्प्याने डेव्हलप करू)
-const CourierPage = () => <div style={{padding: '50px'}}><h2>Courier & Parcel Service</h2><p>API Integration coming soon...</p></div>;
-const TransportPage = () => <div style={{padding: '50px'}}><h2>Full Truck / Tempo Transport</h2><p>Vendor Bidding System coming soon...</p></div>;
-const MoversPage = () => <div style={{padding: '50px'}}><h2>Packers & Movers</h2><p>Local Partner network coming soon...</p></div>;
-const BusinessPage = () => <div style={{padding: '50px'}}><h2>MSME & Bulk Business Dashboard</h2><p>Enterprise solutions coming soon...</p></div>;
-const TradePage = () => <div style={{padding: '50px'}}><h2>Import & Export (EXIM)</h2><p>Global Trade & Customs support coming soon...</p></div>;
+// ही रिकामी पेजेस सध्या तयार करा जेणेकरून एरर येणार नाही
+const Courier = () => <div className="p-5"><h1>Courier Service Page</h1></div>;
+const Transport = () => <div className="p-5"><h1>Transport Service Page</h1></div>;
+const Packers = () => <div className="p-5"><h1>Packers & Movers Page</h1></div>;
+const Business = () => <div className="p-5"><h1>Business & MSME Dashboard</h1></div>;
+const Trade = () => <div className="p-5"><h1>Import & Export Trade Page</h1></div>;
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/courier" element={<CourierPage />} />
-        <Route path="/transport" element={<TransportPage />} />
-        <Route path="/packers" element={<MoversPage />} />
-        <Route path="/msme" element={<BusinessPage />} />
-        <Route path="/trade" element={<TradePage />} />
+        <Route path="/courier" element={<Courier />} />
+        <Route path="/transport" element={<Transport />} />
+        <Route path="/packers" element={<Packers />} />
+        <Route path="/msme" element={<Business />} />
+        <Route path="/trade" element={<Trade />} />
       </Routes>
     </Router>
   );
