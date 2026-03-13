@@ -5,7 +5,8 @@ import PartnerRegister from './pages/PartnerRegister';
 import AdminDashboard from './pages/AdminDashboard';
 import Tracking from './pages/Tracking';
 import BusinessMSME from './pages/BusinessMSME';
-import About from './pages/About'; // About page import kelay
+import About from './pages/About';
+import AIChat from './components/AIChat'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -84,7 +85,10 @@ function App() {
         {currentPage === 'msme' && <BusinessMSME />}
       </main>
 
-      {/* 3. Professional Footer with Social Links */}
+      {/* AI Chat Component - Visible on all pages */}
+      <AIChat />
+
+      {/* 3. Professional Footer */}
       <footer className="bg-dark text-white pt-5 pb-3">
         <div className="container">
           <div className="row g-4 text-start">
@@ -92,48 +96,8 @@ function App() {
             <div className="col-md-4">
               <h5 className="fw-bold text-primary mb-3">Apni Manzil</h5>
               <p className="small text-secondary" style={{ lineHeight: '1.8' }}>
-                Apni Manzil he Kudal (Sindhudurg) madhye MSMEs ani individual customers sathi ek centralized logistics platform aahe. 
+                Apni Manzil is a centralized logistics platform based in Kudal (Sindhudurg), 
+                providing efficient transport and courier solutions for MSMEs and individual customers.
               </p>
-              {/* Social Media Icons */}
               <div className="d-flex gap-3 mt-3">
-                <a href="#" className="text-white me-2" style={{fontSize: '20px'}}><i className="fab fa-facebook"></i></a>
-                <a href="#" className="text-white me-2" style={{fontSize: '20px'}}><i className="fab fa-instagram"></i></a>
-                <a href="#" className="text-white me-2" style={{fontSize: '20px'}}><i className="fab fa-linkedin"></i></a>
-                <a href="https://wa.me/919405862356" target="_blank" rel="noreferrer" className="text-white" style={{fontSize: '20px'}}><i className="fab fa-whatsapp"></i></a>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <h6 className="fw-bold mb-3">Contact Us</h6>
-              <p className="small text-secondary mb-1">📍 Kudal, Sindhudurg - 416520, Maharashtra.</p>
-              <p className="small text-secondary mb-1">📞 +91 9405862356</p>
-              <p className="small text-secondary mb-1">📞 +91 7218582356</p>
-              <p className="small text-secondary mb-4">📧 help@apnimanzil.co.in</p>
-            </div>
-
-            <div className="col-md-4 text-md-end">
-              <h6 className="fw-bold mb-3">Quick Links</h6>
-              <ul className="list-unstyled small text-secondary">
-                <li className="mb-2" style={{cursor:'pointer'}} onClick={() => setCurrentPage('home')}>Home</li>
-                <li className="mb-2" style={{cursor:'pointer'}} onClick={() => setCurrentPage('about')}>About Us</li>
-                <li className="mb-2" style={{cursor:'pointer'}} onClick={() => setCurrentPage('tracking')}>Track Parcel</li>
-              </ul>
-            </div>
-
-          </div>
-          <hr className="my-4 border-secondary" />
-          <div className="text-center">
-            <small className="text-secondary">© 2026 Apni Manzil Logistics | Built for Sindhudurg 🚩</small>
-          </div>
-        </div>
-      </footer>
-
-      <style>{`
-        .hover-link:hover { color: #0056b3 !important; transition: 0.3s; }
-      `}</style>
-
-    </div>
-  );
-}
-
-export default App;
+                <a href="#" className="text-white me-2" style={{fontSize
