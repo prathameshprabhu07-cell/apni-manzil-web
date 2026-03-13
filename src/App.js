@@ -1,58 +1,25 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './Home';
 
-// Importing your pages and components with the correct paths
-import Home from './pages/Home'; // Correct path for src/pages/Home.js
-import Partner from './components/Partner'; // Correct path for src/components/Partner.js
+// Placeholder Components (हे आपण नंतर टप्प्याटप्प्याने डेव्हलप करू)
+const CourierPage = () => <div style={{padding: '50px'}}><h2>Courier & Parcel Service</h2><p>API Integration coming soon...</p></div>;
+const TransportPage = () => <div style={{padding: '50px'}}><h2>Full Truck / Tempo Transport</h2><p>Vendor Bidding System coming soon...</p></div>;
+const MoversPage = () => <div style={{padding: '50px'}}><h2>Packers & Movers</h2><p>Local Partner network coming soon...</p></div>;
+const BusinessPage = () => <div style={{padding: '50px'}}><h2>MSME & Bulk Business Dashboard</h2><p>Enterprise solutions coming soon...</p></div>;
+const TradePage = () => <div style={{padding: '50px'}}><h2>Import & Export (EXIM)</h2><p>Global Trade & Customs support coming soon...</p></div>;
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        {/* Navigation Bar */}
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-          <div className="container">
-            <Link className="navbar-brand fw-bold" to="/">
-              <span className="text-primary">Apni</span> Manzil
-            </Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav ms-auto align-items-center">
-                <li className="nav-item">
-                  <Link className="nav-link" to="/">Home</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/partner">Become a Partner</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="btn btn-primary ms-lg-3 rounded-pill px-4 fw-bold" to="/partner">
-                    Join Network
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-
-        {/* Routes Configuration */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/partner" element={<Partner />} />
-        </Routes>
-
-        {/* Professional Footer */}
-        <footer className="bg-dark text-white py-4 mt-5">
-          <div className="container text-center">
-            <p className="mb-1 fw-bold">Apni Manzil - One Solution for All Deliveries</p>
-            <p className="small text-muted">Serving Pan-India | Courier • MSME • Transport • Packers & Movers</p>
-            <div className="mt-3">
-              <small>© 2026 Apni Manzil Services. All Rights Reserved.</small>
-            </div>
-          </div>
-        </footer>
-      </div>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/courier" element={<CourierPage />} />
+        <Route path="/transport" element={<TransportPage />} />
+        <Route path="/packers" element={<MoversPage />} />
+        <Route path="/msme" element={<BusinessPage />} />
+        <Route path="/trade" element={<TradePage />} />
+      </Routes>
     </Router>
   );
 }
