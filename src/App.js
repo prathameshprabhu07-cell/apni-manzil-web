@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './Home';
+// Home.js 'pages' फोल्डरमध्ये असल्याने पाथ बदलला आहे
+import Home from './pages/Home'; 
 
-// Placeholder Components for each service page
-// You can replace these with your actual page components later
+// Standard Functional Components
 const Courier = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Courier Services Page</h1><p>Integration with Shiprocket/Delhivery API coming soon.</p></div>;
 const Transport = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Transport & Trucking Page</h1><p>Vendor bidding system setup in progress.</p></div>;
 const Packers = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Packers & Movers Page</h1><p>Local vendor networking portal.</p></div>;
