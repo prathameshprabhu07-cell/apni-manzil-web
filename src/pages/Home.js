@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiPackage, FiTruck, FiBox, FiGlobe, FiBriefcase, FiSearch, FiCpu } from 'react-icons/fi';
+import { FiPackage, FiTruck, FiBox, FiGlobe, FiBriefcase, FiSearch, FiCpu, FiTrendingUp, FiAnchor, FiLayers, FiShield, FiWind, FiGlobe as FiWorld, FiZap, FiDatabase } from 'react-icons/fi';
 import CourierDetail from './CourierDetail';
 
 const Home = () => {
@@ -25,29 +25,24 @@ const Home = () => {
     </div>
   );
 
+  // Navin Logistics Insights Data
+  const insights = [
+    { title: "Market Giant", desc: "Indian Logistics is a $400B+ industry by 2026.", icon: <FiTrendingUp />, color: "#2ecc71" },
+    { title: "Mode Split", desc: "70% Road, 25% Sea, and 5% Air transport share.", icon: <FiTruck />, color: "#e67e22" },
+    { title: "Warehouse", desc: "Growth of 19% CAGR in smart warehousing.", icon: <FiLayers />, color: "#f1c40f" },
+    { title: "Global Trade", desc: "Managing $1 Trillion+ of annual trade flow.", icon: <FiWorld />, color: "#3498db" },
+    { title: "Last Mile", desc: "The most crucial step for Customer Satisfaction.", icon: <FiBox />, color: "#e74c3c" },
+    { title: "Cold Chain", desc: "Vital for Healthcare & Fresh Food safety.", icon: <FiShield />, color: "#1abc9c" },
+    { title: "Green Logistics", desc: "Shift towards EVs for zero emission delivery.", icon: <FiZap />, color: "#27ae60" },
+    { title: "Digitalization", desc: "Real-time tracking using AI & IoT technology.", icon: <FiDatabase />, color: "#34495e" }
+  ];
+
   return (
     <div className="container py-5">
+      {/* Services Section */}
       <div className="text-center mb-5">
         <h1 className="fw-bold display-5">Apni Manzil Services</h1>
         <p className="text-muted">Tumchya logistics cha pratyek prashna, amche ekach uttar.</p>
       </div>
 
-      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 justify-content-center">
-        {/* 1. Courier - Jya var click kelyavar navin page ughadel */}
-        <ServiceCard icon={<FiPackage />} title="Courier Services" desc="Domestic & International" btnColor="#27ae60" action={() => setView('courier')} />
-        
-        {/* 2. Baki sagle cards parat add kele */}
-        <ServiceCard icon={<FiTruck />} title="Transport" desc="Heavy & Full Truck" btnColor="#d35400" />
-        <ServiceCard icon={<FiBox />} title="Packers & Movers" desc="Home Shifting" btnColor="#f39c12" />
-        <ServiceCard icon={<FiBriefcase />} title="Business MSME" desc="Bulk Solutions" btnColor="#2980b9" />
-        <ServiceCard icon={<FiGlobe />} title="International" desc="Sea & Air Freight" btnColor="#8e44ad" />
-        <ServiceCard icon={<FiSearch />} title="Tracking" desc="Real-time Status" btnColor="#7f8c8d" />
-        <ServiceCard icon={<FiCpu />} title="AI Logistics" desc="Smart Management" btnColor="#2c3e50" />
-      </div>
-
-      <style>{`.hover-up:hover { transform: translateY(-10px); transition: 0.3s; }`}</style>
-    </div>
-  );
-};
-
-export default Home;
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 justify-content-center mb
