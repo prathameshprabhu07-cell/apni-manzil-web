@@ -50,7 +50,7 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* 2. NEW: Secondary Services Bar (White Line as seen in your photo) */}
+      {/* 2. Secondary Services Bar */}
       <div style={{ 
         backgroundColor: '#fff', 
         borderBottom: '1px solid #eee', 
@@ -67,7 +67,7 @@ const Home = () => {
           { name: 'Transport', path: '/transport' },
           { name: 'International', path: '/importexport' },
           { name: 'Business MSME', path: '/msme' },
-          { name: 'Partner Registration', path: '#' },
+          { name: 'Partner Registration', path: '/partner-registration' }, // बदल इथे केला आहे
           { name: 'Help Centre', path: '/help' }
         ].map((item, index) => (
           <span 
@@ -106,7 +106,6 @@ const Home = () => {
           Reliable Logistics & Global Supply Chain Solutions
         </p>
         
-        {/* Tracking Bar */}
         <div style={{ marginTop: '35px', display: 'flex', justifyContent: 'center' }}>
           <div style={{ background: 'white', borderRadius: '35px', display: 'flex', width: '100%', maxWidth: '650px', padding: '6px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
             <input 

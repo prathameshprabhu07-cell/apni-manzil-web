@@ -5,8 +5,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home'; 
 import ImportExportDetail from './pages/ImportExportDetail'; 
 import CourierDetail from './pages/CourierDetail'; 
-import HelpCenter from './pages/HelpCenter'; // हेल्प सेंटर जोडले
-import ChatBot from './components/ChatBot'; // AI चॅटबॉट जोडला
+import HelpCenter from './pages/HelpCenter'; 
+import PartnerRegistration from './pages/PartnerRegistration'; // नवीन पार्टनर पेज इम्पॉर्ट केले
+import ChatBot from './components/ChatBot'; 
 
 // बाकीचे components
 const Transport = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Transport & Trucking</h1></div>;
@@ -24,10 +25,11 @@ function App() {
         {/* १. होम पेज */}
         <Route path="/" element={<Home />} />
         
-        {/* २. कुरिअर आणि इतर सर्व्हिसेस */}
+        {/* २. महत्त्वाचे रूट्स */}
         <Route path="/courier" element={<CourierDetail />} />
         <Route path="/importexport" element={<ImportExportDetail />} />
-        <Route path="/help" element={<HelpCenter />} /> {/* हेल्प सेंटर रूट */}
+        <Route path="/help" element={<HelpCenter />} /> 
+        <Route path="/partner-registration" element={<PartnerRegistration />} /> {/* पार्टनर रजिस्ट्रेशन रूट */}
 
         {/* ३. इतर रूट्स */}
         <Route path="/transport" element={<Transport />} />
@@ -39,7 +41,7 @@ function App() {
         <Route path="/tradefinance" element={<TradeFinance />} />
       </Routes>
 
-      {/* ४. AI ChatBot - हा Routes च्या बाहेर आहे जेणेकरून तो सर्व पेजेसवर दिसेल */}
+      {/* ४. AI ChatBot */}
       <ChatBot />
     </Router>
   );
