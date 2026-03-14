@@ -1,12 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Pages फोल्डरमधून फाईल्स इम्पॉर्ट केल्या आहेत
+// Pages and Components इम्पॉर्ट
 import Home from './pages/Home'; 
 import ImportExportDetail from './pages/ImportExportDetail'; 
-import CourierDetail from './pages/CourierDetail'; // ही ओळ आपण जोडली आहे
+import CourierDetail from './pages/CourierDetail'; 
+import HelpCenter from './pages/HelpCenter'; // हेल्प सेंटर जोडले
+import ChatBot from './components/ChatBot'; // AI चॅटबॉट जोडला
 
-// बाकीचे components तसेच ठेवले आहेत
+// बाकीचे components
 const Transport = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Transport & Trucking</h1></div>;
 const Packers = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Packers & Movers</h1></div>;
 const MSME = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Business MSME</h1></div>;
@@ -22,13 +24,12 @@ function App() {
         {/* १. होम पेज */}
         <Route path="/" element={<Home />} />
         
-        {/* २. कुरिअर डिटेल्स - आता यात तुम्ही दिलेले ९ ऑप्शन्स दिसतील */}
+        {/* २. कुरिअर आणि इतर सर्व्हिसेस */}
         <Route path="/courier" element={<CourierDetail />} />
-
-        {/* ३. इम्पोर्ट एक्सपोर्ट */}
         <Route path="/importexport" element={<ImportExportDetail />} />
+        <Route path="/help" element={<HelpCenter />} /> {/* हेल्प सेंटर रूट */}
 
-        {/* ४. इतर रूट्स */}
+        {/* ३. इतर रूट्स */}
         <Route path="/transport" element={<Transport />} />
         <Route path="/packers" element={<Packers />} />
         <Route path="/msme" element={<MSME />} />
@@ -37,6 +38,9 @@ function App() {
         <Route path="/customs" element={<Customs />} />
         <Route path="/tradefinance" element={<TradeFinance />} />
       </Routes>
+
+      {/* ४. AI ChatBot - हा Routes च्या बाहेर आहे जेणेकरून तो सर्व पेजेसवर दिसेल */}
+      <ChatBot />
     </Router>
   );
 }

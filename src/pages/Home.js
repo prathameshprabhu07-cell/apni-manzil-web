@@ -6,12 +6,11 @@ import {
   Home as HomeIcon, 
   Building2, 
   Globe, 
-  Search, 
-  Cpu, 
   PlaneTakeoff, 
   Ship, 
   Receipt, 
-  Handshake 
+  Handshake,
+  CheckCircle
 } from 'lucide-react';
 
 const Home = () => {
@@ -28,6 +27,16 @@ const Home = () => {
     { id: 'customs', title: 'Customs Clearance', desc: 'Hassle-Free Documentation', icon: <Receipt size={30} color="#ffd600" />, btnColor: '#ffd600' },
     { id: 'tradefinance', title: 'Trade Finance', desc: 'Funding for Global Trade', icon: <Handshake size={30} color="#d32f2f" />, btnColor: '#d32f2f' }
   ];
+
+  // Statistics Card Style
+  const statCardStyle = {
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '12px',
+    textAlign: 'center',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    border: '1px solid #eee'
+  };
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
@@ -52,12 +61,9 @@ const Home = () => {
         color: 'white'
       }}>
         <h1 style={{ fontSize: '3.5rem', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>Apni Manzil</h1>
-        
-        {/* हा तो मुख्य बदल जो तुम्ही सांगितलात */}
         <h2 style={{ fontSize: '1.8rem', fontWeight: '600', marginTop: '15px', color: '#ffffff', textTransform: 'uppercase' }}>
           One Solution For All Deliveries — Serving All Over India
         </h2>
-        
         <p style={{ fontSize: '1.2rem', marginTop: '10px', opacity: 0.9 }}>
           Reliable Logistics & Global Supply Chain Solutions
         </p>
@@ -68,9 +74,9 @@ const Home = () => {
             <input 
               type="text" 
               placeholder="Enter Tracking ID (e.g. AMZ12345)" 
-              style={{ flex: 1, border: 'none', outline: 'none', padding: '12px 25px', borderRadius: '35px', fontSize: '1rem' }}
+              style={{ flex: 1, border: 'none', outline: 'none', padding: '12px 25px', borderRadius: '35px', fontSize: '1rem', color: '#333' }}
             />
-            <button style={{ backgroundColor: '#008a5e', color: 'white', border: 'none', padding: '10px 35px', borderRadius: '35px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem', transition: '0.3s' }}>
+            <button style={{ backgroundColor: '#008a5e', color: 'white', border: 'none', padding: '10px 35px', borderRadius: '35px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}>
               Track Now
             </button>
           </div>
@@ -112,8 +118,7 @@ const Home = () => {
                   fontSize: '0.85rem', 
                   fontWeight: '600',
                   cursor: 'pointer',
-                  width: '100%',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                  width: '100%'
                 }}>
                 Explore Service
               </button>
@@ -122,8 +127,59 @@ const Home = () => {
         </div>
       </div>
 
+      {/* --- NEW LOGISTICS DETAILS SECTION --- */}
+      <div style={{ backgroundColor: '#fff', padding: '80px 20px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '50px', alignItems: 'center' }}>
+            
+            {/* Left: Text Content */}
+            <div>
+              <h2 style={{ color: '#004080', fontWeight: 'bold', fontSize: '2.2rem', marginBottom: '20px' }}>India's Trusted Logistics Network</h2>
+              <p style={{ color: '#555', lineHeight: '1.7', fontSize: '1.1rem' }}>
+                Apni Manzil provides end-to-end supply chain solutions. From local courier deliveries to complex international freight, we ensure your cargo reaches its destination safely and on time.
+              </p>
+              <div style={{ marginTop: '25px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                  <CheckCircle size={20} color="#008a5e" style={{ marginRight: '10px' }} />
+                  <span>24/7 Real-time Asset Tracking</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                  <CheckCircle size={20} color="#008a5e" style={{ marginRight: '10px' }} />
+                  <span>Optimized Route Planning for Faster Delivery</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                  <CheckCircle size={20} color="#008a5e" style={{ marginRight: '10px' }} />
+                  <span>Secure Warehousing and Distribution</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Statistics Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div style={statCardStyle}>
+                <h3 style={{ color: '#008a5e', margin: '0', fontSize: '1.8rem' }}>15k+</h3>
+                <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#666', fontWeight: '600' }}>Pincodes Covered</p>
+              </div>
+              <div style={statCardStyle}>
+                <h3 style={{ color: '#008a5e', margin: '0', fontSize: '1.8rem' }}>500+</h3>
+                <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#666', fontWeight: '600' }}>Trucks on Road</p>
+              </div>
+              <div style={statCardStyle}>
+                <h3 style={{ color: '#008a5e', margin: '0', fontSize: '1.8rem' }}>1M+</h3>
+                <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#666', fontWeight: '600' }}>Deliveries Completed</p>
+              </div>
+              <div style={statCardStyle}>
+                <h3 style={{ color: '#008a5e', margin: '0', fontSize: '1.8rem' }}>99%</h3>
+                <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#666', fontWeight: '600' }}>On-Time Rate</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       {/* Footer Info */}
-      <div style={{ textAlign: 'center', paddingBottom: '40px', color: '#888' }}>
+      <div style={{ textAlign: 'center', padding: '40px 0', color: '#888', backgroundColor: '#f8f9fa' }}>
         <p>© 2026 Apni Manzil Logistics Solutions. All India Network.</p>
       </div>
 
