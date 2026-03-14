@@ -72,6 +72,17 @@ const Home = () => {
     marginBottom: '10px'
   };
 
+  // नेव्हिगेशनसाठी कॉमन फंक्शन
+  const menuItems = [
+    { name: 'Home', path: '/' },
+    { name: 'About Us', path: '/about-us' },
+    { name: 'Courier Services', path: '/courier' },
+    { name: 'Transport', path: '/transport' },
+    { name: 'Business MSME', path: '/msme' },
+    { name: 'Partner Registration', path: '/partner-registration' },
+    { name: 'Help Centre', path: '/help' }
+  ];
+
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
@@ -88,15 +99,20 @@ const Home = () => {
         </div>
         <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
           <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500', fontSize: '0.9rem' }} onClick={() => navigate('/')}>Home</span>
-          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500', fontSize: '0.9rem' }}>Tracking</span>
+          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500', fontSize: '0.9rem' }} onClick={() => alert('Tracking system coming soon!')}>Tracking</span>
           <button style={{ backgroundColor: '#004080', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '5px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' }}>Login</button>
         </div>
       </nav>
 
-      {/* 2. Secondary Services Bar */}
-      <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #eee', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: '25px' }}>
-        {['Home', 'About Us', 'Courier Services', 'Transport', 'International', 'Business MSME', 'Partner Registration', 'Help Centre'].map((item, idx) => (
-          <span key={idx} style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>{item}</span>
+      {/* 2. Secondary Services Bar - FIX: आता सर्व लिंक्स काम करतील */}
+      <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #eee', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: '25px', flexWrap: 'wrap' }}>
+        {menuItems.map((item, idx) => (
+          <span 
+            key={idx} 
+            onClick={() => navigate(item.path)}
+            style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>
+            {item.name}
+          </span>
         ))}
       </div>
 
@@ -170,6 +186,7 @@ const Home = () => {
               <li style={footerLinkStyle} onClick={() => navigate('/courier')}>Courier Services</li>
               <li style={footerLinkStyle} onClick={() => navigate('/transport')}>Transport Services</li>
               <li style={footerLinkStyle} onClick={() => navigate('/msme')}>Business MSME</li>
+              <li style={footerLinkStyle} onClick={() => navigate('/about-us')}>About Us</li>
               <li style={footerLinkStyle} onClick={() => alert('Tracking system coming soon!')}>Track Shipment</li>
             </ul>
           </div>
@@ -177,8 +194,7 @@ const Home = () => {
           <div>
             <h4 style={{ marginBottom: '20px', borderBottom: '2px solid #004080', display: 'inline-block', paddingBottom: '5px' }}>Contact Us</h4>
             <p style={{ color: '#aaa', fontSize: '0.85rem', lineHeight: '1.7' }}>
-              Kudal, Sindhudurg,<br />
-              Maharashtra - 416520
+              Maharashtra, India
             </p>
             <p style={{ color: '#aaa', fontSize: '0.85rem', marginTop: '10px' }}><strong>Email:</strong> help@apnimanzil.co.in</p>
             <p style={{ color: '#aaa', fontSize: '0.85rem' }}><strong>Phone:</strong> +91 7218852356</p>
