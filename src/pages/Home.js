@@ -28,7 +28,6 @@ const Home = () => {
     { id: 'tradefinance', title: 'Trade Finance', desc: 'Funding for Global Trade', icon: <Handshake size={30} color="#d32f2f" />, btnColor: '#d32f2f' }
   ];
 
-  // Statistics Card Style
   const statCardStyle = {
     backgroundColor: '#fff',
     padding: '20px',
@@ -41,17 +40,56 @@ const Home = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* Navbar */}
+      {/* 1. Main Navbar (Blue Line) */}
       <nav style={{ backgroundColor: '#fff', padding: '15px 50px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
         <h2 style={{ color: '#004080', fontWeight: 'bold', margin: 0 }}>Apni Manzil</h2>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <span style={{ cursor: 'pointer', color: '#555' }}>Home</span>
+          <span style={{ cursor: 'pointer', color: '#555' }} onClick={() => navigate('/')}>Home</span>
           <span style={{ cursor: 'pointer', color: '#555' }}>Tracking</span>
           <button style={{ backgroundColor: '#004080', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '5px', cursor: 'pointer' }}>Login</button>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* 2. NEW: Secondary Services Bar (White Line as seen in your photo) */}
+      <div style={{ 
+        backgroundColor: '#fff', 
+        borderBottom: '1px solid #eee', 
+        padding: '12px 0', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        gap: '25px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.02)'
+      }}>
+        {[
+          { name: 'Home', path: '/' },
+          { name: 'About Us', path: '#' },
+          { name: 'Courier Services', path: '/courier' },
+          { name: 'Transport', path: '/transport' },
+          { name: 'International', path: '/importexport' },
+          { name: 'Business MSME', path: '/msme' },
+          { name: 'Partner Registration', path: '#' },
+          { name: 'Help Centre', path: '/help' }
+        ].map((item, index) => (
+          <span 
+            key={index}
+            onClick={() => item.path !== '#' && navigate(item.path)}
+            style={{ 
+              cursor: 'pointer', 
+              fontSize: '0.85rem', 
+              color: '#444', 
+              fontWeight: '500',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}
+            onMouseOver={(e) => e.target.style.color = '#004080'}
+            onMouseOut={(e) => e.target.style.color = '#444'}
+          >
+            {item.name}
+          </span>
+        ))}
+      </div>
+
+      {/* 3. Hero Section */}
       <div style={{ 
         backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1350&q=80")',
         backgroundSize: 'cover',
@@ -83,7 +121,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Services Grid */}
+      {/* 4. Services Grid */}
       <div style={{ maxWidth: '1240px', margin: '-50px auto 50px auto', padding: '0 20px' }}>
         <div style={{ 
           display: 'grid', 
@@ -127,12 +165,11 @@ const Home = () => {
         </div>
       </div>
 
-      {/* --- NEW LOGISTICS DETAILS SECTION --- */}
+      {/* 5. Logistics Details Section */}
       <div style={{ backgroundColor: '#fff', padding: '80px 20px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '50px', alignItems: 'center' }}>
             
-            {/* Left: Text Content */}
             <div>
               <h2 style={{ color: '#004080', fontWeight: 'bold', fontSize: '2.2rem', marginBottom: '20px' }}>India's Trusted Logistics Network</h2>
               <p style={{ color: '#555', lineHeight: '1.7', fontSize: '1.1rem' }}>
@@ -154,7 +191,6 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Right: Statistics Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <div style={statCardStyle}>
                 <h3 style={{ color: '#008a5e', margin: '0', fontSize: '1.8rem' }}>15k+</h3>
