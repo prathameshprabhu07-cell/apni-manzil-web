@@ -12,8 +12,7 @@ import {
   Handshake,
   CheckCircle,
   Plus,
-  Trash2,
-  Calculator
+  Trash2
 } from 'lucide-react';
 
 const Home = () => {
@@ -27,7 +26,6 @@ const Home = () => {
   const [destPin, setDestPin] = useState('');
   const [payMode, setPayMode] = useState('Prepaid');
 
-  // नवीन पार्सल रो जोडणे (Max 5)
   const addParcel = () => {
     if (parcels.length < 5) {
       setParcels([...parcels, { id: Date.now(), length: '', width: '', height: '', weight: '', value: '' }]);
@@ -36,7 +34,6 @@ const Home = () => {
     }
   };
 
-  // पार्सल रो काढून टाकणे
   const removeParcel = (id) => {
     if (parcels.length > 1) {
       setParcels(parcels.filter(p => p.id !== id));
@@ -77,17 +74,22 @@ const Home = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* 1. Main Navbar (Sticky) */}
+      {/* 1. Main Navbar (Sticky) with Logo & Tagline */}
       <nav style={{ 
         position: 'sticky', top: 0, zIndex: 1000,
-        backgroundColor: '#fff', padding: '15px 50px', display: 'flex', 
+        backgroundColor: '#fff', padding: '10px 50px', display: 'flex', 
         justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
       }}>
-        <h2 onClick={() => navigate('/')} style={{ color: '#004080', fontWeight: 'bold', margin: 0, cursor: 'pointer' }}>Apni Manzil</h2>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <span style={{ cursor: 'pointer', color: '#555' }} onClick={() => navigate('/')}>Home</span>
-          <span style={{ cursor: 'pointer', color: '#555' }}>Tracking</span>
-          <button style={{ backgroundColor: '#004080', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '5px', cursor: 'pointer' }}>Login</button>
+        <div onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
+          <h2 style={{ color: '#004080', fontWeight: 'bold', margin: 0, lineHeight: '1.1' }}>Apni Manzil</h2>
+          <span style={{ fontSize: '0.65rem', color: '#666', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            One Solution For All Deliveries
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
+          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500' }} onClick={() => navigate('/')}>Home</span>
+          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500' }}>Tracking</span>
+          <button style={{ backgroundColor: '#004080', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '5px', cursor: 'pointer', fontWeight: '600' }}>Login</button>
         </div>
       </nav>
 
@@ -110,7 +112,7 @@ const Home = () => {
             key={index}
             onClick={() => item.path !== '#' && navigate(item.path)}
             style={{ 
-              cursor: 'pointer', fontSize: '0.85rem', color: '#444', fontWeight: '500',
+              cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600',
               textTransform: 'uppercase', letterSpacing: '0.5px'
             }}
             onMouseOver={(e) => e.target.style.color = '#004080'}
@@ -121,15 +123,13 @@ const Home = () => {
         ))}
       </div>
 
-      {/* 3. Hero Section */}
+      {/* 3. Hero Section (Only Tracking) */}
       <div style={{ 
         backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1350&q=80")',
-        backgroundSize: 'cover', backgroundPosition: 'center', padding: '100px 20px', textAlign: 'center', color: 'white'
+        backgroundSize: 'cover', backgroundPosition: 'center', padding: '120px 20px', textAlign: 'center', color: 'white'
       }}>
         <h1 style={{ fontSize: '3.5rem', fontWeight: 'bold', margin: 0, letterSpacing: '1px' }}>Apni Manzil</h1>
-        <h2 style={{ fontSize: '1.8rem', fontWeight: '600', marginTop: '15px', color: '#ffffff', textTransform: 'uppercase' }}>
-          One Solution For All Deliveries — Serving All Over India
-        </h2>
+        <p style={{ fontSize: '1.2rem', marginTop: '10px', opacity: 0.9 }}>Reliable Logistics & Global Supply Chain Solutions</p>
         
         <div style={{ marginTop: '35px', display: 'flex', justifyContent: 'center' }}>
           <div style={{ background: 'white', borderRadius: '35px', display: 'flex', width: '100%', maxWidth: '650px', padding: '6px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
@@ -145,16 +145,32 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 4. Advanced Rate Calculator (As per your request) */}
-      <div style={{ maxWidth: '1100px', margin: '-30px auto 50px auto', padding: '0 20px', position: 'relative', zIndex: 10 }}>
-        <div style={{ backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 20px 50px rgba(0,0,0,0.15)', overflow: 'hidden' }}>
-          
+      {/* 4. Services Grid */}
+      <div style={{ maxWidth: '1240px', margin: '60px auto', padding: '0 20px' }}>
+        <h2 style={{ textAlign: 'center', color: '#004080', marginBottom: '40px', fontWeight: 'bold' }}>Our Logistics Services</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+          {services.map((s) => (
+            <div key={s.id} onClick={() => navigate(`/${s.id}`)} style={{ backgroundColor: 'white', padding: '30px 20px', borderRadius: '15px', textAlign: 'center', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', transition: 'all 0.3s ease', cursor: 'pointer', borderBottom: `4px solid ${s.btnColor}` }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-10px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ marginBottom: '15px' }}>{s.icon}</div>
+              <h5 style={{ fontWeight: 'bold', color: '#222', fontSize: '1.1rem', margin: '0' }}>{s.title}</h5>
+              <p style={{ color: '#666', fontSize: '0.85rem', marginBottom: '20px', marginTop: '8px', lineHeight: '1.4' }}>{s.desc}</p>
+              <button style={{ backgroundColor: s.btnColor, color: 'white', border: 'none', padding: '10px 20px', borderRadius: '25px', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', width: '100%' }}>Explore Service</button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. Advanced Rate Calculator (Shifted here) */}
+      <div style={{ maxWidth: '1100px', margin: '80px auto', padding: '0 20px' }}>
+        <div style={{ backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', overflow: 'hidden', border: '1px solid #eee' }}>
           <div style={{ backgroundColor: '#004080', padding: '25px', textAlign: 'center', color: 'white' }}>
-            <h2 style={{ margin: 0, fontSize: '2.2rem', fontWeight: 'bold' }}>Apni Manzil</h2>
-            <p style={{ margin: '5px 0 0 0', fontSize: '1rem', opacity: 0.9 }}>One Solution For All Deliveries</p>
+            <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold' }}>Shipping Rate Calculator</h2>
+            <p style={{ margin: '5px 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>Get instant quotes for your domestic & international shipments</p>
           </div>
 
-          <div style={{ padding: '30px' }}>
+          <div style={{ padding: '35px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '25px' }}>
               <div>
                 <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#333' }}>Pickup Pincode</label>
@@ -174,50 +190,34 @@ const Home = () => {
               </div>
             </div>
 
-            <h4 style={{ marginBottom: '15px', color: '#004080', borderBottom: '2px solid #f0f0f0', paddingBottom: '10px' }}>
-              Parcel Details (Dimensions in cm)
+            <h4 style={{ marginBottom: '15px', color: '#004080', borderBottom: '2px solid #f0f0f0', paddingBottom: '10px', fontSize: '1rem' }}>
+              Parcel Details (L × W × H in cm)
             </h4>
             
-            {parcels.map((parcel, index) => (
+            {parcels.map((parcel) => (
               <div key={parcel.id} style={{ 
                 display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr)) 45px', 
                 gap: '12px', marginBottom: '15px', alignItems: 'flex-end', padding: '15px',
-                backgroundColor: '#f9f9f9', borderRadius: '10px', border: '1px solid #eee'
+                backgroundColor: '#f9fbff', borderRadius: '10px', border: '1px solid #e0e7ff'
               }}>
-                <div><label style={{fontSize:'0.75rem', fontWeight:'bold'}}>Length</label><input type="number" placeholder="L" style={inputStyle} /></div>
-                <div><label style={{fontSize:'0.75rem', fontWeight:'bold'}}>Width</label><input type="number" placeholder="W" style={inputStyle} /></div>
-                <div><label style={{fontSize:'0.75rem', fontWeight:'bold'}}>Height</label><input type="number" placeholder="H" style={inputStyle} /></div>
-                <div><label style={{fontSize:'0.75rem', fontWeight:'bold'}}>Weight (kg)</label><input type="number" placeholder="Kg" style={inputStyle} /></div>
-                <div><label style={{fontSize:'0.75rem', fontWeight:'bold'}}>Invoice Value</label><input type="number" placeholder="Value ₹" style={inputStyle} /></div>
+                <div><label style={{fontSize:'0.75rem', fontWeight:'bold', color: '#555'}}>Length</label><input type="number" placeholder="cm" style={inputStyle} /></div>
+                <div><label style={{fontSize:'0.75rem', fontWeight:'bold', color: '#555'}}>Width</label><input type="number" placeholder="cm" style={inputStyle} /></div>
+                <div><label style={{fontSize:'0.75rem', fontWeight:'bold', color: '#555'}}>Height</label><input type="number" placeholder="cm" style={inputStyle} /></div>
+                <div><label style={{fontSize:'0.75rem', fontWeight:'bold', color: '#555'}}>Weight</label><input type="number" placeholder="kg" style={inputStyle} /></div>
+                <div><label style={{fontSize:'0.75rem', fontWeight:'bold', color: '#555'}}>Value</label><input type="number" placeholder="₹" style={inputStyle} /></div>
                 <button onClick={() => removeParcel(parcel.id)} style={{ backgroundColor: '#ffeded', color: '#d32f2f', border: 'none', padding: '10px', borderRadius: '8px', cursor: 'pointer' }}><Trash2 size={18}/></button>
               </div>
             ))}
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px', alignItems: 'center' }}>
               <button onClick={addParcel} style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#fff', color: '#004080', border: '2px solid #004080', padding: '10px 20px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-                <Plus size={20} /> Add More Parcel
+                <Plus size={20} /> Add Another Box
               </button>
-              <button style={{ backgroundColor: '#008a5e', color: 'white', border: 'none', padding: '12px 40px', borderRadius: '10px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 5px 15px rgba(0,138,94,0.3)' }}>
-                Get Quote
+              <button style={{ backgroundColor: '#008a5e', color: 'white', border: 'none', padding: '15px 50px', borderRadius: '10px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 5px 15px rgba(0,138,94,0.3)' }}>
+                Calculate Now
               </button>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* 5. Services Grid */}
-      <div style={{ maxWidth: '1240px', margin: '50px auto', padding: '0 20px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-          {services.map((s) => (
-            <div key={s.id} onClick={() => navigate(`/${s.id}`)} style={{ backgroundColor: 'white', padding: '30px 20px', borderRadius: '15px', textAlign: 'center', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', transition: 'all 0.3s ease', cursor: 'pointer', borderBottom: `4px solid ${s.btnColor}` }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-10px)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-              <div style={{ marginBottom: '15px' }}>{s.icon}</div>
-              <h5 style={{ fontWeight: 'bold', color: '#222', fontSize: '1.1rem', margin: '0' }}>{s.title}</h5>
-              <p style={{ color: '#666', fontSize: '0.85rem', marginBottom: '20px', marginTop: '8px', lineHeight: '1.4' }}>{s.desc}</p>
-              <button style={{ backgroundColor: s.btnColor, color: 'white', border: 'none', padding: '10px 20px', borderRadius: '25px', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', width: '100%' }}>Explore Service</button>
-            </div>
-          ))}
         </div>
       </div>
 
