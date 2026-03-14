@@ -12,12 +12,13 @@ import MSMERegistration from './pages/MSMERegistration';
 import ChatBot from './components/ChatBot'; 
 
 // Basic components for other routes
-const Transport = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Transport & Trucking</h1></div>;
-const Packers = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Packers & Movers</h1></div>;
-const AirFreight = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Air Freight</h1></div>;
-const SeaFreight = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Sea Freight</h1></div>;
-const Customs = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Customs Clearance</h1></div>;
-const TradeFinance = () => <div style={{ padding: '50px', textAlign: 'center' }}><h1>Trade Finance</h1></div>;
+// टीप: जर तू या पेजेससाठी वेगळ्या फाईल्स बनवल्या असतील, तर वर import करून खालील कॉन्स्टंट काढून टाक.
+const Transport = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Transport & Trucking Services</h1><p>Work in Progress...</p></div>;
+const Packers = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Packers & Movers</h1><p>Work in Progress...</p></div>;
+const AirFreight = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Air Freight Services</h1><p>Work in Progress...</p></div>;
+const SeaFreight = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Sea Freight Services</h1><p>Work in Progress...</p></div>;
+const Customs = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Customs Clearance</h1><p>Work in Progress...</p></div>;
+const TradeFinance = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Trade Finance Solutions</h1><p>Work in Progress...</p></div>;
 
 function App() {
   // MSME register aahe ki nahi he check karnyacha state
@@ -38,12 +39,11 @@ function App() {
         <Route path="/help" element={<HelpCenter />} /> 
         <Route path="/partner-registration" element={<PartnerRegistration />} />
 
-        {/* --- SMART MSME LOGIC START --- */}
+        {/* --- SMART MSME LOGIC --- */}
         <Route 
           path="/msme" 
           element={
             isMSMERegistered ? (
-              // Dashboard la businessName pathvla aahe
               <MSMEDashboard businessName={businessName} />
             ) : (
               <Navigate to="/msme-registration" />
@@ -56,22 +56,25 @@ function App() {
           element={
             <MSMERegistration 
               setRegistered={setIsMSMERegistered} 
-              setBusinessName={setBusinessName} // Naav save karnyathi function pathvle
+              setBusinessName={setBusinessName} 
             />
           } 
         />
-        {/* --- SMART MSME LOGIC END --- */}
 
-        {/* 3. Other Routes */}
+        {/* 3. Other Routes (Services) */}
+        {/* Home.js मधून जेव्हा युजर 'Explore Service' किंवा कॅल्क्युलेटरवर क्लिक करेल, तेव्हा तो इथे येईल */}
         <Route path="/transport" element={<Transport />} />
         <Route path="/packers" element={<Packers />} />
         <Route path="/airfreight" element={<AirFreight />} />
         <Route path="/seafreight" element={<SeaFreight />} />
         <Route path="/customs" element={<Customs />} />
         <Route path="/tradefinance" element={<TradeFinance />} />
+
+        {/* ४०४ एरर टाळण्यासाठी डिफॉल्ट रूट (Optional) */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
 
-      {/* 4. AI ChatBot */}
+      {/* 4. AI ChatBot (नेहमी स्क्रीनवर दिसेल) */}
       <ChatBot />
     </Router>
   );
