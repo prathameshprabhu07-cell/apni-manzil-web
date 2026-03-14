@@ -40,9 +40,9 @@ const Home = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* 1. Main Navbar (Blue Line) */}
+      {/* 1. Main Navbar */}
       <nav style={{ backgroundColor: '#fff', padding: '15px 50px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <h2 style={{ color: '#004080', fontWeight: 'bold', margin: 0 }}>Apni Manzil</h2>
+        <h2 onClick={() => navigate('/')} style={{ color: '#004080', fontWeight: 'bold', margin: 0, cursor: 'pointer' }}>Apni Manzil</h2>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <span style={{ cursor: 'pointer', color: '#555' }} onClick={() => navigate('/')}>Home</span>
           <span style={{ cursor: 'pointer', color: '#555' }}>Tracking</span>
@@ -50,7 +50,7 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* 2. Secondary Services Bar */}
+      {/* 2. Secondary Services Bar - Corrected Paths */}
       <div style={{ 
         backgroundColor: '#fff', 
         borderBottom: '1px solid #eee', 
@@ -67,7 +67,7 @@ const Home = () => {
           { name: 'Transport', path: '/transport' },
           { name: 'International', path: '/importexport' },
           { name: 'Business MSME', path: '/msme' },
-          { name: 'Partner Registration', path: '/partner-registration' }, // बदल इथे केला आहे
+          { name: 'Partner Registration', path: '/partner-registration' },
           { name: 'Help Centre', path: '/help' }
         ].map((item, index) => (
           <span 
@@ -128,7 +128,9 @@ const Home = () => {
           gap: '20px' 
         }}>
           {services.map((s) => (
-            <div key={s.id} style={{ 
+            <div key={s.id} 
+            onClick={() => navigate(`/${s.id}`)}
+            style={{ 
               backgroundColor: 'white', 
               padding: '30px 20px', 
               borderRadius: '15px', 
@@ -140,7 +142,6 @@ const Home = () => {
             }}
             onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-10px)'}
             onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-            onClick={() => navigate(`/${s.id}`)}
             >
               <div style={{ marginBottom: '15px' }}>{s.icon}</div>
               <h5 style={{ fontWeight: 'bold', color: '#222', fontSize: '1.1rem', margin: '0' }}>{s.title}</h5>
