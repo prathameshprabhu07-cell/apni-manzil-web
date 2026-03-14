@@ -74,22 +74,35 @@ const Home = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* 1. Main Navbar (Sticky) with Logo & Tagline */}
+      {/* 1. Main Navbar (आता हा वरच थांबेल - position: 'relative') */}
       <nav style={{ 
-        position: 'sticky', top: 0, zIndex: 1000,
-        backgroundColor: '#fff', padding: '10px 50px', display: 'flex', 
-        justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+        position: 'relative', 
+        zIndex: 1000,
+        backgroundColor: '#fff', 
+        padding: '10px 50px', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
       }}>
-        <div onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ color: '#004080', fontWeight: 'bold', margin: 0, lineHeight: '1.1' }}>Apni Manzil</h2>
+        {/* Logo & Tagline Container */}
+        <div 
+          onClick={() => navigate('/')} 
+          style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
+        >
+          <h2 style={{ color: '#004080', fontWeight: 'bold', margin: 0, lineHeight: '1.1', fontSize: '1.5rem' }}>
+            Apni Manzil
+          </h2>
           <span style={{ fontSize: '0.65rem', color: '#666', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             One Solution For All Deliveries
           </span>
         </div>
+
+        {/* Nav Links */}
         <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
-          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500' }} onClick={() => navigate('/')}>Home</span>
-          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500' }}>Tracking</span>
-          <button style={{ backgroundColor: '#004080', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '5px', cursor: 'pointer', fontWeight: '600' }}>Login</button>
+          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500', fontSize: '0.9rem' }} onClick={() => navigate('/')}>Home</span>
+          <span style={{ cursor: 'pointer', color: '#555', fontWeight: '500', fontSize: '0.9rem' }}>Tracking</span>
+          <button style={{ backgroundColor: '#004080', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '5px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' }}>Login</button>
         </div>
       </nav>
 
@@ -162,7 +175,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 5. Advanced Rate Calculator (Shifted here) */}
+      {/* 5. Advanced Rate Calculator (Below Services) */}
       <div style={{ maxWidth: '1100px', margin: '80px auto', padding: '0 20px' }}>
         <div style={{ backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', overflow: 'hidden', border: '1px solid #eee' }}>
           <div style={{ backgroundColor: '#004080', padding: '25px', textAlign: 'center', color: 'white' }}>
