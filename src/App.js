@@ -11,8 +11,10 @@ import MSMEDashboard from './components/MSMEDashboard';
 import MSMERegistration from './pages/MSMERegistration'; 
 import ChatBot from './components/ChatBot'; 
 
+// --- नवीन बदल: About Page इम्पोर्ट केले ---
+import About from './pages/About'; 
+
 // Basic components for other routes
-// टीप: जर तू या पेजेससाठी वेगळ्या फाईल्स बनवल्या असतील, तर वर import करून खालील कॉन्स्टंट काढून टाक.
 const Transport = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Transport & Trucking Services</h1><p>Work in Progress...</p></div>;
 const Packers = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Packers & Movers</h1><p>Work in Progress...</p></div>;
 const AirFreight = () => <div style={{ padding: '100px 50px', textAlign: 'center' }}><h1>Air Freight Services</h1><p>Work in Progress...</p></div>;
@@ -38,6 +40,9 @@ function App() {
         <Route path="/importexport" element={<ImportExportDetail />} />
         <Route path="/help" element={<HelpCenter />} /> 
         <Route path="/partner-registration" element={<PartnerRegistration />} />
+        
+        {/* --- नवीन बदल: About Us रूट जोडला --- */}
+        <Route path="/about-us" element={<About />} />
 
         {/* --- SMART MSME LOGIC --- */}
         <Route 
@@ -62,7 +67,6 @@ function App() {
         />
 
         {/* 3. Other Routes (Services) */}
-        {/* Home.js मधून जेव्हा युजर 'Explore Service' किंवा कॅल्क्युलेटरवर क्लिक करेल, तेव्हा तो इथे येईल */}
         <Route path="/transport" element={<Transport />} />
         <Route path="/packers" element={<Packers />} />
         <Route path="/airfreight" element={<AirFreight />} />
@@ -70,7 +74,7 @@ function App() {
         <Route path="/customs" element={<Customs />} />
         <Route path="/tradefinance" element={<TradeFinance />} />
 
-        {/* ४०४ एरर टाळण्यासाठी डिफॉल्ट रूट (Optional) */}
+        {/* ४०४ एरर टाळण्यासाठी डिफॉल्ट रूट */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
 
