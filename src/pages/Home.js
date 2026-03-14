@@ -11,7 +11,7 @@ import {
   Receipt, 
   Handshake,
   CheckCircle,
-  Plus,
+  Plus, 
   Trash2
 } from 'lucide-react';
 
@@ -30,7 +30,7 @@ const Home = () => {
     if (parcels.length < 5) {
       setParcels([...parcels, { id: Date.now(), length: '', width: '', height: '', weight: '', value: '' }]);
     } else {
-      alert("तुम्ही एकावेळी जास्तीत जास्त ५ पार्सल जोडू शकता.");
+      alert("You can add a maximum of 5 parcels at a time.");
     }
   };
 
@@ -74,16 +74,17 @@ const Home = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* 1. Main Navbar (आता हा वरच थांबेल - position: 'relative') */}
+      {/* 1. Main Navbar (Sticky - moves with scroll) */}
       <nav style={{ 
-        position: 'relative', 
+        position: 'sticky', 
+        top: 0, 
         zIndex: 1000,
         backgroundColor: '#fff', 
         padding: '10px 50px', 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)' 
       }}>
         {/* Logo & Tagline Container */}
         <div 
@@ -175,7 +176,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 5. Advanced Rate Calculator (Below Services) */}
+      {/* 5. Advanced Rate Calculator */}
       <div style={{ maxWidth: '1100px', margin: '80px auto', padding: '0 20px' }}>
         <div style={{ backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', overflow: 'hidden', border: '1px solid #eee' }}>
           <div style={{ backgroundColor: '#004080', padding: '25px', textAlign: 'center', color: 'white' }}>
