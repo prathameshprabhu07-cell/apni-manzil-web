@@ -19,6 +19,10 @@ import {
   Loader2 
 } from 'lucide-react';
 
+// --- Firebase Imports (हे नवीन जोडले आहेत) ---
+import { db } from '../firebase'; 
+import { ref, push, set } from "firebase/database";
+
 // पाथ बरोबर केला जेणेकरून build error येणार नाही
 import { getNimbusToken, fetchShippingRates } from '../nimbusService';
 
@@ -34,6 +38,20 @@ const Home = () => {
   const [payMode, setPayMode] = useState('Prepaid');
   const [rates, setRates] = useState(null); 
   const [loading, setLoading] = useState(false);
+
+  // --- Firebase मध्ये डेटा सेव करण्याचे फंक्शन ---
+  const saveRateQueryToFirebase = async (searchData) => {
+    try {
+      const ratesRef = ref(db, 'searched_rates');
+      const newRateRef = push(ratesRef);
+      await set(newRateRef, {
+        ...searchData,
+        timestamp: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error("Firebase Save Error:", err);
+    }
+  };
 
   const handleCalculate = async () => {
     if (!pickupPin || !destPin) {
@@ -51,6 +69,16 @@ const Home = () => {
       
       if (liveRates && liveRates.length > 0) {
         setRates(liveRates);
+        
+        // --- बदल: डेटा यशस्वीरित्या मिळाल्यावर Firebase मध्ये नोंद करणे ---
+        saveRateQueryToFirebase({
+          pickup: pickupPin,
+          destination: destPin,
+          weight: weight,
+          payment: payMode,
+          foundServices: liveRates.length
+        });
+
       } else {
         alert("No services available for this route.");
       }
@@ -216,7 +244,7 @@ const Home = () => {
              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '25px' }}>
                 <div><label>Pickup Pincode</label><input style={inputStyle} value={pickupPin} onChange={(e)=>setPickupPin(e.target.value)} placeholder="e.g. 411001" /></div>
                 <div><label>Destination Pincode</label><input style={inputStyle} value={destPin} onChange={(e)=>setDestPin(e.target.value)} placeholder="e.g. 110001" /></div>
-                <div><label>Payment Mode</label><select style={inputStyle} value={payMode} onChange={(e)=>setPayMode(e.target.value)}><option value="prepaid">Prepaid</option><option value="cod">COD</option></select></div>
+                <div><label>Payment Mode</label><select style={inputStyle} value={payMode} onChange={(e)=>setPayMode(e.target.value)}><option value="Prepaid">Prepaid</option><option value="COD">COD</option></select></div>
              </div>
 
              {parcels.map((parcel, index) => (

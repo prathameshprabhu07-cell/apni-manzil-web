@@ -1,13 +1,48 @@
 import React, { useState } from 'react';
-import { FiSearch, FiMapPin, FiCheckCircle } from 'react-icons/fi';
+import { FiSearch, FiMapPin, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+// Firebase Imports
+import { db } from '../firebase'; 
+import { ref, get, child } from "firebase/database";
 
 const Tracking = () => {
   const [trackingId, setTrackingId] = useState('');
-  const [showStatus, setShowStatus] = useState(false);
+  const [trackingData, setTrackingData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleTrack = (e) => {
+  const handleTrack = async (e) => {
     e.preventDefault();
-    if(trackingId) setShowStatus(true);
+    if (!trackingId) return;
+
+    setLoading(true);
+    setError('');
+    setTrackingData(null);
+
+    try {
+      const dbRef = ref(db);
+      // 'bookings' नोडमधून डेटा मिळवणे
+      const snapshot = await get(child(dbRef, `bookings`));
+
+      if (snapshot.exists()) {
+        const bookings = snapshot.val();
+        // युजरने टाकलेला ID डेटाबेसमध्ये शोधणे
+        const foundOrder = Object.values(bookings).find(
+          (order) => order.orderId === trackingId.trim()
+        );
+
+        if (foundOrder) {
+          setTrackingData(foundOrder);
+        } else {
+          setError('Invalid Tracking ID. Please check and try again.');
+        }
+      } else {
+        setError('No shipments found in our records.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Connection error. Please try again.');
+    }
+    setLoading(false);
   };
 
   return (
@@ -22,30 +57,48 @@ const Tracking = () => {
               <input 
                 type="text" 
                 className="form-control form-control-lg rounded-pill px-4 shadow-sm" 
-                placeholder="Ex: AM12345678" 
-                onChange={(e) => setTrackingId(e.target.value)}
+                placeholder="Ex: AMZ123456" 
+                value={trackingId}
+                onChange={(e) => setTrackingId(e.target.value.toUpperCase())}
                 required
               />
-              <button type="submit" className="btn btn-primary btn-lg rounded-pill px-4 shadow">
-                <FiSearch /> Track
+              <button type="submit" disabled={loading} className="btn btn-primary btn-lg rounded-pill px-4 shadow">
+                {loading ? '...' : <><FiSearch /> Track</>}
               </button>
             </form>
 
-            {showStatus && (
+            {/* Error Message */}
+            {error && (
+              <div className="alert alert-danger rounded-4">
+                <FiAlertCircle /> {error}
+              </div>
+            )}
+
+            {/* Shipment Status Display */}
+            {trackingData && (
               <div className="text-start animate-fade-in">
-                <h5 className="fw-bold text-primary mb-4 border-bottom pb-2">Shipment Status: {trackingId}</h5>
+                <h5 className="fw-bold text-primary mb-4 border-bottom pb-2">
+                  Shipment Status: {trackingData.orderId}
+                </h5>
                 <div className="position-relative ps-4 border-start border-2 border-primary ms-2">
+                  
+                  {/* Status 1: Order Placed */}
                   <div className="mb-4 position-relative">
                     <FiCheckCircle className="position-absolute text-success bg-white" style={{left: '-32px', fontSize: '20px'}} />
                     <p className="mb-0 fw-bold">Order Placed</p>
-                    <small className="text-muted">Today - 10:30 AM</small>
+                    <small className="text-muted">{trackingData.bookingDate}</small>
                   </div>
+
+                  {/* Status 2: Current Status (In Transit / Pending etc) */}
                   <div className="mb-4 position-relative">
                     <FiMapPin className="position-absolute text-primary bg-white" style={{left: '-32px', fontSize: '20px'}} />
-                    <p className="mb-0 fw-bold">In Transit</p>
-                    <small className="text-muted">Location: Mumbai Warehouse</small>
+                    <p className="mb-0 fw-bold">{trackingData.status || 'Processing'}</p>
+                    <small className="text-muted">Receiver: {trackingData.receiverName}</small>
+                    <br />
+                    <small className="text-muted">Destination: {trackingData.deliveryAddress}</small>
                   </div>
                 </div>
+
                 <div className="alert alert-info border-0 rounded-4 mt-4">
                   <small><strong>Note:</strong> He status 10-15 minutani update hote.</small>
                 </div>

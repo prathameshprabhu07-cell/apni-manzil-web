@@ -2,28 +2,50 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, FileText, Phone, ArrowRight } from 'lucide-react';
 
-// Ithe props madhe setBusinessName add kela aahe
+// --- Firebase Imports (हे नवीन जोडले आहेत) ---
+import { database } from '../firebase'; 
+import { ref, set } from "firebase/database";
+
 const MSMERegistration = ({ setRegistered, setBusinessName }) => {
   const [formData, setFormData] = useState({
     businessName: '',
     gstNumber: '',
     mobile: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    console.log("Business Data:", formData);
-    
-    // 1. Business name state madhe save kara (App.js sathi)
-    setBusinessName(formData.businessName);
-    
-    // 2. User la registered mark kara
-    setRegistered(true);
-    
-    // 3. Direct Dashboard var pathva
-    navigate('/msme');
+    try {
+      // 1. Firebase डेटाबेसमध्ये माहिती सेव करणे
+      // आपण 'msme_profile' या पाथवर डेटा ठेवतोय (जो App.js मध्ये तपासला जातो)
+      const userRef = ref(database, 'msme_profile');
+      
+      await set(userRef, {
+        businessName: formData.businessName,
+        gstNumber: formData.gstNumber,
+        mobile: formData.mobile,
+        isRegistered: true,
+        registrationDate: new Date().toISOString()
+      });
+
+      console.log("Data saved to Firebase!");
+
+      // 2. Local State अपडेट करणे (App.js साठी)
+      setBusinessName(formData.businessName);
+      setRegistered(true);
+      
+      // 3. डॅशबोर्डवर नेणे
+      navigate('/msme');
+    } catch (error) {
+      console.error("Firebase Error:", error);
+      alert("Registration failed. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -104,22 +126,26 @@ const MSMERegistration = ({ setRegistered, setBusinessName }) => {
             </div>
           </div>
 
-          <button type="submit" style={{ 
-            width: '100%', 
-            backgroundColor: '#004080', 
-            color: 'white', 
-            padding: '12px', 
-            borderRadius: '6px', 
-            border: 'none', 
-            fontSize: '16px', 
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '10px'
-          }}>
-            Complete Registration <ArrowRight size={20} />
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            style={{ 
+              width: '100%', 
+              backgroundColor: isSubmitting ? '#ccc' : '#004080', 
+              color: 'white', 
+              padding: '12px', 
+              borderRadius: '6px', 
+              border: 'none', 
+              fontSize: '16px', 
+              fontWeight: 'bold',
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '10px'
+            }}
+          >
+            {isSubmitting ? 'Registering...' : 'Complete Registration'} <ArrowRight size={20} />
           </button>
         </form>
       </div>

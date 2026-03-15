@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
@@ -7,12 +7,40 @@ import {
   PlusCircle
 } from 'lucide-react';
 
-// Prop ghetla: businessName
+// Firebase Imports
+import { database } from '../firebase'; 
+import { ref, onValue } from "firebase/database";
+
 const MSMEDashboard = ({ businessName }) => {
+  // --- नवीन स्टेट: डेटाबेस मधून येणाऱ्या व्हॅल्यूज ---
+  const [dbStats, setDbStats] = useState({
+    totalOrders: "0",
+    inTransit: "0",
+    pendingPayments: "₹0"
+  });
+
+  useEffect(() => {
+    // समजा आपण युजरचे आकडे 'msme_profile/stats' मध्ये ठेवणार आहोत
+    const statsRef = ref(database, 'msme_profile/stats');
+    
+    const unsubscribe = onValue(statsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setDbStats({
+          totalOrders: data.totalOrders || "0",
+          inTransit: data.inTransit || "0",
+          pendingPayments: data.pendingPayments || "₹0"
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const stats = [
-    { title: "Total Orders", value: "124", icon: <Package size={24} />, color: "#004080" },
-    { title: "In Transit", value: "18", icon: <Truck size={24} />, color: "#f39c12" },
-    { title: "Pending Payments", value: "₹45,000", icon: <CreditCard size={24} />, color: "#e74c3c" },
+    { title: "Total Orders", value: dbStats.totalOrders, icon: <Package size={24} />, color: "#004080" },
+    { title: "In Transit", value: dbStats.inTransit, icon: <Truck size={24} />, color: "#f39c12" },
+    { title: "Pending Payments", value: dbStats.pendingPayments, icon: <CreditCard size={24} />, color: "#e74c3c" },
   ];
 
   return (
@@ -38,7 +66,6 @@ const MSMEDashboard = ({ businessName }) => {
       <div style={{ flex: 1, padding: '30px' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <div>
-            {/* Ithe Business Name disel */}
             <h1 style={{ margin: 0, color: '#333' }}>Welcome, {businessName || "Business Owner"}!</h1>
             <p style={{ color: '#666', marginTop: '5px' }}>Here is your business logistics overview.</p>
           </div>
