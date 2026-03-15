@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 // निंबसची सर्विस इम्पोर्ट केली
-import { getNimbusToken, fetchShippingRates } from './nimbusService';
+import { getNimbusToken, fetchShippingRates } from '../nimbusService';
 
 const Home = () => {
   const navigate = useNavigate();
