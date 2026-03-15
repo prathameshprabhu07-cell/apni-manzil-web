@@ -8,11 +8,10 @@ import {
 } from 'lucide-react';
 
 // Firebase Imports
-import { database } from '../firebase'; 
+import { db } from '../firebase'; // इथे 'db' नाव आहे
 import { ref, onValue } from "firebase/database";
 
 const MSMEDashboard = ({ businessName }) => {
-  // --- नवीन स्टेट: डेटाबेस मधून येणाऱ्या व्हॅल्यूज ---
   const [dbStats, setDbStats] = useState({
     totalOrders: "0",
     inTransit: "0",
@@ -20,8 +19,8 @@ const MSMEDashboard = ({ businessName }) => {
   });
 
   useEffect(() => {
-    // समजा आपण युजरचे आकडे 'msme_profile/stats' मध्ये ठेवणार आहोत
-    const statsRef = ref(database, 'msme_profile/stats');
+    // दुरुस्ती: 'database' ऐवजी 'db' वापरा
+    const statsRef = ref(db, 'msme_profile/stats'); 
     
     const unsubscribe = onValue(statsRef, (snapshot) => {
       const data = snapshot.val();

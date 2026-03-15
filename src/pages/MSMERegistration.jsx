@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, FileText, Phone, ArrowRight } from 'lucide-react';
 
-// --- Firebase Imports (हे नवीन जोडले आहेत) ---
-import { database } from '../firebase'; 
+// --- Firebase Imports (दुरुस्त केले आहे) ---
+import { db } from '../firebase'; // इथे 'database' ऐवजी 'db' केले आहे
 import { ref, set } from "firebase/database";
 
 const MSMERegistration = ({ setRegistered, setBusinessName }) => {
@@ -21,8 +21,8 @@ const MSMERegistration = ({ setRegistered, setBusinessName }) => {
     
     try {
       // 1. Firebase डेटाबेसमध्ये माहिती सेव करणे
-      // आपण 'msme_profile' या पाथवर डेटा ठेवतोय (जो App.js मध्ये तपासला जातो)
-      const userRef = ref(database, 'msme_profile');
+      // 'database' ऐवजी 'db' वापरले आहे
+      const userRef = ref(db, 'msme_profile');
       
       await set(userRef, {
         businessName: formData.businessName,
