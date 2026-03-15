@@ -16,10 +16,10 @@ import {
   Instagram,
   Facebook,
   Linkedin,
-  Loader2 // लोड होताना दाखवण्यासाठी नवीन आयकॉन
+  Loader2 
 } from 'lucide-react';
 
-// निंबसची सर्विस इम्पोर्ट केली
+// पाथ बरोबर केला जेणेकरून build error येणार नाही
 import { getNimbusToken, fetchShippingRates } from '../nimbusService';
 
 const Home = () => {
@@ -33,9 +33,8 @@ const Home = () => {
   const [destPin, setDestPin] = useState('');
   const [payMode, setPayMode] = useState('Prepaid');
   const [rates, setRates] = useState(null); 
-  const [loading, setLoading] = useState(false); // लोडिंग स्टेट
+  const [loading, setLoading] = useState(false);
 
-  // --- नवीन फंक्शन: निंबस कडून रिअल रेट्स आणण्यासाठी ---
   const handleCalculate = async () => {
     if (!pickupPin || !destPin) {
       alert("Please enter both Pincodes!");
@@ -44,18 +43,14 @@ const Home = () => {
 
     setLoading(true);
     try {
-      // १. टोकन मिळवा
       const token = await getNimbusToken();
       if (!token) throw new Error("Authentication Failed");
 
-      // २. पहिल्या पार्सलचे वजन घ्या (नसेल तर ०.५ किलो धरू)
       const weight = parcels[0].weight || 0.5;
-
-      // ३. निंबस पोस्ट कडून रेट्स आणा
       const liveRates = await fetchShippingRates(token, pickupPin, destPin, weight, payMode);
       
       if (liveRates && liveRates.length > 0) {
-        setRates(liveRates); // खऱ्या कंपन्यांचे रेट्स सेट केले
+        setRates(liveRates);
       } else {
         alert("No services available for this route.");
       }
@@ -100,7 +95,7 @@ const Home = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* 1. Main Navbar - जसा होता तसाच */}
+      {/* 1. Main Navbar */}
       <nav style={{ 
         position: 'sticky', top: 0, zIndex: 1000,
         backgroundColor: '#fff', padding: '10px 50px', 
@@ -118,7 +113,7 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* 2. Secondary Services Bar - जसा होता तसाच */}
+      {/* 2. Secondary Services Bar */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #eee', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: '25px', flexWrap: 'wrap' }}>
         <span onClick={() => navigate('/')} style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>Home</span>
         <span onClick={() => navigate('/about-us')} style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>About Us</span>
@@ -129,7 +124,7 @@ const Home = () => {
         <span onClick={() => navigate('/help')} style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>Help Centre</span>
       </div>
 
-      {/* 3. Hero Section - जसा होता तसाच */}
+      {/* 3. Hero Section */}
       <div style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1350&q=80")', backgroundSize: 'cover', padding: '120px 20px', textAlign: 'center', color: 'white' }}>
         <h1 style={{ fontSize: '3.5rem', fontWeight: 'bold', margin: 0 }}>Apni Manzil</h1>
         <p style={{ fontSize: '1.2rem', marginTop: '10px' }}>Reliable Logistics & Global Supply Chain Solutions</p>
@@ -141,7 +136,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 4. Services Grid (९ सेपरेट ब्लॉक्स) - जसे होते तसेच */}
+      {/* 4. Services Grid */}
       <div style={{ maxWidth: '1240px', margin: '60px auto', padding: '0 20px' }}>
         <h2 style={{ textAlign: 'center', color: '#004080', marginBottom: '40px' }}>Our Logistics Services</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
@@ -211,7 +206,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 5. Rate Calculator - रिअल API लॉजिक सह */}
+      {/* 5. Rate Calculator */}
       <div style={{ maxWidth: '1100px', margin: '80px auto', padding: '0 20px' }}>
         <div style={{ backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
           <div style={{ backgroundColor: '#004080', padding: '25px', textAlign: 'center', color: 'white' }}>
@@ -246,7 +241,6 @@ const Home = () => {
 
              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                 <button onClick={addParcel} style={{ padding: '10px 20px', cursor: 'pointer', border: '1px solid #004080', borderRadius: '5px', background: 'white', color: '#004080', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}><Plus size={18}/> Add Box</button>
-                
                 <button 
                   onClick={handleCalculate} 
                   disabled={loading}
@@ -255,7 +249,6 @@ const Home = () => {
                 </button>
              </div>
 
-             {/* रिअल रिझल्ट्स इथे दिसतील */}
              {rates && (
                <div style={{ marginTop: '30px' }}>
                  <h4 style={{ marginBottom: '15px', color: '#004080' }}>Available Services:</h4>
@@ -275,7 +268,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 6. Footer Section - जसा होता तसाच */}
+      {/* 6. Footer Section */}
       <footer style={{ backgroundColor: '#0b1622', color: 'white', padding: '60px 20px 20px 20px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px' }}>
           <div>

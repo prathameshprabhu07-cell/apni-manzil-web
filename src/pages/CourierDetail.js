@@ -1,54 +1,22 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
 
 const CourierDetail = () => {
-  const navigate = useNavigate(); // Back जाण्यासाठी navigate वापरूया
-
-  const courierOptions = [
-    { title: "Domestic Courier", desc: "India madhe kuthehi" },
-    { title: "International Courier", desc: "Jagbharat kuthehi" },
-    { title: "Express / Same Day", desc: "Fastest delivery" },
-    { title: "Surface Courier", desc: "Economy (Truck/Road)" },
-    { title: "Air Courier", desc: "Fast (Flight)" },
-    { title: "Bulk Courier", desc: "Business & MSME" },
-    { title: "In-City Courier", desc: "Local delivery" },
-    { title: "Government Speed Post", desc: "Postal service" },
-    { title: "Safe Document Service", desc: "High security" }
-  ];
-
   return (
-    <div className="container py-5" style={{ fontFamily: 'Segoe UI, sans-serif' }}>
-      {/* Back to Home Button */}
-      <button 
-        className="btn btn-outline-primary mb-4" 
-        onClick={() => navigate('/')} // Home वर परत जाण्यासाठी
-        style={{ borderRadius: '20px' }}
-      >
-        <FiArrowLeft /> Back to Home
-      </button>
+    <div style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1 style={{ color: '#004080' }}>Courier Services</h1>
+      <p>We provide the fastest domestic and international courier services.</p>
       
-      <h2 className="fw-bold mb-4" style={{ color: '#004080' }}>Select Your Courier Service</h2>
-      
-      <div className="row g-3">
-        {courierOptions.map((opt, index) => (
-          <div className="col-md-4" key={index}>
-            <div className="card h-100 border-0 shadow-sm p-4 rounded-4" style={{ transition: '0.3s', backgroundColor: '#fff' }}>
-              <h6 className="fw-bold text-primary mb-2">
-                <FiCheckCircle className="me-2" color="#008a5e"/>
-                {opt.title}
-              </h6>
-              <p className="text-muted small mb-3">{opt.desc}</p>
-              <button 
-                className="btn btn-success btn-sm w-100 rounded-pill"
-                style={{ backgroundColor: '#008a5e', border: 'none' }}
-              >
-                Book Now
-              </button>
-            </div>
-          </div>
-        ))}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginTop: '30px' }}>
+        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+          <h3>Domestic Delivery</h3>
+          <p>Delivery across 27,000+ pincodes in India.</p>
+        </div>
+        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+          <h3>International Shipping</h3>
+          <p>Global reach to 200+ countries.</p>
+        </div>
       </div>
+      {/* तू इथे तुझा रेट कॅल्क्युलेटर पुन्हा कॉल करू शकतोस */}
     </div>
   );
 };
