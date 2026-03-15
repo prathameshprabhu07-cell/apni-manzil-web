@@ -15,8 +15,12 @@ import {
   Trash2,
   Instagram,
   Facebook,
-  Linkedin
+  Linkedin,
+  Loader2 // लोड होताना दाखवण्यासाठी नवीन आयकॉन
 } from 'lucide-react';
+
+// निंबसची सर्विस इम्पोर्ट केली
+import { getNimbusToken, fetchShippingRates } from './nimbusService';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -28,7 +32,39 @@ const Home = () => {
   const [pickupPin, setPickupPin] = useState('');
   const [destPin, setDestPin] = useState('');
   const [payMode, setPayMode] = useState('Prepaid');
-  const [rates, setRates] = useState(null); // फक्त हे नवीन रिझल्टसाठी
+  const [rates, setRates] = useState(null); 
+  const [loading, setLoading] = useState(false); // लोडिंग स्टेट
+
+  // --- नवीन फंक्शन: निंबस कडून रिअल रेट्स आणण्यासाठी ---
+  const handleCalculate = async () => {
+    if (!pickupPin || !destPin) {
+      alert("Please enter both Pincodes!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // १. टोकन मिळवा
+      const token = await getNimbusToken();
+      if (!token) throw new Error("Authentication Failed");
+
+      // २. पहिल्या पार्सलचे वजन घ्या (नसेल तर ०.५ किलो धरू)
+      const weight = parcels[0].weight || 0.5;
+
+      // ३. निंबस पोस्ट कडून रेट्स आणा
+      const liveRates = await fetchShippingRates(token, pickupPin, destPin, weight, payMode);
+      
+      if (liveRates && liveRates.length > 0) {
+        setRates(liveRates); // खऱ्या कंपन्यांचे रेट्स सेट केले
+      } else {
+        alert("No services available for this route.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error fetching rates. Please check your API credentials.");
+    }
+    setLoading(false);
+  };
 
   const addParcel = () => {
     if (parcels.length < 5) {
@@ -64,7 +100,7 @@ const Home = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* 1. Main Navbar */}
+      {/* 1. Main Navbar - जसा होता तसाच */}
       <nav style={{ 
         position: 'sticky', top: 0, zIndex: 1000,
         backgroundColor: '#fff', padding: '10px 50px', 
@@ -82,7 +118,7 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* 2. Secondary Services Bar (तुझे शॉर्टकट ऑप्शन्स) */}
+      {/* 2. Secondary Services Bar - जसा होता तसाच */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #eee', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: '25px', flexWrap: 'wrap' }}>
         <span onClick={() => navigate('/')} style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>Home</span>
         <span onClick={() => navigate('/about-us')} style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>About Us</span>
@@ -93,7 +129,7 @@ const Home = () => {
         <span onClick={() => navigate('/help')} style={{ cursor: 'pointer', fontSize: '0.8rem', color: '#444', fontWeight: '600', textTransform: 'uppercase' }}>Help Centre</span>
       </div>
 
-      {/* 3. Hero Section */}
+      {/* 3. Hero Section - जसा होता तसाच */}
       <div style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1350&q=80")', backgroundSize: 'cover', padding: '120px 20px', textAlign: 'center', color: 'white' }}>
         <h1 style={{ fontSize: '3.5rem', fontWeight: 'bold', margin: 0 }}>Apni Manzil</h1>
         <p style={{ fontSize: '1.2rem', marginTop: '10px' }}>Reliable Logistics & Global Supply Chain Solutions</p>
@@ -105,7 +141,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 4. Services Grid (९ सेपरेट ब्लॉक्स) */}
+      {/* 4. Services Grid (९ सेपरेट ब्लॉक्स) - जसे होते तसेच */}
       <div style={{ maxWidth: '1240px', margin: '60px auto', padding: '0 20px' }}>
         <h2 style={{ textAlign: 'center', color: '#004080', marginBottom: '40px' }}>Our Logistics Services</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
@@ -175,7 +211,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 5. Rate Calculator */}
+      {/* 5. Rate Calculator - रिअल API लॉजिक सह */}
       <div style={{ maxWidth: '1100px', margin: '80px auto', padding: '0 20px' }}>
         <div style={{ backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
           <div style={{ backgroundColor: '#004080', padding: '25px', textAlign: 'center', color: 'white' }}>
@@ -183,31 +219,63 @@ const Home = () => {
           </div>
           <div style={{ padding: '35px' }}>
              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '25px' }}>
-                <div><label>Pickup Pincode</label><input style={inputStyle} value={pickupPin} onChange={(e)=>setPickupPin(e.target.value)} /></div>
-                <div><label>Destination Pincode</label><input style={inputStyle} value={destPin} onChange={(e)=>setDestPin(e.target.value)} /></div>
-                <div><label>Payment Mode</label><select style={inputStyle} value={payMode} onChange={(e)=>setPayMode(e.target.value)}><option>Prepaid</option><option>COD</option></select></div>
+                <div><label>Pickup Pincode</label><input style={inputStyle} value={pickupPin} onChange={(e)=>setPickupPin(e.target.value)} placeholder="e.g. 411001" /></div>
+                <div><label>Destination Pincode</label><input style={inputStyle} value={destPin} onChange={(e)=>setDestPin(e.target.value)} placeholder="e.g. 110001" /></div>
+                <div><label>Payment Mode</label><select style={inputStyle} value={payMode} onChange={(e)=>setPayMode(e.target.value)}><option value="prepaid">Prepaid</option><option value="cod">COD</option></select></div>
              </div>
-             {parcels.map((parcel) => (
+
+             {parcels.map((parcel, index) => (
                 <div key={parcel.id} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr) 45px', gap: '10px', marginBottom: '10px', padding: '15px', background: '#f9f9f9', borderRadius: '10px' }}>
-                   <input placeholder="L" style={inputStyle} /><input placeholder="W" style={inputStyle} /><input placeholder="H" style={inputStyle} /><input placeholder="Kg" style={inputStyle} /><input placeholder="₹" style={inputStyle} />
+                   <input placeholder="L (cm)" style={inputStyle} />
+                   <input placeholder="W (cm)" style={inputStyle} />
+                   <input placeholder="H (cm)" style={inputStyle} />
+                   <input 
+                      placeholder="Kg" 
+                      style={inputStyle} 
+                      value={parcel.weight} 
+                      onChange={(e) => {
+                        const newParcels = [...parcels];
+                        newParcels[index].weight = e.target.value;
+                        setParcels(newParcels);
+                      }} 
+                   />
+                   <input placeholder="₹ Value" style={inputStyle} />
                    <button onClick={() => removeParcel(parcel.id)} style={{ color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}><Trash2 size={20}/></button>
                 </div>
              ))}
+
              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-                <button onClick={addParcel} style={{ padding: '10px 20px', cursor: 'pointer', border: '1px solid #004080', borderRadius: '5px', background: 'white', color: '#004080', fontWeight: 'bold' }}><Plus size={18}/> Add Box</button>
-                <button onClick={() => setRates([{ name: 'Standard Delivery', price: 85 }])} style={{ backgroundColor: '#008a5e', color: 'white', padding: '10px 40px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Calculate Now</button>
+                <button onClick={addParcel} style={{ padding: '10px 20px', cursor: 'pointer', border: '1px solid #004080', borderRadius: '5px', background: 'white', color: '#004080', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}><Plus size={18}/> Add Box</button>
+                
+                <button 
+                  onClick={handleCalculate} 
+                  disabled={loading}
+                  style={{ backgroundColor: '#008a5e', color: 'white', padding: '10px 40px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  {loading ? <Loader2 className="animate-spin" size={20} /> : "Calculate Now"}
+                </button>
              </div>
+
+             {/* रिअल रिझल्ट्स इथे दिसतील */}
              {rates && (
-               <div style={{ marginTop: '20px', padding: '15px', background: '#f0fdf4', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                 <span style={{ fontWeight: 'bold' }}>{rates[0].name}</span>
-                 <span style={{ color: '#008a5e', fontWeight: 'bold', fontSize: '1.2rem' }}>₹{rates[0].price}.00</span>
+               <div style={{ marginTop: '30px' }}>
+                 <h4 style={{ marginBottom: '15px', color: '#004080' }}>Available Services:</h4>
+                 {rates.map((rate, idx) => (
+                   <div key={idx} style={{ marginBottom: '10px', padding: '15px', background: '#f0fdf4', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #bbf7d0' }}>
+                     <div>
+                       <span style={{ fontWeight: 'bold', color: '#166534' }}>{rate.courier_name}</span>
+                       <br />
+                       <small style={{ color: '#666' }}>Expected Delivery: {rate.expected_delivery_date || 'N/A'}</small>
+                     </div>
+                     <span style={{ color: '#008a5e', fontWeight: 'bold', fontSize: '1.2rem' }}>₹{rate.total_charge}</span>
+                   </div>
+                 ))}
                </div>
              )}
           </div>
         </div>
       </div>
 
-      {/* 6. Footer Section */}
+      {/* 6. Footer Section - जसा होता तसाच */}
       <footer style={{ backgroundColor: '#0b1622', color: 'white', padding: '60px 20px 20px 20px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px' }}>
           <div>
