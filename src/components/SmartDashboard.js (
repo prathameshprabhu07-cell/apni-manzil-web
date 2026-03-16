@@ -1,0 +1,92 @@
+import React from 'react';
+import { Package, Truck, Bike, Home, Warehouse, Globe, Zap, Database, Search, Bell, User, LayoutDashboard, Wallet, Headphones } from 'lucide-react';
+
+const SmartDashboard = () => {
+  return (
+    <div className="flex min-h-screen bg-[#F0F2F5] font-sans">
+      {/* Sidebar - Blue Theme */}
+      <aside className="w-64 bg-[#002D5E] text-white p-6 hidden lg:block">
+        <h1 className="text-2xl font-bold mb-10 text-orange-500">Apni Manzil</h1>
+        <nav className="space-y-6">
+          <div className="flex items-center gap-3 text-white font-bold cursor-pointer"><LayoutDashboard size={20}/> Dashboard</div>
+          <div className="flex items-center gap-3 opacity-60 hover:opacity-100 cursor-pointer"><Package size={20}/> Shipments</div>
+          <div className="flex items-center gap-3 opacity-60 hover:opacity-100 cursor-pointer"><Wallet size={20}/> Wallet</div>
+          <div className="flex items-center gap-3 opacity-60 hover:opacity-100 cursor-pointer"><Headphones size={20}/> Support</div>
+        </nav>
+      </aside>
+
+      {/* Main Area */}
+      <main className="flex-1 p-6">
+        {/* Header */}
+        <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm">
+          <h2 className="text-xl font-bold text-gray-800">Welcome back, Pritesh!</h2>
+          <div className="flex items-center gap-4">
+             <div className="bg-orange-100 p-2 rounded-full text-orange-600 font-bold text-sm">₹ 12,032.50</div>
+             <User className="bg-gray-200 rounded-full p-1" size={32}/>
+          </div>
+        </header>
+
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: "Total Shipments", val: "252", color: "text-orange-500" },
+            { label: "Delivered", val: "182", color: "text-green-500" },
+            { label: "In-Transit", val: "27", color: "text-blue-500" },
+            { label: "Wallet", val: "₹ 12,032", color: "text-purple-600" }
+          ].map((s, i) => (
+            <div key={i} className="bg-white p-5 rounded-xl shadow-sm border-b-4 border-orange-400">
+              <p className="text-xs text-gray-400 font-bold uppercase">{s.label}</p>
+              <h2 className={`text-2xl font-bold ${s.color}`}>{s.val}</h2>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* 9 Services Grid */}
+          <div className="lg:w-2/3 bg-white p-6 rounded-2xl shadow-sm">
+            <h3 className="font-bold mb-6 text-gray-700">Popular Logistics Services</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {[
+                { name: "Domestic Courier", icon: <Package className="text-blue-600"/> },
+                { name: "Express Courier", icon: <Zap className="text-orange-500"/> },
+                { name: "Same Day Delivery", icon: <Truck className="text-green-600"/> },
+                { name: "Bike Delivery", icon: <Bike className="text-red-500"/> },
+                { name: "Packers & Movers", icon: <Home className="text-amber-700"/> },
+                { name: "Warehouse", icon: <Warehouse className="text-slate-600"/> },
+                { name: "International", icon: <Globe className="text-indigo-600"/> },
+                { name: "Special Logistics", icon: <Database className="text-cyan-600"/> },
+                { name: "AI Selection", icon: <Zap className="text-yellow-500"/> }
+              ].map((service, i) => (
+                <div key={i} className="border rounded-xl p-4 hover:bg-orange-50 cursor-pointer transition-all text-center">
+                  <div className="flex justify-center mb-2">{service.icon}</div>
+                  <p className="text-xs font-bold text-gray-600">{service.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Side Box */}
+          <div className="lg:w-1/3 space-y-4">
+            <div className="bg-[#002D5E] text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 opacity-10"><Zap size={100}/></div>
+              <h3 className="font-bold mb-4">AI Smart Recommendation</h3>
+              <div className="space-y-3">
+                <div className="bg-white/10 p-3 rounded-lg flex justify-between items-center text-sm">
+                  <span>Cheapest Delivery</span>
+                  <span className="font-bold text-orange-400">₹ 79</span>
+                </div>
+                <div className="bg-white/10 p-3 rounded-lg flex justify-between items-center text-sm">
+                  <span>Fastest Delivery</span>
+                  <span className="font-bold text-orange-400">1 Day</span>
+                </div>
+              </div>
+              <button className="w-full mt-4 bg-orange-500 text-white py-2 rounded-lg font-bold hover:bg-orange-600 transition-colors">Compare Rates</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default SmartDashboard;
