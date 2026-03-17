@@ -11,6 +11,8 @@ import About from './pages/About';
 import ImportExportDetail from './pages/ImportExportDetail'; 
 import CourierDetail from './pages/CourierDetail'; 
 import CourierService from './components/CourierService'; 
+// --- हे नवीन पेज आपण इथे इंपोर्ट केलं आहे ---
+import CourierServiceDetail from './pages/CourierServiceDetail'; 
 import Tracking from './pages/Tracking'; // आधीपासून असलेली ट्रॅकिंग फाईल
 import AdminDashboard from './components/AdminDashboard'; // नवीन ॲडमिन पॅनेल
 import HelpCenter from './pages/HelpCenter'; 
@@ -73,11 +75,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about-us" element={<About />} />
         <Route path="/help" element={<HelpCenter />} /> 
-        <Route path="/track" element={<Tracking />} /> {/* ट्रॅकिंग रूट */}
+        <Route path="/track" element={<Tracking />} /> 
         
         {/* 2. Core Logistics Services */}
         <Route path="/courier-info" element={<CourierDetail />} />
         <Route path="/courier" element={<CourierService />} />
+        
+        {/* --- हे नवीन रूट आपण इथे ॲड केलं आहे --- */}
+        <Route path="/courier-service" element={<CourierServiceDetail />} />
         
         <Route path="/transport" element={<Transport />} />
         <Route path="/importexport" element={<ImportExportDetail />} />
@@ -90,7 +95,6 @@ function App() {
         {/* 3. Registrations & Dashboards */}
         <Route path="/partner-registration" element={<PartnerRegistration />} />
         
-        {/* Super Admin Route (Keep this URL secret) */}
         <Route path="/admin-control-panel" element={<AdminDashboard />} />
 
         <Route 
