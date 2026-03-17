@@ -1,40 +1,116 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// Firebase Imports
+// ==========================================
+// 1. FIREBASE & DATABASE CONFIGURATION
+// ==========================================
 import { db } from './firebase'; 
 import { ref, onValue } from "firebase/database";
 
-// Pages and Components Imports
+// ==========================================
+// 2. MAIN PAGES & COMPONENTS IMPORTS
+// ==========================================
 import Home from './pages/Home'; 
 import About from './pages/About'; 
 import ImportExportDetail from './pages/ImportExportDetail'; 
 import CourierDetail from './pages/CourierDetail'; 
 import CourierService from './components/CourierService'; 
-// --- हे नवीन पेज आपण इथे इंपोर्ट केलं आहे ---
 import CourierServiceDetail from './pages/CourierServiceDetail'; 
-import Tracking from './pages/Tracking'; // आधीपासून असलेली ट्रॅकिंग फाईल
-import AdminDashboard from './components/AdminDashboard'; // नवीन ॲडमिन पॅनेल
+import HyperlocalService from './pages/HyperlocalService'; 
+import TruckTransportService from './pages/TruckTransportService'; 
+import Tracking from './pages/Tracking'; 
+import AdminDashboard from './components/AdminDashboard'; 
 import HelpCenter from './pages/HelpCenter'; 
 import PartnerRegistration from './pages/PartnerRegistration'; 
 import MSMEDashboard from './components/MSMEDashboard'; 
 import MSMERegistration from './pages/MSMERegistration'; 
 import ChatBot from './components/ChatBot'; 
 
-// Placeholder Components
-const Transport = () => <div style={{ padding: '100px 50px', textAlign: 'center', minHeight: '60vh' }}><h1>Transport & Trucking Services</h1><p>Our fleet is ready to move your heavy cargo across India. Coming Soon...</p></div>;
-const Packers = () => <div style={{ padding: '100px 50px', textAlign: 'center', minHeight: '60vh' }}><h1>Packers & Movers</h1><p>Professional home and office shifting services. Coming Soon...</p></div>;
-const AirFreight = () => <div style={{ padding: '100px 50px', textAlign: 'center', minHeight: '60vh' }}><h1>Air Freight Services</h1><p>Fastest delivery via air cargo. Coming Soon...</p></div>;
-const SeaFreight = () => <div style={{ padding: '100px 50px', textAlign: 'center', minHeight: '60vh' }}><h1>Sea Freight Services</h1><p>Bulk global shipping via sea. Coming Soon...</p></div>;
-const Customs = () => <div style={{ padding: '100px 50px', textAlign: 'center', minHeight: '60vh' }}><h1>Customs Clearance</h1><p>Hassle-free international documentation. Coming Soon...</p></div>;
-const TradeFinance = () => <div style={{ padding: '100px 50px', textAlign: 'center', minHeight: '60vh' }}><h1>Trade Finance Solutions</h1><p>Financial support for your global trade. Coming Soon...</p></div>;
+// --- नवीन पेजेसचे इम्पोर्ट्स ---
+import PackersAndMovers from './pages/PackersAndMovers'; 
+import WarehouseStorage from './pages/WarehouseStorage'; 
+import InternationalLogistics from './pages/InternationalLogistics'; 
+import EcommerceLogistics from './pages/EcommerceLogistics'; 
+
+// --- Special Logistics Import (नवीन जोडले) ---
+import SpecialLogistics from './pages/SpecialLogistics'; 
+
+// --- AI Smart Logistics Import (नवीन जोडले) ---
+import AISmartLogistics from './pages/AISmartLogistics'; 
+
+// ==========================================
+// 3. SERVICE PLACEHOLDER COMPONENTS
+// ==========================================
+
+const Transport = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f8fafc' }}>
+    <h1 style={{ color: '#002D5E', fontSize: '3rem', fontWeight: '900', marginBottom: '20px' }}>
+      Transport & Trucking Solutions
+    </h1>
+    <p style={{ color: '#64748b', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+      Our heavy-duty fleet management system is being upgraded to give you the best experience.
+      Stay tuned for the grand launch of our professional transport services.
+    </p>
+  </div>
+);
+
+const AirFreight = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0f9ff' }}>
+    <h1 style={{ color: '#0369a1', fontSize: '3rem', fontWeight: '900', marginBottom: '20px' }}>
+      International Air Freight
+    </h1>
+    <p style={{ color: '#0c4a6e', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+      Fastest global delivery routes via premium air cargo partners. 
+      Expanding our wings to deliver across 190+ countries soon.
+    </p>
+  </div>
+);
+
+const SeaFreight = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0fdf4' }}>
+    <h1 style={{ color: '#15803d', fontSize: '3rem', fontWeight: '900', marginBottom: '20px' }}>
+      Global Sea Freight
+    </h1>
+    <p style={{ color: '#14532d', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+      Affordable bulk shipping for your international business needs.
+      Cargo containers and vessel tracking system integration in progress.
+    </p>
+  </div>
+);
+
+const Customs = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}>
+    <h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900', marginBottom: '20px' }}>
+      Customs & Compliance
+    </h1>
+    <p style={{ color: '#4c1d95', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+      Expert documentation and hassle-free customs clearance for your imports and exports.
+      Our digital portal for automated filing is coming soon.
+    </p>
+  </div>
+);
+
+const TradeFinance = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}>
+    <h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900', marginBottom: '20px' }}>
+      Logistics Trade Finance
+    </h1>
+    <p style={{ color: '#881337', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+      Financial support and credit solutions for small and medium enterprises.
+      Empowering your business growth with easy capital access.
+    </p>
+  </div>
+);
+
+// ==========================================
+// 4. MAIN APPLICATION LOGIC
+// ==========================================
 
 function App() {
   const [isMSMERegistered, setIsMSMERegistered] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // --- Firebase कडून रजिस्ट्रेशन स्टेटस तपासणे ---
   useEffect(() => {
     const userRef = ref(db, 'msme_profile'); 
     
@@ -54,16 +130,11 @@ function App() {
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh', 
-        fontSize: '1.2rem', 
-        color: '#004080',
-        fontWeight: 'bold' 
-      }}>
-        Loading Apni Manzil...
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#002D5E' }}>
+        <div style={{ textAlign: 'center', color: 'white', fontFamily: 'sans-serif' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 'bold' }}>APNI MANZIL</h2>
+          <p style={{ letterSpacing: '3px', opacity: 0.8 }}>Loading Professional Logistics Portal...</p>
+        </div>
       </div>
     );
   }
@@ -71,58 +142,62 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* 1. Main Pages */}
         <Route path="/" element={<Home />} />
         <Route path="/about-us" element={<About />} />
         <Route path="/help" element={<HelpCenter />} /> 
         <Route path="/track" element={<Tracking />} /> 
         
-        {/* 2. Core Logistics Services */}
         <Route path="/courier-info" element={<CourierDetail />} />
         <Route path="/courier" element={<CourierService />} />
-        
-        {/* --- हे नवीन रूट आपण इथे ॲड केलं आहे --- */}
         <Route path="/courier-service" element={<CourierServiceDetail />} />
+        <Route path="/hyperlocal-service" element={<HyperlocalService />} />
+        <Route path="/truck-transport" element={<TruckTransportService />} />
         
         <Route path="/transport" element={<Transport />} />
         <Route path="/importexport" element={<ImportExportDetail />} />
-        <Route path="/packers" element={<Packers />} />
+
+        {/* --- Packers & Movers --- */}
+        <Route path="/packers" element={<PackersAndMovers />} />
+        <Route path="/packers-movers" element={<PackersAndMovers />} />
+
+        {/* --- Warehouse & Storage --- */}
+        <Route path="/warehouse-storage" element={<WarehouseStorage />} />
+
+        {/* --- International Logistics --- */}
+        <Route path="/international-logistics" element={<InternationalLogistics />} />
+
+        {/* --- E-commerce Logistics --- */}
+        <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
+
+        {/* --- Special Logistics (नवीन मार्ग जोडला) --- */}
+        <Route path="/special-logistics" element={<SpecialLogistics />} />
+
+        {/* --- AI Smart Logistics (नवीन जोडला) --- */}
+        <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
+
         <Route path="/airfreight" element={<AirFreight />} />
         <Route path="/seafreight" element={<SeaFreight />} />
         <Route path="/customs" element={<Customs />} />
         <Route path="/tradefinance" element={<TradeFinance />} />
 
-        {/* 3. Registrations & Dashboards */}
         <Route path="/partner-registration" element={<PartnerRegistration />} />
-        
+
+        {/* Admin Dashboard Route (दुरुस्त केला) */}
         <Route path="/admin-control-panel" element={<AdminDashboard />} />
 
         <Route 
           path="/msme" 
-          element={
-            isMSMERegistered ? (
-              <MSMEDashboard businessName={businessName} />
-            ) : (
-              <Navigate to="/msme-registration" />
-            )
-          } 
+          element={isMSMERegistered ? <MSMEDashboard businessName={businessName} /> : <Navigate to="/msme-registration" />} 
         />
 
         <Route 
           path="/msme-registration" 
-          element={
-            <MSMERegistration 
-              setRegistered={setIsMSMERegistered} 
-              setBusinessName={setBusinessName} 
-            />
-          } 
+          element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} 
         />
 
-        {/* 4. 404 Redirect */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
 
-      {/* Global Components */}
       <ChatBot />
     </Router>
   );

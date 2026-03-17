@@ -11,14 +11,16 @@ const Home = () => {
 
   const mainServices = [
     { id: 1, name: "Courier & Parcel Delivery", icon: <Package size={32} />, color: "text-blue-600", bg: "bg-blue-50", isCourier: true },
-    { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50" },
-    { id: 3, name: "Truck & Transport Booking", icon: <Truck size={32} />, color: "text-green-600", bg: "bg-green-50" },
-    { id: 4, name: "Packers & Movers", icon: <HomeIcon size={32} />, color: "text-amber-700", bg: "bg-amber-50" },
-    { id: 5, name: "Warehouse & Storage", icon: <Warehouse size={32} />, color: "text-slate-600", bg: "bg-slate-50" },
-    { id: 6, name: "International Logistics", icon: <Globe size={32} />, color: "text-indigo-600", bg: "bg-indigo-50" },
-    { id: 7, name: "E-commerce Logistics", icon: <Boxes size={32} />, color: "text-pink-600", bg: "bg-pink-50" },
-    { id: 8, name: "Special Logistics", icon: <Star size={32} />, color: "text-cyan-600", bg: "bg-cyan-50" },
-    { id: 9, name: "AI Smart Logistics", icon: <Bot size={32} />, color: "text-yellow-600", bg: "bg-yellow-50" }
+    { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50", isHyperlocal: true }, 
+    { id: 3, name: "Truck & Transport Booking", icon: <Truck size={32} />, color: "text-green-600", bg: "bg-green-50", isTruck: true },
+    { id: 4, name: "Packers & Movers", icon: <HomeIcon size={32} />, color: "text-amber-700", bg: "bg-amber-50", isPackers: true },
+    { id: 5, name: "Warehouse & Storage", icon: <Warehouse size={32} />, color: "text-slate-600", bg: "bg-slate-50", isWarehouse: true },
+    { id: 6, name: "International Logistics", icon: <Globe size={32} />, color: "text-indigo-600", bg: "bg-indigo-50", isInternational: true },
+    { id: 7, name: "E-commerce Logistics", icon: <Boxes size={32} />, color: "text-pink-600", bg: "bg-pink-50", isEcommerce: true },
+    { id: 8, name: "Special Logistics", icon: <Star size={32} />, color: "text-cyan-600", bg: "bg-cyan-50", isSpecial: true },
+    
+    // --- AI Smart Logistics ला ओळख (isAI) जोडली आहे ---
+    { id: 9, name: "AI Smart Logistics", icon: <Bot size={32} />, color: "text-yellow-600", bg: "bg-yellow-50", isAI: true }
   ];
 
   return (
@@ -60,7 +62,7 @@ const Home = () => {
       {/* 2. HERO SECTION */}
       <section className="bg-gradient-to-b from-blue-50 to-slate-50 pt-16 pb-20 px-6 text-center">
         <h1 className="text-4xl md:text-6xl font-black text-[#002D5E] mb-6 tracking-tight leading-tight">
-          India’s <span className="text-orange-500 text-center">AI Smart</span> Logistics Platform
+          India’s <span className="text-orange-500">AI Smart</span> Logistics Platform
         </h1>
         <p className="text-slate-500 font-bold mb-12 text-lg uppercase tracking-[0.3em]">One Solution for All Delivery</p>
         
@@ -92,7 +94,18 @@ const Home = () => {
               {mainServices.map((s) => (
                 <div 
                   key={s.id} 
-                  onClick={() => s.isCourier ? navigate('/courier-service') : null}
+                  onClick={() => {
+                    if (s.isCourier) navigate('/courier-service');
+                    else if (s.isHyperlocal) navigate('/hyperlocal-service');
+                    else if (s.isTruck) navigate('/truck-transport');
+                    else if (s.isPackers) navigate('/packers-movers');
+                    else if (s.isWarehouse) navigate('/warehouse-storage');
+                    else if (s.isInternational) navigate('/international-logistics');
+                    else if (s.isEcommerce) navigate('/ecommerce-logistics'); 
+                    else if (s.isSpecial) navigate('/special-logistics');
+                    // --- AI Smart Logistics मार्ग जोडला ---
+                    else if (s.isAI) navigate('/ai-smart-logistics');
+                  }}
                   className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center justify-center h-52 relative overflow-hidden shadow-sm"
                 >
                   <div className={`${s.bg} ${s.color} p-5 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
@@ -100,7 +113,7 @@ const Home = () => {
                   </div>
                   <h4 className="font-extrabold text-sm text-slate-800 text-center px-4 leading-snug">{s.name}</h4>
                   <div className="absolute bottom-4 flex items-center gap-1 text-[10px] font-black text-orange-500 uppercase opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 text-center">
-                    {s.isCourier ? "View Categories" : "Book Now"} <ChevronRight size={12}/>
+                    { (s.isCourier || s.isHyperlocal || s.isTruck || s.isPackers || s.isWarehouse || s.isInternational || s.isEcommerce || s.isSpecial || s.isAI) ? "View Categories" : "Book Now"} <ChevronRight size={12}/>
                   </div>
                 </div>
               ))}
@@ -108,39 +121,39 @@ const Home = () => {
           </div>
 
           <div className="lg:w-1/3">
-            <div className="bg-[#002D5E] rounded-[3rem] p-10 text-white shadow-2xl sticky top-28 overflow-hidden border-t-8 border-orange-500">
-               <div className="flex items-center gap-4 mb-10">
-                 <div className="bg-white/10 p-3 rounded-2xl text-center">
-                   <Bot className="text-orange-400 text-center" size={32} />
-                 </div>
-                 <h3 className="text-2xl font-black leading-none">AI Smart<br/><span className="text-orange-400">Logistics Pick</span></h3>
-               </div>
-               
-               <div className="space-y-5 mb-10 text-center">
-                  <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
-                    <div className='text-center'>
-                      <p className="text-[10px] font-bold uppercase opacity-50 tracking-widest text-center">Cheapest Rate</p>
-                      <p className="font-bold text-lg text-center">Delhivery</p>
-                    </div>
-                    <span className="font-black text-orange-400 text-2xl tracking-tighter text-center">₹ 79</span>
+            <div className="bg-[#002D5E] rounded-[3rem] p-10 text-white shadow-2xl sticky top-28 overflow-hidden border-t-8 border-orange-500 text-center">
+                <div className="flex items-center gap-4 mb-10 justify-center">
+                  <div className="bg-white/10 p-3 rounded-2xl">
+                    <Bot className="text-orange-400" size={32} />
                   </div>
-                  <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
-                    <div className='text-center'>
-                      <p className="text-[10px] font-bold uppercase opacity-50 tracking-widest text-center">Fastest Time</p>
-                      <p className="font-bold text-lg text-center">DTDC Air</p>
-                    </div>
-                    <span className="font-black text-orange-400 text-2xl tracking-tighter text-right text-center">24H</span>
-                  </div>
-               </div>
-               <button className="w-full bg-orange-500 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-600 transition shadow-xl shadow-orange-950/20 text-center">
-                 Compare All Rates
-               </button>
+                  <h3 className="text-2xl font-black leading-none text-left">AI Smart<br/><span className="text-orange-400">Logistics Pick</span></h3>
+                </div>
+                
+                <div className="space-y-5 mb-10">
+                   <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
+                     <div className="text-left">
+                       <p className="text-[10px] font-bold uppercase opacity-50 tracking-widest">Cheapest Rate</p>
+                       <p className="font-bold text-lg">Delhivery</p>
+                     </div>
+                     <span className="font-black text-orange-400 text-2xl tracking-tighter">₹ 79</span>
+                   </div>
+                   <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
+                     <div className="text-left">
+                       <p className="text-[10px] font-bold uppercase opacity-50 tracking-widest">Fastest Time</p>
+                       <p className="font-bold text-lg">DTDC Air</p>
+                     </div>
+                     <span className="font-black text-orange-400 text-2xl tracking-tighter">24H</span>
+                   </div>
+                </div>
+                <button className="w-full bg-orange-500 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-600 transition shadow-xl shadow-orange-950/20">
+                  Compare All Rates
+                </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- BECOME A LOGISTICS PARTNER --- */}
+      {/* ... बाकीचा कोड (Partner, Track, Footer) तसाच आहे ... */}
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="relative overflow-hidden bg-gradient-to-r from-[#002D5E] to-blue-800 rounded-[3.5rem] p-1 md:p-2 shadow-2xl border border-blue-400/20">
           <div className="bg-white/5 backdrop-blur-md rounded-[3.3rem] p-8 md:p-14 flex flex-col md:flex-row items-center justify-between gap-12">
@@ -151,7 +164,10 @@ const Home = () => {
               <p className="text-blue-100 text-lg font-medium italic opacity-90">
                 "Road, Rail, Air or Sea - We deliver everywhere. Join our network today!"
               </p>
-              <button className="bg-orange-500 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-orange-600 transition shadow-2xl flex items-center gap-3 mx-auto md:mx-0 group">
+              <button 
+                onClick={() => navigate('/partner-registration')}
+                className="bg-orange-500 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-orange-600 transition shadow-2xl flex items-center gap-3 mx-auto md:mx-0 group"
+              >
                 Join as Partner <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform"/>
               </button>
             </div>
@@ -166,10 +182,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- TRACK YOUR SHIPMENT --- */}
       <section id="track" className="max-w-7xl mx-auto px-6 py-20 mb-20">
         <div className="bg-white rounded-[3.5rem] p-10 md:p-16 shadow-2xl border border-slate-50 flex flex-col lg:flex-row gap-16 items-center">
-          <div className="flex-1 space-y-8 w-full text-center">
+          <div className="flex-1 space-y-8 w-full">
             <div className="flex items-center gap-4 justify-center md:justify-start">
               <div className="h-10 w-2 bg-[#002D5E] rounded-full"></div>
               <h3 className="text-3xl font-black text-[#002D5E]">Track Your Shipment</h3>
@@ -205,50 +220,49 @@ const Home = () => {
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Partners</p>
              </div>
              <div className="bg-orange-50/50 p-8 rounded-[2.5rem] border border-orange-100 text-center space-y-2 col-span-2 shadow-sm">
-                <p className="text-4xl font-black text-orange-500 text-center">100+</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Cities Covered</p>
+                <p className="text-4xl font-black text-orange-500">100+</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cities Covered</p>
              </div>
           </div>
         </div>
       </section>
 
-      {/* --- FOOTER --- */}
       <footer className="bg-[#002D5E] text-white pt-20 pb-10 px-6 md:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6">
-            <div className="text-2xl font-black flex items-center gap-2">
+          <div className="space-y-6 text-center md:text-left">
+            <div className="text-2xl font-black flex items-center gap-2 justify-center md:justify-start">
               <span className="bg-orange-500 text-white px-2 py-1 rounded-lg italic text-lg">AM</span>
               <span>Apni <span className="text-orange-500">Manzil</span></span>
             </div>
             <p className="text-blue-100/60 text-sm leading-relaxed">
               India's leading AI-powered logistics platform. One solution for all your delivery needs.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 justify-center md:justify-start">
               <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition"><Facebook size={18}/></a>
               <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition"><Instagram size={18}/></a>
               <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition"><Linkedin size={18}/></a>
             </div>
           </div>
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1">Quick Links</h4>
+          <div className="space-y-6 text-center md:text-left">
+            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1 mx-auto md:mx-0">Quick Links</h4>
             <ul className="space-y-3 text-blue-100/60 text-sm">
               <li><a href="#services" className="hover:text-orange-400 transition">Our Services</a></li>
               <li><a href="#track" className="hover:text-orange-400 transition">Track Shipment</a></li>
               <li><a href="/partner-registration" className="hover:text-orange-400 transition">Become a Partner</a></li>
             </ul>
           </div>
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1">Support</h4>
+          <div className="space-y-6 text-center md:text-left">
+            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1 mx-auto md:mx-0">Support</h4>
             <ul className="space-y-3 text-blue-100/60 text-sm">
               <li><a href="/help" className="hover:text-orange-400 transition">Help Center</a></li>
               <li><a href="#" className="hover:text-orange-400 transition">Terms & Conditions</a></li>
             </ul>
           </div>
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1">Contact Us</h4>
+          <div className="space-y-6 text-center md:text-left">
+            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1 mx-auto md:mx-0">Contact Us</h4>
             <ul className="space-y-4 text-blue-100/60 text-sm">
-              <li className="flex items-center gap-3"><Phone size={18} className="text-orange-500"/> +91 98765 43210</li>
-              <li className="flex items-center gap-3"><Mail size={18} className="text-orange-500"/> support@apnimanzil.co.in</li>
+              <li className="flex items-center gap-3 justify-center md:justify-start"><Phone size={18} className="text-orange-500"/> +91 98765 43210</li>
+              <li className="flex items-center gap-3 justify-center md:justify-start"><Mail size={18} className="text-orange-500"/> support@apnimanzil.co.in</li>
             </ul>
           </div>
         </div>
