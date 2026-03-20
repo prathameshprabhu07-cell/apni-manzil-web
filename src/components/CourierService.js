@@ -24,11 +24,9 @@ const CourierService = () => {
     { id: 9, name: "Safe Document Service", desc: "High security" },
   ];
 
-  // नवीन फंक्शन: बटण क्लिक झाल्यावर नक्की काय व्हायला हवे
   const handleServiceSelection = (service) => {
     console.log("Service Selected:", service.name);
     setSelectedService(service);
-    // फॉर्म निवडल्यावर पेज आपोआप वर जाईल जेणेकरून फॉर्म दिसेल
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -75,16 +73,34 @@ const CourierService = () => {
     <div style={{ padding: '20px', backgroundColor: '#eef2f7', minHeight: '100vh' }}>
       {!selectedService ? (
         <>
-          <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#004080' }}>Select Your Courier Service</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+          <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#004080', fontWeight: 'bold' }}>
+            Select Your Courier Service
+          </h2>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+            gap: '25px', 
+            maxWidth: '1200px', 
+            margin: '0 auto' 
+          }}>
             {services.map((s) => (
-              <div key={s.id} style={cardStyle}>
+              <div 
+                key={s.id} 
+                onClick={() => handleServiceSelection(s)}
+                style={{
+                  ...cardStyle,
+                  cursor: 'pointer', // कार्डवर हात दिसेल
+                  position: 'relative',
+                  zIndex: 1
+                }}
+              >
                 <h3 style={{ color: '#008080' }}>{s.name}</h3>
                 <p style={{ fontSize: '14px', color: '#666' }}>{s.desc}</p>
-                {/* बदललेले बटण: handleServiceSelection वापरले आहे */}
                 <button 
-                  onClick={() => handleServiceSelection(s)} 
-                  style={{...bookBtnStyle, cursor: 'pointer', zIndex: 10}}
+                  style={{
+                    ...bookBtnStyle,
+                    pointerEvents: 'none' // बटणमुळे क्लिक अडकणार नाही
+                  }}
                 >
                   Book Now
                 </button>
@@ -95,7 +111,7 @@ const CourierService = () => {
       ) : (
         <div style={formWrapper}>
           <button onClick={() => setSelectedService(null)} style={backBtn}>← मागे जा (Back)</button>
-          <h2 style={{ textAlign: 'center' }}>Booking: {selectedService.name}</h2>
+          <h2 style={{ textAlign: 'center', color: '#004080' }}>Booking: {selectedService.name}</h2>
           
           <form style={formStyle} onSubmit={handleSubmit}>
               <p style={{ color: '#666' }}>ही सर्व्हिस बुक करण्यासाठी खालील माहिती भरा:</p>
@@ -115,9 +131,9 @@ const CourierService = () => {
   );
 };
 
-// --- STYLES (तुझेच ओरिजनल स्टाईल्स) ---
+// --- STYLES ---
 const cardStyle = { background: '#fff', padding: '25px', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', borderTop: '4px solid #008080' };
-const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 0', width: '100%', borderRadius: '4px', fontWeight: 'bold' };
+const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 0', width: '100%', borderRadius: '4px', fontWeight: 'bold', marginTop: '10px' };
 const formWrapper = { maxWidth: '500px', margin: '0 auto', background: '#fff', padding: '30px', borderRadius: '10px' };
 const formStyle = { display: 'flex', flexDirection: 'column', gap: '15px' };
 const inputStyle = { padding: '12px', borderRadius: '5px', border: '1px solid #ccc' };
