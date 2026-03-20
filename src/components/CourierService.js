@@ -27,6 +27,7 @@ const CourierService = () => {
   const handleServiceSelection = (service) => {
     console.log("Service Selected:", service.name);
     setSelectedService(service);
+    // क्लिक केल्यावर स्मूथली पेजच्या वर जाणे जेणेकरून फॉर्म दिसेल
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -39,6 +40,7 @@ const CourierService = () => {
     setLoading(true);
 
     try {
+      // इथे तुझा बॅकएंड API कॉल होत आहे
       const response = await fetch('http://localhost:5000/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,7 +60,7 @@ const CourierService = () => {
 
       if (response.ok && result.status) {
         alert(`यशस्वी! तुमची ऑर्डर बुक झाली. AWB: ${result.data.awb_number}`);
-        setSelectedService(null);
+        setSelectedService(null); // बुकिंग झाल्यावर पुन्हा कार्ड्स दाखवा
       } else {
         alert("त्रुटी: " + (result.error || "ऑर्डर बुक होऊ शकली नाही."));
       }
@@ -89,17 +91,20 @@ const CourierService = () => {
                 onClick={() => handleServiceSelection(s)}
                 style={{
                   ...cardStyle,
-                  cursor: 'pointer', // कार्डवर हात दिसेल
+                  cursor: 'pointer',
                   position: 'relative',
-                  zIndex: 1
+                  zIndex: 1,
+                  transition: '0.3s'
                 }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
                 <h3 style={{ color: '#008080' }}>{s.name}</h3>
                 <p style={{ fontSize: '14px', color: '#666' }}>{s.desc}</p>
                 <button 
                   style={{
                     ...bookBtnStyle,
-                    pointerEvents: 'none' // बटणमुळे क्लिक अडकणार नाही
+                    pointerEvents: 'none' 
                   }}
                 >
                   Book Now
@@ -109,6 +114,7 @@ const CourierService = () => {
           </div>
         </>
       ) : (
+        /* हा तुझा API फॉर्म आहे जो कार्ड क्लिक केल्यावर उघडेल */
         <div style={formWrapper}>
           <button onClick={() => setSelectedService(null)} style={backBtn}>← मागे जा (Back)</button>
           <h2 style={{ textAlign: 'center', color: '#004080' }}>Booking: {selectedService.name}</h2>
@@ -131,13 +137,13 @@ const CourierService = () => {
   );
 };
 
-// --- STYLES ---
+// --- STYLES (हे तुझेच ओरिजनल स्टाईल्स आहेत) ---
 const cardStyle = { background: '#fff', padding: '25px', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', borderTop: '4px solid #008080' };
 const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 0', width: '100%', borderRadius: '4px', fontWeight: 'bold', marginTop: '10px' };
-const formWrapper = { maxWidth: '500px', margin: '0 auto', background: '#fff', padding: '30px', borderRadius: '10px' };
+const formWrapper = { maxWidth: '500px', margin: '0 auto', background: '#fff', padding: '30px', borderRadius: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)' };
 const formStyle = { display: 'flex', flexDirection: 'column', gap: '15px' };
-const inputStyle = { padding: '12px', borderRadius: '5px', border: '1px solid #ccc' };
-const backBtn = { background: 'none', border: 'none', color: '#004080', cursor: 'pointer', marginBottom: '20px' };
-const confirmBtn = { background: '#004080', color: '#fff', padding: '15px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
+const inputStyle = { padding: '12px', borderRadius: '5px', border: '1px solid #ccc', fontSize: '16px' };
+const backBtn = { background: 'none', border: 'none', color: '#004080', cursor: 'pointer', marginBottom: '20px', fontWeight: 'bold' };
+const confirmBtn = { background: '#004080', color: '#fff', padding: '15px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' };
 
 export default CourierService;
