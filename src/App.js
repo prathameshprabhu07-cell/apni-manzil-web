@@ -32,10 +32,10 @@ import WarehouseStorage from './pages/WarehouseStorage';
 import InternationalLogistics from './pages/InternationalLogistics'; 
 import EcommerceLogistics from './pages/EcommerceLogistics'; 
 
-// --- Special Logistics Import (नवीन जोडले) ---
+// --- Special Logistics Import ---
 import SpecialLogistics from './pages/SpecialLogistics'; 
 
-// --- AI Smart Logistics Import (नवीन जोडले) ---
+// --- AI Smart Logistics Import ---
 import AISmartLogistics from './pages/AISmartLogistics'; 
 
 // ==========================================
@@ -169,10 +169,10 @@ function App() {
         {/* --- E-commerce Logistics --- */}
         <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
 
-        {/* --- Special Logistics (नवीन मार्ग जोडला) --- */}
+        {/* --- Special Logistics --- */}
         <Route path="/special-logistics" element={<SpecialLogistics />} />
 
-        {/* --- AI Smart Logistics (नवीन जोडला) --- */}
+        {/* --- AI Smart Logistics --- */}
         <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
 
         <Route path="/airfreight" element={<AirFreight />} />
@@ -182,7 +182,7 @@ function App() {
 
         <Route path="/partner-registration" element={<PartnerRegistration />} />
 
-        {/* Admin Dashboard Route (दुरुस्त केला) */}
+        {/* Admin Dashboard Route */}
         <Route path="/admin-control-panel" element={<AdminDashboard />} />
 
         <Route 
