@@ -29,7 +29,8 @@ const CourierService = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/create-order', {
+      // तुझी रेंडर बॅकएंड लिंक इथे अपडेट केली आहे
+      const response = await fetch('https://apni-manzil-web.onrender.com/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -39,7 +40,9 @@ const CourierService = () => {
           payment_method: "prepaid"
         })
       });
+      
       const result = await response.json();
+      
       if (response.ok && result.status) {
         alert(`Success! Your order has been booked. AWB: ${result.data.awb_number}`);
         setSelectedService(null);
@@ -47,7 +50,8 @@ const CourierService = () => {
         alert("Error: " + (result.error || "Failed to book order. Please try again."));
       }
     } catch (error) {
-      alert("Server Error: Please check if the backend (Port 5000) is running.");
+      // आता हा मेसेज आला तर समजायचे की रेंडर सर्व्हर 'Sleep' मोडमध्ये असू शकतो (पहिली रिक्वेस्ट थोडा वेळ घेते)
+      alert("Server Connection Error: Please ensure your Render backend is live.");
     } finally {
       setLoading(false);
     }
@@ -103,7 +107,6 @@ const CourierService = () => {
   );
 };
 
-// Styles
 const cardStyle = { background: '#fff', padding: '25px', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', borderTop: '4px solid #008080' };
 const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 0', width: '100%', borderRadius: '4px', fontWeight: 'bold', marginTop: '10px' };
 const formWrapper = { maxWidth: '500px', margin: '0 auto', background: '#fff', padding: '30px', borderRadius: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)' };
