@@ -4,11 +4,17 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// बदल: CORS मध्ये तुझ्या Vercel लिंकला परवानगी दिली आहे
+app.use(cors({
+    origin: ["https://apni-manzil-web.vercel.app", "http://localhost:3000"],
+    methods: ["GET", "POST"]
+}));
+
 app.use(express.json());
 
 // ==========================================
-// 1. NIMBUSPOST AUTHENTICATION (टोकन मिळवण्यासाठी)
+// 1. NIMBUSPOST AUTHENTICATION
 // ==========================================
 const getNimbusToken = async () => {
     try {
@@ -16,7 +22,6 @@ const getNimbusToken = async () => {
             email: process.env.NIMBUS_EMAIL,
             password: process.env.NIMBUS_PASSWORD
         });
-        // लॉगिन यशस्वी झाल्यास टोकन परत करतो
         return response.data.data; 
     } catch (error) {
         console.error("Nimbus Login Error:", error.response ? error.response.data : error.message);
@@ -25,7 +30,7 @@ const getNimbusToken = async () => {
 };
 
 // ==========================================
-// 2. API: TRACKING (पार्सल ट्रॅक करण्यासाठी)
+// 2. API: TRACKING
 // ==========================================
 app.get('/api/track/:awb', async (req, res) => {
     const token = await getNimbusToken();
@@ -42,14 +47,13 @@ app.get('/api/track/:awb', async (req, res) => {
 });
 
 // ==========================================
-// 3. API: CREATE ORDER (नवीन ऑर्डर बुक करण्यासाठी)
+// 3. API: CREATE ORDER
 // ==========================================
 app.post('/api/create-order', async (req, res) => {
     const token = await getNimbusToken();
     if (!token) return res.status(500).json({ error: "Authentication Failed" });
 
     try {
-        // req.body मध्ये आपण React मधून पाठवलेला डेटा असेल
         const response = await axios.post('https://api.nimbuspost.com/v1/shipments/create', req.body, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -58,6 +62,11 @@ app.post('/api/create-order', async (req, res) => {
         console.error("Order Creation Error:", error.response ? error.response.data : error.message);
         res.status(500).json({ error: "Order creation failed on NimbusPost server" });
     }
+});
+
+// डमी रूट (हे चेक करण्यासाठी की सर्व्हर सुरू आहे का)
+app.get('/', (req, res) => {
+    res.send("Apni Manzil Backend is Live!");
 });
 
 // ==========================================
