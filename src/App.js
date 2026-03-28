@@ -149,7 +149,10 @@ function App() {
         
         <Route path="/courier-info" element={<CourierDetail />} />
         <Route path="/courier" element={<CourierService />} />
-        <Route path="/courier-service" element={<CourierServiceDetail />} />
+
+        {/* --- मुख्य बदल खालील ओळीत केला आहे --- */}
+        <Route path="/courier-service" element={<CourierService />} /> 
+
         <Route path="/hyperlocal-service" element={<HyperlocalService />} />
         <Route path="/truck-transport" element={<TruckTransportService />} />
         

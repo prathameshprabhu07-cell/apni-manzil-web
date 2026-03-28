@@ -18,7 +18,6 @@ const CourierService = () => {
   ];
 
   const handleServiceSelection = (service) => {
-    // हा मेसेज Inspect Console मध्ये दिसेल
     console.log("SUCCESS: Selected Service is", service.name); 
     setSelectedService(service);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -65,19 +64,20 @@ const CourierService = () => {
             {services.map((s) => (
               <div 
                 key={s.id} 
+                // बदल: क्लिक इव्हेंट आणि स्टाईलमध्ये सुधारणा जेणेकरून क्लिक 'मिस' होणार नाही
                 onClick={() => handleServiceSelection(s)}
                 style={{
                   ...cardStyle,
                   cursor: 'pointer',
                   position: 'relative',
-                  zIndex: 999, // वाढवलेला z-index जेणेकरून क्लिक मिस होणार नाही
+                  zIndex: 10, 
                   transition: '0.3s'
                 }}
                 onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
                 onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <h3 style={{ color: '#008080' }}>{s.name}</h3>
-                <p style={{ fontSize: '14px', color: '#666' }}>{s.desc}</p>
+                <h3 style={{ color: '#008080', pointerEvents: 'none' }}>{s.name}</h3>
+                <p style={{ fontSize: '14px', color: '#666', pointerEvents: 'none' }}>{s.desc}</p>
                 <button style={{ ...bookBtnStyle, pointerEvents: 'none' }}>Book Now</button>
               </div>
             ))}
@@ -101,7 +101,6 @@ const CourierService = () => {
   );
 };
 
-// Styles (same as your original)
 const cardStyle = { background: '#fff', padding: '25px', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', borderTop: '4px solid #008080' };
 const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 0', width: '100%', borderRadius: '4px', fontWeight: 'bold', marginTop: '10px' };
 const formWrapper = { maxWidth: '500px', margin: '0 auto', background: '#fff', padding: '30px', borderRadius: '10px' };
