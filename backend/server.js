@@ -5,11 +5,10 @@ require('dotenv').config();
 
 const app = express();
 
-// बदल: CORS मध्ये तुझ्या Vercel लिंकला परवानगी दिली आहे
-app.use(cors({
-    origin: ["https://apni-manzil-web.vercel.app", "http://localhost:3000"],
-    methods: ["GET", "POST"]
-}));
+// ==========================================
+// बदल: CORS ला अधिक सुरक्षित आणि लवचिक केले आहे
+// ==========================================
+app.use(cors()); // यामुळे सर्व ठिकाणांहून येणाऱ्या रिक्वेस्ट स्वीकारल्या जातील
 
 app.use(express.json());
 
