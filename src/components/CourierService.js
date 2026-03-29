@@ -3,22 +3,26 @@ import React, { useState } from 'react';
 const CourierService = () => {
   const [selectedService, setSelectedService] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', pincode: '', address: '', weight: '0.5' });
+  const [formData, setFormData] = useState({ 
+    name: '', 
+    phone: '', 
+    pincode: '', 
+    address: '', 
+    city: '',
+    state: '',
+    weight: '0.5' 
+  });
 
   const services = [
-    { id: 1, name: "Domestic Courier", desc: "Delivery anywhere across India" },
-    { id: 2, name: "International Courier", desc: "Worldwide shipping services" },
-    { id: 3, name: "Express / Same Day", desc: "Urgent fastest delivery" },
-    { id: 4, name: "Surface Courier", desc: "Economy shipping (Road/Truck)" },
-    { id: 5, name: "Air Courier", desc: "Priority flight delivery" },
-    { id: 6, name: "Bulk Courier", desc: "Special rates for Business & MSMEs" },
-    { id: 7, name: "In-City Courier", desc: "Local same-city delivery" },
-    { id: 8, name: "Government Speed Post", desc: "Reliable postal services" },
-    { id: 9, name: "Safe Document Service", desc: "High-security document handling" },
+    { id: 1, name: "Domestic Courier", desc: "Delivery anywhere across India", icon: "🇮🇳" },
+    { id: 2, name: "International Courier", desc: "Worldwide shipping services", icon: "🌎" },
+    { id: 3, name: "Express / Same Day", desc: "Urgent fastest delivery", icon: "⚡" },
+    { id: 4, name: "Surface Courier", desc: "Economy shipping (Road/Truck)", icon: "🚛" },
+    { id: 5, name: "Air Courier", desc: "Priority flight delivery", icon: "✈️" },
+    { id: 6, name: "Bulk Courier", desc: "Special rates for Business & MSMEs", icon: "📦" },
   ];
 
   const handleServiceSelection = (service) => {
-    console.log("Service Selected:", service.name); 
     setSelectedService(service);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -28,14 +32,21 @@ const CourierService = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
-      // तुझी रेंडर बॅकएंड लिंक इथे अपडेट केली आहे
+      // तुझी Render ची लिंक इथे तपासा
       const response = await fetch('https://apni-manzil-web.onrender.com/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           order_number: "AM-" + Date.now(),
-          ...formData,
+          shipping_address: formData.address,
+          shipping_city: formData.city,
+          shipping_state: formData.state,
+          shipping_pincode: formData.pincode,
+          shipping_name: formData.name,
+          shipping_phone: formData.phone,
+          weight: formData.weight,
           service_name: selectedService.name,
           payment_method: "prepaid"
         })
@@ -43,63 +54,63 @@ const CourierService = () => {
       
       const result = await response.json();
       
-      if (response.ok && result.status) {
-        alert(`Success! Your order has been booked. AWB: ${result.data.awb_number}`);
+      if (response.ok) {
+        alert(`Success! Order Booked. AWB: ${result.data?.awb_number || 'Pending'}`);
         setSelectedService(null);
       } else {
-        alert("Error: " + (result.error || "Failed to book order. Please try again."));
+        alert("Error: " + (result.error || "Order creation failed. Check logs."));
       }
     } catch (error) {
-      // आता हा मेसेज आला तर समजायचे की रेंडर सर्व्हर 'Sleep' मोडमध्ये असू शकतो (पहिली रिक्वेस्ट थोडा वेळ घेते)
-      alert("Server Connection Error: Please ensure your Render backend is live.");
+      alert("Server Connection Error: Make sure your Render backend is awake!");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#eef2f7', minHeight: '100vh' }}>
+    <div style={{ padding: '40px 20px', backgroundColor: '#f4f7f9', minHeight: '100vh' }}>
       {!selectedService ? (
-        <>
-          <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#004080', fontWeight: 'bold' }}>
-            Select Your Courier Service
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '25px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <h2 style={{ textAlign: 'center', color: '#004080', marginBottom: '10px' }}>Select Courier Service</h2>
+          <p style={{ textAlign: 'center', color: '#666', marginBottom: '40px' }}>Choose the best delivery option for your needs</p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             {services.map((s) => (
-              <div 
-                key={s.id} 
-                onClick={() => handleServiceSelection(s)}
-                style={{
-                  ...cardStyle,
-                  cursor: 'pointer',
-                  position: 'relative',
-                  zIndex: 10, 
-                  transition: '0.3s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-              >
-                <h3 style={{ color: '#008080' }}>{s.name}</h3>
-                <p style={{ fontSize: '14px', color: '#666' }}>{s.desc}</p>
-                <button style={{ ...bookBtnStyle, pointerEvents: 'none' }}>Book Now</button>
+              <div key={s.id} onClick={() => handleServiceSelection(s)} style={cardStyle}>
+                <div style={{ fontSize: '40px', marginBottom: '15px' }}>{s.icon}</div>
+                <h3 style={{ color: '#008080', margin: '10px 0' }}>{s.name}</h3>
+                <p style={{ fontSize: '14px', color: '#777', height: '40px' }}>{s.desc}</p>
+                <button style={bookBtnStyle}>Select Service</button>
               </div>
             ))}
           </div>
-        </>
+        </div>
       ) : (
         <div style={formWrapper}>
           <button onClick={() => setSelectedService(null)} style={backBtn}>← Back to Services</button>
-          <h2 style={{ textAlign: 'center', color: '#004080' }}>Booking: {selectedService.name}</h2>
+          <h2 style={{ color: '#004080', marginBottom: '20px' }}>Booking: {selectedService.name}</h2>
+          
           <form style={formStyle} onSubmit={handleSubmit}>
-              <p style={{ color: '#666', fontSize: '14px' }}>Please fill in the receiver's details below:</p>
+            <div style={inputGroup}>
               <input name="name" placeholder="Receiver Name" style={inputStyle} onChange={handleChange} required />
-              <input name="phone" placeholder="Phone Number" style={inputStyle} onChange={handleChange} required />
+              <input name="phone" placeholder="Phone (10 digits)" style={inputStyle} onChange={handleChange} required />
+            </div>
+            
+            <textarea name="address" placeholder="Full Address" style={{...inputStyle, height: '80px'}} onChange={handleChange} required />
+            
+            <div style={inputGroup}>
+              <input name="city" placeholder="City" style={inputStyle} onChange={handleChange} required />
+              <input name="state" placeholder="State" style={inputStyle} onChange={handleChange} required />
+            </div>
+            
+            <div style={inputGroup}>
               <input name="pincode" placeholder="Pincode" style={inputStyle} onChange={handleChange} required />
-              <input name="weight" placeholder="Weight (KG) e.g. 0.5" type="number" step="0.1" style={inputStyle} onChange={handleChange} required />
-              <textarea name="address" placeholder="Complete Delivery Address" style={inputStyle} onChange={handleChange} required />
-              <button type="submit" style={confirmBtn} disabled={loading}>
-                {loading ? 'Processing...' : 'Confirm Order & Dispatch'}
-              </button>
+              <input name="weight" placeholder="Weight (KG)" type="number" step="0.1" style={inputStyle} onChange={handleChange} required />
+            </div>
+
+            <button type="submit" style={confirmBtn} disabled={loading}>
+              {loading ? 'Please Wait...' : 'Confirm & Book Shipment'}
+            </button>
           </form>
         </div>
       )}
@@ -107,12 +118,14 @@ const CourierService = () => {
   );
 };
 
-const cardStyle = { background: '#fff', padding: '25px', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', borderTop: '4px solid #008080' };
-const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 0', width: '100%', borderRadius: '4px', fontWeight: 'bold', marginTop: '10px' };
-const formWrapper = { maxWidth: '500px', margin: '0 auto', background: '#fff', padding: '30px', borderRadius: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)' };
+// CSS Styles
+const cardStyle = { background: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.08)', cursor: 'pointer', textAlign: 'center', transition: '0.3s' };
+const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', fontWeight: 'bold', marginTop: '15px', width: '100%' };
+const formWrapper = { maxWidth: '600px', margin: '0 auto', background: '#fff', padding: '40px', borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' };
 const formStyle = { display: 'flex', flexDirection: 'column', gap: '15px' };
-const inputStyle = { padding: '12px', borderRadius: '5px', border: '1px solid #ccc', fontSize: '16px' };
-const backBtn = { background: 'none', border: 'none', color: '#004080', cursor: 'pointer', marginBottom: '20px', fontWeight: 'bold' };
-const confirmBtn = { background: '#004080', color: '#fff', padding: '15px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' };
+const inputGroup = { display: 'flex', gap: '10px' };
+const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '15px', width: '100%' };
+const confirmBtn = { background: '#004080', color: '#fff', padding: '15px', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', marginTop: '10px' };
+const backBtn = { background: 'none', border: 'none', color: '#004080', cursor: 'pointer', fontWeight: 'bold', marginBottom: '15px' };
 
 export default CourierService;
