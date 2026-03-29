@@ -13,35 +13,35 @@ const EcommerceLogistics = () => {
     {
       id: 1,
       title: "Order Fulfillment",
-      desc: "तुमच्या ऑर्डर पिकिंगपासून पॅकिंग आणि शिपिंगपर्यंतची संपूर्ण जबाबदारी.",
+      desc: "Complete responsibility from order picking to packing and shipping.",
       icon: <PackageCheck size={32} className="text-blue-600" />,
       color: "bg-blue-50"
     },
     {
       id: 2,
       title: "Marketplace Shipping",
-      desc: "Amazon, Flipkart आणि Shopify स्टोअर्ससोबत सोपे इंटिग्रेशन.",
+      desc: "Easy integration with Amazon, Flipkart, and Shopify stores.",
       icon: <ShoppingCart size={32} className="text-sky-600" />,
       color: "bg-sky-50"
     },
     {
       id: 3,
       title: "COD Shipping",
-      desc: "तुमच्या व्यवसायासाठी जलद Cash on Delivery पेमेंट सुविधा.",
+      desc: "Fast Cash on Delivery payment facility for your business.",
       icon: <Banknote size={32} className="text-emerald-600" />,
       color: "bg-emerald-50"
     },
     {
       id: 4,
       title: "Returns Management",
-      desc: "RTO आणि रिव्हर्स लॉजिस्टिक्सचे सोपे व्यवस्थापन.",
+      desc: "Simple management of RTO and reverse logistics.",
       icon: <RefreshCcw size={32} className="text-orange-600" />,
       color: "bg-orange-50"
     },
     {
       id: 5,
       title: "Inventory Handling",
-      desc: "स्मार्ट स्टॉक ट्रॅकिंग आणि इन्व्हेंटरी मॅनेजमेंट सिस्टम.",
+      desc: "Smart stock tracking and inventory management system.",
       icon: <Box size={32} className="text-indigo-600" />,
       color: "bg-indigo-50"
     }
@@ -50,7 +50,22 @@ const EcommerceLogistics = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       
-      {/* 1. HERO SECTION */}
+      {/* 1. Professional Navbar */}
+      <nav className="flex justify-between items-center py-4 px-12 bg-white sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center gap-2 text-2xl font-bold text-[#002D5E] cursor-pointer" onClick={() => navigate('/')}>
+          <span className="bg-[#ff5e00] text-white px-2 py-1 rounded">AM</span> Apni Manzil
+        </div>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
+          <a href="#" className="hover:text-blue-600 transition">Services ▾</a>
+          <a href="#" className="hover:text-blue-600 transition">Track Shipment</a>
+          <a href="#" className="hover:text-blue-600 transition">Logistics Partner</a>
+          <a href="#" className="hover:text-blue-600 transition">Help</a>
+          <button className="px-6 py-2 border border-gray-200 rounded-full hover:bg-gray-50 transition">Login</button>
+          <button className="px-6 py-2 bg-[#002D5E] text-white rounded-full font-bold hover:bg-blue-800 transition">Sign Up</button>
+        </div>
+      </nav>
+
+      {/* 2. Hero Section */}
       <div className="bg-[#002D5E] text-white py-20 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 space-y-6 text-center md:text-left">
@@ -58,7 +73,7 @@ const EcommerceLogistics = () => {
               E-commerce <span className="text-orange-400">Logistics</span>
             </h1>
             <p className="text-xl opacity-90 font-medium max-w-lg mx-auto md:mx-0">
-              तुमचा ऑनलाइन व्यवसाय वाढवा भारताच्या सर्वात विश्वसनीय फुलफिलमेंट नेटवर्कसोबत.
+              Grow your online business with India's most reliable fulfillment network.
             </p>
             <button className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-xl">
               Start Shipping Now
@@ -73,7 +88,7 @@ const EcommerceLogistics = () => {
         </div>
       </div>
 
-      {/* 2. SERVICES SECTION */}
+      {/* 3. Services Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-black text-slate-800 uppercase tracking-widest">Select an E-commerce Service</h2>
@@ -101,7 +116,7 @@ const EcommerceLogistics = () => {
         </div>
       </section>
 
-      {/* 3. CALL TO ACTION BANNER */}
+      {/* 4. Call to Action Banner */}
       <div className="max-w-7xl mx-auto px-6 mb-24">
         <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-[3rem] p-10 md:p-16 flex flex-col md:flex-row items-center gap-10 shadow-2xl">
            <div className="md:w-2/3 space-y-6 text-white text-center md:text-left">
@@ -119,11 +134,9 @@ const EcommerceLogistics = () => {
         </div>
       </div>
 
-      {/* 4. PROFESSIONAL FOOTER */}
+      {/* 5. Professional Footer */}
       <footer className="bg-[#001529] text-white pt-20 pb-10 px-6 md:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          
-          {/* Brand Column */}
           <div className="space-y-6 text-center md:text-left">
             <div className="text-2xl font-black flex items-center gap-2 justify-center md:justify-start cursor-pointer" onClick={() => navigate('/')}>
               <span className="bg-orange-500 text-white px-2 py-1 rounded-lg italic text-lg">AM</span>
@@ -140,7 +153,6 @@ const EcommerceLogistics = () => {
             </div>
           </div>
 
-          {/* Services Links */}
           <div className="space-y-6 text-center md:text-left">
             <h4 className="text-lg font-black border-b-2 border-orange-500 w-fit pr-4 pb-1 uppercase tracking-widest mx-auto md:mx-0">Solutions</h4>
             <ul className="space-y-3 text-slate-400 text-sm font-bold">
@@ -151,7 +163,6 @@ const EcommerceLogistics = () => {
             </ul>
           </div>
 
-          {/* Support Links */}
           <div className="space-y-6 text-center md:text-left">
             <h4 className="text-lg font-black border-b-2 border-orange-500 w-fit pr-4 pb-1 uppercase tracking-widest mx-auto md:mx-0">Support</h4>
             <ul className="space-y-3 text-slate-400 text-sm font-bold">
@@ -162,7 +173,6 @@ const EcommerceLogistics = () => {
             </ul>
           </div>
 
-          {/* Contact Info */}
           <div className="space-y-6 text-center md:text-left">
             <h4 className="text-lg font-black border-b-2 border-orange-500 w-fit pr-4 pb-1 uppercase tracking-widest mx-auto md:mx-0">Contact Us</h4>
             <ul className="space-y-4 text-slate-400 text-sm font-bold">
@@ -174,21 +184,18 @@ const EcommerceLogistics = () => {
               </li>
               <li className="flex items-start gap-3 justify-center md:justify-start">
                 <MapPin size={18} className="text-orange-500 shrink-0"/> 
-                <span>Logistics Park, <br/>Sector 45, Pune - 411001</span>
+                <span>Logistics Park, Sector 45, Pune - 411001</span>
               </li>
             </ul>
           </div>
-
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-8 text-center">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.3em]">
-            © 2026 Apni Manzil Logistics. Crafted with ❤️ for Indian Sellers.
+            © 2026 Apni Manzil Logistics. All Rights Reserved.
           </p>
         </div>
       </footer>
-
     </div>
   );
 };

@@ -53,6 +53,22 @@ const WarehouseStorage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
+      
+      {/* --- नवीन ADD केलेला NAVBAR --- */}
+      <nav className="flex justify-between items-center py-4 px-12 bg-white sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center gap-2 text-2xl font-bold text-[#002D5E]">
+          <span className="bg-[#ff5e00] text-white px-2 py-1 rounded">AM</span> Apni Manzil
+        </div>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
+          <a href="#" className="hover:text-blue-600">Services ▾</a>
+          <a href="#" className="hover:text-blue-600">Track Shipment</a>
+          <a href="#" className="hover:text-blue-600">Logistics Partner</a>
+          <a href="#" className="hover:text-blue-600">Help</a>
+          <button className="px-6 py-2 border border-gray-200 rounded-full hover:bg-gray-50">Login</button>
+          <button className="px-6 py-2 bg-[#002D5E] text-white rounded-full font-bold">Sign Up</button>
+        </div>
+      </nav>
+
       {/* 1. HERO SECTION */}
       <div className="bg-gradient-to-r from-[#002D5E] to-blue-600 text-white py-20 px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
@@ -125,7 +141,7 @@ const WarehouseStorage = () => {
         </div>
       </div>
 
-      {/* --- 4. FOOTER (इथे Footer जोडला आहे) --- */}
+      {/* 4. FOOTER */}
       <footer className="bg-[#002D5E] text-white pt-20 pb-10 px-6 md:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
