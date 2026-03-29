@@ -2,130 +2,120 @@ import React, { useState } from 'react';
 
 const CourierService = () => {
   const [selectedService, setSelectedService] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ 
-    name: '', 
-    phone: '', 
-    pincode: '', 
-    address: '', 
-    city: '',
-    state: '',
-    weight: '0.5' 
-  });
 
+  // ८ सर्विसेस फोटोप्रमाणे
   const services = [
-    { id: 1, name: "Domestic Courier", desc: "Delivery anywhere across India", icon: "🇮🇳" },
-    { id: 2, name: "International Courier", desc: "Worldwide shipping services", icon: "🌎" },
-    { id: 3, name: "Express / Same Day", desc: "Urgent fastest delivery", icon: "⚡" },
-    { id: 4, name: "Surface Courier", desc: "Economy shipping (Road/Truck)", icon: "🚛" },
-    { id: 5, name: "Air Courier", desc: "Priority flight delivery", icon: "✈️" },
-    { id: 6, name: "Bulk Courier", desc: "Special rates for Business & MSMEs", icon: "📦" },
+    { id: 1, name: "Domestic Courier", desc: "Nationwide Delivery", icon: "🇮🇳" },
+    { id: 2, name: "Express Courier", desc: "Fast & Reliable", icon: "⏱️" },
+    { id: 3, name: "Same Day Delivery", desc: "Delivery in 24 Hours", icon: "⚡" },
+    { id: 4, name: "Next Day Delivery", desc: "Delivery by Next Day", icon: "📅" },
+    { id: 5, name: "Document Courier", desc: "Secure Documents", icon: "📄" },
+    { id: 6, name: "Parcel Delivery", desc: "All Size Parcels", icon: "📦" },
+    { id: 7, name: "Bulk Shipping", desc: "Large Volume Shipping", icon: "🚛" },
+    { id: 8, name: "Reverse Pickup", desc: "Easy Returns Service", icon: "🔄" },
   ];
 
-  const handleServiceSelection = (service) => {
-    setSelectedService(service);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-      // तुझी Render ची लिंक इथे तपासा
-      const response = await fetch('https://apni-manzil-web.onrender.com/api/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          order_number: "AM-" + Date.now(),
-          shipping_address: formData.address,
-          shipping_city: formData.city,
-          shipping_state: formData.state,
-          shipping_pincode: formData.pincode,
-          shipping_name: formData.name,
-          shipping_phone: formData.phone,
-          weight: formData.weight,
-          service_name: selectedService.name,
-          payment_method: "prepaid"
-        })
-      });
-      
-      const result = await response.json();
-      
-      if (response.ok) {
-        alert(`Success! Order Booked. AWB: ${result.data?.awb_number || 'Pending'}`);
-        setSelectedService(null);
-      } else {
-        alert("Error: " + (result.error || "Order creation failed. Check logs."));
-      }
-    } catch (error) {
-      alert("Server Connection Error: Make sure your Render backend is awake!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div style={{ padding: '40px 20px', backgroundColor: '#f4f7f9', minHeight: '100vh' }}>
-      {!selectedService ? (
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <h2 style={{ textAlign: 'center', color: '#004080', marginBottom: '10px' }}>Select Courier Service</h2>
-          <p style={{ textAlign: 'center', color: '#666', marginBottom: '40px' }}>Choose the best delivery option for your needs</p>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-            {services.map((s) => (
-              <div key={s.id} onClick={() => handleServiceSelection(s)} style={cardStyle}>
-                <div style={{ fontSize: '40px', marginBottom: '15px' }}>{s.icon}</div>
-                <h3 style={{ color: '#008080', margin: '10px 0' }}>{s.name}</h3>
-                <p style={{ fontSize: '14px', color: '#777', height: '40px' }}>{s.desc}</p>
-                <button style={bookBtnStyle}>Select Service</button>
+    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f8f9fa' }}>
+      
+      {/* 1. Navbar */}
+      <nav style={navStyle}>
+        <div style={{ fontWeight: 'bold', fontSize: '24px', color: '#004080' }}>
+          <span style={{ color: '#ff8c00' }}>AM</span> Apni Manzil
+        </div>
+        <div style={navLinks}>
+          <a href="#">Services ▾</a>
+          <a href="#">Track Shipment</a>
+          <a href="#">Logistics Partner</a>
+          <a href="#">Help</a>
+          <button style={loginBtn}>Login</button>
+          <button style={signUpBtn}>Sign Up</button>
+        </div>
+      </nav>
+
+      {/* 2. Hero Section */}
+      <header style={heroSection}>
+        <p style={{ fontSize: '14px', marginBottom: '10px' }}>Home / Courier & Parcel Delivery</p>
+        <h1 style={{ fontSize: '36px', marginBottom: '10px' }}>Courier & Parcel Delivery Service</h1>
+        <p style={{ color: '#ffdf00', fontSize: '18px', fontWeight: 'bold' }}>Smart Courier Solutions for Your Needs</p>
+      </header>
+
+      {/* 3. Service Category Grid */}
+      <div style={{ padding: '50px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <h3 style={{ textAlign: 'center', marginBottom: '40px', color: '#333' }}>Select a Courier Service Category</h3>
+        
+        <div style={gridStyle}>
+          {services.map((s) => (
+            <div key={s.id} style={cardStyle}>
+              <div style={iconCircle}>{s.icon}</div>
+              <div style={{ textAlign: 'left', flexGrow: 1 }}>
+                <h4 style={{ margin: '0', color: '#004080' }}>{s.name}</h4>
+                <p style={{ fontSize: '12px', color: '#777' }}>{s.desc}</p>
               </div>
-            ))}
+              <button style={exploreBtn} onClick={() => setSelectedService(s)}>Explore</button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. Compare Rates Section */}
+      <div style={compareBanner}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div style={{ fontSize: '50px' }}>🤖</div>
+          <div>
+            <h2 style={{ margin: '0' }}>Compare Rates & Save!</h2>
+            <p style={{ margin: '0' }}>Get the <span style={{ color: '#ffdf00' }}>Best Deals</span> on All Couriers.</p>
           </div>
         </div>
-      ) : (
-        <div style={formWrapper}>
-          <button onClick={() => setSelectedService(null)} style={backBtn}>← Back to Services</button>
-          <h2 style={{ color: '#004080', marginBottom: '20px' }}>Booking: {selectedService.name}</h2>
-          
-          <form style={formStyle} onSubmit={handleSubmit}>
-            <div style={inputGroup}>
-              <input name="name" placeholder="Receiver Name" style={inputStyle} onChange={handleChange} required />
-              <input name="phone" placeholder="Phone (10 digits)" style={inputStyle} onChange={handleChange} required />
-            </div>
-            
-            <textarea name="address" placeholder="Full Address" style={{...inputStyle, height: '80px'}} onChange={handleChange} required />
-            
-            <div style={inputGroup}>
-              <input name="city" placeholder="City" style={inputStyle} onChange={handleChange} required />
-              <input name="state" placeholder="State" style={inputStyle} onChange={handleChange} required />
-            </div>
-            
-            <div style={inputGroup}>
-              <input name="pincode" placeholder="Pincode" style={inputStyle} onChange={handleChange} required />
-              <input name="weight" placeholder="Weight (KG)" type="number" step="0.1" style={inputStyle} onChange={handleChange} required />
-            </div>
+        <button style={compareBtn}>Compare Now</button>
+      </div>
 
-            <button type="submit" style={confirmBtn} disabled={loading}>
-              {loading ? 'Please Wait...' : 'Confirm & Book Shipment'}
-            </button>
-          </form>
+      {/* 5. Footer */}
+      <footer style={footerStyle}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            <h4>Apni Manzil</h4>
+            <p style={{ fontSize: '13px' }}>Your trusted partner for all logistics needs across India.</p>
+          </div>
+          <div style={{ display: 'flex', gap: '40px' }}>
+            <div style={footerCol}>
+              <b>Company</b>
+              <a href="#">About Us</a>
+              <a href="#">Contact</a>
+            </div>
+            <div style={footerCol}>
+              <b>Services</b>
+              <a href="#">Domestic</a>
+              <a href="#">International</a>
+            </div>
+          </div>
         </div>
-      )}
+        <div style={{ textAlign: 'center', marginTop: '30px', borderTop: '1px solid #333', paddingTop: '20px', fontSize: '12px' }}>
+          © 2026 Apni Manzil Logistics Pvt. Ltd. All Rights Reserved.
+        </div>
+      </footer>
+
     </div>
   );
 };
 
-// CSS Styles
-const cardStyle = { background: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.08)', cursor: 'pointer', textAlign: 'center', transition: '0.3s' };
-const bookBtnStyle = { background: '#008080', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', fontWeight: 'bold', marginTop: '15px', width: '100%' };
-const formWrapper = { maxWidth: '600px', margin: '0 auto', background: '#fff', padding: '40px', borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' };
-const formStyle = { display: 'flex', flexDirection: 'column', gap: '15px' };
-const inputGroup = { display: 'flex', gap: '10px' };
-const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '15px', width: '100%' };
-const confirmBtn = { background: '#004080', color: '#fff', padding: '15px', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', marginTop: '10px' };
-const backBtn = { background: 'none', border: 'none', color: '#004080', cursor: 'pointer', fontWeight: 'bold', marginBottom: '15px' };
+// --- STYLES ---
+const navStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 50px', backgroundColor: '#fff', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' };
+const navLinks = { display: 'flex', gap: '20px', alignItems: 'center' };
+const loginBtn = { padding: '8px 25px', borderRadius: '20px', border: '1px solid #ddd', backgroundColor: '#fff', cursor: 'pointer' };
+const signUpBtn = { padding: '8px 25px', borderRadius: '20px', border: 'none', backgroundColor: '#004080', color: '#fff', cursor: 'pointer' };
+
+const heroSection = { backgroundColor: '#0056b3', color: '#fff', padding: '60px 50px', textAlign: 'center', background: 'linear-gradient(to right, #004080, #007bff)' };
+
+const gridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' };
+const cardStyle = { backgroundColor: '#fff', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', border: '1px solid #eee' };
+const iconCircle = { width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#eef2f7', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '24px', marginBottom: '15px' };
+const exploreBtn = { marginTop: '15px', padding: '8px 40px', backgroundColor: '#ff5e00', color: '#fff', border: 'none', borderRadius: '20px', cursor: 'pointer', fontWeight: 'bold' };
+
+const compareBanner = { backgroundColor: '#004080', color: '#fff', margin: '50px 20px', padding: '30px 50px', borderRadius: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', marginLeft: 'auto', marginRight: 'auto' };
+const compareBtn = { padding: '12px 30px', backgroundColor: '#ff5e00', color: '#fff', border: 'none', borderRadius: '25px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' };
+
+const footerStyle = { backgroundColor: '#111', color: '#fff', padding: '50px 20px', marginTop: '50px' };
+const footerCol = { display: 'flex', flexDirection: 'column', gap: '10px' };
 
 export default CourierService;
