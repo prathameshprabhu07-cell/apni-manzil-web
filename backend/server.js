@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const mongoose = require('mongoose'); // नवीन: डेटाबेससाठी
+const mongoose = require('mongoose'); // डेटाबेससाठी
 require('dotenv').config();
 
 const app = express();
@@ -10,14 +10,16 @@ app.use(cors());
 app.use(express.json());
 
 // ==========================================
-// नवीन: MONGODB CONNECTION (Packers & Movers डेटासाठी)
+// १. MONGODB CONNECTION
 // ==========================================
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/apnimanzil_pm';
 mongoose.connect(mongoURI)
-  .then(() => console.log("✅ MongoDB Connected for Packers & Movers!"))
+  .then(() => console.log("✅ MongoDB Connected Successfully!"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
-// पॅकर्स अँड मूव्हर्ससाठी डेटा साचा (Schema)
+// --- मॉडेल्स (Models) ---
+
+// ग्राहक लीड्ससाठी (Customer Leads)
 const PackersLead = mongoose.model('PackersLead', new mongoose.Schema({
   customerName: String,
   customerPhone: String,
@@ -29,8 +31,26 @@ const PackersLead = mongoose.model('PackersLead', new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 }));
 
+// नवीन: पार्टनर नोंदणीसाठी (Partner Registration - 11 Steps)
+const Partner = mongoose.model('Partner', new mongoose.Schema({
+  ownerName: String,
+  companyName: String,
+  phone: { type: String, unique: true },
+  email: String,
+  businessType: String,
+  panNumber: String,
+  gstNumber: String,
+  serviceTypes: [String],
+  cities: [String],
+  vehicleTypes: [String],
+  workerCount: Number,
+  providesInsurance: String,
+  isVerified: { type: Boolean, default: false }, // मॅन्युअल अप्रूव्हलसाठी
+  createdAt: { type: Date, default: Date.now }
+}));
+
 // ==========================================
-// 1. NIMBUSPOST AUTHENTICATION (Courier Section)
+// २. NIMBUSPOST AUTHENTICATION (Courier Section)
 // ==========================================
 const getNimbusToken = async () => {
     try {
@@ -46,73 +66,68 @@ const getNimbusToken = async () => {
 };
 
 // ==========================================
-// 2. API: COURIER TRACKING
+// ३. API: COURIER (Tracking & Order)
 // ==========================================
 app.get('/api/track/:awb', async (req, res) => {
     const token = await getNimbusToken();
-    if (!token) return res.status(500).json({ error: "Authentication Failed with NimbusPost" });
-
+    if (!token) return res.status(500).json({ error: "Authentication Failed" });
     try {
         const response = await axios.get(`https://api.nimbuspost.com/v1/shipments/track/${req.params.awb}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         res.json(response.data);
-    } catch (error) {
-        res.status(500).json({ error: "Tracking Data Not Found" });
-    }
+    } catch (error) { res.status(500).json({ error: "Tracking Error" }); }
 });
 
-// ==========================================
-// 3. API: CREATE COURIER ORDER
-// ==========================================
 app.post('/api/create-order', async (req, res) => {
     const token = await getNimbusToken();
     if (!token) return res.status(500).json({ error: "Authentication Failed" });
-
     try {
         const response = await axios.post('https://api.nimbuspost.com/v1/shipments/create', req.body, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         res.json(response.data);
-    } catch (error) {
-        console.error("Order Creation Error:", error.response ? error.response.data : error.message);
-        res.status(500).json({ error: "Order creation failed on NimbusPost server" });
-    }
+    } catch (error) { res.status(500).json({ error: "Order Creation Failed" }); }
 });
 
 // ==========================================
-// 4. नवीन API: PACKERS & MOVERS LEAD POSTING
+// ४. API: PACKERS & MOVERS (Customer Leads)
 // ==========================================
 app.post('/api/packers/post-lead', async (req, res) => {
     try {
         const newLead = new PackersLead(req.body);
         await newLead.save();
-        res.status(201).json({ success: true, message: "Packers & Movers lead saved across India!" });
+        res.status(201).json({ success: true, message: "Lead saved successfully!" });
+    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+app.get('/api/packers/leads/:city', async (req, res) => {
+    try {
+        const leads = await PackersLead.find({ fromCity: new RegExp(req.params.city, 'i') }).sort({ createdAt: -1 });
+        res.json(leads);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ==========================================
+// ५. नवीन API: PARTNER REGISTRATION (पार्टनर नोंदणी)
+// ==========================================
+app.post('/api/partners/register', async (req, res) => {
+    try {
+        const newPartner = new Partner(req.body);
+        await newPartner.save();
+        res.status(201).json({ success: true, message: "Partner registered! Waiting for approval." });
     } catch (err) {
+        if (err.code === 11000) return res.status(400).json({ success: false, message: "Mobile number already exists!" });
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// ==========================================
-// 5. नवीन API: PARTNER FETCH LEADS (सर्व शहरांसाठी)
-// ==========================================
-app.get('/api/packers/leads/:city', async (req, res) => {
-    try {
-        const city = req.params.city;
-        // शहराप्रमाणे फिल्टर (उदा. बोरीवली टाकलं तर तिथल्या सर्व लीड्स मिळतील)
-        const leads = await PackersLead.find({ fromCity: new RegExp(city, 'i') }).sort({ createdAt: -1 });
-        res.json(leads);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 app.get('/', (req, res) => {
-    res.send("Apni Manzil Master Backend (Courier + Packers) is Live!");
+    res.send("Apni Manzil Master Backend is Live!");
 });
 
 // ==========================================
-// 6. SERVER START
+// ६. SERVER START
 // ==========================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

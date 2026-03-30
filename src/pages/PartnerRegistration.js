@@ -1,69 +1,110 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Handshake, CheckCircle, Send, ArrowLeft } from 'lucide-react';
+import { User, Building, Truck, IndianRupee, FileCheck, ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
+import axios from 'axios';
 
 const PartnerRegistration = () => {
-  const navigate = useNavigate();
-  const [submitted, setSubmitted] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState({
+    // Step 1: Basic Details
+    ownerName: '', companyName: '', phone: '', email: '', password: '',
+    // Step 2: Business Info
+    establishedSince: '', businessType: 'Individual', panNumber: '', gstNumber: '',
+    // Step 3: Service Details
+    serviceTypes: [], cities: '', serviceDistance: 'Both',
+    // Step 4: Fleet & Capacity
+    vehicleCount: '', vehicleTypes: [], workerCount: '', packingAvailable: 'Yes',
+    // Step 10: Insurance
+    providesInsurance: 'No'
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+  const nextStep = () => setCurrentStep(prev => prev + 1);
+  const prevStep = () => setCurrentStep(prev => prev - 1);
+
+  const handleSubmit = async () => {
+    try {
+      const res = await axios.post('http://localhost:5000/api/partners/register', formData);
+      if (res.data.success) {
+        alert("तुमचा अर्ज मॅन्युअल व्हेरिफिकेशनसाठी पाठवला आहे! 🚀");
+      }
+    } catch (err) {
+      alert("काहीतरी चूक झाली आहे. पुन्हा प्रयत्न करा.");
+    }
   };
 
-  if (submitted) {
-    return (
-      <div style={{ textAlign: 'center', padding: '100px 20px', fontFamily: 'Segoe UI' }}>
-        <CheckCircle size={80} color="#008a5e" style={{ marginBottom: '20px' }} />
-        <h2 style={{ color: '#004080' }}>Registration Successful!</h2>
-        <p>Our team will contact you within 24 hours to verify your details.</p>
-        <button onClick={() => navigate('/')} style={btnStyle}>Back to Home</button>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ backgroundColor: '#f4f7f9', minHeight: '100vh', fontFamily: 'Segoe UI' }}>
-      <div style={{ backgroundColor: '#004080', color: 'white', padding: '60px 20px', textAlign: 'center' }}>
-        <Handshake size={50} style={{ marginBottom: '15px' }} />
-        <h1>Become a Partner</h1>
-        <p>Join India's fastest growing logistics network</p>
-      </div>
+    <div className="min-h-screen bg-slate-50 py-12 px-6">
+      <div className="max-w-3xl mx-auto bg-white rounded-[2.5rem] shadow-2xl overflow-hidden">
+        
+        {/* Progress Bar */}
+        <div className="bg-[#004080] p-8 text-white">
+          <h1 className="text-2xl font-black mb-4 uppercase italic">Partner Onboarding</h1>
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <div key={s} className={`h-2 flex-1 rounded-full ${currentStep >= s ? 'bg-[#ff5e00]' : 'bg-white/20'}`} />
+            ))}
+          </div>
+          <p className="mt-4 text-sm font-bold opacity-80">Step {currentStep} of 11</p>
+        </div>
 
-      <div style={{ maxWidth: '600px', margin: '-40px auto 50px auto', backgroundColor: 'white', padding: '40px', borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={labelStyle}>Full Name / Company Name</label>
-            <input type="text" required style={inputStyle} placeholder="Enter name" />
+        <div className="p-10">
+          {/* STEP 1: BASIC DETAILS */}
+          {currentStep === 1 && (
+            <div className="space-y-6 animate-in fade-in duration-500">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-orange-100 p-3 rounded-2xl"><User className="text-[#ff5e00]" /></div>
+                <h2 className="text-xl font-black text-slate-800">Basic Details</h2>
+              </div>
+              <input type="text" placeholder="Owner Full Name" className="w-full p-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 ring-orange-500 font-bold" 
+                onChange={(e) => setFormData({...formData, ownerName: e.target.value})} />
+              <input type="text" placeholder="Company Name" className="w-full p-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 ring-orange-500 font-bold" 
+                onChange={(e) => setFormData({...formData, companyName: e.target.value})} />
+              <input type="text" placeholder="Mobile Number (OTP Verification)" className="w-full p-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 ring-orange-500 font-bold" 
+                onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            </div>
+          )}
+
+          {/* STEP 3: SERVICE DETAILS */}
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-blue-100 p-3 rounded-2xl"><Truck className="text-blue-600" /></div>
+                <h2 className="text-xl font-black text-slate-800">Service Details</h2>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                {['House Shifting', 'Office Shifting', 'Vehicle Transport'].map(item => (
+                  <label key={item} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition">
+                    <input type="checkbox" className="w-5 h-5 accent-[#ff5e00]" />
+                    <span className="font-bold text-slate-700">{item}</span>
+                  </label>
+                ))}
+              </div>
+              <input type="text" placeholder="Service Cities (e.g. Mumbai, Pune)" className="w-full p-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 ring-orange-500 font-bold" 
+                onChange={(e) => setFormData({...formData, cities: e.target.value})} />
+            </div>
+          )}
+
+          {/* Buttons Navigation */}
+          <div className="mt-12 flex gap-4">
+            {currentStep > 1 && (
+              <button onClick={prevStep} className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-black border-2 border-slate-100 text-slate-500 hover:bg-slate-50 transition">
+                <ArrowLeft size={20} /> Back
+              </button>
+            )}
+            
+            {currentStep < 5 ? (
+              <button onClick={nextStep} className="flex-[2] flex items-center justify-center gap-2 bg-[#ff5e00] text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-orange-600 transition">
+                Continue <ArrowRight size={20} />
+              </button>
+            ) : (
+              <button onClick={handleSubmit} className="flex-[2] bg-green-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-green-700 transition">
+                Submit Application
+              </button>
+            )}
           </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={labelStyle}>Contact Number</label>
-            <input type="tel" required style={inputStyle} placeholder="Enter mobile number" />
-          </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={labelStyle}>Business Type</label>
-            <select style={inputStyle}>
-              <option>Truck Owner</option>
-              <option>Courier Franchise</option>
-              <option>Warehouse Partner</option>
-              <option>Delivery Agent</option>
-            </select>
-          </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={labelStyle}>City/Area of Operation</label>
-            <input type="text" required style={inputStyle} placeholder="e.g. Pune, Maharashtra" />
-          </div>
-          <button type="submit" style={{ ...btnStyle, width: '100%', marginTop: '10px' }}>
-            Submit Application <Send size={18} style={{ marginLeft: '10px' }} />
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
-
-const labelStyle = { display: 'block', marginBottom: '8px', fontWeight: '600', color: '#444' };
-const inputStyle = { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' };
-const btnStyle = { backgroundColor: '#004080', color: 'white', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' };
 
 export default PartnerRegistration;
