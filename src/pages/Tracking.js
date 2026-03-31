@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { Search, MapPin, Package, Truck, CheckCircle2, Clock, ShieldCheck } from 'lucide-react';
+// Phone आणि Mail इथे ॲड केले आहेत
+import { 
+  Search, MapPin, Package, Truck, 
+  CheckCircle2, Clock, ShieldCheck, 
+  Phone, Mail 
+} from 'lucide-react';
 
 const Tracking = () => {
   const [trackingId, setTrackingId] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  // हे डेमो डेटा आहे, नंतर आपण API जोडू शकतो
+  // हे डेमो डेटा आहे
   const trackData = {
     id: "AM-10293847",
     status: "In Transit",
