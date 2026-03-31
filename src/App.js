@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
+// --- LAYOUT IMPORT (नवीन जोडलेले) ---
+import Layout from './components/Layout'; 
+
 // ==========================================
 // 1. FIREBASE & DATABASE CONFIGURATION
 // ==========================================
@@ -39,7 +42,7 @@ import SpecialLogistics from './pages/SpecialLogistics';
 import AISmartLogistics from './pages/AISmartLogistics'; 
 
 // ==========================================
-// 3. SERVICE PLACEHOLDER COMPONENTS
+// 3. SERVICE PLACEHOLDER COMPONENTS (तुझा पूर्ण मूळ कोड जसाच्या तसा)
 // ==========================================
 
 const Transport = () => (
@@ -141,65 +144,59 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about-us" element={<About />} />
-        <Route path="/help" element={<HelpCenter />} /> 
-        <Route path="/track" element={<Tracking />} /> 
-        
-        <Route path="/courier-info" element={<CourierDetail />} />
-        <Route path="/courier" element={<CourierService />} />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about-us" element={<About />} />
+          <Route path="/help" element={<HelpCenter />} /> 
+          <Route path="/track" element={<Tracking />} /> 
+          
+          <Route path="/courier-info" element={<CourierDetail />} />
+          <Route path="/courier" element={<CourierService />} />
 
-        {/* --- मुख्य बदल खालील ओळीत केला आहे --- */}
-        <Route path="/courier-service" element={<CourierService />} /> 
+          <Route path="/courier-service" element={<CourierService />} /> 
 
-        <Route path="/hyperlocal-service" element={<HyperlocalService />} />
-        <Route path="/truck-transport" element={<TruckTransportService />} />
-        
-        <Route path="/transport" element={<Transport />} />
-        <Route path="/importexport" element={<ImportExportDetail />} />
+          <Route path="/hyperlocal-service" element={<HyperlocalService />} />
+          <Route path="/truck-transport" element={<TruckTransportService />} />
+          
+          <Route path="/transport" element={<Transport />} />
+          <Route path="/importexport" element={<ImportExportDetail />} />
 
-        {/* --- Packers & Movers --- */}
-        <Route path="/packers" element={<PackersAndMovers />} />
-        <Route path="/packers-movers" element={<PackersAndMovers />} />
+          <Route path="/packers" element={<PackersAndMovers />} />
+          <Route path="/packers-movers" element={<PackersAndMovers />} />
 
-        {/* --- Warehouse & Storage --- */}
-        <Route path="/warehouse-storage" element={<WarehouseStorage />} />
+          <Route path="/warehouse-storage" element={<WarehouseStorage />} />
 
-        {/* --- International Logistics --- */}
-        <Route path="/international-logistics" element={<InternationalLogistics />} />
+          <Route path="/international-logistics" element={<InternationalLogistics />} />
 
-        {/* --- E-commerce Logistics --- */}
-        <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
+          <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
 
-        {/* --- Special Logistics --- */}
-        <Route path="/special-logistics" element={<SpecialLogistics />} />
+          <Route path="/special-logistics" element={<SpecialLogistics />} />
 
-        {/* --- AI Smart Logistics --- */}
-        <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
+          <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
 
-        <Route path="/airfreight" element={<AirFreight />} />
-        <Route path="/seafreight" element={<SeaFreight />} />
-        <Route path="/customs" element={<Customs />} />
-        <Route path="/tradefinance" element={<TradeFinance />} />
+          <Route path="/airfreight" element={<AirFreight />} />
+          <Route path="/seafreight" element={<SeaFreight />} />
+          <Route path="/customs" element={<Customs />} />
+          <Route path="/tradefinance" element={<TradeFinance />} />
 
-        <Route path="/partner-registration" element={<PartnerRegistration />} />
+          <Route path="/partner-registration" element={<PartnerRegistration />} />
 
-        {/* Admin Dashboard Route */}
-        <Route path="/admin-control-panel" element={<AdminDashboard />} />
+          <Route path="/admin-control-panel" element={<AdminDashboard />} />
 
-        <Route 
-          path="/msme" 
-          element={isMSMERegistered ? <MSMEDashboard businessName={businessName} /> : <Navigate to="/msme-registration" />} 
-        />
+          <Route 
+            path="/msme" 
+            element={isMSMERegistered ? <MSMEDashboard businessName={businessName} /> : <Navigate to="/msme-registration" />} 
+          />
 
-        <Route 
-          path="/msme-registration" 
-          element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} 
-        />
+          <Route 
+            path="/msme-registration" 
+            element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} 
+          />
 
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Layout>
 
       <ChatBot />
     </Router>
