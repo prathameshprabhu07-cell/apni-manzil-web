@@ -1,8 +1,7 @@
 import React from 'react';
 import { 
   Globe, Plane, Ship, ArrowRightLeft, FileText, 
-  MapPin, ShieldCheck, Zap, ChevronRight, 
-  Facebook, Instagram, Linkedin, Phone, Mail 
+  ShieldCheck, Zap, ChevronRight 
 } from 'lucide-react';
 
 const InternationalLogistics = () => {
@@ -46,6 +45,7 @@ const InternationalLogistics = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
+      
       {/* 1. HERO SECTION (ग्लोबल लूक) */}
       <div className="bg-gradient-to-r from-[#001F3F] to-blue-800 text-white py-24 px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
@@ -54,7 +54,7 @@ const InternationalLogistics = () => {
                 <p className="text-xs font-black text-orange-400 uppercase tracking-widest">Global Network • 190+ Countries</p>
             </div>
             <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tighter">
-              International <br/><span className="text-orange-400 text-center">Logistics</span>
+              International <br/><span className="text-orange-400">Logistics</span>
             </h1>
             <p className="text-xl font-medium opacity-90 max-w-lg leading-relaxed">
               Connect your business to the world. Fastest global shipping with secure customs handling and real-time tracking.
@@ -123,54 +123,8 @@ const InternationalLogistics = () => {
         </div>
       </div>
 
-      {/* --- 4. FOOTER --- */}
-      <footer className="bg-[#001529] text-white pt-20 pb-10 px-6 md:px-16 border-t-4 border-blue-600">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6">
-            <div className="text-2xl font-black flex items-center gap-2">
-              <span className="bg-orange-500 text-white px-2 py-1 rounded-lg italic text-lg text-center">AM</span>
-              <span>Apni <span className="text-orange-400">Manzil</span></span>
-            </div>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Leading the way in global trade and logistics. Connecting India to every corner of the world.
-            </p>
-            <div className="flex gap-4">
-              <div className="p-3 bg-white/5 rounded-2xl hover:bg-orange-500 transition cursor-pointer"><Facebook size={20}/></div>
-              <div className="p-3 bg-white/5 rounded-2xl hover:bg-orange-500 transition cursor-pointer"><Instagram size={20}/></div>
-              <div className="p-3 bg-white/5 rounded-2xl hover:bg-orange-500 transition cursor-pointer"><Linkedin size={20}/></div>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <h4 className="text-lg font-black border-b-2 border-orange-500 w-fit pr-4 pb-1 uppercase tracking-widest">Global Services</h4>
-            <ul className="space-y-3 text-slate-400 text-sm font-bold">
-              <li className="hover:text-orange-400 transition cursor-pointer">Export Documentation</li>
-              <li className="hover:text-orange-400 transition cursor-pointer">Global Freight Forwarding</li>
-              <li className="hover:text-orange-400 transition cursor-pointer">Customs Consultancy</li>
-            </ul>
-          </div>
+      {/* FOOTER & NAVBAR REMOVED - Managed by Main Layout */}
 
-          <div className="space-y-6">
-            <h4 className="text-lg font-black border-b-2 border-orange-500 w-fit pr-4 pb-1 uppercase tracking-widest">Global Support</h4>
-            <ul className="space-y-3 text-slate-400 text-sm font-bold">
-              <li className="hover:text-orange-400 transition cursor-pointer">Tracking Help</li>
-              <li className="hover:text-orange-400 transition cursor-pointer">Global Partners</li>
-              <li className="hover:text-orange-400 transition cursor-pointer">Regulatory Updates</li>
-            </ul>
-          </div>
-
-          <div className="space-y-6">
-            <h4 className="text-lg font-black border-b-2 border-orange-500 w-fit pr-4 pb-1 uppercase tracking-widest">Contact Global</h4>
-            <ul className="space-y-4 text-slate-400 text-sm font-bold">
-              <li className="flex items-center gap-3"><Phone size={18} className="text-orange-500"/> +91 98765 43210</li>
-              <li className="flex items-center gap-3"><Mail size={18} className="text-orange-500"/> global@apnimanzil.co.in</li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-white/5 pt-8 text-center text-xs font-bold text-slate-500 uppercase tracking-[0.3em]">
-          <p>© 2026 Apni Manzil Global Logistics. All Rights Reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };

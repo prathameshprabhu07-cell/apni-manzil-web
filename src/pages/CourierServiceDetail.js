@@ -2,8 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
-  Package, Boxes, RefreshCcw, ChevronRight,
-  Facebook, Twitter, Instagram, Linkedin, Mail, Phone
+  Package, Boxes, RefreshCcw, ChevronRight
 } from 'lucide-react';
 
 const CourierServiceDetail = () => {
@@ -23,7 +22,7 @@ const CourierServiceDetail = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans">
       
-      {/* १. मोठी निळी शेड (Header Section) */}
+      {/* १. Header Section (हे तसेच ठेवले आहे कारण हे पेजचे टायटल आहे) */}
       <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-16 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
         
@@ -100,53 +99,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* ३. फुटर (Footer Section - जसे Home.js मध्ये होते) */}
-      <footer className="bg-[#002D5E] text-white pt-20 pb-10 px-6 md:px-16 mt-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6">
-            <div className="text-2xl font-black flex items-center gap-2">
-              <span className="bg-orange-500 text-white px-2 py-1 rounded-lg italic text-lg">AM</span>
-              <span>Apni <span className="text-orange-500">Manzil</span></span>
-            </div>
-            <p className="text-blue-100/60 text-sm leading-relaxed">
-              India's leading AI-powered logistics platform. One solution for all your delivery needs.
-            </p>
-            <div className="flex gap-4">
-              <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition"><Facebook size={18}/></a>
-              <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition"><Instagram size={18}/></a>
-              <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition"><Linkedin size={18}/></a>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1">Quick Links</h4>
-            <ul className="space-y-3 text-blue-100/60 text-sm">
-              <li><button onClick={() => navigate('/')} className="hover:text-orange-400 transition">Our Services</button></li>
-              <li><a href="#" className="hover:text-orange-400 transition">Track Shipment</a></li>
-              <li><a href="#" className="hover:text-orange-400 transition">Become a Partner</a></li>
-            </ul>
-          </div>
-
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1">Support</h4>
-            <ul className="space-y-3 text-blue-100/60 text-sm">
-              <li><a href="#" className="hover:text-orange-400 transition">Help Center</a></li>
-              <li><a href="#" className="hover:text-orange-400 transition">Terms & Conditions</a></li>
-            </ul>
-          </div>
-
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1">Contact Us</h4>
-            <ul className="space-y-4 text-blue-100/60 text-sm">
-              <li className="flex items-center gap-3"><Phone size={18} className="text-orange-500"/> +91 98765 43210</li>
-              <li className="flex items-center gap-3"><Mail size={18} className="text-orange-500"/> support@apnimanzil.co.in</li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-white/10 pt-8 text-center text-xs font-bold text-blue-100/40 uppercase tracking-widest">
-          <p>© 2026 Apni Manzil. All Rights Reserved.</p>
-        </div>
-      </footer>
+      {/* FOOTER REMOVED - It will now be handled by Layout.js */}
 
     </div>
   );

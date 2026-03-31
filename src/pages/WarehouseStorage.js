@@ -1,8 +1,7 @@
 import React from 'react';
 import { 
   Clock, Calendar, Box, Snowflake, ClipboardList, ShieldCheck, 
-  ArrowRight, Warehouse, CheckCircle2, ChevronRight,
-  Facebook, Instagram, Linkedin, Phone, Mail
+  ArrowRight, Warehouse, CheckCircle2
 } from 'lucide-react';
 
 const WarehouseStorage = () => {
@@ -54,21 +53,6 @@ const WarehouseStorage = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       
-      {/* --- नवीन ADD केलेला NAVBAR --- */}
-      <nav className="flex justify-between items-center py-4 px-12 bg-white sticky top-0 z-50 shadow-sm">
-        <div className="flex items-center gap-2 text-2xl font-bold text-[#002D5E]">
-          <span className="bg-[#ff5e00] text-white px-2 py-1 rounded">AM</span> Apni Manzil
-        </div>
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
-          <a href="#" className="hover:text-blue-600">Services ▾</a>
-          <a href="#" className="hover:text-blue-600">Track Shipment</a>
-          <a href="#" className="hover:text-blue-600">Logistics Partner</a>
-          <a href="#" className="hover:text-blue-600">Help</a>
-          <button className="px-6 py-2 border border-gray-200 rounded-full hover:bg-gray-50">Login</button>
-          <button className="px-6 py-2 bg-[#002D5E] text-white rounded-full font-bold">Sign Up</button>
-        </div>
-      </nav>
-
       {/* 1. HERO SECTION */}
       <div className="bg-gradient-to-r from-[#002D5E] to-blue-600 text-white py-20 px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
@@ -141,51 +125,6 @@ const WarehouseStorage = () => {
         </div>
       </div>
 
-      {/* 4. FOOTER */}
-      <footer className="bg-[#002D5E] text-white pt-20 pb-10 px-6 md:px-16">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6">
-            <div className="text-2xl font-black flex items-center gap-2">
-              <span className="bg-orange-500 text-white px-2 py-1 rounded-lg italic text-lg">AM</span>
-              <span>Apni <span className="text-orange-400">Manzil</span></span>
-            </div>
-            <p className="text-blue-100/60 text-sm leading-relaxed">
-              India's leading AI-powered logistics platform. Specialized warehouse and secure storage solutions.
-            </p>
-            <div className="flex gap-4">
-              <div className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition cursor-pointer"><Facebook size={18}/></div>
-              <div className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition cursor-pointer"><Instagram size={18}/></div>
-              <div className="p-2 bg-white/10 rounded-full hover:bg-orange-500 transition cursor-pointer"><Linkedin size={18}/></div>
-            </div>
-          </div>
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1 text-center md:text-left">Warehouse Services</h4>
-            <ul className="space-y-3 text-blue-100/60 text-sm text-center md:text-left">
-              <li className="hover:text-orange-400 transition cursor-pointer text-center md:text-left">Household Storage</li>
-              <li className="hover:text-orange-400 transition cursor-pointer text-center md:text-left">Business Inventory</li>
-              <li className="hover:text-orange-400 transition cursor-pointer text-center md:text-left">Cold Chain Solutions</li>
-            </ul>
-          </div>
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1 text-center md:text-left">Support</h4>
-            <ul className="space-y-3 text-blue-100/60 text-sm text-center md:text-left">
-              <li className="hover:text-orange-400 transition cursor-pointer text-center md:text-left">Help Center</li>
-              <li className="hover:text-orange-400 transition cursor-pointer text-center md:text-left">Safety Protocols</li>
-              <li className="hover:text-orange-400 transition cursor-pointer text-center md:text-left">Terms & Conditions</li>
-            </ul>
-          </div>
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold border-b-2 border-orange-500 w-fit pr-4 pb-1 text-center md:text-left">Contact Us</h4>
-            <ul className="space-y-4 text-blue-100/60 text-sm text-center md:text-left">
-              <li className="flex items-center gap-3 justify-center md:justify-start"><Phone size={18} className="text-orange-500"/> +91 98765 43210</li>
-              <li className="flex items-center gap-3 justify-center md:justify-start"><Mail size={18} className="text-orange-500"/> storage@apnimanzil.co.in</li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-white/10 pt-8 text-center text-xs font-bold text-blue-100/40 uppercase tracking-widest">
-          <p>© 2026 Apni Manzil Warehouse. All Rights Reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };

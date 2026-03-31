@@ -1,14 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, Truck, Package, Boxes, Globe, Zap, Anchor, 
-  ChevronRight, Phone, Mail, Facebook, Instagram, Linkedin
+  ArrowLeft, Truck, Package, Boxes, Zap, Anchor, 
+  ChevronRight
 } from 'lucide-react';
 
 const TruckTransportService = () => {
   const navigate = useNavigate();
 
-  // सर्व्हिसेसची नावे तशीच ठेवली आहेत, किंमत पूर्णपणे काढली आहे.
   const truckTypes = [
     { id: 1, name: "Mini Truck", desc: "Small city deliveries & narrow roads", icon: <Truck size={30} /> },
     { id: 2, name: "Pickup Truck", desc: "Reliable for medium loads & shifting", icon: <Package size={30} /> },
@@ -21,7 +20,7 @@ const TruckTransportService = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       
-      {/* १. हिरो सेक्शन (निळी पट्टी फिक्स असलेला) */}
+      {/* १. हिरो सेक्शन */}
       <div className="bg-[#002D5E] text-white pt-12 pb-32 px-6 md:px-16 relative overflow-hidden">
         <button 
           onClick={() => navigate('/')} 
@@ -50,7 +49,7 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* २. ६ कार्ड्स (जुन्या साईझमध्ये, विना किंमत) */}
+      {/* २. ६ कार्ड्स (विना किंमत) */}
       <div className="max-w-7xl mx-auto px-6 -mt-20 mb-20 relative z-30">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {truckTypes.map((truck) => (
@@ -61,7 +60,6 @@ const TruckTransportService = () => {
               <h3 className="text-xl font-black text-[#002D5E] mb-2">{truck.name}</h3>
               <p className="text-sm text-slate-500 font-bold mb-6">{truck.desc}</p>
               
-              {/* फक्त बुक नाव बटन ठेवले आहे */}
               <button className="text-xs font-black uppercase tracking-widest text-[#002D5E] flex items-center gap-2 group-hover:text-orange-500 transition">
                 Book Now <ChevronRight size={14}/>
               </button>
@@ -70,40 +68,7 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* ३. फुटर */}
-      <footer className="bg-[#002D5E] text-white pt-20 pb-10 px-6 md:px-16">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6 text-center md:text-left">
-            <div className="text-2xl font-black flex items-center gap-2 justify-center md:justify-start">
-              <span className="bg-orange-500 text-white px-2 py-1 rounded-lg italic text-lg">AM</span>
-              <span>Apni <span className="text-orange-500">Manzil</span></span>
-            </div>
-            <p className="text-blue-100/60 text-sm font-medium">India's leading logistics platform.</p>
-          </div>
-          <div className="space-y-4 text-center md:text-left">
-            <h4 className="text-lg font-bold text-orange-500">Services</h4>
-            <ul className="text-blue-100/60 text-sm font-bold space-y-2">
-              <li>Trucking</li>
-              <li>Hyperlocal</li>
-              <li>Packers & Movers</li>
-            </ul>
-          </div>
-          <div className="space-y-4 text-center md:text-left">
-            <h4 className="text-lg font-bold text-orange-500">Support</h4>
-            <ul className="text-blue-100/60 text-sm font-bold space-y-2">
-              <li>Help Center</li>
-              <li>Terms of Service</li>
-            </ul>
-          </div>
-          <div className="space-y-4 text-center md:text-left">
-            <h4 className="text-lg font-bold text-orange-500">Contact</h4>
-            <p className="text-blue-100/60 text-sm font-bold">+91 98765 43210</p>
-          </div>
-        </div>
-        <div className="border-t border-white/10 pt-8 text-center text-[10px] font-black text-blue-100/30 uppercase">
-          © 2026 Apni Manzil. All Rights Reserved.
-        </div>
-      </footer>
+      {/* FOOTER REMOVED - Managed by Layout */}
 
     </div>
   );

@@ -44,8 +44,8 @@ const HelpCenter = () => {
   return (
     <div style={{ backgroundColor: '#f4f7f9', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* Top Header Section */}
-      <div style={{ backgroundColor: '#004080', padding: '80px 20px', textAlign: 'center', color: 'white' }}>
+      {/* Top Header Section - It acts as the page title area */}
+      <div style={{ backgroundColor: '#004080', padding: '80px 20px', textAlign: 'center', color: 'white', position: 'relative' }}>
         <button 
           onClick={() => navigate('/')}
           style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '10px 15px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
@@ -57,7 +57,7 @@ const HelpCenter = () => {
         <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', margin: 0 }}>Help Center</h1>
         <p style={{ fontSize: '1.1rem', marginTop: '10px', opacity: 0.8 }}>Search for solutions or get in touch with our experts</p>
         
-        {/* Search Bar in Help Center */}
+        {/* Search Bar */}
         <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
           <div style={{ backgroundColor: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', width: '100%', maxWidth: '500px', padding: '5px 15px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
             <Search color="#999" size={20} />
@@ -79,7 +79,9 @@ const HelpCenter = () => {
               <div style={{ color: opt.color, marginBottom: '15px', display: 'flex', justifyContent: 'center' }}>{opt.icon}</div>
               <h4 style={{ margin: '0 0 5px 0', color: '#333' }}>{opt.title}</h4>
               <p style={{ color: '#666', fontWeight: 'bold' }}>{opt.detail}</p>
-              <span style={{ fontSize: '0.8rem', color: '#999' }}><Clock size={12} style={{ marginRight: '4px' }} /> Response time: ~15 mins</span>
+              <span style={{ fontSize: '0.8rem', color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                <Clock size={12} /> Response time: ~15 mins
+              </span>
             </div>
           ))}
         </div>
@@ -109,10 +111,9 @@ const HelpCenter = () => {
 
       </div>
 
-      {/* Footer Info */}
-      <div style={{ textAlign: 'center', paddingBottom: '40px', color: '#999', fontSize: '0.9rem' }}>
-        <p>Still need help? Our support team is available 24/7 for Apni Manzil partners.</p>
-      </div>
+      {/* ADDITIONAL FOOTER REMOVED - Managed by Layout.js */}
+      <div style={{ paddingBottom: '60px' }}></div>
+
     </div>
   );
 };

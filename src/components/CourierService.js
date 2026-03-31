@@ -5,7 +5,6 @@ const CourierService = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', pincode: '', address: '', weight: '0.5' });
   
-  // Hover स्टेट सांभाळण्यासाठी नवीन स्टेट
   const [hoveredId, setHoveredId] = useState(null);
 
   const services = [
@@ -55,22 +54,9 @@ const CourierService = () => {
   };
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f8f9fa' }}>
+    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       
-      {/* नॅव्हबार */}
-      <nav style={navStyle}>
-        <div style={logoWrapper}>
-          <span style={orangeAMLogo}>AM</span> Apni Manzil
-        </div>
-        <div style={navLinks}>
-          <a href="#" style={linkStyle}>Services ▾</a>
-          <a href="#" style={linkStyle}>Track Shipment</a>
-          <a href="#" style={linkStyle}>Logistics Partner</a>
-          <a href="#" style={linkStyle}>Help</a>
-          <button style={loginBtn}>Login</button>
-          <button style={signUpBtn}>Sign Up</button>
-        </div>
-      </nav>
+      {/* जुना नॅव्हबार इथून काढला आहे */}
 
       {!selectedService ? (
         <>
@@ -93,7 +79,7 @@ const CourierService = () => {
                     transform: hoveredId === s.id ? 'translateY(-10px)' : 'translateY(0)',
                     boxShadow: hoveredId === s.id ? '0 12px 30px rgba(0,0,0,0.15)' : '0 4px 15px rgba(0,0,0,0.05)',
                     borderColor: hoveredId === s.id ? '#ff5e00' : '#eee',
-                    transition: 'all 0.3s ease' // हाच तो स्मूथ इफेक्ट आहे
+                    transition: 'all 0.3s ease'
                   }}
                 >
                   <div style={iconCircleStyle}>{s.icon}</div>
@@ -137,48 +123,12 @@ const CourierService = () => {
         </div>
       )}
 
-      {/* फुटर */}
-      <footer style={blueFooterStyle}>
-        <div style={footerGrid}>
-          <div style={footerCol}>
-            <div style={{ fontWeight: 'bold', fontSize: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-               <span style={orangeAMLogo}>AM</span> Apni Manzil
-            </div>
-            <p style={footerColText}>India's leading AI-powered logistics platform. One solution for all your special delivery needs.</p>
-            <div style={socialRow}>
-              <span style={socialIcon}>f</span> <span style={socialIcon}>📸</span> <span style={socialIcon}>in</span>
-            </div>
-          </div>
-          <div style={footerCol}>
-            <h4 style={footerColTitle}>Quick Links</h4>
-            <div style={orangeLine}></div>
-            <ul style={footerColList}><li>Our Services</li><li>Track Shipment</li><li>Become a Partner</li></ul>
-          </div>
-          <div style={footerCol}>
-            <h4 style={footerColTitle}>Support</h4>
-            <div style={orangeLine}></div>
-            <ul style={footerColList}><li>Help Center</li><li>Terms & Conditions</li><li>Privacy Policy</li></ul>
-          </div>
-          <div style={footerCol}>
-            <h4 style={footerColTitle}>Contact Us</h4>
-            <div style={orangeLine}></div>
-            <ul style={footerColList}><li>📞 +91 93703 43210</li><li>📧 support@apnimanzil.co.in</li><li>📍 Mumbai, India</li></ul>
-          </div>
-        </div>
-        <div style={bottomBar}>© 2026 APNI MANZIL. ALL RIGHTS RESERVED.</div>
-      </footer>
+      {/* जुना फुटर इथून काढला आहे */}
     </div>
   );
 };
 
-// --- मूळ Styles तसेच ठेवले आहेत ---
-const navStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 60px', backgroundColor: '#fff', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 1000 };
-const logoWrapper = { fontWeight: 'bold', fontSize: '22px', display: 'flex', alignItems: 'center', gap: '8px', color: '#004080' };
-const orangeAMLogo = { backgroundColor: '#ff5e00', color: '#fff', padding: '2px 8px', borderRadius: '5px' };
-const navLinks = { display: 'flex', gap: '25px', alignItems: 'center' };
-const linkStyle = { textDecoration: 'none', color: '#333', fontSize: '14px', fontWeight: '500' };
-const loginBtn = { padding: '8px 25px', borderRadius: '20px', border: '1px solid #ddd', backgroundColor: '#fff', cursor: 'pointer', fontSize: '13px' };
-const signUpBtn = { padding: '8px 25px', borderRadius: '20px', border: 'none', backgroundColor: '#004080', color: '#fff', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' };
+// --- फक्त आवश्यक Styles ठेवले आहेत ---
 const heroBanner = { backgroundColor: '#0056b3', color: '#fff', padding: '60px 20px', textAlign: 'center', background: 'linear-gradient(135deg, #004080 0%, #007bff 100%)' };
 const breadcrumb = { fontSize: '12px', opacity: 0.8, marginBottom: '10px' };
 const mainHeading = { fontSize: '32px', fontWeight: 'bold', margin: '0 0 10px 0' };
@@ -197,15 +147,5 @@ const formStyle = { display: 'flex', flexDirection: 'column', gap: '15px' };
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '15px' };
 const backBtn = { background: 'none', border: 'none', color: '#004080', cursor: 'pointer', marginBottom: '15px', fontWeight: 'bold' };
 const confirmBtn = { background: '#004080', color: '#fff', padding: '15px', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' };
-const blueFooterStyle = { backgroundColor: '#0056b3', color: '#fff', padding: '60px 60px 20px', marginTop: '60px' };
-const footerGrid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', maxWidth: '1200px', margin: '0 auto' };
-const footerCol = { display: 'flex', flexDirection: 'column', gap: '12px' };
-const footerColTitle = { fontSize: '18px', fontWeight: 'bold', margin: 0 };
-const orangeLine = { width: '35px', height: '2px', backgroundColor: '#ff5e00', marginTop: '-8px' };
-const footerColList = { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', opacity: 0.9 };
-const footerColText = { fontSize: '13px', lineHeight: '1.6', opacity: 0.8, maxWidth: '240px' };
-const socialRow = { display: 'flex', gap: '10px', marginTop: '10px' };
-const socialIcon = { width: '30px', height: '30px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '14px' };
-const bottomBar = { textAlign: 'center', marginTop: '50px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '12px', opacity: 0.7 };
-   
+
 export default CourierService;
