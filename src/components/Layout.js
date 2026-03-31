@@ -4,7 +4,7 @@ import {
   Menu, X, Phone, Globe, User, 
   Facebook, Instagram, Linkedin, Mail, 
   MapPin, ChevronRight, HelpCircle, ShieldCheck, ChevronDown,
-  LayoutDashboard, Truck // हे दोन नवीन आयकॉन ॲड केले आहेत
+  LayoutDashboard, Truck, LogIn, UserPlus // नवीन आयकॉन्स जोडले
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans text-[#001D3D]">
       
-      {/* --- TOP BAR --- */}
+      {/* --- TOP BAR (Professional Update) --- */}
       <div className="bg-[#001D3D] text-white py-2 px-12 hidden md:flex justify-between items-center text-[10px] font-black tracking-[0.2em]">
         <div className="flex gap-6">
           <span className="flex items-center gap-2 border-r border-slate-700 pr-6">
@@ -36,9 +36,16 @@ const Layout = ({ children }) => {
             <Globe size={12} className="text-[#FF5E00]"/> GLOBAL LOGISTICS NETWORK
           </span>
         </div>
-        <div className="flex gap-6">
-          <Link to="/track" className="hover:text-[#FF5E00] transition uppercase">TRACK SHIPMENT</Link>
-          <Link to="/login" className="hover:text-[#FF5E00] transition text-[#FF5E00] uppercase">PARTNER LOGIN</Link>
+        
+        {/* NEW: TOP BAR LOGIN/SIGNUP LINKS */}
+        <div className="flex gap-6 items-center">
+          <Link to="/login" className="flex items-center gap-1.5 hover:text-[#FF5E00] transition uppercase">
+            <LogIn size={12} /> Login
+          </Link>
+          <Link to="/register" className="flex items-center gap-1.5 hover:text-[#FF5E00] transition uppercase border-l border-slate-700 pl-6">
+            <UserPlus size={12} /> Sign Up
+          </Link>
+          <Link to="/track" className="hover:text-[#FF5E00] transition uppercase border-l border-slate-700 pl-6">TRACK SHIPMENT</Link>
         </div>
       </div>
 
@@ -86,7 +93,7 @@ const Layout = ({ children }) => {
           {/* २. डॅशबोर्ड बटण - आता हे पॉपअप उघडेल */}
           <button 
             onClick={() => setShowDashboardModal(true)}
-            className="bg-[#001D3D] text-white px-8 py-3 hover:bg-[#FF5E00] transition duration-300 flex items-center gap-2 uppercase"
+            className="bg-[#001D3D] text-white px-8 py-3 hover:bg-[#FF5E00] transition duration-300 flex items-center gap-2 uppercase shadow-lg shadow-blue-900/10"
           >
             <User size={14}/> DASHBOARD
           </button>
@@ -157,7 +164,6 @@ const Layout = ({ children }) => {
 
       {/* --- FOOTER --- */}
       <footer className="bg-[#001D3D] text-white pt-16 pb-8 px-12 border-t-8 border-[#FF5E00]">
-        {/* ... (तुझा पूर्ण जुना फुटर कोड इथे तसाच राहील) ... */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
             <h4 className="text-2xl font-black italic tracking-tighter uppercase">APNI MANZIL</h4>
