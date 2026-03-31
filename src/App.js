@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// --- LAYOUT IMPORT (नवीन जोडलेले) ---
+// --- LAYOUT IMPORT ---
 import Layout from './components/Layout'; 
 
 // ==========================================
@@ -41,8 +41,11 @@ import SpecialLogistics from './pages/SpecialLogistics';
 // --- AI Smart Logistics Import ---
 import AISmartLogistics from './pages/AISmartLogistics'; 
 
+// --- VENDOR DASHBOARD IMPORT (नवीन जोडलेले) ---
+import VendorDashboard from './pages/VendorDashboard'; 
+
 // ==========================================
-// 3. SERVICE PLACEHOLDER COMPONENTS (तुझा पूर्ण मूळ कोड जसाच्या तसा)
+// 3. SERVICE PLACEHOLDER COMPONENTS
 // ==========================================
 
 const Transport = () => (
@@ -183,6 +186,9 @@ function App() {
           <Route path="/partner-registration" element={<PartnerRegistration />} />
 
           <Route path="/admin-control-panel" element={<AdminDashboard />} />
+
+          {/* VENDOR DASHBOARD ROUTE (नवीन जोडलेला) */}
+          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
 
           <Route 
             path="/msme" 
