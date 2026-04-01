@@ -20,11 +20,44 @@ const Home = () => {
     { id: 9, name: "AI Smart Logistics", icon: <Bot size={32} />, color: "text-yellow-600", bg: "bg-yellow-50", isAI: true }
   ];
 
+  // --- Large Real Color Images Data ---
+  const solutionStrip = [
+    { 
+      name: 'Courier Box', 
+      img: 'https://images.unsplash.com/photo-1589710751891-b773998b5bf7?auto=format&fit=crop&q=80&w=600', 
+      desc: 'Local Delivery' 
+    },
+    { 
+      name: 'Truck Transport', 
+      img: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=500', 
+      desc: 'Heavy Cargo' 
+    },
+    { 
+      name: 'Packers Movers', 
+      img: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&q=80&w=500', 
+      desc: 'House Shifting' 
+    },
+    { 
+      name: 'Warehouse', 
+      img: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=500', 
+      desc: 'Smart Storage' 
+    },
+    { 
+      // --- Updated: ५ व्या क्रमांकावर Ship आणि Plane चा Combo Image ---
+      name: 'International Logistics', 
+      img: 'https://img.freepik.com/free-photo/cargo-ship-sea-with-plane-flying-above_1142-42702.jpg', 
+      desc: 'Plan & Ship' 
+    },
+    { 
+      name: 'AI Robotics', 
+      img: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=500', 
+      desc: 'Auto Sorting' 
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       
-      {/* NAVBAR REMOVED - Handled by Layout.js */}
-
       {/* 1. HERO SECTION */}
       <section className="bg-gradient-to-b from-blue-50 to-slate-50 pt-16 pb-20 px-6 text-center">
         <h1 className="text-4xl md:text-6xl font-black text-[#002D5E] mb-6 tracking-tight leading-tight">
@@ -147,6 +180,38 @@ const Home = () => {
         </div>
       </section>
 
+      {/* --- SECTION: LARGE COLOR IMAGES STRIP (5th image updated) --- */}
+      <section className="max-w-7xl mx-auto px-6 py-20 bg-white mt-12 rounded-[3.5rem] shadow-sm border border-slate-50">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] uppercase italic tracking-tighter">
+            One Solution for All Deliveries
+          </h2>
+          <div className="w-24 h-2 bg-orange-500 mx-auto mt-6 rounded-full"></div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 px-4">
+          {solutionStrip.map((item, index) => (
+            <div key={index} className="flex flex-col items-center group cursor-pointer">
+              <div className="relative w-full aspect-square overflow-hidden rounded-[2.5rem] shadow-lg group-hover:shadow-2xl transition-all duration-500 border-2 border-white group-hover:border-orange-500 group-hover:-translate-y-4">
+                <img 
+                  src={item.img} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#002D5E]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center p-4">
+                  <p className="text-white text-[10px] font-black uppercase tracking-widest">{item.desc}</p>
+                </div>
+              </div>
+              <div className="text-center mt-6">
+                <p className="font-black text-sm uppercase tracking-tighter text-[#002D5E] group-hover:text-orange-500 transition-colors">
+                  {item.name}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* 4. TRACKING SECTION */}
       <section id="track" className="max-w-7xl mx-auto px-6 py-20 mb-20">
         <div className="bg-white rounded-[3.5rem] p-10 md:p-16 shadow-2xl border border-slate-50 flex flex-col lg:flex-row gap-16 items-center">
@@ -179,8 +244,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* FOOTER REMOVED - Handled by Layout.js */}
 
     </div>
   );
