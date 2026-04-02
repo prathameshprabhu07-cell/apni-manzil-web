@@ -1,13 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// All icons
 import { 
   Package, Truck, Bike, Home as HomeIcon, Warehouse, Globe, Zap, Bot, Star, 
-  Search, HelpCircle, Box, Boxes, ChevronRight, CheckCircle, ArrowRight
+  Search, HelpCircle, Box, Boxes, ChevronRight, CheckCircle, ArrowRight, MapPin 
 } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
 
+  // १. मुख्य सर्व्हिसेस डेटा
   const mainServices = [
     { id: 1, name: "Courier & Parcel Delivery", icon: <Package size={32} />, color: "text-blue-600", bg: "bg-blue-50", isCourier: true },
     { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50", isHyperlocal: true }, 
@@ -20,39 +23,14 @@ const Home = () => {
     { id: 9, name: "AI Smart Logistics", icon: <Bot size={32} />, color: "text-yellow-600", bg: "bg-yellow-50", isAI: true }
   ];
 
-  // --- Large Real Color Images Data ---
+  // २. इमेज स्ट्रिप डेटा
   const solutionStrip = [
-    { 
-      name: 'Courier Box', 
-      img: 'https://images.unsplash.com/photo-1589710751891-b773998b5bf7?auto=format&fit=crop&q=80&w=600', 
-      desc: 'Local Delivery' 
-    },
-    { 
-      name: 'Truck Transport', 
-      img: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=500', 
-      desc: 'Heavy Cargo' 
-    },
-    { 
-      name: 'Packers Movers', 
-      img: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&q=80&w=500', 
-      desc: 'House Shifting' 
-    },
-    { 
-      name: 'Warehouse', 
-      img: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=500', 
-      desc: 'Smart Storage' 
-    },
-    { 
-      // --- Updated: ५ व्या क्रमांकावर Ship आणि Plane चा Combo Image ---
-      name: 'International Logistics', 
-      img: 'https://img.freepik.com/free-photo/cargo-ship-sea-with-plane-flying-above_1142-42702.jpg', 
-      desc: 'Plan & Ship' 
-    },
-    { 
-      name: 'AI Robotics', 
-      img: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=500', 
-      desc: 'Auto Sorting' 
-    },
+    { name: 'Courier Box', img: 'https://images.unsplash.com/photo-1589710751891-b773998b5bf7?auto=format&fit=crop&q=80&w=600', desc: 'Local Delivery' },
+    { name: 'Truck Transport', img: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=500', desc: 'Heavy Cargo' },
+    { name: 'Packers Movers', img: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&q=80&w=500', desc: 'House Shifting' },
+    { name: 'Warehouse', img: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=500', desc: 'Smart Storage' },
+    { name: 'International Logistics', img: 'https://img.freepik.com/free-photo/cargo-ship-sea-with-plane-flying-above_1142-42702.jpg', desc: 'Plan & Ship' },
+    { name: 'AI Robotics', img: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=500', desc: 'Auto Sorting' },
   ];
 
   return (
@@ -88,7 +66,6 @@ const Home = () => {
               <div className="h-10 w-2 bg-orange-500 rounded-full"></div>
               <h2 className="text-3xl font-black text-[#002D5E] tracking-tight">Popular Logistics Services</h2>
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {mainServices.map((s) => (
                 <div 
@@ -126,7 +103,6 @@ const Home = () => {
                   </div>
                   <h3 className="text-2xl font-black leading-none text-left">AI Smart<br/><span className="text-orange-400">Logistics Pick</span></h3>
                 </div>
-                
                 <div className="space-y-5 mb-10">
                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
                      <div className="text-left">
@@ -151,7 +127,110 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. PARTNER SECTION */}
+      {/* 3. ALL-IN-ONE TRACKING HUB (Improved Mobile View) */}
+      <section id="track" className="max-w-7xl mx-auto px-6 py-12">
+        <div className="bg-white rounded-[3.5rem] p-8 md:p-14 shadow-2xl border border-slate-50 flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
+          
+          {/* Left Side: Professional Live Map Preview */}
+          <div className="lg:w-1/3 w-full flex justify-center">
+            <div className="relative w-72 h-[480px] bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl border-[6px] border-slate-800 ring-4 ring-slate-100/50">
+              <div className="bg-white h-full rounded-[2.8rem] overflow-hidden flex flex-col relative">
+                
+                {/* Header inside Mobile */}
+                <div className="p-5 text-center bg-white shadow-sm pt-8">
+                  <h3 className="font-black text-slate-800 text-xs uppercase tracking-widest">Live Shipment</h3>
+                </div>
+
+                {/* Map Content */}
+                <div className="flex-1 bg-slate-100 relative">
+                  <img src="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&q=80&w=600" alt="Map" className="w-full h-full object-cover opacity-60" />
+                  
+                  {/* Moving Elements */}
+                  <div className="absolute top-1/2 left-1/4 animate-bounce">
+                    <div className="bg-orange-500 p-3 rounded-full shadow-2xl border-2 border-white">
+                      <Bike className="text-white" size={24} />
+                    </div>
+                  </div>
+                  
+                  <div className="absolute top-20 right-16">
+                    <div className="bg-[#002D5E] p-2 rounded-full shadow-lg border-2 border-white">
+                      <MapPin className="text-white" size={20} fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Status Card (Exactly like your request) */}
+                <div className="p-6 bg-white border-t space-y-3">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 uppercase">Estimated Arrival</p>
+                      <p className="font-black text-slate-800 text-lg leading-tight">20 mins left</p>
+                    </div>
+                    <div className="text-right">
+                       <p className="text-[10px] font-black text-orange-500 bg-orange-50 px-2 py-1 rounded-md uppercase tracking-tighter">On the way</p>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="w-[75%] h-full bg-orange-500 rounded-full animate-pulse"></div>
+                  </div>
+                  <p className="text-[9px] text-slate-400 font-bold text-center uppercase tracking-widest">ID: #AMZ98745</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side: Tracking Input & Text */}
+          <div className="lg:w-2/3 space-y-10 w-full">
+            <div className="space-y-4 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-600 px-4 py-2 rounded-full border border-orange-100">
+                <Zap size={14} fill="currentColor" />
+                <span className="text-xs font-black uppercase tracking-[0.2em]">Smart Tracking Engine</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] leading-tight">
+                Track Your <span className="text-orange-500">Live Shipment</span>
+              </h2>
+              <p className="text-slate-500 text-lg font-bold max-w-xl">
+                Enter your Tracking ID below to get real-time GPS location and delivery status instantly.
+              </p>
+            </div>
+
+            {/* The Unified Input Box */}
+            <div className="flex flex-col md:flex-row gap-4 bg-slate-50 p-3 rounded-[2.5rem] border border-slate-100 shadow-inner">
+              <div className="flex-1 flex items-center gap-4 px-6 py-4">
+                <Search className="text-orange-500" size={24} />
+                <input 
+                  type="text" 
+                  placeholder="Enter Tracking ID (e.g. AMZ12345)" 
+                  className="bg-transparent w-full outline-none font-black text-slate-700 placeholder:text-slate-300 text-lg" 
+                />
+              </div>
+              <button className="bg-[#002D5E] text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-500 transition-all shadow-xl flex items-center justify-center gap-3 group">
+                Track Shipment <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+              </button>
+            </div>
+
+            {/* Quick Stats Below Input */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-4">
+               <div className="flex items-center gap-3">
+                 <div className="bg-green-100 p-2 rounded-lg text-green-600"><CheckCircle size={18}/></div>
+                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Real-time GPS</p>
+               </div>
+               <div className="flex items-center gap-3">
+                 <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><Bot size={18}/></div>
+                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">AI Prediction</p>
+               </div>
+               <div className="flex items-center gap-3 md:col-span-1 col-span-2 justify-center md:justify-start">
+                 <div className="bg-orange-100 p-2 rounded-lg text-orange-600"><Globe size={18}/></div>
+                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Global Access</p>
+               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. PARTNER SECTION */}
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="relative overflow-hidden bg-gradient-to-r from-[#002D5E] to-blue-800 rounded-[3.5rem] p-1 md:p-2 shadow-2xl border border-blue-400/20">
           <div className="bg-white/5 backdrop-blur-md rounded-[3.3rem] p-8 md:p-14 flex flex-col md:flex-row items-center justify-between gap-12">
@@ -159,9 +238,7 @@ const Home = () => {
               <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
                 Become a <span className="text-orange-400">Logistics Partner</span>
               </h2>
-              <p className="text-blue-100 text-lg font-medium italic opacity-90">
-                "Road, Rail, Air or Sea - We deliver everywhere. Join our network today!"
-              </p>
+              <p className="text-blue-100 text-lg font-medium italic opacity-90">"Road, Rail, Air or Sea - We deliver everywhere. Join our network today!"</p>
               <button 
                 onClick={() => navigate('/partner-registration')}
                 className="bg-orange-500 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-orange-600 transition shadow-2xl flex items-center gap-3 mx-auto md:mx-0 group"
@@ -170,77 +247,105 @@ const Home = () => {
               </button>
             </div>
             <div className="md:w-1/2">
-              <img 
-                src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1000" 
-                alt="Logistics Network" 
-                className="rounded-[2.5rem] shadow-2xl border-4 border-white/10 object-cover h-80 w-full hover:scale-105 transition-transform duration-500"
-              />
+              <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1000" alt="Partner" className="rounded-[2.5rem] shadow-2xl border-4 border-white/10 object-cover h-80 w-full hover:scale-105 transition-transform duration-500"/>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- SECTION: LARGE COLOR IMAGES STRIP (5th image updated) --- */}
+      {/* 5. ONE SOLUTION STRIP */}
       <section className="max-w-7xl mx-auto px-6 py-20 bg-white mt-12 rounded-[3.5rem] shadow-sm border border-slate-50">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] uppercase italic tracking-tighter">
-            One Solution for All Deliveries
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] uppercase italic tracking-tighter">One Solution for All Deliveries</h2>
           <div className="w-24 h-2 bg-orange-500 mx-auto mt-6 rounded-full"></div>
         </div>
-
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 px-4">
           {solutionStrip.map((item, index) => (
             <div key={index} className="flex flex-col items-center group cursor-pointer">
               <div className="relative w-full aspect-square overflow-hidden rounded-[2.5rem] shadow-lg group-hover:shadow-2xl transition-all duration-500 border-2 border-white group-hover:border-orange-500 group-hover:-translate-y-4">
-                <img 
-                  src={item.img} 
-                  alt={item.name} 
-                  className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700"
-                />
+                <img src={item.img} alt={item.name} className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#002D5E]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center p-4">
                   <p className="text-white text-[10px] font-black uppercase tracking-widest">{item.desc}</p>
                 </div>
               </div>
               <div className="text-center mt-6">
-                <p className="font-black text-sm uppercase tracking-tighter text-[#002D5E] group-hover:text-orange-500 transition-colors">
-                  {item.name}
-                </p>
+                <p className="font-black text-sm uppercase tracking-tighter text-[#002D5E] group-hover:text-orange-500 transition-colors">{item.name}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 4. TRACKING SECTION */}
-      <section id="track" className="max-w-7xl mx-auto px-6 py-20 mb-20">
-        <div className="bg-white rounded-[3.5rem] p-10 md:p-16 shadow-2xl border border-slate-50 flex flex-col lg:flex-row gap-16 items-center">
-          <div className="flex-1 space-y-8 w-full">
-            <div className="flex items-center gap-4 justify-center md:justify-start">
-              <div className="h-10 w-2 bg-[#002D5E] rounded-full"></div>
-              <h3 className="text-3xl font-black text-[#002D5E]">Track Your Shipment</h3>
-            </div>
-            
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 flex items-center gap-4 bg-slate-50 border border-slate-100 px-8 py-6 rounded-[2rem] focus-within:border-orange-400 transition-all shadow-inner">
-                <Search className="text-slate-400" size={24} />
-                <input type="text" placeholder="Enter Tracking ID" className="bg-transparent w-full outline-none font-bold text-slate-700" />
+      {/* 6. PREMIUM BENEFITS SECTION */}
+      <section id="benefits" className="max-w-7xl mx-auto px-6 py-24 bg-white mt-16 rounded-[4rem] shadow-sm border border-slate-50">
+        <div className="flex flex-col lg:flex-row items-end justify-between mb-20 gap-8">
+          <div className="max-w-3xl">
+            <h2 className="text-[11px] font-black text-orange-500 uppercase tracking-[0.5em] mb-4">The Gold Standard</h2>
+            <h3 className="text-5xl md:text-6xl font-black text-[#002D5E] tracking-tight leading-[0.95]">Why Businesses <br /><span className="text-slate-300">Trust Apni Manzil.</span></h3>
+          </div>
+          <div className="lg:text-right">
+            <p className="text-slate-400 font-bold text-sm uppercase tracking-widest mb-2">Efficiency. Security. Scale.</p>
+            <div className="h-1.5 w-20 bg-orange-500 lg:ml-auto rounded-full"></div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {[
+            { title: "Unified Logistics", desc: "A single powerhouse for Couriers, Packers & Movers, and Heavy Transport.", icon: <Boxes size={24} />, img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=500" },
+            { title: "Verified Network", desc: "Elite tie-ups with certified logistics partners.", icon: <CheckCircle size={24} />, img: "https://images.unsplash.com/photo-1521791136064-7986c295955c?auto=format&fit=crop&q=80&w=500" },
+            { title: "Doorstep Service", desc: "Seamless doorstep collection and delivery.", icon: <HomeIcon size={24} />, img: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaad5b?auto=format&fit=crop&q=80&w=500" },
+            { title: "Precision Tracking", desc: "Real-time visibility of every shipment.", icon: <Search size={24} />, img: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=500" },
+            { title: "Secure Delivery", desc: "Safe and guaranteed delivery protocols.", icon: <Zap size={24} />, img: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=500" },
+            { title: "Affordable Pricing", desc: "Institutional-grade pricing that beats market rates.", icon: <Zap size={24} />, img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=500" },
+            { title: "Global Reach", desc: "Covering Domestic and International borders.", icon: <Globe size={24} />, img: "https://images.unsplash.com/photo-1436491865332-7a61a109c055?auto=format&fit=crop&q=80&w=500" },
+            { title: "24/7 Support", desc: "Dedicated support desk for assistance.", icon: <HelpCircle size={24} />, img: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=500" }
+          ].map((item, idx) => (
+            <div key={idx} className="group cursor-pointer">
+              <div className="relative h-64 w-full rounded-[2.5rem] overflow-hidden mb-6 shadow-lg border-2 border-transparent group-hover:border-orange-500 transition-all duration-500">
+                <img src={item.img} alt={item.title} className="w-full h-full object-cover grayscale-[50%] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#002D5E] via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity"></div>
+                <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl text-[#002D5E] shadow-xl group-hover:bg-orange-500 group-hover:text-white transition-colors duration-500">{item.icon}</div>
               </div>
-              <button className="bg-[#002D5E] text-white px-12 py-6 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-blue-900 transition shadow-lg">
-                Track Status
-              </button>
+              <div className="px-2">
+                <h4 className="text-lg font-black text-[#002D5E] uppercase tracking-tighter mb-2 group-hover:text-orange-500 transition-colors">{item.title}</h4>
+                <p className="text-slate-400 font-bold text-xs leading-relaxed uppercase tracking-wide">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+{/* 7. FINAL BRANDING TRUCK SECTION (Full Width) */}
+      <section className="w-full mt-20 mb-10 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-[3.5rem] shadow-2xl border-4 border-white group">
+            {/* Truck Image */}
+            <img 
+              src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=1200" 
+              alt="Apni Manzil Logistics Truck" 
+              className="w-full h-[400px] md:h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            
+            {/* Text Overlay on Image (Optional - looks professional) */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#002D5E]/60 to-transparent flex items-center px-12">
+              <div className="max-w-xl text-white">
+                <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter leading-none mb-4">
+                  APNI <span className="text-orange-500">MANZIL</span>
+                </h2>
+                <p className="text-xl md:text-2xl font-bold uppercase tracking-[0.2em] opacity-90">
+                  One Solution for All Deliveries
+                </p>
+              </div>
             </div>
           </div>
-
-          <div className="lg:w-1/3 grid grid-cols-2 gap-4 w-full">
-             <div className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100 text-center space-y-2 shadow-sm">
-                <p className="text-4xl font-black text-[#002D5E]">10k+</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Shipments</p>
-             </div>
-             <div className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100 text-center space-y-2 shadow-sm">
-                <p className="text-4xl font-black text-[#002D5E]">500+</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Partners</p>
-             </div>
+          
+          {/* Bottom Branding Text */}
+          <div className="text-center mt-12 mb-20">
+            <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-tighter">
+              APNI <span className="text-orange-500">MANZIL</span> LOGISTICS
+            </h2>
+            <div className="w-20 h-1.5 bg-orange-500 mx-auto mt-4 rounded-full"></div>
+            <p className="text-slate-400 font-bold uppercase tracking-[0.4em] text-xs mt-6">
+              Reliable • Fast • Smart
+            </p>
           </div>
         </div>
       </section>
