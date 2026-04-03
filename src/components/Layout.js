@@ -87,7 +87,6 @@ const Layout = ({ children }) => {
           <Link to="/partner-registration" className="hover:text-[#FF5E00] transition-all text-[#FF5E00]">BECOME A PARTNER</Link>
           <Link to="/about-us" className="hover:text-[#FF5E00] transition-all">ABOUT US</Link>
           
-          {/* PROFESSIONAL GHOST BUTTON STYLE */}
           <button 
             onClick={() => setShowDashboardModal(true)}
             className="border-2 border-[#001D3D] text-[#001D3D] px-8 py-2.5 hover:bg-[#001D3D] hover:text-white transition-all duration-300 flex items-center gap-2 uppercase font-black text-[13px] rounded-sm tracking-wider"
@@ -101,7 +100,7 @@ const Layout = ({ children }) => {
         </div>
       </nav>
 
-      {/* --- DASHBOARD POPUP (PROFESSIONAL BLACK/WHITE THEME) --- */}
+      {/* --- DASHBOARD POPUP --- */}
       {showDashboardModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl p-10 max-w-md w-full shadow-2xl relative border-t-[8px] border-black animate-in zoom-in duration-200">
@@ -115,7 +114,6 @@ const Layout = ({ children }) => {
             </div>
 
             <div className="space-y-4">
-              {/* MSME CARD - Premium White Style */}
               <Link to="/msme" onClick={() => setShowDashboardModal(false)} 
                 className="flex items-center gap-5 p-6 rounded-xl border border-slate-200 hover:border-black hover:shadow-xl transition-all group bg-white">
                 <div className="bg-slate-100 p-4 rounded-lg group-hover:bg-black group-hover:text-white transition-colors">
@@ -127,7 +125,6 @@ const Layout = ({ children }) => {
                 </div>
               </Link>
 
-              {/* VENDOR CARD - Premium White Style */}
               <Link to="/vendor-dashboard" onClick={() => setShowDashboardModal(false)} 
                 className="flex items-center gap-5 p-6 rounded-xl border border-slate-200 hover:border-black hover:shadow-xl transition-all group bg-white">
                 <div className="bg-slate-100 p-4 rounded-lg group-hover:bg-black group-hover:text-white transition-colors">
@@ -148,7 +145,7 @@ const Layout = ({ children }) => {
         {children}
       </main>
 
-      {/* --- FOOTER --- */}
+      {/* --- FOOTER (With Your Social Links) --- */}
       <footer className="bg-[#001D3D] text-white pt-20 pb-10 px-12 border-t-8 border-[#FF5E00]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
@@ -157,8 +154,24 @@ const Layout = ({ children }) => {
               Providing end-to-end logistics solutions across India. Technology driven, reliability focused.
             </p>
             <div className="flex gap-5 pt-2">
-              <a href="#" className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"><Facebook size={20} /></a>
-              <a href="#" className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"><Instagram size={20} /></a>
+              {/* Facebook Link */}
+              <a 
+                href="https://www.facebook.com/share/1AjZxsuL4h/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"
+              >
+                <Facebook size={20} />
+              </a>
+              {/* Instagram Link */}
+              <a 
+                href="https://www.instagram.com/prathameshprabhu07?igsh=MXA2Ym92ZnE3N2lkcA==" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"
+              >
+                <Instagram size={20} />
+              </a>
               <a href="#" className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"><Linkedin size={20} /></a>
             </div>
           </div>
