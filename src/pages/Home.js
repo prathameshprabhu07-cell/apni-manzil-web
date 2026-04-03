@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// १. तुझी नवीन पसंतीची इमेज इथे इम्पोर्ट कर (image_7.png)
+// १. इमेजेस इम्पोर्ट करा (Path बरोबर असल्याची खात्री करा)
 import HeroLogisticsImage from '../assets/global-logistics.png'; 
+import TrackingAppImage from '../assets/tracking-app.png'; // <--- तुझी ट्रॅकिंग इमेज
 
 // All icons
 import { 
@@ -39,21 +40,17 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       
-      {/* 1. HERO SECTION - विथ नवीन AI इमेज बॅकग्राउंड */}
+      {/* 1. HERO SECTION */}
       <section className="relative w-full h-[400px] md:h-[450px] flex items-center justify-center overflow-hidden">
-        
-        {/* बॅकग्राउंड इमेज ओव्हरलेसह */}
         <div className="absolute inset-0 z-0">
           <img 
             src={HeroLogisticsImage} 
             alt="Apni Manzil Global Logistics" 
             className="w-full h-full object-cover"
           />
-          {/* डार्क ओव्हरले जेणेकरून टेक्स्ट पांढऱ्या रंगात स्पष्ट दिसेल */}
           <div className="absolute inset-0 bg-[#001D3D]/65 backdrop-blur-[1px]"></div>
         </div>
 
-        {/* टेक्स्ट आणि सर्च बार कंटेंट */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tighter leading-tight italic uppercase">
             India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Platform
@@ -61,22 +58,22 @@ const Home = () => {
           <p className="text-white/80 font-bold mb-10 text-sm md:text-lg uppercase tracking-[0.4em]">One Solution for All Delivery</p>
           
           <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-2 border border-white/20">
-             <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-               <Search size={20} className="text-gray-400" />
-               <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
-             </div>
-             <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-               <Search size={20} className="text-gray-400" />
-               <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
-             </div>
-             <button className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-500/40">
-               Compare Services
-             </button>
+              <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+                <Search size={20} className="text-gray-400" />
+                <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
+              </div>
+              <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+                <Search size={20} className="text-gray-400" />
+                <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
+              </div>
+              <button className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-500/40">
+                Compare Services
+              </button>
           </div>
         </div>
       </section>
 
-      {/* 2. MAIN SERVICES SECTION - जसाच्या तसा */}
+      {/* 2. MAIN SERVICES SECTION */}
       <section id="services" className="max-w-7xl mx-auto px-6 py-16">
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="lg:w-2/3">
@@ -145,44 +142,21 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. ALL-IN-ONE TRACKING HUB - जसाच्या तसा */}
+      {/* 3. ALL-IN-ONE TRACKING HUB - अपडेटेड इमेज (Sonya, change here) */}
       <section id="track" className="max-w-7xl mx-auto px-6 py-6">
         <div className="bg-white rounded-[3.5rem] p-8 md:p-14 shadow-2xl border border-slate-50 flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
           <div className="lg:w-1/3 w-full flex justify-center">
-            <div className="relative w-72 h-[480px] bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl border-[6px] border-slate-800 ring-4 ring-slate-100/50">
-              <div className="bg-white h-full rounded-[2.8rem] overflow-hidden flex flex-col relative">
-                <div className="p-5 text-center bg-white shadow-sm pt-8">
-                  <h3 className="font-black text-slate-800 text-xs uppercase tracking-widest">Live Shipment</h3>
-                </div>
-                <div className="flex-1 bg-slate-100 relative">
-                  <img src="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&q=80&w=600" alt="Map" className="w-full h-full object-cover opacity-60" />
-                  <div className="absolute top-1/2 left-1/4 animate-bounce">
-                    <div className="bg-orange-500 p-3 rounded-full shadow-2xl border-2 border-white">
-                      <Bike className="text-white" size={24} />
-                    </div>
-                  </div>
-                  <div className="absolute top-20 right-16">
-                    <div className="bg-[#002D5E] p-2 rounded-full shadow-lg border-2 border-white">
-                      <MapPin className="text-white" size={20} fill="currentColor" />
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6 bg-white border-t space-y-3">
-                  <div className="flex justify-between items-end">
-                    <div>
-                      <p className="text-[10px] font-black text-slate-400 uppercase">Estimated Arrival</p>
-                      <p className="font-black text-slate-800 text-lg leading-tight">20 mins left</p>
-                    </div>
-                    <div className="text-right">
-                       <p className="text-[10px] font-black text-orange-500 bg-orange-50 px-2 py-1 rounded-md uppercase tracking-tighter">On the way</p>
-                    </div>
-                  </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="w-[75%] h-full bg-orange-500 rounded-full animate-pulse"></div>
-                  </div>
-                  <p className="text-[9px] text-slate-400 font-bold text-center uppercase tracking-widest">ID: #AMZ98745</p>
-                </div>
-              </div>
+            <div className="relative w-full max-w-[320px]">
+              {/* आपण इथे इम्पोर्ट केलेली Image वापरत आहोत */}
+              <img 
+                src={TrackingAppImage} 
+                alt="Live GPS Tracking" 
+                className="w-full h-auto rounded-[3rem] shadow-2xl border-4 border-slate-900 ring-8 ring-orange-500/10"
+                onError={(e) => {
+                  e.target.onerror = null; 
+                  e.target.src="https://img.freepik.com/premium-vector/tracking-delivery-service-home-with-smartphone_101884-754.jpg"
+                }}
+              />
             </div>
           </div>
 
@@ -195,7 +169,7 @@ const Home = () => {
               <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] leading-tight">
                 Track Your <span className="text-orange-500">Live Shipment</span>
               </h2>
-              <p className="text-slate-500 text-lg font-bold max-w-xl">
+              <p className="text-slate-500 text-lg font-bold max-w-xl mx-auto lg:mx-0">
                 Enter your Tracking ID below to get real-time GPS location and delivery status instantly.
               </p>
             </div>
@@ -216,7 +190,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 4. PARTNER SECTION - जसाच्या तसा */}
+      {/* 4. PARTNER SECTION */}
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="relative overflow-hidden bg-gradient-to-r from-[#002D5E] to-blue-800 rounded-[3.5rem] p-1 md:p-2 shadow-2xl border border-blue-400/20">
           <div className="bg-white/5 backdrop-blur-md rounded-[3.3rem] p-8 md:p-14 flex flex-col md:flex-row items-center justify-between gap-12">
@@ -239,7 +213,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 5. ONE SOLUTION STRIP - जसाच्या तसा */}
+      {/* 5. ONE SOLUTION STRIP */}
       <section className="max-w-7xl mx-auto px-6 py-20 bg-white mt-12 rounded-[3.5rem] shadow-sm border border-slate-50">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] uppercase italic tracking-tighter">One Solution for All Deliveries</h2>
@@ -262,7 +236,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 6. PREMIUM BENEFITS SECTION - जसाच्या तसा */}
+      {/* 6. PREMIUM BENEFITS SECTION */}
       <section id="benefits" className="max-w-7xl mx-auto px-6 py-24 bg-white mt-16 rounded-[4rem] shadow-sm border border-slate-50">
         <div className="flex flex-col lg:flex-row items-end justify-between mb-20 gap-8">
           <div className="max-w-3xl">
@@ -300,7 +274,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 7. FINAL BRANDING TRUCK SECTION (Full Width) - जसाच्या तसा */}
+      {/* 7. FINAL BRANDING TRUCK SECTION */}
       <section className="w-full mt-20 mb-10 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="relative overflow-hidden rounded-[3.5rem] shadow-2xl border-4 border-white group">
@@ -335,5 +309,5 @@ const Home = () => {
     </div>
   );
 };
-  
+
 export default Home;
