@@ -146,7 +146,7 @@ const Home = () => {
       </section>
 
       {/* 3. ALL-IN-ONE TRACKING HUB - जसाच्या तसा */}
-      <section id="track" className="max-w-7xl mx-auto px-6 py-12">
+      <section id="track" className="max-w-7xl mx-auto px-6 py-6">
         <div className="bg-white rounded-[3.5rem] p-8 md:p-14 shadow-2xl border border-slate-50 flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
           <div className="lg:w-1/3 w-full flex justify-center">
             <div className="relative w-72 h-[480px] bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl border-[6px] border-slate-800 ring-4 ring-slate-100/50">
