@@ -125,6 +125,24 @@ const WarehouseStorage = () => {
         </div>
       </div>
 
+      {/* ४. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      <div 
+        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#002D5E'
+        }}
+      >
+        <div className="max-w-5xl px-6 relative z-10">
+          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+            One Solution for All Logistics
+          </h2>
+        </div>
+      </div>
+
     </div>
   );
 };

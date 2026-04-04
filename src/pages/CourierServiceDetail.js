@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { 
   ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
   Package, Boxes, RefreshCcw, ChevronRight
@@ -22,7 +23,7 @@ const CourierServiceDetail = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans">
       
-      {/* १. Header Section (हे तसेच ठेवले आहे कारण हे पेजचे टायटल आहे) */}
+      {/* १. Header Section */}
       <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-16 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
         
@@ -44,10 +45,9 @@ const CourierServiceDetail = () => {
       </div>
 
       {/* २. मुख्य आशय (8 Boxes + Sidebar) */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 -mt-12 pb-24 relative z-20">
+      <div className="max-w-7xl mx-auto px-6 md:px-16 -mt-12 pb-12 relative z-20">
         <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* डाव्या बाजूचे ८ पर्याय */}
           <div className="lg:w-[65%] grid grid-cols-1 md:grid-cols-2 gap-4">
             {subServices.map((s) => (
               <div 
@@ -70,7 +70,6 @@ const CourierServiceDetail = () => {
             ))}
           </div>
 
-          {/* उजव्या बाजूचे AI Recommendation */}
           <div className="lg:w-[35%]">
             <div className="bg-white rounded-[3rem] p-8 shadow-2xl border border-blue-50 relative overflow-hidden h-fit">
               <div className="flex items-center gap-3 mb-10">
@@ -99,7 +98,26 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* FOOTER REMOVED - It will now be handled by Layout.js */}
+      {/* ३. नवीन ब्रँडेड ट्रक इमेज सेक्शन */}
+      <div 
+        className="w-full h-[400px] flex items-center justify-center text-center px-6 mt-12 mb-12"
+        style={{
+          // Public फोल्डरमध्ये इमेज असल्याने डायरेक्ट पाथ वापरला आहे
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/truck-bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="max-w-4xl">
+          <h2 className="text-white text-3xl md:text-5xl font-black mb-4 drop-shadow-lg">
+            तुमच्या मालाची सुरक्षित ने-आण, आता आपल्या मंझिलसह!
+          </h2>
+          <p className="text-orange-400 text-lg md:text-xl font-bold uppercase tracking-widest drop-shadow-md">
+            "Reliable Logistics Partner Across India"
+          </p>
+        </div>
+      </div>
 
     </div>
   );

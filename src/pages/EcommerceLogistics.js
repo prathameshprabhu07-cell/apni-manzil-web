@@ -49,8 +49,6 @@ const EcommerceLogistics = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       
-      {/* NAVBAR REMOVED - It will now be handled by Layout.js */}
-
       {/* 1. Hero Section */}
       <div className="bg-[#002D5E] text-white py-20 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
@@ -120,7 +118,23 @@ const EcommerceLogistics = () => {
         </div>
       </div>
 
-      {/* FOOTER REMOVED - It will now be handled by Layout.js */}
+      {/* ४. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      <div 
+        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#002D5E'
+        }}
+      >
+        <div className="max-w-5xl px-6 relative z-10">
+          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+            One Solution for All Logistics
+          </h2>
+        </div>
+      </div>
 
     </div>
   );

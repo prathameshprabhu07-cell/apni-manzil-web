@@ -18,8 +18,6 @@ const HyperlocalService = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       
-      {/* NAVBAR REMOVED - Handled by Layout.js */}
-
       {/* 1. Hero Section with Blue Shade & Rider Image */}
       <section className="relative bg-gradient-to-r from-blue-700 to-blue-500 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-16 py-16 md:py-24 flex flex-col md:flex-row items-center">
@@ -88,7 +86,23 @@ const HyperlocalService = () => {
         </div>
       </section>
 
-      {/* FOOTER REMOVED - Handled by Layout.js */}
+      {/* ४. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      <div 
+        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#002D5E'
+        }}
+      >
+        <div className="max-w-5xl px-6 relative z-10">
+          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+            One Solution for All Logistics
+          </h2>
+        </div>
+      </div>
 
     </div>
   );

@@ -56,8 +56,6 @@ const CourierService = () => {
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       
-      {/* जुना नॅव्हबार इथून काढला आहे */}
-
       {!selectedService ? (
         <>
           <header style={heroBanner}>
@@ -105,6 +103,38 @@ const CourierService = () => {
             </div>
             <button style={compareNowBtn}>Compare Now</button>
           </div>
+
+          {/* --- फक्त ट्रक इमेज आणि तुमची नवीन टॅगलाईन --- */}
+          <div 
+            style={{
+              width: '100%',
+              height: '550px', 
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              textAlign: 'center',
+              padding: '0 20px',
+              marginTop: '60px',
+              backgroundColor: '#002D5E', 
+              backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
+              backgroundSize: 'contain', 
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
+            <div style={{ maxWidth: '800px' }}>
+              <h2 style={{ 
+                color: '#fff', 
+                fontSize: '42px', 
+                fontWeight: '900', 
+                textTransform: 'uppercase', 
+                letterSpacing: '1px',
+                textShadow: '3px 3px 10px rgba(0,0,0,0.8)' 
+              }}>
+                One Solution for All Logistics
+              </h2>
+            </div>
+          </div>
         </>
       ) : (
         <div style={formWrapper}>
@@ -122,13 +152,11 @@ const CourierService = () => {
           </form>
         </div>
       )}
-
-      {/* जुना फुटर इथून काढला आहे */}
     </div>
   );
 };
 
-// --- फक्त आवश्यक Styles ठेवले आहेत ---
+// Styles (Same as original)
 const heroBanner = { backgroundColor: '#0056b3', color: '#fff', padding: '60px 20px', textAlign: 'center', background: 'linear-gradient(135deg, #004080 0%, #007bff 100%)' };
 const breadcrumb = { fontSize: '12px', opacity: 0.8, marginBottom: '10px' };
 const mainHeading = { fontSize: '32px', fontWeight: 'bold', margin: '0 0 10px 0' };
