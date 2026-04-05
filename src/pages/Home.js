@@ -53,7 +53,7 @@ const Home = () => {
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tighter leading-tight italic uppercase">
-            India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Platform
+            India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Aggregator Platform
           </h1>
           <p className="text-white/80 font-bold mb-10 text-sm md:text-lg uppercase tracking-[0.4em]">One Solution for All Delivery</p>
           
