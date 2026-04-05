@@ -49,7 +49,12 @@ const Layout = ({ children }) => {
       {/* --- NAVBAR --- */}
       <nav className="bg-white border-b border-gray-200 py-5 px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
         <Link to="/" className="flex items-center gap-3">
-          <div className="bg-[#001D3D] text-white px-4 py-2 font-black text-2xl italic border-r-4 border-[#FF5E00]">AM</div>
+          {/* --- इकडे बदल केला आहे: "AM" च्या जागी नवीन लोगो लावला आहे --- */}
+          <img 
+            src="/favicon.png" 
+            alt="Logo" 
+            className="h-16 w-auto object-contain border-r-4 border-[#FF5E00] pr-3" 
+          />
           <div className="flex flex-col">
             <span className="text-2xl font-black tracking-tighter uppercase italic leading-none">Apni Manzil</span>
             <span className="text-[10px] font-black text-[#FF5E00] tracking-[0.3em] uppercase">Logistics & Supply Chain</span>
@@ -100,7 +105,7 @@ const Layout = ({ children }) => {
         </div>
       </nav>
 
-      {/* --- DASHBOARD POPUP --- */}
+      {/* ... (DASHBOARD POPUP आणि बाकी कोड जसाच्या तसा आहे) ... */}
       {showDashboardModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl p-10 max-w-md w-full shadow-2xl relative border-t-[8px] border-black animate-in zoom-in duration-200">
@@ -140,12 +145,11 @@ const Layout = ({ children }) => {
         </div>
       )}
 
-      {/* --- MAIN CONTENT --- */}
       <main className="flex-grow flex flex-col">
         {children}
       </main>
 
-      {/* --- FOOTER (With Your Social Links) --- */}
+      {/* --- FOOTER --- */}
       <footer className="bg-[#001D3D] text-white pt-20 pb-10 px-12 border-t-8 border-[#FF5E00]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
@@ -154,22 +158,10 @@ const Layout = ({ children }) => {
               Providing end-to-end logistics solutions across India. Technology driven, reliability focused.
             </p>
             <div className="flex gap-5 pt-2">
-              {/* Facebook Link */}
-              <a 
-                href="https://www.facebook.com/share/1AjZxsuL4h/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"
-              >
+              <a href="https://www.facebook.com/share/1AjZxsuL4h/" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition">
                 <Facebook size={20} />
               </a>
-              {/* Instagram Link */}
-              <a 
-                href="https://www.instagram.com/prathameshprabhu07?igsh=MXA2Ym92ZnE3N2lkcA==" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"
-              >
+              <a href="https://www.instagram.com/prathameshprabhu07?igsh=MXA2Ym92ZnE3N2lkcA==" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition">
                 <Instagram size={20} />
               </a>
               <a href="#" className="p-3 bg-white/5 rounded-lg hover:bg-[#FF5E00] transition"><Linkedin size={20} /></a>

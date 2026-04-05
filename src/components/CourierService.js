@@ -156,7 +156,7 @@ const CourierService = () => {
   );
 };
 
-// Styles (Same as original)
+// Styles
 const heroBanner = { backgroundColor: '#0056b3', color: '#fff', padding: '60px 20px', textAlign: 'center', background: 'linear-gradient(135deg, #004080 0%, #007bff 100%)' };
 const breadcrumb = { fontSize: '12px', opacity: 0.8, marginBottom: '10px' };
 const mainHeading = { fontSize: '32px', fontWeight: 'bold', margin: '0 0 10px 0' };
