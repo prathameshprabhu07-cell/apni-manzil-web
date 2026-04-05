@@ -195,7 +195,7 @@ const Layout = ({ children }) => {
           <div className="space-y-6">
             <h5 className="text-[13px] font-black tracking-[0.3em] text-[#FF5E00] uppercase">Contact Details</h5>
             <div className="text-[12px] font-bold text-slate-300 uppercase tracking-widest space-y-5">
-              <p className="flex items-start gap-4 leading-loose"><MapPin size={18} className="text-[#FF5E00] shrink-0" /> Corporate Office: Mumbai, Maharashtra, India</p>
+              <p className="flex items-start gap-4 leading-loose"><MapPin size={18} className="text-[#FF5E00] shrink-0" /> Corporate Office: Kudal, sundhudurg, Maharashtra, 416520, India</p>
               <p className="flex items-center gap-4"><Mail size={18} className="text-[#FF5E00] shrink-0" /> help@apnimanzil.co.in</p>
               <p className="flex items-center gap-4"><Phone size={18} className="text-[#FF5E00] shrink-0" /> +91 73785 02356</p>
             </div>
