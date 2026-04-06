@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// १. इमेजेस इम्पोर्ट करा (Path बरोबर असल्याची खात्री करा)
+// १. इमेजेस इम्पोर्ट करा
 import HeroLogisticsImage from '../assets/global-logistics.png'; 
-import TrackingAppImage from '../assets/tracking-app.png'; // <--- तुझी ट्रॅकिंग इमेज
+import TrackingAppImage from '../assets/tracking-app.png'; 
 
 // All icons
 import { 
@@ -40,6 +40,46 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       
+      {/* ✅ NEW: MOVING TICKER LINE (धावती पट्टी) */}
+      <div style={{
+        background: '#002D5E',
+        color: 'white',
+        padding: '12px 0',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        borderBottom: '3px solid #FF5E00',
+        zIndex: 50,
+        position: 'relative'
+      }}>
+        <div style={{
+          display: 'inline-block',
+          paddingLeft: '100%',
+          animation: 'tickerMove 25s linear infinite'
+        }}>
+          <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
+            👉 “Fast, Reliable Delivery Across India” 
+          </span>
+          <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
+            👉 “Book Courier, Transport & Packers in 1 Click”
+          </span>
+          <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
+            👉 “Fast, Reliable Delivery Across India” 
+          </span>
+          <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
+            👉 “Book Courier, Transport & Packers in 1 Click”
+          </span>
+        </div>
+
+        <style>
+          {`
+            @keyframes tickerMove {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-100%); }
+            }
+          `}
+        </style>
+      </div>
+
       {/* 1. HERO SECTION */}
       <section className="relative w-full h-[400px] md:h-[450px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -142,12 +182,11 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. ALL-IN-ONE TRACKING HUB - अपडेटेड इमेज (Sonya, change here) */}
+      {/* 3. ALL-IN-ONE TRACKING HUB */}
       <section id="track" className="max-w-7xl mx-auto px-6 py-6">
         <div className="bg-white rounded-[3.5rem] p-8 md:p-14 shadow-2xl border border-slate-50 flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
           <div className="lg:w-1/3 w-full flex justify-center">
             <div className="relative w-full max-w-[320px]">
-              {/* आपण इथे इम्पोर्ट केलेली Image वापरत आहोत */}
               <img 
                 src={TrackingAppImage} 
                 alt="Live GPS Tracking" 

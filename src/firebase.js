@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth"; // <--- १. ऑथेंटिकेशनसाठी हे अ‍ॅड केलंय
 
 const firebaseConfig = {
   apiKey: "AIzaSyBbHtE4-Q14Bwq-dO7A7Eeky9E7OtiEpWA",
@@ -21,3 +22,6 @@ export const db = getFirestore(app);
 
 // २. Realtime DB: लाईव्ह ट्रॅकिंग (Live Map) साठी
 export const rtdb = getDatabase(app);
+
+// ३. Auth: लॉगिन आणि साइनअपसाठी (EXIM Dashboard साठी हे महत्त्वाचं आहे)
+export const auth = getAuth(app); // <--- २. हे आता एक्सपोर्ट झालंय!
