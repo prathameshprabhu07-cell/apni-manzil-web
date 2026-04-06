@@ -49,7 +49,6 @@ const Layout = ({ children }) => {
       {/* --- NAVBAR --- */}
       <nav className="bg-white border-b border-gray-200 py-5 px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
         <Link to="/" className="flex items-center gap-3">
-          {/* --- इकडे बदल केला आहे: "AM" च्या जागी नवीन लोगो लावला आहे --- */}
           <img 
             src="/favicon.png" 
             alt="Logo" 
@@ -105,7 +104,7 @@ const Layout = ({ children }) => {
         </div>
       </nav>
 
-      {/* ... (DASHBOARD POPUP आणि बाकी कोड जसाच्या तसा आहे) ... */}
+      {/* --- DASHBOARD POPUP --- */}
       {showDashboardModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl p-10 max-w-md w-full shadow-2xl relative border-t-[8px] border-black animate-in zoom-in duration-200">
@@ -119,7 +118,8 @@ const Layout = ({ children }) => {
             </div>
 
             <div className="space-y-4">
-              <Link to="/msme" onClick={() => setShowDashboardModal(false)} 
+              {/* --- बदल इथे केला आहे: MSME च्या ऐवजी आता आपल्या नवीन Customer Dashboard कडे नेईल --- */}
+              <Link to="/customer-dashboard" onClick={() => setShowDashboardModal(false)} 
                 className="flex items-center gap-5 p-6 rounded-xl border border-slate-200 hover:border-black hover:shadow-xl transition-all group bg-white">
                 <div className="bg-slate-100 p-4 rounded-lg group-hover:bg-black group-hover:text-white transition-colors">
                   <LayoutDashboard size={28} />
