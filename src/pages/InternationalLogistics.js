@@ -4,7 +4,24 @@ import {
   ShieldCheck, Zap, ChevronRight 
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const InternationalLogistics = () => {
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleGlobalBooking = (serviceTitle) => {
+    // कस्टमरचा डेटा (सध्या तुझा नंबर टेस्टिंगसाठी)
+    const customerPhone = "7378502356"; 
+    const customerName = "Global Client";
+    const orderId = "INT-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप मेसेज पाठवा
+    sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
+    
+    alert(`${serviceTitle} साठी तुमची चौकशी व्हॉट्सॲपवर पाठवण्यात आली आहे!`);
+  };
+
   const globalServices = [
     {
       id: 1,
@@ -46,7 +63,7 @@ const InternationalLogistics = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       
-      {/* 1. HERO SECTION (ग्लोबल लूक) */}
+      {/* 1. HERO SECTION */}
       <div className="bg-gradient-to-r from-[#001F3F] to-blue-800 text-white py-24 px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 z-10 space-y-6">
@@ -87,7 +104,12 @@ const InternationalLogistics = () => {
               </div>
               <h3 className="text-2xl font-black text-slate-800">{service.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
-              <button className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn">
+              
+              {/* ✅ Ship Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+              <button 
+                onClick={() => handleGlobalBooking(service.title)}
+                className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn"
+              >
                 Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
               </button>
             </div>
@@ -108,7 +130,12 @@ const InternationalLogistics = () => {
                 <ShieldCheck size={24} className="text-orange-400" /> <span className="font-bold">Secure Customs</span>
               </div>
             </div>
-            <button className="bg-white text-[#002D5E] px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-500 hover:text-white transition shadow-2xl">
+            
+            {/* ✅ Get Export Quote वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+            <button 
+              onClick={() => handleGlobalBooking("International Export Quote")}
+              className="bg-white text-[#002D5E] px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-500 hover:text-white transition shadow-2xl"
+            >
               Get Export Quote
             </button>
           </div>

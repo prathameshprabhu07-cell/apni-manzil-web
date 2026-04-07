@@ -16,6 +16,14 @@ const HelpCenter = () => {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(null);
 
+  // ✅ WhatsApp Open करण्यासाठी फंक्शन
+  const openWhatsApp = () => {
+    const phoneNumber = "7378502356"; 
+    const message = "नमस्कार Apni Manzil Support, मला मदतीची गरज आहे.";
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
   const faqs = [
     { 
       q: "My shipment is delayed. What should I do?", 
@@ -36,15 +44,33 @@ const HelpCenter = () => {
   ];
 
   const contactOptions = [
-    { icon: <Phone size={24} />, title: "Call Us", detail: "+91 98765 43210", color: "#008a5e" },
-    { icon: <Mail size={24} />, title: "Email Us", detail: "support@apnimanzil.com", color: "#e64a19" },
-    { icon: <MessageCircle size={24} />, title: "Live Chat", detail: "Available 24/7", color: "#1976d2" }
+    { 
+      icon: <Phone size={24} />, 
+      title: "Call Us", 
+      detail: "+91 7378502356", 
+      color: "#008a5e",
+      action: () => window.open('tel:+917378502356') 
+    },
+    { 
+      icon: <Mail size={24} />, 
+      title: "Email Us", 
+      detail: "help@apnimanzil.co.in", 
+      color: "#e64a19",
+      action: () => window.open('mailto:help@apnimanzil.co.in')
+    },
+    { 
+      icon: <MessageCircle size={24} />, 
+      title: "Live Chat (WhatsApp)", 
+      detail: "Available 24/7", 
+      color: "#25D366", // WhatsApp Green Color
+      action: openWhatsApp 
+    }
   ];
 
   return (
     <div style={{ backgroundColor: '#f4f7f9', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       
-      {/* Top Header Section - It acts as the page title area */}
+      {/* Top Header Section */}
       <div style={{ backgroundColor: '#004080', padding: '80px 20px', textAlign: 'center', color: 'white', position: 'relative' }}>
         <button 
           onClick={() => navigate('/')}
@@ -75,10 +101,24 @@ const HelpCenter = () => {
         {/* Contact Method Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
           {contactOptions.map((opt, i) => (
-            <div key={i} style={{ backgroundColor: 'white', padding: '30px', borderRadius: '15px', textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+            <div 
+              key={i} 
+              onClick={opt.action}
+              style={{ 
+                backgroundColor: 'white', 
+                padding: '30px', 
+                borderRadius: '15px', 
+                textAlign: 'center', 
+                boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                cursor: 'pointer',
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
               <div style={{ color: opt.color, marginBottom: '15px', display: 'flex', justifyContent: 'center' }}>{opt.icon}</div>
               <h4 style={{ margin: '0 0 5px 0', color: '#333' }}>{opt.title}</h4>
-              <p style={{ color: '#666', fontWeight: 'bold' }}>{opt.detail}</p>
+              <p style={{ color: '#666', fontWeight: 'bold', fontSize: '0.9rem' }}>{opt.detail}</p>
               <span style={{ fontSize: '0.8rem', color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                 <Clock size={12} /> Response time: ~15 mins
               </span>
@@ -111,7 +151,6 @@ const HelpCenter = () => {
 
       </div>
 
-      {/* ADDITIONAL FOOTER REMOVED - Managed by Layout.js */}
       <div style={{ paddingBottom: '60px' }}></div>
 
     </div>

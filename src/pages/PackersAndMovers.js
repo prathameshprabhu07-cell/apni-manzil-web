@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Home, Building2, Sofa, Truck, ShieldCheck, X } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const PackersAndMovers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -13,9 +16,18 @@ const PackersAndMovers = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      // १. बॅकेंडला डेटा पोस्ट करणे
       const res = await axios.post('http://localhost:5000/api/packers/post-lead', formData);
+      
       if (res.data.success) {
-        alert("तुमची रॅक्युयरमेंट सेव्ह झाली आहे! ✅");
+        // २. यशस्वी झाल्यावर व्हॉट्सॲप नोटिफिकेशन पाठवणे
+        const serviceMsg = `Shifting: ${formData.houseType} from ${formData.fromCity} to ${formData.toCity}`;
+        const orderId = "PM-" + Math.floor(Math.random() * 100000);
+        
+        // युजरच्या नंबरवर मेसेज जाईल
+        sendWhatsAppNotification(formData.customerPhone, formData.customerName, serviceMsg, orderId);
+
+        alert("तुमची रॅक्युयरमेंट सेव्ह झाली आहे आणि व्हॉट्सॲपवर माहिती पाठवली आहे! ✅");
         setIsModalOpen(false);
       }
     } catch (err) {
@@ -49,7 +61,11 @@ const PackersAndMovers = () => {
                 <input required type="text" placeholder="To City" className="p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-orange-500 font-bold text-sm" onChange={(e) => setFormData({...formData, toCity: e.target.value})} />
               </div>
               <select className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-500" onChange={(e) => setFormData({...formData, houseType: e.target.value})}>
-                <option>1BHK</option><option>2BHK</option><option>3BHK</option><option>Few Items</option><option>Office</option>
+                <option value="1BHK">1BHK</option>
+                <option value="2BHK">2BHK</option>
+                <option value="3BHK">3BHK</option>
+                <option value="Few Items">Few Items</option>
+                <option value="Office">Office</option>
               </select>
               <input required type="date" className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-500" onChange={(e) => setFormData({...formData, moveDate: e.target.value})} />
               <button disabled={loading} type="submit" className="w-full bg-[#ff5e00] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-orange-600 transition-all active:scale-95">

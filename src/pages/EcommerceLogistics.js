@@ -5,8 +5,24 @@ import {
   ChevronRight, CheckCircle, MapPin, ArrowRight
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const EcommerceLogistics = () => {
   const navigate = useNavigate();
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleEcommerceQuery = (serviceTitle) => {
+    // युजरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+    const customerPhone = "7378502356"; 
+    const customerName = "E-com Vendor";
+    const orderId = "EC-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
+    sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
+    
+    alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या व्हॉट्सॲपवर पाठवली आहे!`);
+  };
 
   const ecommerceServices = [
     {
@@ -59,7 +75,10 @@ const EcommerceLogistics = () => {
             <p className="text-xl opacity-90 font-medium max-w-lg mx-auto md:mx-0">
               Grow your online business with India's most reliable fulfillment network.
             </p>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-xl">
+            <button 
+              onClick={() => handleEcommerceQuery("Full E-commerce Setup")}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-xl"
+            >
               Start Shipping Now
             </button>
           </div>
@@ -92,7 +111,11 @@ const EcommerceLogistics = () => {
               <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8">
                 {service.desc}
               </p>
-              <button className="w-full bg-slate-50 group-hover:bg-orange-500 group-hover:text-white text-slate-700 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition flex items-center justify-center gap-2">
+              {/* ✅ Explore More वर क्लिक केल्यावर मेसेज जाईल */}
+              <button 
+                onClick={() => handleEcommerceQuery(service.title)}
+                className="w-full bg-slate-50 group-hover:bg-orange-500 group-hover:text-white text-slate-700 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition flex items-center justify-center gap-2"
+              >
                 Explore More <ChevronRight size={16} />
               </button>
             </div>
@@ -111,8 +134,11 @@ const EcommerceLogistics = () => {
                </div>
             </div>
             <div className="md:w-1/3 flex justify-center">
-               <button className="bg-white text-[#002D5E] px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:text-white transition shadow-xl">
-                 Get Started
+               <button 
+                onClick={() => handleEcommerceQuery("E-com Business Growth")}
+                className="bg-white text-[#002D5E] px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:text-white transition shadow-xl"
+               >
+                  Get Started
                </button>
             </div>
         </div>

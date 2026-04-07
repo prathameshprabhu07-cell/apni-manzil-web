@@ -4,7 +4,24 @@ import {
   ShieldCheck, MapPin
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const SpecialLogistics = () => {
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleSpecialBooking = (serviceTitle) => {
+    // कस्टमरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+    const customerPhone = "7378502356"; 
+    const customerName = "Special Logistics Client";
+    const orderId = "SPEC-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप मेसेज पाठवा
+    sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
+    
+    alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवण्यात आली आहे!`);
+  };
+
   const specialServices = [
     {
       id: 1,
@@ -77,7 +94,12 @@ const SpecialLogistics = () => {
               </div>
               <h3 className="font-black text-lg text-slate-800 mb-2">{s.title}</h3>
               <p className="text-slate-400 text-xs font-bold mb-6">{s.desc}</p>
-              <button className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100">
+              
+              {/* ✅ Explore बटनवर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+              <button 
+                onClick={() => handleSpecialBooking(s.title)}
+                className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100"
+              >
                 {s.tag}
               </button>
             </div>
@@ -97,7 +119,12 @@ const SpecialLogistics = () => {
               <p className="text-blue-100/70 font-bold uppercase tracking-widest text-xs">Request a Customized Logistics Solution Today!</p>
             </div>
           </div>
-          <button className="bg-orange-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-xl mt-8 md:mt-0 relative z-10">
+          
+          {/* ✅ Get a Quote बटनवर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+          <button 
+            onClick={() => handleSpecialBooking("Special Handling Quote Request")}
+            className="bg-orange-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-xl mt-8 md:mt-0 relative z-10"
+          >
             Get a Quote!
           </button>
         </div>

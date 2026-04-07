@@ -6,8 +6,24 @@ import {
   Package, Boxes, RefreshCcw, ChevronRight
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleBooking = (serviceName) => {
+    // समजा आपण डमी डेटा वापरतोय, रिअल टाइममध्ये हा डेटा युजरच्या प्रोफाईलमधून येईल
+    const customerPhone = "7378502356"; // तुझा किंवा कस्टमरचा नंबर
+    const customerName = "Client";
+    const orderId = "CR-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप मेसेज पाठवा
+    sendWhatsAppNotification(customerPhone, customerName, serviceName, orderId);
+    
+    alert(`${serviceName} साठी तुमची बुकिंग रिक्वेस्ट व्हॉट्सॲपवर पाठवली आहे!`);
+  };
 
   const subServices = [
     { id: 1, name: "Domestic Courier", desc: "Standard shipping across India", icon: <Truck size={28} />, color: "text-blue-600", bg: "bg-blue-50" },
@@ -52,6 +68,7 @@ const CourierServiceDetail = () => {
             {subServices.map((s) => (
               <div 
                 key={s.id} 
+                onClick={() => handleBooking(s.name)} // ✅ क्लिक केल्यावर मेसेज जाईल
                 className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:border-orange-300 transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-4">
@@ -90,7 +107,10 @@ const CourierServiceDetail = () => {
                 </div>
               </div>
 
-              <button className="w-full mt-10 bg-[#002D5E] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-800 transition shadow-xl">
+              <button 
+                onClick={() => handleBooking("AI Smart Pick Comparison")}
+                className="w-full mt-10 bg-[#002D5E] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-800 transition shadow-xl"
+              >
                 Compare All Rates
               </button>
             </div>
@@ -102,7 +122,6 @@ const CourierServiceDetail = () => {
       <div 
         className="w-full h-[400px] flex items-center justify-center text-center px-6 mt-12 mb-12"
         style={{
-          // Public फोल्डरमध्ये इमेज असल्याने डायरेक्ट पाथ वापरला आहे
           backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',

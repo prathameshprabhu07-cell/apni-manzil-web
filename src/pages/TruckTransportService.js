@@ -5,8 +5,24 @@ import {
   ChevronRight
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const TruckTransportService = () => {
   const navigate = useNavigate();
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleTruckBooking = (truckName) => {
+    // कस्टमरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+    const customerPhone = "7378502356"; 
+    const customerName = "Truck Service Client";
+    const orderId = "TRK-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप मेसेज पाठवा
+    sendWhatsAppNotification(customerPhone, customerName, truckName, orderId);
+    
+    alert(`${truckName} साठी तुमची बुकिंग चौकशी यशस्वीरित्या पाठवण्यात आली आहे!`);
+  };
 
   const truckTypes = [
     { id: 1, name: "Mini Truck", desc: "Small city deliveries & narrow roads", icon: <Truck size={30} /> },
@@ -49,7 +65,7 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* २. ६ कार्ड्स (विना किंमत) */}
+      {/* २. ६ कार्ड्स */}
       <div className="max-w-7xl mx-auto px-6 -mt-20 mb-20 relative z-30">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {truckTypes.map((truck) => (
@@ -60,7 +76,11 @@ const TruckTransportService = () => {
               <h3 className="text-xl font-black text-[#002D5E] mb-2">{truck.name}</h3>
               <p className="text-sm text-slate-500 font-bold mb-6">{truck.desc}</p>
               
-              <button className="text-xs font-black uppercase tracking-widest text-[#002D5E] flex items-center gap-2 group-hover:text-orange-500 transition">
+              {/* ✅ Book Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+              <button 
+                onClick={() => handleTruckBooking(truck.name)}
+                className="text-xs font-black uppercase tracking-widest text-[#002D5E] flex items-center gap-2 group-hover:text-orange-500 transition"
+              >
                 Book Now <ChevronRight size={14}/>
               </button>
             </div>
@@ -68,7 +88,7 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* ३. फायनल ब्रँडेड ट्रक इमेज सेक्शन (जो आपण सर्व पेजेसवर फायनल केला आहे) */}
+      {/* ३. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
         style={{

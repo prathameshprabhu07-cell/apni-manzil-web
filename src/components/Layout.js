@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Menu, X, Phone, Globe, User, 
   Facebook, Instagram, Linkedin, Mail, 
@@ -11,6 +11,7 @@ const Layout = ({ children }) => {
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDashboardModal, setShowDashboardModal] = useState(false);
+  const navigate = useNavigate();
 
   const services = [
     { name: 'Truck Transport', path: '/truck-transport' },
@@ -36,12 +37,15 @@ const Layout = ({ children }) => {
         </div>
         
         <div className="flex gap-8 items-center">
-          <Link to="/login" className="flex items-center gap-2 hover:text-[#FF5E00] transition uppercase font-black">
-            <LogIn size={14} /> Login
-          </Link>
-          <Link to="/register" className="flex items-center gap-2 hover:text-[#FF5E00] transition uppercase border-l border-slate-700 pl-8 font-black">
-            <UserPlus size={14} /> Sign Up
-          </Link>
+          {/* ✅ आता हे बटण सुद्धा तोच ३-वे पॉपअप उघडेल */}
+          <button onClick={() => setShowDashboardModal(true)} className="flex items-center gap-2 hover:text-[#FF5E00] transition-all uppercase font-black group">
+            <LogIn size={14} className="group-hover:-translate-x-1 transition-transform" /> Login
+          </button>
+          
+          <button onClick={() => setShowDashboardModal(true)} className="flex items-center gap-2 text-[#FF5E00] hover:text-white transition-all uppercase border-l border-slate-700 pl-8 font-black group">
+            <UserPlus size={14} className="group-hover:scale-110 transition-transform" /> Sign Up
+          </button>
+          
           <Link to="/track" className="hover:text-[#FF5E00] transition uppercase border-l border-slate-700 pl-8 font-black">TRACK SHIPMENT</Link>
         </div>
       </div>
@@ -60,7 +64,6 @@ const Layout = ({ children }) => {
           </div>
         </Link>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-10 text-[13px] font-black tracking-[0.1em] text-[#001D3D]">
           <Link to="/" className="hover:text-[#FF5E00] transition-all">HOME</Link>
           
@@ -93,53 +96,87 @@ const Layout = ({ children }) => {
           
           <button 
             onClick={() => setShowDashboardModal(true)}
-            className="border-2 border-[#001D3D] text-[#001D3D] px-8 py-2.5 hover:bg-[#001D3D] hover:text-white transition-all duration-300 flex items-center gap-2 uppercase font-black text-[13px] rounded-sm tracking-wider"
+            className="border-2 border-[#001D3D] text-[#001D3D] px-8 py-2.5 hover:bg-[#001D3D] hover:text-white transition-all duration-300 flex items-center gap-2 uppercase font-black text-[13px] rounded-sm tracking-wider shadow-sm hover:shadow-md"
           >
             <User size={16}/> DASHBOARD
           </button>
         </div>
 
-        <div className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <div className="md:hidden cursor-pointer" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </div>
       </nav>
 
-      {/* --- DASHBOARD POPUP --- */}
+      {/* --- MOBILE MENU --- */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 top-[100px] bg-white z-[100] p-6">
+          <div className="flex flex-col gap-6 text-lg font-black uppercase italic">
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+            <Link to="/about-us" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+            <hr />
+            <div className="flex flex-col gap-4">
+               <button onClick={() => { setShowDashboardModal(true); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 text-[#001D3D]">
+                 <LogIn size={20} /> Login / Sign Up
+               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- ✅ 3-WAY REGISTER/LOGIN MODAL (New Changes Here) --- */}
       {showDashboardModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-10 max-w-md w-full shadow-2xl relative border-t-[8px] border-black animate-in zoom-in duration-200">
-            <button onClick={() => setShowDashboardModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-black transition-colors">
+          <div className="bg-white rounded-2xl p-8 max-w-4xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] animate-in zoom-in duration-200">
+            <button onClick={() => setShowDashboardModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-black">
               <X size={28} />
             </button>
 
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-black text-black uppercase italic tracking-tighter">Choose Portal</h2>
-              <p className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Access your secure dashboard</p>
+              <h2 className="text-3xl font-black text-[#001D3D] uppercase italic tracking-tighter">Choose Portal</h2>
+              <p className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Access your secure dashboard or create an account</p>
             </div>
 
-            <div className="space-y-4">
-              {/* --- बदल इथे केला आहे: MSME च्या ऐवजी आता आपल्या नवीन Customer Dashboard कडे नेईल --- */}
-              <Link to="/customer-dashboard" onClick={() => setShowDashboardModal(false)} 
-                className="flex items-center gap-5 p-6 rounded-xl border border-slate-200 hover:border-black hover:shadow-xl transition-all group bg-white">
-                <div className="bg-slate-100 p-4 rounded-lg group-hover:bg-black group-hover:text-white transition-colors">
-                  <LayoutDashboard size={28} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              {/* --- 1. MSME / INDIVIDUAL --- */}
+              <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
+                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm">
+                  <User size={32} />
                 </div>
-                <div className="text-left">
-                  <h3 className="font-black text-black uppercase text-sm tracking-tight">Customer / MSME</h3>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Bookings & Analytics</p>
+                <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">MSME / Individual</h3>
+                <p className="text-[10px] text-slate-500 font-bold uppercase mb-6 leading-tight">For Regular Bookings & Small Businesses</p>
+                <div className="mt-auto space-y-2">
+                  <Link to="/customer-dashboard" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black transition-all">Login</Link>
+                  <Link to="/msme-registration" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg hover:bg-[#001D3D] hover:text-white transition-all">Register</Link>
                 </div>
-              </Link>
+              </div>
 
-              <Link to="/vendor-dashboard" onClick={() => setShowDashboardModal(false)} 
-                className="flex items-center gap-5 p-6 rounded-xl border border-slate-200 hover:border-black hover:shadow-xl transition-all group bg-white">
-                <div className="bg-slate-100 p-4 rounded-lg group-hover:bg-black group-hover:text-white transition-colors">
-                  <Truck size={28} />
+              {/* --- 2. VENDOR / PARTNER --- */}
+              <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
+                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm">
+                  <Truck size={32} />
                 </div>
-                <div className="text-left">
-                  <h3 className="font-black text-black uppercase text-sm tracking-tight">Vendor / Partner</h3>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Fleet & Order Management</p>
+                <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">Vendor / Partner</h3>
+                <p className="text-[10px] text-slate-500 font-bold uppercase mb-6 leading-tight">For Fleet Owners & Transport Agencies</p>
+                <div className="mt-auto space-y-2">
+                  <Link to="/vendor-dashboard" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black transition-all">Login</Link>
+                  <Link to="/partner-registration" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg hover:bg-[#001D3D] hover:text-white transition-all">Register</Link>
                 </div>
-              </Link>
+              </div>
+
+              {/* --- 3. EXIM CLIENT --- */}
+              <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
+                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm">
+                  <Globe size={32} />
+                </div>
+                <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">EXIM Client</h3>
+                <p className="text-[10px] text-slate-500 font-bold uppercase mb-6 leading-tight">For Global Trade & Import Export</p>
+                <div className="mt-auto space-y-2">
+                  <Link to="/exim-login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black transition-all">Login</Link>
+                  <Link to="/importexport" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg hover:bg-[#001D3D] hover:text-white transition-all">Register</Link>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

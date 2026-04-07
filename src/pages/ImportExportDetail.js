@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Globe, ShieldCheck, Ship, Plane, FileText } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const ImportExportDetail = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -12,7 +15,15 @@ const ImportExportDetail = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Thank you! Our Export-Import experts will contact you soon.");
+
+    // ✅ व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
+    const serviceName = `${formData.type} to/from ${formData.country}`;
+    const orderId = "EXIM-" + Math.floor(Math.random() * 100000);
+    
+    // टेस्टसाठी तुझा नंबर किंवा युजरचा नंबर (सध्या आपण ७३७८५०२३५६ वापरतोय)
+    sendWhatsAppNotification("7378502356", formData.name, serviceName, orderId);
+
+    alert("Thank you! Our Export-Import experts will contact you soon on WhatsApp.");
     console.log(formData);
   };
 

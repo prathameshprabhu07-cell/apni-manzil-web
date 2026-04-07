@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// १. इमेजेस इम्पोर्ट करा
+// १. इमेजेस इम्पोर्ट करा (खात्री करा की या फाईल्स assets फोल्डरमध्ये आहेत)
 import HeroLogisticsImage from '../assets/global-logistics.png'; 
 import TrackingAppImage from '../assets/tracking-app.png'; 
 
-// All icons
+// All icons from lucide-react
 import { 
   Package, Truck, Bike, Home as HomeIcon, Warehouse, Globe, Zap, Bot, Star, 
   Search, HelpCircle, Box, Boxes, ChevronRight, CheckCircle, ArrowRight, MapPin 
@@ -40,7 +40,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       
-      {/* ✅ NEW: MOVING TICKER LINE (धावती पट्टी) */}
+      {/* ✅ MOVING TICKER LINE */}
       <div style={{
         background: '#002D5E',
         color: 'white',
@@ -99,15 +99,16 @@ const Home = () => {
           
           <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-2 border border-white/20">
               <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-                <Search size={20} className="text-gray-400" />
+                <MapPin size={20} className="text-orange-500" />
                 <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
               </div>
               <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
                 <Search size={20} className="text-gray-400" />
                 <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
               </div>
-              <button className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-500/40">
-                Compare Services
+              {/* ✅ POWERFUL BUTTON 1 */}
+              <button className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-[0_10px_20px_rgba(249,115,22,0.4)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.6)] hover:-translate-y-1 active:scale-95 duration-300 flex items-center justify-center gap-2 group">
+                Compare Services <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform"/>
               </button>
           </div>
         </div>
@@ -143,7 +144,7 @@ const Home = () => {
                   </div>
                   <h4 className="font-extrabold text-sm text-slate-800 text-center px-4 leading-snug">{s.name}</h4>
                   <div className="absolute bottom-4 flex items-center gap-1 text-[10px] font-black text-orange-500 uppercase opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 text-center">
-                    { (s.isCourier || s.isHyperlocal || s.isTruck || s.isPackers || s.isWarehouse || s.isInternational || s.isEcommerce || s.isSpecial || s.isAI) ? "View Categories" : "Book Now"} <ChevronRight size={12}/>
+                    View Categories <ChevronRight size={12}/>
                   </div>
                 </div>
               ))}
@@ -152,11 +153,11 @@ const Home = () => {
 
           <div className="lg:w-1/3">
             <div className="bg-[#002D5E] rounded-[3rem] p-10 text-white shadow-2xl sticky top-28 overflow-hidden border-t-8 border-orange-500 text-center">
-                <div className="flex items-center gap-4 mb-10 justify-center">
+                <div className="flex items-center gap-4 mb-10 justify-center text-left">
                   <div className="bg-white/10 p-3 rounded-2xl">
                     <Bot className="text-orange-400" size={32} />
                   </div>
-                  <h3 className="text-2xl font-black leading-none text-left">AI Smart<br/><span className="text-orange-400">Logistics Pick</span></h3>
+                  <h3 className="text-2xl font-black leading-none">AI Smart<br/><span className="text-orange-400">Logistics Pick</span></h3>
                 </div>
                 <div className="space-y-5 mb-10">
                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
@@ -174,7 +175,8 @@ const Home = () => {
                      <span className="font-black text-orange-400 text-2xl tracking-tighter">24H</span>
                    </div>
                 </div>
-                <button className="w-full bg-orange-500 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-600 transition shadow-xl shadow-orange-950/20">
+                {/* ✅ POWERFUL BUTTON 2 */}
+                <button className="w-full bg-orange-500 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-white hover:text-[#002D5E] transition-all shadow-xl shadow-black/20 active:scale-95 duration-300">
                   Compare All Rates
                 </button>
             </div>
@@ -221,7 +223,8 @@ const Home = () => {
                   className="bg-transparent w-full outline-none font-black text-slate-700 placeholder:text-slate-300 text-lg" 
                 />
               </div>
-              <button className="bg-[#002D5E] text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-500 transition-all shadow-xl flex items-center justify-center gap-3 group">
+              {/* ✅ POWERFUL BUTTON 3 */}
+              <button className="bg-[#002D5E] text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:shadow-[0_10px_20px_rgba(249,115,22,0.3)] transition-all shadow-xl flex items-center justify-center gap-3 group active:scale-95 duration-300">
                 Track Shipment <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
               </button>
             </div>
@@ -238,9 +241,10 @@ const Home = () => {
                 Become a <span className="text-orange-400">Logistics Partner</span>
               </h2>
               <p className="text-blue-100 text-lg font-medium italic opacity-90">"Road, Rail, Air or Sea - We deliver everywhere. Join our network today!"</p>
+              {/* ✅ POWERFUL BUTTON 4 */}
               <button 
                 onClick={() => navigate('/partner-registration')}
-                className="bg-orange-500 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-orange-600 transition shadow-2xl flex items-center gap-3 mx-auto md:mx-0 group"
+                className="bg-orange-500 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-orange-600 transition shadow-[0_15px_30px_rgba(0,0,0,0.3)] flex items-center gap-3 mx-auto md:mx-0 group active:scale-95 duration-300"
               >
                 Join as Partner <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform"/>
               </button>
@@ -278,7 +282,7 @@ const Home = () => {
       {/* 6. PREMIUM BENEFITS SECTION */}
       <section id="benefits" className="max-w-7xl mx-auto px-6 py-24 bg-white mt-16 rounded-[4rem] shadow-sm border border-slate-50">
         <div className="flex flex-col lg:flex-row items-end justify-between mb-20 gap-8">
-          <div className="max-w-3xl">
+          <div className="max-w-3xl text-left">
             <h2 className="text-[11px] font-black text-orange-500 uppercase tracking-[0.5em] mb-4">The Gold Standard</h2>
             <h3 className="text-5xl md:text-6xl font-black text-[#002D5E] tracking-tight leading-[0.95]">Why Businesses <br /><span className="text-slate-300">Trust Apni Manzil.</span></h3>
           </div>
@@ -304,7 +308,7 @@ const Home = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#002D5E] via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity"></div>
                 <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl text-[#002D5E] shadow-xl group-hover:bg-orange-500 group-hover:text-white transition-colors duration-500">{item.icon}</div>
               </div>
-              <div className="px-2">
+              <div className="px-2 text-left">
                 <h4 className="text-lg font-black text-[#002D5E] uppercase tracking-tighter mb-2 group-hover:text-orange-500 transition-colors">{item.title}</h4>
                 <p className="text-slate-400 font-bold text-xs leading-relaxed uppercase tracking-wide">{item.desc}</p>
               </div>
@@ -323,7 +327,7 @@ const Home = () => {
               className="w-full h-[400px] md:h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#002D5E]/60 to-transparent flex items-center px-12">
-              <div className="max-w-xl text-white">
+              <div className="max-w-xl text-white text-left">
                 <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter leading-none mb-4">
                   APNI <span className="text-orange-500">MANZIL</span>
                 </h2>

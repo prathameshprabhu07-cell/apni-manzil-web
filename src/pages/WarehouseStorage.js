@@ -4,7 +4,24 @@ import {
   ArrowRight, Warehouse, CheckCircle2
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const WarehouseStorage = () => {
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleWarehouseBooking = (serviceTitle) => {
+    // कस्टमरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+    const customerPhone = "7378502356"; 
+    const customerName = "Warehouse Client";
+    const orderId = "WH-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप मेसेज पाठवा
+    sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
+    
+    alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवण्यात आली आहे!`);
+  };
+
   const warehouseServices = [
     {
       id: 1,
@@ -93,7 +110,12 @@ const WarehouseStorage = () => {
               </div>
               <h3 className="text-xl font-black text-slate-800">{service.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
-              <button className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-100">
+              
+              {/* ✅ Get Quote वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+              <button 
+                onClick={() => handleWarehouseBooking(service.title)}
+                className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-100"
+              >
                 Get Quote
               </button>
             </div>
@@ -117,7 +139,12 @@ const WarehouseStorage = () => {
               <div className="flex items-center gap-3 font-bold text-lg"><CheckCircle2 className="text-orange-400" /> Affordable Rates</div>
               <div className="flex items-center gap-3 font-bold text-lg"><CheckCircle2 className="text-orange-400" /> 24/7 Monitoring</div>
             </div>
-            <button className="bg-orange-500 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center gap-4 group">
+            
+            {/* ✅ Get Quote Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+            <button 
+              onClick={() => handleWarehouseBooking("General Warehouse Quote Request")}
+              className="bg-orange-500 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center gap-4 group"
+            >
               Get Quote Now <ArrowRight className="group-hover:translate-x-2 transition-transform" />
             </button>
             <p className="text-blue-200/60 font-bold italic tracking-widest text-sm text-center md:text-left">Hassle-Free Confidence & Peace of Mind!</p>

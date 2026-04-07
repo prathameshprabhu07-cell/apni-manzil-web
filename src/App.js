@@ -122,9 +122,11 @@ function App() {
           <Route path="/help" element={<HelpCenter />} /> 
           <Route path="/track" element={<Tracking />} /> 
           
-          {/* ✅ मी फक्त इथे बदल केलाय: CourierDetail ऐवजी CourierService लावले आहे */}
-          <Route path="/courier-service" element={<CourierService />} />
+          {/* ✅ LOGIN & REGISTER ROUTES (हे ॲड केले आहेत) */}
+          <Route path="/login" element={<EXIMLogin />} />
+          <Route path="/register" element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} />
           
+          <Route path="/courier-service" element={<CourierService />} />
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
           <Route path="/importexport" element={<ImportExportDetail />} />
@@ -135,7 +137,6 @@ function App() {
           <Route path="/special-logistics" element={<SpecialLogistics />} />
           <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
           
-          {/* बाकीचे रूट्स तसेच आहेत */}
           <Route path="/airfreight" element={<AirFreight />} />
           <Route path="/seafreight" element={<SeaFreight />} />
           <Route path="/customs" element={<Customs />} />

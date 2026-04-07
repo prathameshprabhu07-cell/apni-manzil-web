@@ -5,8 +5,24 @@ import {
   Cpu, ShieldCheck
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const AISmartLogistics = () => {
   const navigate = useNavigate();
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleAIQuery = (serviceTitle) => {
+    // समजा आपण डमी डेटा वापरतोय, रिअल टाइममध्ये हा डेटा फॉर्ममधून येईल
+    const customerPhone = "7378502356"; // टेस्टसाठी तुझा नंबर किंवा युजरचा नंबर
+    const customerName = "Valued Client";
+    const orderId = "AI-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप नोटिफिकेशन पाठवा
+    sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
+    
+    alert(`${serviceTitle} साठी तुमची चौकशी (Query) व्हॉट्सॲपवर पाठवली आहे!`);
+  };
 
   const aiServices = [
     {
@@ -52,13 +68,11 @@ const AISmartLogistics = () => {
             </div>
             <div className="md:w-1/2 flex justify-end">
                <div className="relative">
-                  {/* Digital Robot Icon Placeholder */}
                   <div className="absolute -inset-4 bg-blue-400/20 blur-3xl rounded-full animate-pulse"></div>
                   <Bot size={240} className="text-blue-100 opacity-20 relative z-10" />
                </div>
             </div>
          </div>
-         {/* Decorative Tech Lines */}
          <div className="absolute bottom-0 left-0 w-full h-16 bg-white rounded-t-[4rem]"></div>
       </div>
 
@@ -78,7 +92,12 @@ const AISmartLogistics = () => {
               </div>
               <h3 className="font-black text-xl text-slate-800 mb-3">{s.title}</h3>
               <p className="text-slate-500 text-sm font-medium mb-8 leading-relaxed">{s.desc}</p>
-              <button className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] hover:bg-[#002D5E] transition-colors shadow-lg shadow-orange-100 group-hover:shadow-blue-100">
+              
+              {/* ✅ बटणवर क्लिक केल्यावर WhatsApp मेसेज जाईल */}
+              <button 
+                onClick={() => handleAIQuery(s.title)}
+                className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] hover:bg-[#002D5E] transition-colors shadow-lg shadow-orange-100 group-hover:shadow-blue-100"
+              >
                 {s.tag}
               </button>
             </div>
@@ -101,13 +120,16 @@ const AISmartLogistics = () => {
               <p className="text-blue-200/70 font-bold uppercase tracking-widest text-xs leading-relaxed">Optimize Your Supply Chain with Cutting-Edge AI Solutions.</p>
             </div>
           </div>
-          <button className="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-orange-600 transition shadow-xl mt-10 md:mt-0 relative z-10">
+          <button 
+            onClick={() => handleAIQuery("AI Tech Consultation")}
+            className="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-orange-600 transition shadow-xl mt-10 md:mt-0 relative z-10"
+          >
             Learn More
           </button>
         </div>
       </div>
 
-      {/* ५. ब्रँडेड ट्रक इमेज सेक्शन (जो आपण फायनल केला आहे) */}
+      {/* ५. ब्रँडेड ट्रक इमेज सेक्शन */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center mt-20 pt-[60px] relative overflow-hidden"
         style={{

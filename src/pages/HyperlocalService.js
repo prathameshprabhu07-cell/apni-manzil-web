@@ -5,8 +5,24 @@ import {
   CheckCircle, MapPin, BadgePercent, Smartphone
 } from 'lucide-react';
 
+// ✅ WhatsApp Utility Import केली आहे
+import { sendWhatsAppNotification } from '../utils/WhatsApp';
+
 const HyperlocalService = () => {
   const navigate = useNavigate();
+
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  const handleLocalBooking = (serviceName) => {
+    // युजरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+    const customerPhone = "7378502356"; 
+    const customerName = "Local Customer";
+    const orderId = "HL-" + Math.floor(Math.random() * 100000);
+
+    // व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
+    sendWhatsAppNotification(customerPhone, customerName, serviceName, orderId);
+    
+    alert(`${serviceName} साठी तुमची स्थानिक बुकिंग विनंती यशस्वीरित्या पाठवली आहे!`);
+  };
 
   const services = [
     { id: 1, name: "Food Delivery", desc: "Fast & Reliable", icon: <ShoppingCart className="text-orange-500" size={32} />, img: "🍔" },
@@ -52,7 +68,12 @@ const HyperlocalService = () => {
               </div>
               <h3 className="font-black text-[#002D5E] mb-1">{s.name}</h3>
               <p className="text-xs text-slate-400 font-bold mb-6">{s.desc}</p>
-              <button className="w-full bg-orange-500 text-white py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-200 hover:bg-orange-600 transition">
+              
+              {/* ✅ Explore बटनवर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+              <button 
+                onClick={() => handleLocalBooking(s.name)}
+                className="w-full bg-orange-500 text-white py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-200 hover:bg-orange-600 transition"
+              >
                 Explore
               </button>
             </div>
@@ -79,7 +100,12 @@ const HyperlocalService = () => {
                  <p className="text-blue-100 font-medium mt-1 italic">Delivering <span className="text-orange-400">Anything, Anytime, Anywhere!</span></p>
               </div>
            </div>
-           <button className="mt-6 md:mt-0 bg-orange-500 text-white px-12 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-orange-600 transition transform hover:scale-105 z-10">
+           
+           {/* ✅ Book Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
+           <button 
+            onClick={() => handleLocalBooking("Urgent Hyperlocal Delivery")}
+            className="mt-6 md:mt-0 bg-orange-500 text-white px-12 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-orange-600 transition transform hover:scale-105 z-10"
+           >
              Book Now
            </button>
            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mt-16 -mr-16"></div>
