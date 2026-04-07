@@ -47,12 +47,6 @@ import EXIMDashboard from './components/EXIMDashboard';
 // ==========================================
 // 3. SERVICE PLACEHOLDER COMPONENTS
 // ==========================================
-const Transport = () => (
-  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f8fafc' }}>
-    <h1 style={{ color: '#002D5E', fontSize: '3rem', fontWeight: '900', marginBottom: '20px' }}>Transport & Trucking Solutions</h1>
-    <p style={{ color: '#64748b', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>Our heavy-duty fleet management system is being upgraded.</p>
-  </div>
-);
 const AirFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0f9ff' }}><h1 style={{ color: '#0369a1', fontSize: '3rem', fontWeight: '900' }}>International Air Freight</h1></div> );
 const SeaFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0fdf4' }}><h1 style={{ color: '#15803d', fontSize: '3rem', fontWeight: '900' }}>Global Sea Freight</h1></div> );
 const Customs = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}><h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900' }}>Customs & Compliance</h1></div> );
@@ -72,12 +66,10 @@ function App() {
   const [eximUser, setEximUser] = useState(null);
 
   useEffect(() => {
-    // १. EXIM क्लायंट लॉगिन चेक (Firebase Auth)
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setEximUser(user);
     });
 
-    // २. MSME प्रोफाईल चेक
     const q = query(collection(db, "msme_profile"), limit(1));
     const unsubscribeMSME = onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
@@ -95,7 +87,6 @@ function App() {
       setLoading(false);
     });
 
-    // ३. अ‍ॅडमिन लॉगिन चेक
     if (localStorage.getItem('isSuperAdmin') === 'true') setIsAdminAuthenticated(true);
 
     return () => {
@@ -104,7 +95,6 @@ function App() {
     };
   }, []);
 
-  // --- अ‍ॅडमिन लॉगिन ---
   const handleAdminLogin = () => {
     const password = prompt("अ‍ॅडमिन गुप्त पासवर्ड टाका:");
     if (password === "AM@9922") { 
@@ -131,8 +121,10 @@ function App() {
           <Route path="/about-us" element={<About />} />
           <Route path="/help" element={<HelpCenter />} /> 
           <Route path="/track" element={<Tracking />} /> 
-          <Route path="/courier-info" element={<CourierDetail />} />
-          <Route path="/courier" element={<CourierService />} />
+          
+          {/* ✅ FIXED COURIER ROUTE (Home.js ला मॅच होण्यासाठी) */}
+          <Route path="/courier-service" element={<CourierDetail />} />
+          
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
           <Route path="/importexport" element={<ImportExportDetail />} />
@@ -142,6 +134,8 @@ function App() {
           <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
           <Route path="/special-logistics" element={<SpecialLogistics />} />
           <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
+          
+          {/* बाकीचे रूट्स */}
           <Route path="/airfreight" element={<AirFreight />} />
           <Route path="/seafreight" element={<SeaFreight />} />
           <Route path="/customs" element={<Customs />} />
@@ -149,17 +143,13 @@ function App() {
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-
-          {/* ✅ EXIM क्लायंट लॉगिन मार्ग */}
           <Route path="/exim-login" element={<EXIMLogin />} />
           
-          {/* ✅ EXIM क्लायंट डॅशबोर्ड (फक्त लॉगिन असेल तरच दिसेल) */}
           <Route 
             path="/exim-dashboard" 
             element={eximUser ? <EXIMDashboard /> : <Navigate to="/exim-login" />} 
           />
 
-          {/* ✅ अ‍ॅडमिन गुप्त रस्ता */}
           <Route 
             path="/super-secret-admin-99" 
             element={isAdminAuthenticated ? <AdminDashboard /> : <div style={{textAlign:'center', padding:'100px'}}><button onClick={handleAdminLogin}>Unlock Admin Panel</button></div>} 
@@ -173,6 +163,8 @@ function App() {
             path="/msme-registration" 
             element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} 
           />
+          
+          {/* ✅ Default fallback to Home */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
