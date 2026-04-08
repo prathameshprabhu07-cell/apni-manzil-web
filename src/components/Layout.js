@@ -4,7 +4,8 @@ import { auth } from '../firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { 
   Menu, X, Phone, Globe, User, 
-  LogIn, UserPlus, LogOut, ChevronDown, Truck, Building2
+  LogIn, UserPlus, LogOut, ChevronDown, Truck, Building2,
+  Facebook, Instagram, Linkedin, Mail, MapPin 
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -106,53 +107,40 @@ const Layout = ({ children }) => {
         </div>
       </nav>
 
-      {/* --- 3-WAY MODAL (REPAIRED) --- */}
+      {/* --- DASHBOARD MODAL --- */}
       {showDashboardModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-8 max-w-4xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] animate-in zoom-in duration-200">
             <button onClick={() => setShowDashboardModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-black cursor-pointer">
               <X size={28} />
             </button>
-
             <div className="text-center mb-10">
               <h2 className="text-3xl font-black text-[#001D3D] uppercase italic tracking-tighter">Choose Portal</h2>
               <p className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Access your secure dashboard</p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* MSME / INDIVIDUAL BOX */}
               <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
-                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm">
-                  <User size={32} />
-                </div>
+                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm"><User size={32} /></div>
                 <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">MSME / Individual</h3>
                 <div className="mt-auto space-y-2">
-                  <Link to="/login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black transition-all">Login</Link>
-                  <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg hover:bg-[#001D3D] hover:text-white transition-all">Register</Link>
+                  <Link to="/login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black">Login</Link>
+                  <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg">Register</Link>
                 </div>
               </div>
-
-              {/* VENDOR BOX */}
               <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
-                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm">
-                  <Truck size={32} />
-                </div>
+                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm"><Truck size={32} /></div>
                 <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">Vendor / Partner</h3>
                 <div className="mt-auto space-y-2">
-                  <Link to="/login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black transition-all">Login</Link>
-                  <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg hover:bg-[#001D3D] hover:text-white transition-all">Register</Link>
+                  <Link to="/login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black">Login</Link>
+                  <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg">Register</Link>
                 </div>
               </div>
-
-              {/* EXIM BOX */}
               <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
-                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm">
-                  <Globe size={32} />
-                </div>
+                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm"><Globe size={32} /></div>
                 <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">EXIM Client</h3>
                 <div className="mt-auto space-y-2">
-                  <Link to="/login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black transition-all">Login</Link>
-                  <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg hover:bg-[#001D3D] hover:text-white transition-all">Register</Link>
+                  <Link to="/login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black">Login</Link>
+                  <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg">Register</Link>
                 </div>
               </div>
             </div>
@@ -164,12 +152,74 @@ const Layout = ({ children }) => {
         {children}
       </main>
 
+      {/* --- PROFESSIONAL FOOTER --- */}
       <footer className="bg-[#001D3D] text-white pt-20 pb-10 px-12 border-t-8 border-[#FF5E00] relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+          
+          {/* Brand Info */}
           <div className="col-span-1">
-            <h4 className="text-xl font-black mb-6 italic uppercase tracking-tighter">Apni Manzil</h4>
-            <p className="text-slate-400 text-xs font-bold leading-loose uppercase tracking-widest italic">Simplifying Logistics for every destination.</p>
+            <h4 className="text-2xl font-black mb-6 italic uppercase tracking-tighter cursor-pointer"><Link to="/">Apni Manzil</Link></h4>
+            <p className="text-slate-400 text-xs font-bold leading-loose uppercase tracking-widest mb-6">
+              Simplifying Logistics for every destination across the globe. India's growing aggregator platform.
+            </p>
+            <div className="flex gap-4">
+              <a href="https://www.facebook.com/share/1AjZxsuL4h/" target="_blank" rel="noopener noreferrer">
+                <Facebook size={18} className="text-slate-400 hover:text-[#FF5E00] cursor-pointer transition-all" />
+              </a>
+              <a href="https://www.instagram.com/prathameshprabhu07?igsh=MXA2Ym92ZnE3N2lkcA==" target="_blank" rel="noopener noreferrer">
+                <Instagram size={18} className="text-slate-400 hover:text-[#FF5E00] cursor-pointer transition-all" />
+              </a>
+              <Linkedin size={18} className="text-slate-400 hover:text-[#FF5E00] cursor-pointer transition-all" />
+            </div>
           </div>
+
+          {/* Quick Links - UPDATED AS REQUESTED */}
+          <div>
+            <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Support & Info</h5>
+            <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-slate-300">
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/about">About Us</Link></li>
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/help-center">Help Center</Link></li>
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/track">Service Areas</Link></li>
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/partner-registration">Partner With Us</Link></li>
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/privacy-policy">Privacy Policy</Link></li>
+            </ul>
+          </div>
+
+          {/* Services - FUNCTIONAL LINKS */}
+          <div>
+            <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Our Services</h5>
+            <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-slate-300">
+              {services.map((s, idx) => (
+                <li key={idx} className="hover:text-white cursor-pointer transition-all">
+                  <Link to={s.path}>{s.name}</Link>
+                </li>
+              ))}
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/warehouse-storage">Warehousing</Link></li>
+            </ul>
+          </div>
+
+          {/* Contact Details */}
+          <div>
+            <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Contact Us</h5>
+            <ul className="space-y-4 text-xs font-bold tracking-widest text-slate-300">
+              <li className="flex items-center gap-3"><MapPin size={16} className="text-[#FF5E00]"/> KUDAL, SUNDHUDURG, 416520, MAHARASHTRA, INDIA</li>
+              <li className="flex items-center gap-3">
+                <Mail size={16} className="text-[#FF5E00]"/> 
+                <a href="mailto:help@APNIMANZIL.COM" className="hover:text-white">help@APNIMANZIL.COM</a>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone size={16} className="text-[#FF5E00]"/> 
+                <a href="tel:+917378502356" className="hover:text-white">+91 73785 02356</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-slate-800 text-center">
+          <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
+            © 2026 APNI MANZIL LOGISTICS SOLUTIONS PVT LTD • ALL RIGHTS RESERVED
+          </p>
         </div>
       </footer>
     </div>

@@ -112,9 +112,10 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] flex items-center justify-center p-4 font-sans">
+    <div className="min-h-screen bg-[#f8fafc] bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] flex flex-col items-center justify-center p-4 py-12 font-sans">
       
-      <div className="bg-white/80 backdrop-blur-xl w-full max-w-[550px] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden border border-white">
+      {/* MAIN AUTH CARD */}
+      <div className="bg-white/80 backdrop-blur-xl w-full max-w-[550px] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden border border-white mb-10">
         
         <div className="pt-12 pb-8 px-10 text-center">
             <div className="w-16 h-1 bg-indigo-600 mx-auto mb-6 rounded-full"></div>
@@ -175,14 +176,12 @@ const Auth = () => {
               </div>
             )}
 
-            {/* --- EXIM REGISTER MULTI-STEP --- */}
             {!isLogin && role === 'exim' && (
               <div className="space-y-4">
                 <div className="flex gap-1.5 mb-6 justify-center">
                     {[1,2,3,4,5].map(s => <div key={s} className={`h-1 flex-1 rounded-full transition-all duration-500 ${eximStep >= s ? 'bg-indigo-600' : 'bg-slate-200'}`}></div>)}
                 </div>
 
-                {/* Step 1: Basic Details */}
                 {eximStep === 1 && (
                   <div className="space-y-3 animate-in fade-in duration-500">
                     <input name="companyName" placeholder="Company Name" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 focus:bg-white transition-all" onChange={handleChange} />
@@ -197,7 +196,6 @@ const Auth = () => {
                   </div>
                 )}
 
-                {/* Step 2: Business Details */}
                 {eximStep === 2 && (
                   <div className="space-y-3 animate-in fade-in duration-500">
                     <input name="iecCode" placeholder="IEC Code ⭐" className="w-full p-4 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-sm font-bold text-indigo-700 outline-none" onChange={handleChange} />
@@ -215,10 +213,9 @@ const Auth = () => {
                   </div>
                 )}
 
-                {/* Step 3: Trade Info */}
                 {eximStep === 3 && (
                   <div className="space-y-3 animate-in fade-in duration-500">
-                    <input name="countries" placeholder="Countries dealing with (Multi-select)" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
+                    <input name="countries" placeholder="Countries dealing with" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
                     <select name="productCategory" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange}>
                         <option value="">Product Category</option>
                         <option value="Electronics">Electronics</option>
@@ -233,7 +230,6 @@ const Auth = () => {
                   </div>
                 )}
 
-                {/* Step 4: Logistics Needs */}
                 {eximStep === 4 && (
                   <div className="space-y-3 animate-in fade-in duration-500">
                     <select name="shipmentType" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange}>
@@ -255,7 +251,6 @@ const Auth = () => {
                   </div>
                 )}
 
-                {/* Step 5: Documents */}
                 {eximStep === 5 && (
                   <div className="space-y-4 animate-in fade-in duration-500">
                     <div className="border-2 border-dashed border-slate-200 p-6 rounded-2xl text-center hover:border-indigo-400 transition-colors cursor-pointer group">
@@ -294,6 +289,32 @@ const Auth = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* --- BOTTOM SECTION: SLOGAN AND NEW FLEET IMAGE --- */}
+      <div className="w-full max-w-[900px] flex flex-col items-center animate-in fade-in duration-1000 slide-in-from-bottom-5 mt-10">
+          <h3 className="text-[#1e293b] text-2xl md:text-4xl font-black uppercase tracking-[0.2em] italic text-center mb-10 px-4">
+            One Solution for all <span className="text-indigo-600">Deliveries</span>
+          </h3>
+          
+          <div className="w-full relative px-4">
+              {/* Decorative Glows */}
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-200 rounded-full blur-[80px] opacity-40"></div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-200 rounded-full blur-[80px] opacity-40"></div>
+              
+              <div className="relative group overflow-hidden rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(30,41,59,0.3)] border-4 border-white z-10">
+                <img 
+                  src="/fleet.png" 
+                  alt="Apni Manzil Logistics Fleet" 
+                  className="w-full h-auto transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1e293b]/20 to-transparent pointer-events-none"></div>
+              </div>
+          </div>
+          
+          <p className="mt-10 text-slate-400 text-[11px] font-black uppercase tracking-[0.4em] text-center">
+            Reliable • Fast • Global Logistics Partner
+          </p>
       </div>
 
       {showResetModal && (
