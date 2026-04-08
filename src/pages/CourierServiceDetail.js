@@ -6,16 +6,16 @@ import {
   Package, Boxes, RefreshCcw, ChevronRight
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ आणि फंक्शनचे नाव दोन्ही मॅच केले आहेत
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
 
   // ✅ बुकिंग हाताळण्यासाठी फंक्शन
   const handleBooking = (serviceName) => {
-    // समजा आपण डमी डेटा वापरतोय, रिअल टाइममध्ये हा डेटा युजरच्या प्रोफाईलमधून येईल
-    const customerPhone = "7378502356"; // तुझा किंवा कस्टमरचा नंबर
+    // समजा आपण डमी डेटा वापरतोय
+    const customerPhone = "7378502356"; 
     const customerName = "Client";
     const orderId = "CR-" + Math.floor(Math.random() * 100000);
 
@@ -45,7 +45,7 @@ const CourierServiceDetail = () => {
         
         <button 
           onClick={() => navigate('/')} 
-          className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10"
+          className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10 cursor-pointer"
         >
           <ArrowLeft size={20}/> Back to Home
         </button>
@@ -68,7 +68,7 @@ const CourierServiceDetail = () => {
             {subServices.map((s) => (
               <div 
                 key={s.id} 
-                onClick={() => handleBooking(s.name)} // ✅ क्लिक केल्यावर मेसेज जाईल
+                onClick={() => handleBooking(s.name)} 
                 className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:border-orange-300 transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-4">
@@ -109,7 +109,7 @@ const CourierServiceDetail = () => {
 
               <button 
                 onClick={() => handleBooking("AI Smart Pick Comparison")}
-                className="w-full mt-10 bg-[#002D5E] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-800 transition shadow-xl"
+                className="w-full mt-10 bg-[#002D5E] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-800 transition shadow-xl cursor-pointer"
               >
                 Compare All Rates
               </button>

@@ -5,8 +5,8 @@ import {
   CheckCircle, MapPin, BadgePercent, Smartphone
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const HyperlocalService = () => {
   const navigate = useNavigate();
@@ -69,10 +69,9 @@ const HyperlocalService = () => {
               <h3 className="font-black text-[#002D5E] mb-1">{s.name}</h3>
               <p className="text-xs text-slate-400 font-bold mb-6">{s.desc}</p>
               
-              {/* ✅ Explore बटनवर क्लिक केल्यावर नोटिफिकेशन जाईल */}
               <button 
                 onClick={() => handleLocalBooking(s.name)}
-                className="w-full bg-orange-500 text-white py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-200 hover:bg-orange-600 transition"
+                className="w-full bg-orange-500 text-white py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-200 hover:bg-orange-600 transition cursor-pointer"
               >
                 Explore
               </button>
@@ -101,10 +100,9 @@ const HyperlocalService = () => {
               </div>
            </div>
            
-           {/* ✅ Book Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
            <button 
             onClick={() => handleLocalBooking("Urgent Hyperlocal Delivery")}
-            className="mt-6 md:mt-0 bg-orange-500 text-white px-12 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-orange-600 transition transform hover:scale-105 z-10"
+            className="mt-6 md:mt-0 bg-orange-500 text-white px-12 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-orange-600 transition transform hover:scale-105 z-10 cursor-pointer"
            >
              Book Now
            </button>

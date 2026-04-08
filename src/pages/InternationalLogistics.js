@@ -4,8 +4,8 @@ import {
   ShieldCheck, Zap, ChevronRight 
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const InternationalLogistics = () => {
 
@@ -105,10 +105,9 @@ const InternationalLogistics = () => {
               <h3 className="text-2xl font-black text-slate-800">{service.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
               
-              {/* ✅ Ship Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
               <button 
                 onClick={() => handleGlobalBooking(service.title)}
-                className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn"
+                className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
               >
                 Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -131,10 +130,9 @@ const InternationalLogistics = () => {
               </div>
             </div>
             
-            {/* ✅ Get Export Quote वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
             <button 
               onClick={() => handleGlobalBooking("International Export Quote")}
-              className="bg-white text-[#002D5E] px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-500 hover:text-white transition shadow-2xl"
+              className="bg-white text-[#002D5E] px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-500 hover:text-white transition shadow-2xl cursor-pointer"
             >
               Get Export Quote
             </button>

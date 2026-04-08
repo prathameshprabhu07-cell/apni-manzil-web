@@ -5,8 +5,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const TruckTransportService = () => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const TruckTransportService = () => {
       <div className="bg-[#002D5E] text-white pt-12 pb-32 px-6 md:px-16 relative overflow-hidden">
         <button 
           onClick={() => navigate('/')} 
-          className="flex items-center gap-2 text-orange-400 mb-8 font-black hover:scale-105 transition-transform"
+          className="flex items-center gap-2 text-orange-400 mb-8 font-black hover:scale-105 transition-transform cursor-pointer"
         >
           <ArrowLeft size={20}/> BACK TO HOME
         </button>
@@ -76,10 +76,9 @@ const TruckTransportService = () => {
               <h3 className="text-xl font-black text-[#002D5E] mb-2">{truck.name}</h3>
               <p className="text-sm text-slate-500 font-bold mb-6">{truck.desc}</p>
               
-              {/* ✅ Book Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
               <button 
                 onClick={() => handleTruckBooking(truck.name)}
-                className="text-xs font-black uppercase tracking-widest text-[#002D5E] flex items-center gap-2 group-hover:text-orange-500 transition"
+                className="text-xs font-black uppercase tracking-widest text-[#002D5E] flex items-center gap-2 group-hover:text-orange-500 transition cursor-pointer"
               >
                 Book Now <ChevronRight size={14}/>
               </button>

@@ -4,8 +4,8 @@ import {
   ShieldCheck, MapPin
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const SpecialLogistics = () => {
 
@@ -95,10 +95,9 @@ const SpecialLogistics = () => {
               <h3 className="font-black text-lg text-slate-800 mb-2">{s.title}</h3>
               <p className="text-slate-400 text-xs font-bold mb-6">{s.desc}</p>
               
-              {/* ✅ Explore बटनवर क्लिक केल्यावर नोटिफिकेशन जाईल */}
               <button 
                 onClick={() => handleSpecialBooking(s.title)}
-                className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100"
+                className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
               >
                 {s.tag}
               </button>
@@ -120,10 +119,9 @@ const SpecialLogistics = () => {
             </div>
           </div>
           
-          {/* ✅ Get a Quote बटनवर क्लिक केल्यावर नोटिफिकेशन जाईल */}
           <button 
             onClick={() => handleSpecialBooking("Special Handling Quote Request")}
-            className="bg-orange-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-xl mt-8 md:mt-0 relative z-10"
+            className="bg-orange-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-xl mt-8 md:mt-0 relative z-10 cursor-pointer"
           >
             Get a Quote!
           </button>

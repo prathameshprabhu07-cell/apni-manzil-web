@@ -5,8 +5,8 @@ import {
   Cpu, ShieldCheck
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: 'WhatsApp' ऐवजी 'whatsapp' (तुमच्या डिस्कवरील फाईलच्या नावानुसार)
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const AISmartLogistics = () => {
   const navigate = useNavigate();
@@ -93,10 +93,9 @@ const AISmartLogistics = () => {
               <h3 className="font-black text-xl text-slate-800 mb-3">{s.title}</h3>
               <p className="text-slate-500 text-sm font-medium mb-8 leading-relaxed">{s.desc}</p>
               
-              {/* ✅ बटणवर क्लिक केल्यावर WhatsApp मेसेज जाईल */}
               <button 
                 onClick={() => handleAIQuery(s.title)}
-                className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] hover:bg-[#002D5E] transition-colors shadow-lg shadow-orange-100 group-hover:shadow-blue-100"
+                className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] hover:bg-[#002D5E] transition-colors shadow-lg shadow-orange-100 group-hover:shadow-blue-100 cursor-pointer"
               >
                 {s.tag}
               </button>
@@ -122,7 +121,7 @@ const AISmartLogistics = () => {
           </div>
           <button 
             onClick={() => handleAIQuery("AI Tech Consultation")}
-            className="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-orange-600 transition shadow-xl mt-10 md:mt-0 relative z-10"
+            className="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-orange-600 transition shadow-xl mt-10 md:mt-0 relative z-10 cursor-pointer"
           >
             Learn More
           </button>

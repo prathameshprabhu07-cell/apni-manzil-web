@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Home, Building2, Sofa, Truck, ShieldCheck, X } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const PackersAndMovers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,7 +51,7 @@ const PackersAndMovers = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[999] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-red-500"><X /></button>
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-red-500 cursor-pointer"><X /></button>
             <h2 className="text-2xl font-black text-slate-800 mb-6 uppercase italic">Quick Quote Form</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <input required type="text" placeholder="Your Name" className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-orange-500 font-bold" onChange={(e) => setFormData({...formData, customerName: e.target.value})} />
@@ -68,7 +68,7 @@ const PackersAndMovers = () => {
                 <option value="Office">Office</option>
               </select>
               <input required type="date" className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-500" onChange={(e) => setFormData({...formData, moveDate: e.target.value})} />
-              <button disabled={loading} type="submit" className="w-full bg-[#ff5e00] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-orange-600 transition-all active:scale-95">
+              <button disabled={loading} type="submit" className="w-full bg-[#ff5e00] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-orange-600 transition-all active:scale-95 cursor-pointer">
                 {loading ? "Posting..." : "Confirm & Get Rates"}
               </button>
             </form>
@@ -106,7 +106,7 @@ const PackersAndMovers = () => {
               </div>
               <h3 className="font-bold text-slate-800 text-lg pointer-events-none">{s.title}</h3>
               <p className="text-sm text-slate-500 mb-6 pointer-events-none">{s.desc}</p>
-              <button className="w-full bg-orange-500 text-white py-3 rounded-xl font-bold text-sm hover:bg-orange-600 transition uppercase tracking-wider">
+              <button className="w-full bg-orange-500 text-white py-3 rounded-xl font-bold text-sm hover:bg-orange-600 transition uppercase tracking-wider cursor-pointer">
                 Get Quote
               </button>
             </div>

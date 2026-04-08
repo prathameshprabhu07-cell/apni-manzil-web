@@ -4,8 +4,8 @@ import {
   ArrowRight, Warehouse, CheckCircle2
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const WarehouseStorage = () => {
 
@@ -111,10 +111,9 @@ const WarehouseStorage = () => {
               <h3 className="text-xl font-black text-slate-800">{service.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
               
-              {/* ✅ Get Quote वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
               <button 
                 onClick={() => handleWarehouseBooking(service.title)}
-                className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-100"
+                className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
               >
                 Get Quote
               </button>
@@ -140,10 +139,9 @@ const WarehouseStorage = () => {
               <div className="flex items-center gap-3 font-bold text-lg"><CheckCircle2 className="text-orange-400" /> 24/7 Monitoring</div>
             </div>
             
-            {/* ✅ Get Quote Now वर क्लिक केल्यावर नोटिफिकेशन जाईल */}
             <button 
               onClick={() => handleWarehouseBooking("General Warehouse Quote Request")}
-              className="bg-orange-500 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center gap-4 group"
+              className="bg-orange-500 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center gap-4 group cursor-pointer"
             >
               Get Quote Now <ArrowRight className="group-hover:translate-x-2 transition-transform" />
             </button>

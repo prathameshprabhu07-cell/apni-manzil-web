@@ -5,8 +5,8 @@ import {
   ChevronRight, CheckCircle, MapPin, ArrowRight
 } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const EcommerceLogistics = () => {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ const EcommerceLogistics = () => {
             </p>
             <button 
               onClick={() => handleEcommerceQuery("Full E-commerce Setup")}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-xl"
+              className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-xl cursor-pointer"
             >
               Start Shipping Now
             </button>
@@ -111,10 +111,9 @@ const EcommerceLogistics = () => {
               <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8">
                 {service.desc}
               </p>
-              {/* ✅ Explore More वर क्लिक केल्यावर मेसेज जाईल */}
               <button 
                 onClick={() => handleEcommerceQuery(service.title)}
-                className="w-full bg-slate-50 group-hover:bg-orange-500 group-hover:text-white text-slate-700 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition flex items-center justify-center gap-2"
+                className="w-full bg-slate-50 group-hover:bg-orange-500 group-hover:text-white text-slate-700 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 Explore More <ChevronRight size={16} />
               </button>
@@ -136,9 +135,9 @@ const EcommerceLogistics = () => {
             <div className="md:w-1/3 flex justify-center">
                <button 
                 onClick={() => handleEcommerceQuery("E-com Business Growth")}
-                className="bg-white text-[#002D5E] px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:text-white transition shadow-xl"
+                className="bg-white text-[#002D5E] px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:text-white transition shadow-xl cursor-pointer"
                >
-                  Get Started
+                 Get Started
                </button>
             </div>
         </div>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Globe, ShieldCheck, Ship, Plane, FileText } from 'lucide-react';
 
-// ✅ WhatsApp Utility Import केली आहे
-import { sendWhatsAppNotification } from '../utils/WhatsApp';
+// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const ImportExportDetail = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +20,7 @@ const ImportExportDetail = () => {
     const serviceName = `${formData.type} to/from ${formData.country}`;
     const orderId = "EXIM-" + Math.floor(Math.random() * 100000);
     
-    // टेस्टसाठी तुझा नंबर किंवा युजरचा नंबर (सध्या आपण ७३७८५०२३५६ वापरतोय)
+    // टेस्टसाठी तुझा नंबर किंवा युजरचा नंबर
     sendWhatsAppNotification("7378502356", formData.name, serviceName, orderId);
 
     alert("Thank you! Our Export-Import experts will contact you soon on WhatsApp.");
