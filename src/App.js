@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 // ==========================================
 // 1. FIREBASE & DATABASE CONFIGURATION
 // ==========================================
+// ✅ तुझ्या मूळ फाईलमधून db आणि auth इम्पोर्ट केले आहेत
 import { db, auth } from './firebase'; 
 import { collection, onSnapshot, query, limit } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
@@ -40,8 +41,8 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import VendorDashboard from './pages/VendorDashboard'; 
 import CustomerDashboard from './components/CustomerDashboard'; 
 
-// --- ✅ EXIM CLIENT COMPONENTS ---
-import EXIMLogin from './pages/EXIMLogin'; 
+// --- ✅ नवीन AUTHENTICATION PAGE ---
+import Auth from './Auth'; // आपण आता बनवलेले नवीन प्रोफेशनल पेज
 import EXIMDashboard from './components/EXIMDashboard'; 
 
 // ==========================================
@@ -63,13 +64,15 @@ function App() {
   
   // Auth States
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [eximUser, setEximUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null); // ✅ लॉगिन युजर स्टेट
 
   useEffect(() => {
+    // ✅ १. चेक करा युजर लॉगिन आहे की नाही
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      setEximUser(user);
+      setCurrentUser(user);
     });
 
+    // ✅ २. MSME प्रोफाइल चेक (तुझी मूळ लॉजिक)
     const q = query(collection(db, "msme_profile"), limit(1));
     const unsubscribeMSME = onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
@@ -115,17 +118,19 @@ function App() {
 
   return (
     <Router>
-      <Layout>
+      <Layout user={currentUser}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<About />} />
           <Route path="/help" element={<HelpCenter />} /> 
           <Route path="/track" element={<Tracking />} /> 
           
-          {/* ✅ LOGIN & REGISTER ROUTES (हे ॲड केले आहेत) */}
-          <Route path="/login" element={<EXIMLogin />} />
-          <Route path="/register" element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} />
+          {/* ✅ नवीन LOGIN & REGISTER (Auth.js वापरून) */}
+          <Route path="/login" element={currentUser ? <Navigate to="/customer-dashboard" /> : <Auth />} />
+          <Route path="/register" element={<Auth />} />
+          <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
           
+          {/* तुझे मूळ सर्व राउट्स तसेच आहेत */}
           <Route path="/courier-service" element={<CourierService />} />
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
@@ -143,12 +148,16 @@ function App() {
           <Route path="/tradefinance" element={<TradeFinance />} />
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
-          <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-          <Route path="/exim-login" element={<EXIMLogin />} />
+          
+          {/* ✅ डॅशबोर्डला लॉगिनची सुरक्षा दिली आहे */}
+          <Route 
+            path="/customer-dashboard" 
+            element={currentUser ? <CustomerDashboard /> : <Navigate to="/login" />} 
+          />
           
           <Route 
             path="/exim-dashboard" 
-            element={eximUser ? <EXIMDashboard /> : <Navigate to="/exim-login" />} 
+            element={currentUser ? <EXIMDashboard /> : <Navigate to="/exim-login" />} 
           />
 
           <Route 

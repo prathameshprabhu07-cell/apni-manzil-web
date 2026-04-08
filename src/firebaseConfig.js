@@ -1,9 +1,10 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth"; // 👈 ही नवीन लाईन ॲड केली
 
 const firebaseConfig = {
-  apiKey: "AIzaSy...", // तुझी खरी API Key
+  apiKey: "AIzaSy...", 
   authDomain: "apni-manzil.firebaseapp.com",
   projectId: "apni-manzil",
   storageBucket: "apni-manzil.appspot.com",
@@ -17,5 +18,6 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
+const auth = getAuth(app); // 👈 ही नवीन लाईन ॲड केली
 
-export { db, rtdb, app }; // हे नाव नीट चेक कर 'db'
+export { db, rtdb, app, auth }; // 👈 इथे 'auth' बाहेर पाठवला (Export)
