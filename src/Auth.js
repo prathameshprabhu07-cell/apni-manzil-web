@@ -31,6 +31,14 @@ const Auth = () => {
     else setIsLogin(true);
   }, [location.pathname]);
 
+  // Automatically clear messages after 5 seconds
+  useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const [formData, setFormData] = useState({
     fullName: '', email: '', password: '', phone: '', address: '',
     businessName: '', gstNumber: '', businessType: 'Retail',
@@ -51,16 +59,16 @@ const Auth = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (!resetEmail) {
-      alert("कृपया तुमचा ईमेल आयडी टाका.");
+      alert("Please enter your email address.");
       return;
     }
     setResetLoading(true);
     try {
       await sendPasswordResetEmail(auth, resetEmail);
-      alert("तुमच्या ईमेलवर पासवर्ड रिसेट करण्याची लिंक पाठवली आहे.");
+      alert("Password reset link has been sent to your email.");
       setShowResetModal(false);
     } catch (error) {
-      alert("काही तांत्रिक अडचण आहे.");
+      alert("Error: " + error.message);
     }
     setResetLoading(false);
   };
@@ -72,25 +80,44 @@ const Auth = () => {
 
     try {
       if (isLogin) {
+        // --- LOGIN LOGIC ---
         const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
         const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
         
         if (userDoc.exists()) {
           const userData = userDoc.data();
+          
+          // 1. Check if the selected role matches the database role
           if (userData.role !== role) {
-            setMessage({ type: 'error', text: `तुमचे खाते ${userData.role} म्हणून आहे.` });
-            setLoading(false); return;
+            setMessage({ type: 'error', text: `Access Denied. This account is registered as ${userData.role}.` });
+            setLoading(false); 
+            return;
           }
-          if ((userData.role !== 'individual') && userData.status === 'pending') {
-            setMessage({ type: 'error', text: "व्हेरिफिकेशन प्रलंबित आहे." });
-            setLoading(false); return;
+
+          // 2. Check account status for businesses
+          if (userData.role !== 'individual' && userData.status === 'pending') {
+            setMessage({ type: 'error', text: "Your account verification is pending." });
+            setLoading(false); 
+            return;
           }
+
+          // 3. Navigate to correct dashboard
           navigate(userData.role === 'exim' ? '/exim-dashboard' : '/customer-dashboard');
+        } else {
+          setMessage({ type: 'error', text: "User profile not found in database." });
         }
       } else {
+        // --- REGISTRATION LOGIC ---
+        if (formData.password.length < 6) {
+          setMessage({ type: 'error', text: "Password must be at least 6 characters." });
+          setLoading(false);
+          return;
+        }
+
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         const initialStatus = role === 'individual' ? 'active' : 'pending';
 
+        // Save detailed user info to Firestore
         await setDoc(doc(db, "users", userCredential.user.uid), {
           uid: userCredential.user.uid,
           role,
@@ -99,14 +126,34 @@ const Auth = () => {
           createdAt: new Date().toISOString()
         });
 
-        setMessage({ 
-          type: 'success', 
-          text: 'नोंदणी यशस्वी!' 
-        });
+        setMessage({ type: 'success', text: 'Registration Successful! Redirecting to login...' });
         setTimeout(() => setIsLogin(true), 3000);
       }
     } catch (error) {
-      setMessage({ type: 'error', text: "चुकीचा ईमेल किंवा पासवर्ड." });
+      console.error("Firebase Error Code:", error.code);
+      let errorMsg = "An unexpected error occurred.";
+
+      // Specific Firebase Error Handling
+      switch (error.code) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+          errorMsg = "Invalid email or password.";
+          break;
+        case 'auth/email-already-in-use':
+          errorMsg = "This email is already registered.";
+          break;
+        case 'auth/invalid-email':
+          errorMsg = "Please enter a valid email address.";
+          break;
+        case 'auth/weak-password':
+          errorMsg = "Password is too weak.";
+          break;
+        default:
+          errorMsg = error.message;
+      }
+      
+      setMessage({ type: 'error', text: errorMsg });
     }
     setLoading(false);
   };
@@ -151,13 +198,13 @@ const Auth = () => {
             </div>
           )}
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             
             {isLogin && (
               <div className="space-y-4">
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18}/>
-                  <input name="email" placeholder="Email Address" required className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all" onChange={handleChange} />
+                  <input name="email" type="email" placeholder="Email Address" required className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all" onChange={handleChange} />
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18}/>
@@ -170,7 +217,7 @@ const Auth = () => {
                   </button>
                 </div>
 
-                <button onClick={handleAuth} className="w-full bg-[#1e293b] text-white py-4 rounded-2xl font-bold text-sm shadow-lg shadow-slate-200 hover:bg-indigo-600 hover:-translate-y-0.5 transition-all duration-200">
+                <button onClick={handleAuth} disabled={loading} className="w-full bg-[#1e293b] text-white py-4 rounded-2xl font-bold text-sm shadow-lg shadow-slate-200 hover:bg-indigo-600 hover:-translate-y-0.5 transition-all duration-200">
                   {loading ? <Loader2 className="animate-spin mx-auto" /> : `Sign In`}
                 </button>
               </div>
@@ -263,7 +310,9 @@ const Auth = () => {
                     </div>
                     <div className="flex gap-2">
                         <button type="button" onClick={() => setEximStep(4)} className="flex-1 border border-slate-200 py-4 rounded-2xl font-bold text-slate-500">Back</button>
-                        <button onClick={handleAuth} className="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Complete Registration</button>
+                        <button onClick={handleAuth} disabled={loading} className="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all flex justify-center">
+                          {loading ? <Loader2 className="animate-spin" /> : `Complete Registration`}
+                        </button>
                     </div>
                   </div>
                 )}
@@ -273,32 +322,33 @@ const Auth = () => {
             {!isLogin && role !== 'exim' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-in fade-in duration-500">
                 <input name="fullName" placeholder="Full Name" className="md:col-span-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 transition-all" onChange={handleChange} />
-                <input name="email" placeholder="Email" className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 transition-all" onChange={handleChange} />
-                <input name="password" type="password" placeholder="Password" className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 transition-all" onChange={handleChange} />
+                <input name="email" type="email" placeholder="Email" className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 transition-all" onChange={handleChange} />
+                <input name="password" type="password" placeholder="Password (Min 6 chars)" className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 transition-all" onChange={handleChange} />
                 <input name="phone" placeholder="Phone" className="md:col-span-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 transition-all" onChange={handleChange} />
                 {role === 'msme' && ( <input name="businessName" placeholder="Business Name" className="md:col-span-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} /> )}
                 {role === 'vendor' && ( <input name="serviceArea" placeholder="Service Area (City)" className="md:col-span-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} /> )}
-                <button onClick={handleAuth} className="md:col-span-2 bg-[#1e293b] text-white py-4 rounded-2xl font-bold shadow-lg shadow-slate-200 hover:bg-indigo-600 transition-all mt-2">Create Account</button>
+                <button onClick={handleAuth} disabled={loading} className="md:col-span-2 bg-[#1e293b] text-white py-4 rounded-2xl font-bold shadow-lg shadow-slate-200 hover:bg-indigo-600 transition-all mt-2 flex justify-center">
+                   {loading ? <Loader2 className="animate-spin" /> : `Create Account`}
+                </button>
               </div>
             )}
           </form>
 
           <div className="mt-10 text-center">
-            <button onClick={() => {setIsLogin(!isLogin); setEximStep(1);}} className="text-slate-500 text-xs font-bold uppercase tracking-wider hover:text-indigo-600 transition-all">
+            <button onClick={() => {setIsLogin(!isLogin); setEximStep(1); setMessage({type:'', text:''});}} className="text-slate-500 text-xs font-bold uppercase tracking-wider hover:text-indigo-600 transition-all">
               {isLogin ? "Don't have an account? Sign Up" : "Already a member? Sign In"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* --- BOTTOM SECTION: SLOGAN AND NEW FLEET IMAGE --- */}
+      {/* --- BOTTOM SECTION --- */}
       <div className="w-full max-w-[900px] flex flex-col items-center animate-in fade-in duration-1000 slide-in-from-bottom-5 mt-10">
           <h3 className="text-[#1e293b] text-2xl md:text-4xl font-black uppercase tracking-[0.2em] italic text-center mb-10 px-4">
             One Solution for all <span className="text-indigo-600">Deliveries</span>
           </h3>
           
           <div className="w-full relative px-4">
-              {/* Decorative Glows */}
               <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-200 rounded-full blur-[80px] opacity-40"></div>
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-200 rounded-full blur-[80px] opacity-40"></div>
               
@@ -319,7 +369,7 @@ const Auth = () => {
 
       {showResetModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-6 z-50 animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-md rounded-[2rem] p-10 shadow-2xl border border-slate-100">
+          <div className="bg-white w-full max-md rounded-[2rem] p-10 shadow-2xl border border-slate-100">
             <h3 className="text-[#1e293b] text-2xl font-bold mb-2 text-center">Reset Password</h3>
             <p className="text-slate-500 text-sm mb-8 text-center">Enter your email to receive a reset link</p>
             
