@@ -7,7 +7,6 @@ import Layout from './components/Layout';
 // ==========================================
 // 1. FIREBASE & DATABASE CONFIGURATION
 // ==========================================
-// ✅ तुझ्या मूळ फाईलमधून db आणि auth इम्पोर्ट केले आहेत
 import { db, auth } from './firebase'; 
 import { collection, onSnapshot, query, limit } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
@@ -41,8 +40,23 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import VendorDashboard from './pages/VendorDashboard'; 
 import CustomerDashboard from './components/CustomerDashboard'; 
 
+// ✅ --- नवीन HOME SHIFTING IMPORT ---
+import HomeShifting from './pages/HomeShifting'; 
+
+// ✅ ✅ --- नवीन OFFICE SHIFTING IMPORT ---
+import OfficeShiftingForm from './components/OfficeShiftingForm'; 
+
+// ✅ ✅ ✅ --- नवीन FURNITURE SHIFTING IMPORT ---
+import FurnitureShiftingForm from './components/FurnitureShiftingForm';
+
+// ✅ ✅ ✅ ✅ --- नवीन VEHICLE TRANSPORT IMPORT ---
+import VehicleTransportForm from './components/VehicleTransportForm';
+
+// ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING IMPORT (येथे ॲड केला आहे) ---
+import CommercialMovingForm from './components/CommercialMovingForm';
+
 // --- ✅ नवीन AUTHENTICATION PAGE ---
-import Auth from './Auth'; // आपण आता बनवलेले नवीन प्रोफेशनल पेज
+import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
 
 // ==========================================
@@ -53,26 +67,19 @@ const SeaFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'cent
 const Customs = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}><h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900' }}>Customs & Compliance</h1></div> );
 const TradeFinance = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}><h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900' }}>Logistics Trade Finance</h1></div> );
 
-// ==========================================
-// 4. MAIN APPLICATION LOGIC
-// ==========================================
-
 function App() {
   const [isMSMERegistered, setIsMSMERegistered] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [loading, setLoading] = useState(true);
   
-  // Auth States
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null); // ✅ लॉगिन युजर स्टेट
+  const [currentUser, setCurrentUser] = useState(null); 
 
   useEffect(() => {
-    // ✅ १. चेक करा युजर लॉगिन आहे की नाही
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
     });
 
-    // ✅ २. MSME प्रोफाइल चेक (तुझी मूळ लॉजिक)
     const q = query(collection(db, "msme_profile"), limit(1));
     const unsubscribeMSME = onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
@@ -125,17 +132,24 @@ function App() {
           <Route path="/help" element={<HelpCenter />} /> 
           <Route path="/track" element={<Tracking />} /> 
           
-          {/* ✅ नवीन LOGIN & REGISTER (Auth.js वापरून) */}
           <Route path="/login" element={currentUser ? <Navigate to="/customer-dashboard" /> : <Auth />} />
           <Route path="/register" element={<Auth />} />
           <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
           
-          {/* तुझे मूळ सर्व राउट्स तसेच आहेत */}
           <Route path="/courier-service" element={<CourierService />} />
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />
+          
+          <Route path="/home-shifting" element={<HomeShifting />} />
+          <Route path="/office-shifting" element={<OfficeShiftingForm />} />
+          <Route path="/furniture-shifting" element={<FurnitureShiftingForm />} />
+          <Route path="/vehicle-transport" element={<VehicleTransportForm />} />
+
+          {/* ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING ROUTE --- */}
+          <Route path="/commercial-moving" element={<CommercialMovingForm />} />
+
           <Route path="/warehouse-storage" element={<WarehouseStorage />} />
           <Route path="/international-logistics" element={<InternationalLogistics />} />
           <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
@@ -149,7 +163,6 @@ function App() {
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
           
-          {/* ✅ डॅशबोर्डला लॉगिनची सुरक्षा दिली आहे */}
           <Route 
             path="/customer-dashboard" 
             element={currentUser ? <CustomerDashboard /> : <Navigate to="/login" />} 

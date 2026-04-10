@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Home, Building2, Sofa, Truck, ShieldCheck, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; 
 
-// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const PackersAndMovers = () => {
+  const navigate = useNavigate(); 
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,17 +18,11 @@ const PackersAndMovers = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // १. बॅकेंडला डेटा पोस्ट करणे
       const res = await axios.post('http://localhost:5000/api/packers/post-lead', formData);
-      
       if (res.data.success) {
-        // २. यशस्वी झाल्यावर व्हॉट्सॲप नोटिफिकेशन पाठवणे
         const serviceMsg = `Shifting: ${formData.houseType} from ${formData.fromCity} to ${formData.toCity}`;
         const orderId = "PM-" + Math.floor(Math.random() * 100000);
-        
-        // युजरच्या नंबरवर मेसेज जाईल
         sendWhatsAppNotification(formData.customerPhone, formData.customerName, serviceMsg, orderId);
-
         alert("तुमची रॅक्युयरमेंट सेव्ह झाली आहे आणि व्हॉट्सॲपवर माहिती पाठवली आहे! ✅");
         setIsModalOpen(false);
       }
@@ -41,13 +37,13 @@ const PackersAndMovers = () => {
     { id: 3, title: "Furniture Moving", desc: "Heavy Item Moving", icon: <Sofa className="text-blue-500" size={32} /> },
     { id: 4, title: "Vehicle Transport", desc: "Car & Bike Moving", icon: <Truck className="text-indigo-600" size={32} /> },
     { id: 5, title: "Storage with Movers", desc: "Safe & Secure Storage", icon: <ShieldCheck className="text-green-600" size={32} /> },
-    { id: 6, title: "Commercial Moving", desc: "Safe & Secure Storage", icon: <ShieldCheck className="text-green-600" size={32} /> },
+    { id: 6, title: "Commercial Moving", desc: "Industrial Relocation", icon: <ShieldCheck className="text-green-600" size={32} /> },
   ];
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col relative">
       
-      {/* --- FORM MODAL --- */}
+      {/* --- FORM MODAL (फक्त Storage साठी उरेल) --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[999] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl relative">
@@ -65,7 +61,7 @@ const PackersAndMovers = () => {
                 <option value="2BHK">2BHK</option>
                 <option value="3BHK">3BHK</option>
                 <option value="Few Items">Few Items</option>
-                <option value="Office">Office</option>
+                <option value="Commercial">Commercial</option>
               </select>
               <input required type="date" className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-500" onChange={(e) => setFormData({...formData, moveDate: e.target.value})} />
               <button disabled={loading} type="submit" className="w-full bg-[#ff5e00] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-orange-600 transition-all active:scale-95 cursor-pointer">
@@ -98,7 +94,22 @@ const PackersAndMovers = () => {
           {services.map((s) => (
             <div 
               key={s.id} 
-              onClick={() => setIsModalOpen(true)} 
+              // ✅ ✅ ✅ --- NAVIGATION LOGIC UPDATE FOR COMMERCIAL MOVING ---
+              onClick={() => {
+                if(s.title === "House Shifting") {
+                  navigate('/home-shifting');
+                } else if(s.title === "Office Shifting") {
+                  navigate('/office-shifting');
+                } else if(s.title === "Furniture Moving") {
+                  navigate('/furniture-shifting');
+                } else if(s.title === "Vehicle Transport") {
+                  navigate('/vehicle-transport');
+                } else if(s.title === "Commercial Moving") {
+                  navigate('/commercial-moving'); // <--- आता हा थेट कमर्शियल फॉर्मवर जाईल!
+                } else {
+                  setIsModalOpen(true); // फक्त 'Storage with Movers' साठी पॉप-अप उघडेल
+                }
+              }} 
               className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all group text-center cursor-pointer"
             >
               <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform pointer-events-none">
@@ -114,7 +125,7 @@ const PackersAndMovers = () => {
         </div>
       </div>
 
-      {/* --- फायनल ब्रँडेड ट्रक इमेज सेक्शन --- */}
+      {/* Footer Image Section */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
         style={{
