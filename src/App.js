@@ -52,8 +52,11 @@ import FurnitureShiftingForm from './components/FurnitureShiftingForm';
 // ✅ ✅ ✅ ✅ --- नवीन VEHICLE TRANSPORT IMPORT ---
 import VehicleTransportForm from './components/VehicleTransportForm';
 
-// ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING IMPORT (येथे ॲड केला आहे) ---
+// ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING IMPORT ---
 import CommercialMovingForm from './components/CommercialMovingForm';
+
+// 🚀 ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन SAME DAY DELIVERY (BORZO) IMPORT ---
+import SameDayDelivery from './pages/SameDayDelivery'; 
 
 // --- ✅ नवीन AUTHENTICATION PAGE ---
 import Auth from './Auth'; 
@@ -146,9 +149,10 @@ function App() {
           <Route path="/office-shifting" element={<OfficeShiftingForm />} />
           <Route path="/furniture-shifting" element={<FurnitureShiftingForm />} />
           <Route path="/vehicle-transport" element={<VehicleTransportForm />} />
-
-          {/* ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING ROUTE --- */}
           <Route path="/commercial-moving" element={<CommercialMovingForm />} />
+
+          {/* 🚀 ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन SAME DAY DELIVERY ROUTE --- */}
+          <Route path="/same-day-delivery" element={<SameDayDelivery />} />
 
           <Route path="/warehouse-storage" element={<WarehouseStorage />} />
           <Route path="/international-logistics" element={<InternationalLogistics />} />

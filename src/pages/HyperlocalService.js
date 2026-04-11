@@ -11,17 +11,16 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 const HyperlocalService = () => {
   const navigate = useNavigate();
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन (आता हे नवीन पेजवर घेऊन जाईल)
   const handleLocalBooking = (serviceName) => {
-    // युजरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+    // व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा (तुझा मूळ लॉजिक)
     const customerPhone = "7378502356"; 
     const customerName = "Local Customer";
     const orderId = "HL-" + Math.floor(Math.random() * 100000);
-
-    // व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
     sendWhatsAppNotification(customerPhone, customerName, serviceName, orderId);
     
-    alert(`${serviceName} साठी तुमची स्थानिक बुकिंग विनंती यशस्वीरित्या पाठवली आहे!`);
+    // ✅ बदल: आता युजरला नवीन Same Day Delivery पेजवर पाठवा
+    navigate('/same-day-delivery');
   };
 
   const services = [
