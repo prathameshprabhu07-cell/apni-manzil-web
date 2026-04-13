@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Truck, Search, Calculator, 
-  ChevronRight, Box
+  ChevronRight, Box, PackagePlus
 } from 'lucide-react';
 
 const TruckTransportService = () => {
@@ -11,7 +11,7 @@ const TruckTransportService = () => {
   return (
     <div className="min-h-screen bg-slate-100 font-sans overflow-x-hidden text-slate-900">
       
-      {/* 🚛 १. हिरो सेक्शन - Real Truck Image Background (Unsplash) */}
+      {/* 🚛 १. हिरो सेक्शन */}
       <div 
         className="relative text-white pt-12 pb-48 px-6 md:px-16 overflow-hidden bg-[#002D5E]"
         style={{
@@ -48,45 +48,62 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* २. मुख्य २ पर्याय (No-White Hover Effect) */}
-      <div className="max-w-6xl mx-auto px-6 -mt-24 mb-24 relative z-30">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      {/* २. मुख्य ३ पर्याय (Grid Updated to 3 Columns) */}
+      <div className="max-w-7xl mx-auto px-6 -mt-24 mb-24 relative z-30">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          {/* OPTION 1: BOOK TRUCK - ✅ येथे आपण नेव्हिगेशन ॲड केले आहे */}
+          {/* OPTION 1: BOOK TRUCK */}
           <div 
             onClick={() => navigate('/book-truck')}
-            className="group bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-[#002D5E] hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
+            className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-[#002D5E] hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
           >
             <div className="bg-orange-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-orange-500 transition-all duration-500 shadow-inner">
-              <Truck size={60} className="text-orange-600 group-hover:text-white" />
+              <Truck size={50} className="text-orange-600 group-hover:text-white" />
             </div>
-            <h2 className="text-4xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500">BOOK TRUCK</h2>
-            <p className="text-slate-500 font-bold group-hover:text-blue-100/70 mb-8 max-w-[250px] transition-colors duration-500">
-              Need a vehicle for shifting or commercial load? Book instantly.
+            <h2 className="text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Book Truck</h2>
+            <p className="text-slate-500 font-bold group-hover:text-blue-100/70 mb-8 max-w-[250px] transition-colors duration-500 text-sm">
+              Need a full vehicle for shifting or commercial load? Book instantly.
             </p>
-            <button className="bg-[#002D5E] group-hover:bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
-              Book Now <ChevronRight size={20}/>
+            <button className="bg-[#002D5E] group-hover:bg-orange-500 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95 text-xs">
+              Book Now <ChevronRight size={18}/>
             </button>
           </div>
 
-          {/* OPTION 2: FIND LOAD */}
-          <div className="group bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer">
+          {/* OPTION 2: FIND LOADS */}
+          <div className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer">
             <div className="bg-blue-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-[#002D5E] transition-all duration-500 shadow-inner">
-              <Box size={60} className="text-[#002D5E] group-hover:text-white" />
+              <Box size={50} className="text-[#002D5E] group-hover:text-white" />
             </div>
-            <h2 className="text-4xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500">FIND LOADS</h2>
-            <p className="text-slate-500 font-bold group-hover:text-orange-100/70 mb-8 max-w-[250px] transition-colors duration-500">
+            <h2 className="text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Find Loads</h2>
+            <p className="text-slate-500 font-bold group-hover:text-orange-100/70 mb-8 max-w-[250px] transition-colors duration-500 text-sm">
               Are you a truck owner? Find daily loads for your vehicle.
             </p>
-            <button className="bg-[#002D5E] group-hover:bg-white group-hover:text-[#002D5E] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
-              Search <Search size={20}/>
+            <button className="bg-[#002D5E] group-hover:bg-white group-hover:text-[#002D5E] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95 text-xs">
+              Search <Search size={18}/>
+            </button>
+          </div>
+
+          {/* OPTION 3: PART LOAD (NEW) */}
+          <div 
+            onClick={() => navigate('/book-part-load')}
+            className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-green-700 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
+          >
+            <div className="bg-green-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-white transition-all duration-500 shadow-inner">
+              <PackagePlus size={50} className="text-green-700" />
+            </div>
+            <h2 className="text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Part Load</h2>
+            <p className="text-slate-500 font-bold group-hover:text-green-50 mb-8 max-w-[250px] transition-colors duration-500 text-sm">
+              Less goods? Share truck space and save up to 40% on transport.
+            </p>
+            <button className="bg-green-700 group-hover:bg-white group-hover:text-green-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95 text-xs">
+              Book Part <ChevronRight size={18}/>
             </button>
           </div>
 
         </div>
       </div>
 
-      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन - जसा होता तसाच */}
+      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन */}
       <div 
         className="w-full h-[600px] flex items-end justify-center text-center pb-[100px] relative overflow-hidden rounded-t-[4rem] md:rounded-t-[6rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
         style={{
