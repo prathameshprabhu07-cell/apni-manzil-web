@@ -15,7 +15,6 @@ const TruckTransportService = () => {
       <div 
         className="relative text-white pt-12 pb-48 px-6 md:px-16 overflow-hidden bg-[#002D5E]"
         style={{
-          // वरच्या भागात आपण एक नवीन हाय-क्वालिटी ट्रकची इमेज सेट केली आहे
           backgroundImage: `linear-gradient(to right, rgba(0,45,94,0.95), rgba(0,45,94,0.5)), url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=2000')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center'
@@ -53,8 +52,11 @@ const TruckTransportService = () => {
       <div className="max-w-6xl mx-auto px-6 -mt-24 mb-24 relative z-30">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           
-          {/* OPTION 1: BOOK TRUCK - Hovers to Deep Blue */}
-          <div className="group bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-[#002D5E] hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer">
+          {/* OPTION 1: BOOK TRUCK - ✅ येथे आपण नेव्हिगेशन ॲड केले आहे */}
+          <div 
+            onClick={() => navigate('/book-truck')}
+            className="group bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-[#002D5E] hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
+          >
             <div className="bg-orange-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-orange-500 transition-all duration-500 shadow-inner">
               <Truck size={60} className="text-orange-600 group-hover:text-white" />
             </div>
@@ -67,7 +69,7 @@ const TruckTransportService = () => {
             </button>
           </div>
 
-          {/* OPTION 2: FIND LOAD - Hovers to Deep Orange */}
+          {/* OPTION 2: FIND LOAD */}
           <div className="group bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer">
             <div className="bg-blue-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-[#002D5E] transition-all duration-500 shadow-inner">
               <Box size={60} className="text-[#002D5E] group-hover:text-white" />
@@ -84,11 +86,10 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन - जसा होता तसाच (बॅकअपसह) */}
+      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन - जसा होता तसाच */}
       <div 
         className="w-full h-[600px] flex items-end justify-center text-center pb-[100px] relative overflow-hidden rounded-t-[4rem] md:rounded-t-[6rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
         style={{
-          // तुझा जुना कोड तसाच ठेवला आहे: १. Gradient, २. Local Image, ३. Unsplash Backup Image
           backgroundImage: `linear-gradient(to top, rgba(0,45,94,1), rgba(0,45,94,0.2)), url('/truck-bg.png'), url('https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=2000')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
