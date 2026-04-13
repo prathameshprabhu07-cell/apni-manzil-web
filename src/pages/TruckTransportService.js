@@ -1,107 +1,105 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, Truck, Package, Boxes, Zap, Anchor, 
-  ChevronRight
+  ArrowLeft, Truck, Search, Calculator, 
+  ChevronRight, Box
 } from 'lucide-react';
-
-// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
-import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const TruckTransportService = () => {
   const navigate = useNavigate();
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
-  const handleTruckBooking = (truckName) => {
-    // कस्टमरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
-    const customerPhone = "7378502356"; 
-    const customerName = "Truck Service Client";
-    const orderId = "TRK-" + Math.floor(Math.random() * 100000);
-
-    // व्हॉट्सॲप मेसेज पाठवा
-    sendWhatsAppNotification(customerPhone, customerName, truckName, orderId);
-    
-    alert(`${truckName} साठी तुमची बुकिंग चौकशी यशस्वीरित्या पाठवण्यात आली आहे!`);
-  };
-
-  const truckTypes = [
-    { id: 1, name: "Mini Truck", desc: "Small city deliveries & narrow roads", icon: <Truck size={30} /> },
-    { id: 2, name: "Pickup Truck", desc: "Reliable for medium loads & shifting", icon: <Package size={30} /> },
-    { id: 3, name: "Tempo Transport", desc: "Best for commercial & furniture goods", icon: <Boxes size={30} /> },
-    { id: 4, name: "Full Truck Load", desc: "Dedicated truck for large volume cargo", icon: <Truck size={30} className="text-blue-800"/> },
-    { id: 5, name: "Part Truck Load", desc: "Cost-effective sharing for smaller loads", icon: <Zap size={30} /> },
-    { id: 6, name: "Container Transport", desc: "Secure international & interstate transit", icon: <Anchor size={30} /> }
-  ];
-
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-slate-100 font-sans overflow-x-hidden text-slate-900">
       
-      {/* १. हिरो सेक्शन */}
-      <div className="bg-[#002D5E] text-white pt-12 pb-32 px-6 md:px-16 relative overflow-hidden">
+      {/* 🚛 १. हिरो सेक्शन - Real Truck Image Background (Unsplash) */}
+      <div 
+        className="relative text-white pt-12 pb-48 px-6 md:px-16 overflow-hidden bg-[#002D5E]"
+        style={{
+          // वरच्या भागात आपण एक नवीन हाय-क्वालिटी ट्रकची इमेज सेट केली आहे
+          backgroundImage: `linear-gradient(to right, rgba(0,45,94,0.95), rgba(0,45,94,0.5)), url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=2000')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        {/* रेट कॅल्क्युलेटर बॉक्स */}
+        <div className="absolute top-8 right-6 md:right-16 z-50">
+          <div className="bg-orange-500 border border-orange-400 p-4 rounded-2xl flex items-center gap-4 hover:scale-105 transition-all duration-300 cursor-pointer shadow-xl">
+             <Calculator size={24} className="text-white"/>
+             <div className="hidden sm:block">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Check Pricing</p>
+                <p className="text-sm font-black text-white">Rate Calculator</p>
+             </div>
+          </div>
+        </div>
+
         <button 
           onClick={() => navigate('/')} 
-          className="flex items-center gap-2 text-orange-400 mb-8 font-black hover:scale-105 transition-transform cursor-pointer"
+          className="relative z-10 flex items-center gap-2 text-orange-400 mb-12 font-black hover:translate-x-[-5px] transition-transform duration-300 cursor-pointer bg-black/20 w-fit px-4 py-2 rounded-full backdrop-blur-md"
         >
           <ArrowLeft size={20}/> BACK TO HOME
         </button>
         
-        <div className="flex flex-col md:flex-row items-center justify-between gap-10 max-w-7xl mx-auto">
-          <div className="md:w-3/5 space-y-6">
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-tight">
-              Truck & <span className="text-orange-500">Transport</span> <br/> Services
-            </h1>
-            <p className="text-blue-100/80 text-xl font-bold italic border-l-4 border-orange-500 pl-4 max-w-xl">
-              "India's largest fleet for your every load - Mini to Container"
-            </p>
-          </div>
+        <div className="relative z-10 flex flex-col items-start text-left max-w-4xl space-y-6">
+          <h1 className="text-5xl md:text-8xl font-[1000] tracking-tighter leading-none uppercase drop-shadow-2xl">
+            Reliable <span className="text-orange-500">Fleet</span> <br/> On Demand
+          </h1>
+          <p className="text-white/90 text-lg font-bold max-w-xl bg-[#002D5E]/50 backdrop-blur-sm p-4 rounded-xl border-l-4 border-orange-500">
+            India's largest fleet, right at your fingertips. Choose your service to get started.
+          </p>
+        </div>
+      </div>
+
+      {/* २. मुख्य २ पर्याय (No-White Hover Effect) */}
+      <div className="max-w-6xl mx-auto px-6 -mt-24 mb-24 relative z-30">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           
-          <div className="md:w-2/5 relative z-20"> 
-            <img 
-              src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=1000" 
-              alt="Truck Service" 
-              className="rounded-[3rem] shadow-2xl w-full h-80 object-cover border-8 border-white/10"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* २. ६ कार्ड्स */}
-      <div className="max-w-7xl mx-auto px-6 -mt-20 mb-20 relative z-30">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {truckTypes.map((truck) => (
-            <div key={truck.id} className="bg-white p-8 rounded-[2.5rem] shadow-xl hover:shadow-2xl transition-all border border-slate-100 group flex flex-col items-center text-center">
-              <div className="bg-blue-50 text-[#002D5E] p-5 rounded-3xl mb-6 group-hover:bg-orange-50 group-hover:text-orange-500 transition-all">
-                {truck.icon}
-              </div>
-              <h3 className="text-xl font-black text-[#002D5E] mb-2">{truck.name}</h3>
-              <p className="text-sm text-slate-500 font-bold mb-6">{truck.desc}</p>
-              
-              <button 
-                onClick={() => handleTruckBooking(truck.name)}
-                className="text-xs font-black uppercase tracking-widest text-[#002D5E] flex items-center gap-2 group-hover:text-orange-500 transition cursor-pointer"
-              >
-                Book Now <ChevronRight size={14}/>
-              </button>
+          {/* OPTION 1: BOOK TRUCK - Hovers to Deep Blue */}
+          <div className="group bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-[#002D5E] hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer">
+            <div className="bg-orange-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-orange-500 transition-all duration-500 shadow-inner">
+              <Truck size={60} className="text-orange-600 group-hover:text-white" />
             </div>
-          ))}
+            <h2 className="text-4xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500">BOOK TRUCK</h2>
+            <p className="text-slate-500 font-bold group-hover:text-blue-100/70 mb-8 max-w-[250px] transition-colors duration-500">
+              Need a vehicle for shifting or commercial load? Book instantly.
+            </p>
+            <button className="bg-[#002D5E] group-hover:bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
+              Book Now <ChevronRight size={20}/>
+            </button>
+          </div>
+
+          {/* OPTION 2: FIND LOAD - Hovers to Deep Orange */}
+          <div className="group bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer">
+            <div className="bg-blue-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-[#002D5E] transition-all duration-500 shadow-inner">
+              <Box size={60} className="text-[#002D5E] group-hover:text-white" />
+            </div>
+            <h2 className="text-4xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500">FIND LOADS</h2>
+            <p className="text-slate-500 font-bold group-hover:text-orange-100/70 mb-8 max-w-[250px] transition-colors duration-500">
+              Are you a truck owner? Find daily loads for your vehicle.
+            </p>
+            <button className="bg-[#002D5E] group-hover:bg-white group-hover:text-[#002D5E] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
+              Search <Search size={20}/>
+            </button>
+          </div>
+
         </div>
       </div>
 
-      {/* ३. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन - जसा होता तसाच (बॅकअपसह) */}
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        className="w-full h-[600px] flex items-end justify-center text-center pb-[100px] relative overflow-hidden rounded-t-[4rem] md:rounded-t-[6rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
+          // तुझा जुना कोड तसाच ठेवला आहे: १. Gradient, २. Local Image, ३. Unsplash Backup Image
+          backgroundImage: `linear-gradient(to top, rgba(0,45,94,1), rgba(0,45,94,0.2)), url('/truck-bg.png'), url('https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=2000')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
           backgroundColor: '#002D5E'
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
-            One Solution for All Logistics
+          <h2 className="text-white text-5xl md:text-7xl font-[1000] uppercase tracking-tighter drop-shadow-2xl leading-[0.9]">
+            Apni Manzil <br/> <span className="text-orange-500">Logistics</span>
           </h2>
+          <p className="text-white/60 mt-4 font-bold uppercase tracking-[4px]">Verified Trucks • Safe Delivery • Best Rates</p>
         </div>
       </div>
 
