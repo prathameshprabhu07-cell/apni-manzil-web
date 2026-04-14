@@ -11,7 +11,7 @@ const TruckTransportService = () => {
   return (
     <div className="min-h-screen bg-slate-100 font-sans overflow-x-hidden text-slate-900">
       
-      {/* 🚛 १. हिरो सेक्शन */}
+      {/* 🚛 १. हिरो सेक्शन (No Changes) */}
       <div 
         className="relative text-white pt-12 pb-48 px-6 md:px-16 overflow-hidden bg-[#002D5E]"
         style={{
@@ -48,7 +48,7 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* २. मुख्य ३ पर्याय (Grid Updated to 3 Columns) */}
+      {/* २. मुख्य ३ पर्याय (Grid) */}
       <div className="max-w-7xl mx-auto px-6 -mt-24 mb-24 relative z-30">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
@@ -69,8 +69,11 @@ const TruckTransportService = () => {
             </button>
           </div>
 
-          {/* OPTION 2: FIND LOADS */}
-          <div className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer">
+          {/* OPTION 2: FIND LOADS (FIXED NAVIGATION) */}
+          <div 
+            onClick={() => navigate('/find-load')} // 👈 हे आपण ॲड केलं आहे
+            className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
+          >
             <div className="bg-blue-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-[#002D5E] transition-all duration-500 shadow-inner">
               <Box size={50} className="text-[#002D5E] group-hover:text-white" />
             </div>
@@ -83,7 +86,7 @@ const TruckTransportService = () => {
             </button>
           </div>
 
-          {/* OPTION 3: PART LOAD (NEW) */}
+          {/* OPTION 3: PART LOAD */}
           <div 
             onClick={() => navigate('/book-part-load')}
             className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-green-700 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
@@ -103,7 +106,7 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन */}
+      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन (No Changes) */}
       <div 
         className="w-full h-[600px] flex items-end justify-center text-center pb-[100px] relative overflow-hidden rounded-t-[4rem] md:rounded-t-[6rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
         style={{

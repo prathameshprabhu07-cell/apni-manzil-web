@@ -61,6 +61,12 @@ import SameDayDelivery from './pages/SameDayDelivery';
 // ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन TRUCK BOOKING IMPORT ---
 import BookTruck from './pages/BookTruck'; 
 
+// 🚛 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन PART LOAD IMPORT ---
+import BookPartLoad from './pages/BookPartLoad'; 
+
+// 🚛 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन FIND LOAD IMPORT (ADDED) ---
+import FindLoad from './pages/FindLoad'; 
+
 // --- ✅ नवीन AUTHENTICATION PAGE ---
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
@@ -146,8 +152,13 @@ function App() {
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
           
-          {/* 🚀 नवीन TRUCK BOOKING ROUTE ॲड केला आहे */}
           <Route path="/book-truck" element={<BookTruck />} />
+          
+          {/* 🚛 ✅ PART LOAD ROUTE */}
+          <Route path="/book-part-load" element={<BookPartLoad />} />
+
+          {/* 🚛 ✅ नवीन FIND LOAD ROUTE (ADDED) */}
+          <Route path="/find-load" element={<FindLoad />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />
@@ -158,7 +169,6 @@ function App() {
           <Route path="/vehicle-transport" element={<VehicleTransportForm />} />
           <Route path="/commercial-moving" element={<CommercialMovingForm />} />
 
-          {/* 🚀 SAME DAY DELIVERY ROUTE */}
           <Route path="/same-day-delivery" element={<SameDayDelivery />} />
 
           <Route path="/warehouse-storage" element={<WarehouseStorage />} />
