@@ -17,8 +17,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import Home from './pages/Home'; 
 import About from './pages/About'; 
 import ImportExportDetail from './pages/ImportExportDetail'; 
-import CourierDetail from './pages/CourierDetail'; 
-import CourierService from './components/CourierService'; 
+// ✅ जुने CourierDetail आणि CourierService इथून काढले आहेत
 import CourierServiceDetail from './pages/CourierServiceDetail'; 
 import HyperlocalService from './pages/HyperlocalService'; 
 import TruckTransportService from './pages/TruckTransportService'; 
@@ -82,7 +81,7 @@ import ColdStorageForm from './pages/ColdStorageForm';
 // 📊 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन INVENTORY MANAGEMENT IMPORT ---
 import InventoryManagementForm from './pages/InventoryManagementForm';
 
-// 🏗️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन BULK & PALLET STORAGE IMPORT (नवीन ADDED) ---
+// 🏗️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन BULK & PALLET STORAGE IMPORT ---
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 
 // --- ✅ नवीन AUTHENTICATION PAGE ---
@@ -166,7 +165,8 @@ function App() {
           <Route path="/register" element={<Auth />} />
           <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
           
-          <Route path="/courier-service" element={<CourierService />} />
+          {/* ✅ आता फक्त मुख्य CourierServiceDetail पेज राहिल */}
+          <Route path="/courier-service" element={<CourierServiceDetail />} />
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
           
@@ -180,7 +180,6 @@ function App() {
           <Route path="/fulfillment-storage" element={<FulfillmentWarehouseForm />} />
           <Route path="/cold-storage" element={<ColdStorageForm />} />
           <Route path="/inventory-management" element={<InventoryManagementForm />} />
-          {/* ✅ नवीन BULK & PALLET STORAGE ROUTE ADDED */}
           <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />

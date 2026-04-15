@@ -28,3 +28,30 @@ body {
   background-color: #28a745;
   border: none;
 }
+
+/* 🔥 नवीन ॲनिमेशन्स (Courier Page साठी) */
+
+/* १. तरंगणारा परिणाम (Floating Effect) */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* २. हलका बाऊन्स परिणाम (Slow Bounce Effect) */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+/* ३. ३D शॅडो इफेक्ट (Truck आयकॉनसाठी) */
+.drop-shadow-3xl {
+  filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.2));
+}
