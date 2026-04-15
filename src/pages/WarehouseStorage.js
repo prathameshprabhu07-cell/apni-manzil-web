@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { 
   Clock, Calendar, Box, Snowflake, ClipboardList, ShieldCheck, 
   ArrowRight, Warehouse, CheckCircle2
@@ -8,9 +9,46 @@ import {
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const WarehouseStorage = () => {
+  const navigate = useNavigate(); 
 
   // ✅ बुकिंग हाताळण्यासाठी फंक्शन
   const handleWarehouseBooking = (serviceTitle) => {
+    // 🚀 बदल १: जर 'Short Term Storage' असेल तर त्या फॉर्मवर पाठवा
+    if (serviceTitle === "Short Term Storage") {
+      navigate('/short-term-storage');
+      return;
+    }
+
+    // 🚀 बदल २: जर 'Long Term Storage' असेल तर त्या फॉर्मवर पाठवा
+    if (serviceTitle === "Long Term Storage") {
+      navigate('/long-term-storage');
+      return;
+    }
+
+    // 🚀 बदल ३: जर 'Fulfillment Warehouse' असेल तर त्या फॉर्मवर पाठवा
+    if (serviceTitle === "Fulfillment Warehouse") {
+      navigate('/fulfillment-storage');
+      return;
+    }
+
+    // 🚀 बदल ४: जर 'Cold Storage' असेल तर त्या फॉर्मवर पाठवा
+    if (serviceTitle === "Cold Storage") {
+      navigate('/cold-storage');
+      return;
+    }
+
+    // 🚀 बदल ५: जर 'Inventory Management' असेल तर त्या फॉर्मवर पाठवा
+    if (serviceTitle === "Inventory Management") {
+      navigate('/inventory-management');
+      return;
+    }
+
+    // 🚀 बदल ६: जर 'Bulk & Pallet Storage' असेल तर त्या फॉर्मवर पाठवा (नवीन ॲड केलं आहे)
+    if (serviceTitle === "Bulk & Pallet Storage") {
+      navigate('/bulk-pallet-storage');
+      return;
+    }
+
     // कस्टमरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
     const customerPhone = "7378502356"; 
     const customerName = "Warehouse Client";
@@ -140,7 +178,7 @@ const WarehouseStorage = () => {
             </div>
             
             <button 
-              onClick={() => handleWarehouseBooking("General Warehouse Quote Request")}
+              onClick={() => handleWarehouseBooking("Long Term Storage")} 
               className="bg-orange-500 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center gap-4 group cursor-pointer"
             >
               Get Quote Now <ArrowRight className="group-hover:translate-x-2 transition-transform" />

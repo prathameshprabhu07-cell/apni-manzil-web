@@ -67,6 +67,24 @@ import BookPartLoad from './pages/BookPartLoad';
 // 🚛 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन FIND LOAD IMPORT (ADDED) ---
 import FindLoad from './pages/FindLoad'; 
 
+// 📦 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन SHORT TERM STORAGE IMPORT ---
+import ShortTermStorageForm from './pages/ShortTermStorageForm';
+
+// 🏢 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन LONG TERM STORAGE IMPORT ---
+import LongTermStorageForm from './pages/LongTermStorageForm';
+
+// 📦 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन FULFILLMENT WAREHOUSE IMPORT ---
+import FulfillmentWarehouseForm from './pages/FulfillmentWarehouseForm';
+
+// ❄️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन COLD STORAGE IMPORT ---
+import ColdStorageForm from './pages/ColdStorageForm';
+
+// 📊 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन INVENTORY MANAGEMENT IMPORT ---
+import InventoryManagementForm from './pages/InventoryManagementForm';
+
+// 🏗️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन BULK & PALLET STORAGE IMPORT (नवीन ADDED) ---
+import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
+
 // --- ✅ नवीन AUTHENTICATION PAGE ---
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
@@ -153,12 +171,17 @@ function App() {
           <Route path="/truck-transport" element={<TruckTransportService />} />
           
           <Route path="/book-truck" element={<BookTruck />} />
-          
-          {/* 🚛 ✅ PART LOAD ROUTE */}
           <Route path="/book-part-load" element={<BookPartLoad />} />
-
-          {/* 🚛 ✅ नवीन FIND LOAD ROUTE (ADDED) */}
           <Route path="/find-load" element={<FindLoad />} />
+
+          {/* 📦 WAREHOUSE ROUTES */}
+          <Route path="/short-term-storage" element={<ShortTermStorageForm />} />
+          <Route path="/long-term-storage" element={<LongTermStorageForm />} />
+          <Route path="/fulfillment-storage" element={<FulfillmentWarehouseForm />} />
+          <Route path="/cold-storage" element={<ColdStorageForm />} />
+          <Route path="/inventory-management" element={<InventoryManagementForm />} />
+          {/* ✅ नवीन BULK & PALLET STORAGE ROUTE ADDED */}
+          <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />
