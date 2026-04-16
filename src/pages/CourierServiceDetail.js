@@ -95,7 +95,14 @@ const CourierServiceDetail = () => {
                 <input name="weight" required placeholder="0.5" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
               </div>
             </div>
-            <button className="md:col-span-2 bg-orange-500 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95">Confirm & Book via WhatsApp</button>
+            {/* नवीन पेजवर जाण्यासाठी इथे navigate वापरलं आहे */}
+            <button 
+              type="button"
+              onClick={() => navigate('/booking')}
+              className="md:col-span-2 bg-orange-500 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95 text-center"
+            >
+              Book Now on New Page
+            </button>
           </form>
         </div>
       </div>
@@ -109,7 +116,11 @@ const CourierServiceDetail = () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {subServices.map((s) => (
-            <div key={s.id} className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
+            <div 
+              key={s.id} 
+              onClick={() => navigate('/booking')}
+              className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer"
+            >
               <div className={`${s.bg} ${s.color} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform shadow-inner`}>
                 {s.icon}
               </div>

@@ -17,8 +17,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import Home from './pages/Home'; 
 import About from './pages/About'; 
 import ImportExportDetail from './pages/ImportExportDetail'; 
-// ✅ जुने CourierDetail आणि CourierService इथून काढले आहेत
 import CourierServiceDetail from './pages/CourierServiceDetail'; 
+// ✅ नवीन बुकिंग पेज इम्पोर्ट केले आहे
+import BookingPage from './pages/BookingPage'; 
 import HyperlocalService from './pages/HyperlocalService'; 
 import TruckTransportService from './pages/TruckTransportService'; 
 import Tracking from './pages/Tracking'; 
@@ -73,16 +74,16 @@ import ShortTermStorageForm from './pages/ShortTermStorageForm';
 import LongTermStorageForm from './pages/LongTermStorageForm';
 
 // 📦 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन FULFILLMENT WAREHOUSE IMPORT ---
-import FulfillmentWarehouseForm from './pages/FulfillmentWarehouseForm';
+import FulfillmentWarehouseForm from './components/FulfillmentWarehouseForm';
 
 // ❄️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन COLD STORAGE IMPORT ---
-import ColdStorageForm from './pages/ColdStorageForm';
+import ColdStorageForm from './components/ColdStorageForm';
 
 // 📊 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन INVENTORY MANAGEMENT IMPORT ---
-import InventoryManagementForm from './pages/InventoryManagementForm';
+import InventoryManagementForm from './components/InventoryManagementForm';
 
 // 🏗️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन BULK & PALLET STORAGE IMPORT ---
-import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
+import BulkPalletStorageForm from './components/BulkPalletStorageForm';
 
 // --- ✅ नवीन AUTHENTICATION PAGE ---
 import Auth from './Auth'; 
@@ -165,8 +166,10 @@ function App() {
           <Route path="/register" element={<Auth />} />
           <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
           
-          {/* ✅ आता फक्त मुख्य CourierServiceDetail पेज राहिल */}
+          {/* ✅ मुख्य कुरिअर पेज आणि नवीन बुकिंग पेज Route */}
           <Route path="/courier-service" element={<CourierServiceDetail />} />
+          <Route path="/booking" element={<BookingPage />} />
+
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
           
