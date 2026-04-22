@@ -93,9 +93,9 @@ const PartnerRegistration = () => {
                   <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-8 border-b-4 border-orange-500 w-fit pb-2">Compliance Agreement</h3>
                   <div className="bg-gray-50 p-6 border border-gray-200 h-64 overflow-y-auto text-[12px] font-bold text-gray-600 leading-relaxed mb-8 shadow-inner">
                     <p className="mb-6 uppercase text-[#004080] border-b border-gray-200 pb-2">1.0 Data Accuracy & Verification</p>
-                    <p className="mb-6">The registering entity confirms that all statutory documents (PAN, GST, [Aadhaar Redacted]) provided to Apni Manzil are authentic and up-to-date. Fraudulent entries will lead to immediate legal termination.</p>
+                    <p className="mb-6">The registering entity confirms that all statutory documents (PAN, GST, Aadhaar) provided to Apni Manzil are authentic and up-to-date.</p>
                     <p className="mb-6 uppercase text-[#004080] border-b border-gray-200 pb-2">2.0 Operational Standards</p>
-                    <p className="mb-6">Partner must adhere to the standardized Service Level Agreements (SLA) regarding cargo safety and delivery timelines.</p>
+                    <p className="mb-6">Partner must adhere to the standardized Service Level Agreements (SLA).</p>
                   </div>
                   <label className="flex items-center gap-4 cursor-pointer group">
                     <input type="checkbox" className="w-5 h-5 accent-[#004080]" />

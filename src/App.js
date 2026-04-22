@@ -85,6 +85,9 @@ import InventoryManagementForm from './pages/InventoryManagementForm';
 // 🏗️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन BULK & PALLET STORAGE IMPORT (Path Fixed) ---
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 
+// 🤝 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन PARTNER WITH US IMPORT ---
+import PartnerWithUs from './pages/PartnerWithUs'; 
+
 // --- ✅ नवीन AUTHENTICATION PAGE ---
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
@@ -208,6 +211,9 @@ function App() {
           <Route path="/tradefinance" element={<TradeFinance />} />
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+
+          {/* 🤝 नवीन पार्टनर विथ अस Route */}
+          <Route path="/partner-with-us" element={<PartnerWithUs />} />
           
           <Route 
             path="/customer-dashboard" 

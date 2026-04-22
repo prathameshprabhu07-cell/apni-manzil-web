@@ -100,7 +100,8 @@ const Layout = ({ children }) => {
               </div>
             )}
           </div>
-          <Link to="/partner-registration" className="hover:text-[#FF5E00] transition-all text-[#FF5E00]">BECOME A PARTNER</Link>
+          {/* ✅ लिंक अपडेट केली आहे */}
+          <Link to="/partner-with-us" className="hover:text-[#FF5E00] transition-all text-[#FF5E00]">BECOME A PARTNER</Link>
           <button onClick={() => setShowDashboardModal(true)} className="border-2 border-[#001D3D] px-8 py-2.5 hover:bg-[#001D3D] hover:text-white transition-all uppercase font-black text-[13px] rounded-sm cursor-pointer shadow-sm">
             <User size={16}/> {user ? 'MY DASHBOARD' : 'DASHBOARD'}
           </button>
@@ -173,14 +174,15 @@ const Layout = ({ children }) => {
             </div>
           </div>
 
-          {/* Quick Links - UPDATED AS REQUESTED */}
+          {/* Quick Links */}
           <div>
             <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Support & Info</h5>
             <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-slate-300">
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/about">About Us</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/help-center">Help Center</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/track">Service Areas</Link></li>
-              <li className="hover:text-white cursor-pointer transition-all"><Link to="/partner-registration">Partner With Us</Link></li>
+              {/* ✅ लिंक अपडेट केली आहे */}
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/partner-with-us">Partner With Us</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/privacy-policy">Privacy Policy</Link></li>
             </ul>
           </div>
