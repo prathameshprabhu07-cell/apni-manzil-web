@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; // १. useState जोडला
 import { useNavigate } from 'react-router-dom';
 
 // १. इमेजेस इम्पोर्ट करा (खात्री करा की या फाईल्स assets फोल्डरमध्ये आहेत)
@@ -14,17 +14,20 @@ import {
 const Home = () => {
   const navigate = useNavigate();
 
-  // १. मुख्य सर्व्हिसेस डेटा
+  // ✅ निवडलेली सर्व्हिस सेव्ह करण्यासाठी स्टेट
+  const [selectedPath, setSelectedPath] = useState('');
+
+  // १. मुख्य सर्व्हिसेस डेटा (प्रत्येक सर्व्हिसला 'path' जोडला आहे)
   const mainServices = [
-    { id: 1, name: "Courier & Parcel Delivery", icon: <Package size={32} />, color: "text-blue-600", bg: "bg-blue-50", isCourier: true },
-    { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50", isHyperlocal: true }, 
-    { id: 3, name: "Truck & Transport Booking", icon: <Truck size={32} />, color: "text-green-600", bg: "bg-green-50", isTruck: true },
-    { id: 4, name: "Packers & Movers", icon: <HomeIcon size={32} />, color: "text-amber-700", bg: "bg-amber-50", isPackers: true },
-    { id: 5, name: "Warehouse & Storage", icon: <Warehouse size={32} />, color: "text-slate-600", bg: "bg-slate-50", isWarehouse: true },
-    { id: 6, name: "International Logistics", icon: <Globe size={32} />, color: "text-indigo-600", bg: "bg-indigo-50", isInternational: true },
-    { id: 7, name: "E-commerce Logistics", icon: <Boxes size={32} />, color: "text-pink-600", bg: "bg-pink-50", isEcommerce: true },
-    { id: 8, name: "Special Logistics", icon: <Star size={32} />, color: "text-cyan-600", bg: "bg-cyan-50", isSpecial: true },
-    { id: 9, name: "AI Smart Logistics", icon: <Bot size={32} />, color: "text-yellow-600", bg: "bg-yellow-50", isAI: true }
+    { id: 1, name: "Courier & Parcel Delivery", icon: <Package size={32} />, color: "text-blue-600", bg: "bg-blue-50", isCourier: true, path: '/courier-service' },
+    { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50", isHyperlocal: true, path: '/hyperlocal-service' }, 
+    { id: 3, name: "Truck & Transport Booking", icon: <Truck size={32} />, color: "text-green-600", bg: "bg-green-50", isTruck: true, path: '/truck-transport' },
+    { id: 4, name: "Packers & Movers", icon: <HomeIcon size={32} />, color: "text-amber-700", bg: "bg-amber-50", isPackers: true, path: '/packers-movers' },
+    { id: 5, name: "Warehouse & Storage", icon: <Warehouse size={32} />, color: "text-slate-600", bg: "bg-slate-50", isWarehouse: true, path: '/warehouse-storage' },
+    { id: 6, name: "International Logistics", icon: <Globe size={32} />, color: "text-indigo-600", bg: "bg-indigo-50", isInternational: true, path: '/international-logistics' },
+    { id: 7, name: "E-commerce Logistics", icon: <Boxes size={32} />, color: "text-pink-600", bg: "bg-pink-50", isEcommerce: true, path: '/ecommerce-logistics' },
+    { id: 8, name: "Special Logistics", icon: <Star size={32} />, color: "text-cyan-600", bg: "bg-cyan-50", isSpecial: true, path: '/special-logistics' },
+    { id: 9, name: "AI Smart Logistics", icon: <Bot size={32} />, color: "text-yellow-600", bg: "bg-yellow-50", isAI: true, path: '/ai-smart-logistics' }
   ];
 
   // २. इमेज स्ट्रिप डेटा
@@ -80,39 +83,71 @@ const Home = () => {
         </style>
       </div>
 
-      {/* 1. HERO SECTION */}
-      <section className="relative w-full h-[400px] md:h-[450px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={HeroLogisticsImage} 
-            alt="Apni Manzil Global Logistics" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-[#001D3D]/65 backdrop-blur-[1px]"></div>
+    {/* 1. HERO SECTION */}
+<section className="relative w-full h-[400px] md:h-[450px] flex items-center justify-center overflow-hidden">
+  <div className="absolute inset-0 z-0">
+    <img 
+      src={HeroLogisticsImage} 
+      alt="Apni Manzil Global Logistics" 
+      className="w-full h-full object-cover"
+    />
+    <div className="absolute inset-0 bg-[#001D3D]/65 backdrop-blur-[1px]"></div>
+  </div>
+
+  <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
+    <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tighter leading-tight italic uppercase">
+      India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Aggregator Platform
+    </h1>
+    <p className="text-white/80 font-bold mb-10 text-sm md:text-lg uppercase tracking-[0.4em]">One Solution for All Delivery</p>
+    
+    <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-2 border border-white/20">
+        
+        {/* १. Pickup Pincode */}
+        <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+          <MapPin size={20} className="text-orange-500" />
+          <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
         </div>
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tighter leading-tight italic uppercase">
-            India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Aggregator Platform
-          </h1>
-          <p className="text-white/80 font-bold mb-10 text-sm md:text-lg uppercase tracking-[0.4em]">One Solution for All Delivery</p>
-          
-          <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-2 border border-white/20">
-              <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-                <MapPin size={20} className="text-orange-500" />
-                <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
-              </div>
-              <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-                <Search size={20} className="text-gray-400" />
-                <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
-              </div>
-              {/* ✅ POWERFUL BUTTON 1 */}
-              <button className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-[0_10px_20px_rgba(249,115,22,0.4)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.6)] hover:-translate-y-1 active:scale-95 duration-300 flex items-center justify-center gap-2 group">
-                Compare Services <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform"/>
-              </button>
-          </div>
+        {/* २. Delivery Pincode */}
+        <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+          <Search size={20} className="text-gray-400" />
+          <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
         </div>
-      </section>
+
+        {/* ✅ दुरुस्त केलेला: ३. Select Service Box */}
+        <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+          <Box size={20} className="text-blue-600" />
+          <select 
+            className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800 cursor-pointer appearance-none"
+            value={selectedPath}
+            onChange={(e) => setSelectedPath(e.target.value)}
+          >
+            <option value="" disabled>Select Service</option>
+            {mainServices.map((service) => (
+              <option key={service.id} value={service.path}>
+                {service.name}
+              </option>
+            ))}
+          </select>
+          <ChevronRight size={16} className="text-slate-400 rotate-90" />
+        </div>
+
+        {/* ✅ ४. Dynamic Compare Services Button */}
+        <button 
+          onClick={() => {
+            if(selectedPath) {
+              navigate(selectedPath); // युजरने निवडलेल्या पेजवर जाईल
+            } else {
+              alert("कृपया आधी एक सर्व्हिस निवडा!");
+            }
+          }}
+          className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-[0_10px_20px_rgba(249,115,22,0.4)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.6)] hover:-translate-y-1 active:scale-95 duration-300 flex items-center justify-center gap-2 group"
+        >
+          Compare Services <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform"/>
+        </button>
+    </div>
+  </div>
+</section>
 
       {/* 2. MAIN SERVICES SECTION */}
       <section id="services" className="max-w-7xl mx-auto px-6 py-16">
@@ -126,17 +161,7 @@ const Home = () => {
               {mainServices.map((s) => (
                 <div 
                   key={s.id} 
-                  onClick={() => {
-                    if (s.isCourier) navigate('/courier-service');
-                    else if (s.isHyperlocal) navigate('/hyperlocal-service');
-                    else if (s.isTruck) navigate('/truck-transport');
-                    else if (s.isPackers) navigate('/packers-movers');
-                    else if (s.isWarehouse) navigate('/warehouse-storage');
-                    else if (s.isInternational) navigate('/international-logistics');
-                    else if (s.isEcommerce) navigate('/ecommerce-logistics'); 
-                    else if (s.isSpecial) navigate('/special-logistics');
-                    else if (s.isAI) navigate('/ai-smart-logistics');
-                  }}
+                  onClick={() => navigate(s.path)}
                   className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center justify-center h-52 relative overflow-hidden shadow-sm"
                 >
                   <div className={`${s.bg} ${s.color} p-5 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>

@@ -17,6 +17,21 @@ const BookingForm = ({ serviceName, onClose }) => {
     date: ''
   });
 
+  // --- झॅपियर फंक्शन (स्वतंत्र ठेवले आहे) ---
+  const sendToZapier = async (bookingData) => {
+    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/27439476/uvg4w4t/";
+    try {
+      await fetch(ZAPIER_URL, {
+        method: "POST",
+        mode: "no-cors", 
+        body: JSON.stringify(bookingData),
+      });
+      console.log("Zapier ला डेटा पाठवला!");
+    } catch (err) {
+      console.error("Zapier Error:", err);
+    }
+  };
+
   // १. पिनकोड बदलल्यावर रेट्स चेक करणे
   useEffect(() => {
     const fetchRates = async () => {
@@ -33,7 +48,7 @@ const BookingForm = ({ serviceName, onClose }) => {
   // २. Razorpay पेमेंट फंक्शन
   const handlePayment = (amount, bookingId) => {
     const options = {
-      key: "rzp_live_SaHG507xstegnT", // तुझी LIVE KEY
+      key: "rzp_live_SaHG507xstegnT", 
       amount: amount * 100,
       currency: "INR",
       name: "Apni Manzil",
@@ -60,7 +75,7 @@ const BookingForm = ({ serviceName, onClose }) => {
 
     setLoading(true);
     try {
-      const docRef = await addDoc(collection(db, "bookings"), {
+      const bookingPayload = {
         serviceType: serviceName,
         pickupAddress: formData.pickup,
         dropAddress: formData.drop,
@@ -69,8 +84,16 @@ const BookingForm = ({ serviceName, onClose }) => {
         courierName: selectedCourier.name,
         price: selectedCourier.rate,
         status: "Payment Pending",
-        createdAt: serverTimestamp(),
+        createdAt: new Date().toISOString(), // झॅपियरसाठी साधी तारीख
+      };
+
+      const docRef = await addDoc(collection(db, "bookings"), {
+        ...bookingPayload,
+        createdAt: serverTimestamp(), // फायरबेससाठी सर्वर टाइमस्टॅम्प
       });
+
+      // --- झॅपियरला डेटा पाठवा (फायरबेस एंट्री झाल्यावर लगेच) ---
+      sendToZapier(bookingPayload);
 
       // पेमेंट खिडकी उघडा
       handlePayment(selectedCourier.rate, docRef.id);
@@ -81,8 +104,10 @@ const BookingForm = ({ serviceName, onClose }) => {
     }
   };
 
+  // ... (बाकीचा रिटर्न UI कोड तसाच आहे, त्यात काही बदल नाही)
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto">
+      {/* ... (तुमचा पूर्ण UI कोड) ... */}
       <div className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] my-8 animate-in zoom-in duration-200">
         
         <button type="button" onClick={onClose} className="absolute top-6 right-6 text-slate-400 hover:text-black transition-colors">
@@ -118,6 +143,7 @@ const BookingForm = ({ serviceName, onClose }) => {
                 <option value="0.5">0.5 KG</option>
                 <option value="1">1 KG</option>
                 <option value="5">5 KG</option>
+                <option value="5">5 KG</option>
               </select>
             </div>
 
@@ -127,7 +153,6 @@ const BookingForm = ({ serviceName, onClose }) => {
             </div>
           </div>
 
-          {/* Rate Comparison Section */}
           <div className="mt-8">
             <h3 className="text-[10px] font-black uppercase text-slate-400 mb-4 ml-2 flex items-center gap-2">
               <Info size={12}/> Select Courier Partner
