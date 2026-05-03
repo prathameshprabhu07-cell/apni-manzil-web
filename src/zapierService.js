@@ -1,6 +1,7 @@
 // src/zapierService.js
 export const sendToZapier = async (mainService, subService, extraData = {}) => {
-  const url = "https://hooks.zapier.com/hooks/catch/27439476/uvg4w4t/";
+  // तुझी नवीन अपडेटेड लिंक खाली दिली आहे
+  const url = "https://hooks.zapier.com/hooks/catch/27439476/uvczwl6/";
   
   const payload = {
     main_service: mainService,
