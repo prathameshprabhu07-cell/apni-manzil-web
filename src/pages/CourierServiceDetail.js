@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // ✅ Axios Import केला आहे
+import axios from 'axios';
 import { 
   ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
   Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, Phone, User, Home, CreditCard, Search
@@ -9,8 +9,8 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); // ✅ Loading state
-  const [rates, setRates] = useState(null); // ✅ Rates state
+  const [loading, setLoading] = useState(false);
+  const [rates, setRates] = useState(null);
   
   const [formData, setFormData] = useState({
     serviceType: 'Domestic Courier',
@@ -42,49 +42,47 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ १. कुरियर रेट्स तपासण्यासाठी नवीन फंक्शन
+  // ✅ Updated handleCheckRates using Backend Proxy to avoid CORS
   const handleCheckRates = async () => {
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode) {
-      alert("कृपया पिनकोड आणि वजन भरा!");
+      alert("Please fill Pincode and Weight!");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await axios.post('https://api.nimbuspost.com/v1/courier/serviceability', {
-        pickup_postcode: formData.pickupPincode,
-        delivery_postcode: formData.dropPincode,
-        weight: formData.weight,
-        cod: formData.paymentMode === 'Prepaid' ? 0 : 1
-      }, {
-        headers: { 'Authorization': `Bearer ${process.env.REACT_APP_NIMBUS_API_KEY}` }
+      const response = await axios.post('/api/nimbus', {
+        endpoint: 'courier/serviceability',
+        data: {
+          pickup_postcode: formData.pickupPincode,
+          delivery_postcode: formData.dropPincode,
+          weight: formData.weight,
+          cod: formData.paymentMode === 'Prepaid' ? 0 : 1
+        }
       });
 
-      setRates(response.data.data);
-      alert("Live Rates अपडेट झाले आहेत!");
+      if (response.data && response.data.data) {
+        setRates(response.data.data);
+        alert("Live Rates updated successfully!");
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
       console.error("Rate Error:", error);
-      alert("दर तपासताना अडचण आली.");
+      alert("Error checking rates. Please check console for details.");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ २. बुकिंग फंक्शन - NimbusPost API सह
+  // ✅ Updated handleFinalBooking using Backend Proxy to avoid CORS
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // NimbusPost कडून टोकन मिळवणे
-      const loginRes = await axios.post('https://api.nimbuspost.com/v1/login', {
-        email: "7378502356+3802@automaticsignup.com",
-        password: "xa6KSELPyH"
-      });
-      const token = loginRes.data.data;
-
-      // शिपमेंट डेटा तयार करणे
       const orderId = "CR-" + Math.floor(Math.random() * 100000);
+      
       const shipmentData = {
         "order_number": orderId,
         "consignee_name": formData.receiverName,
@@ -97,19 +95,24 @@ const CourierServiceDetail = () => {
         "package_content": formData.parcelType
       };
 
-      // API द्वारे बुकिंग करणे
-      const bookingRes = await axios.post('https://api.nimbuspost.com/v1/shipments', shipmentData, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      // Calls your Vercel/Node backend which handles Nimbus login and shipment
+      const bookingRes = await axios.post('/api/nimbus', {
+        endpoint: 'shipments',
+        data: shipmentData
       });
 
-      const awb = bookingRes.data.data.awb_number;
-      const message = `Booking Confirmed! Order ID: ${orderId} | AWB: ${awb} | Sender: ${formData.senderName} | From: ${formData.pickupPincode} to ${formData.dropPincode} | Weight: ${formData.weight}kg`;
-      
-      sendWhatsAppNotification(formData.senderPhone, formData.senderName, message, orderId);
-      alert(`Booking Successful! Tracking ID: ${awb}`);
+      if (bookingRes.data && bookingRes.data.data) {
+        const awb = bookingRes.data.data.awb_number;
+        const message = `Booking Confirmed! Order ID: ${orderId} | AWB: ${awb} | Sender: ${formData.senderName} | From: ${formData.pickupPincode} to ${formData.dropPincode} | Weight: ${formData.weight}kg`;
+        
+        await sendWhatsAppNotification(formData.senderPhone, formData.senderName, message, orderId);
+        alert(`Booking Successful! Tracking ID: ${awb}`);
+      } else {
+        alert("Booking failed. Please check your credentials or API balance.");
+      }
     } catch (error) {
       console.error("Booking Error:", error);
-      alert("Booking अयशस्वी झाले. कृपया क्रेडेंशियल्स तपासा.");
+      alert("Booking unsuccessful. Please check console errors.");
     } finally {
       setLoading(false);
     }
@@ -165,7 +168,6 @@ const CourierServiceDetail = () => {
                 <label className="text-xs font-black uppercase text-slate-400 ml-4">Weight (kg)</label>
                 <div className="flex gap-2">
                    <input name="weight" required type="number" step="0.1" placeholder="e.g. 0.5" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
-                   {/* ✅ Check Rates Button Added Here */}
                    <button type="button" onClick={handleCheckRates} className="bg-blue-600 text-white px-4 rounded-2xl hover:bg-blue-700 transition flex items-center gap-2">
                       <Search size={18}/> Rates
                    </button>
