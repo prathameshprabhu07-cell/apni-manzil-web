@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // ✅ Axios Import केला आहे
 import { 
   ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
-  Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, Phone, User, Home, CreditCard
+  Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, Phone, User, Home, CreditCard, Search
 } from 'lucide-react';
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // ✅ Loading state
+  const [rates, setRates] = useState(null); // ✅ Rates state
+  
   const [formData, setFormData] = useState({
     serviceType: 'Domestic Courier',
     senderName: '',
@@ -38,12 +42,77 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFinalBooking = (e) => {
+  // ✅ १. कुरियर रेट्स तपासण्यासाठी नवीन फंक्शन
+  const handleCheckRates = async () => {
+    if(!formData.dropPincode || !formData.weight || !formData.pickupPincode) {
+      alert("कृपया पिनकोड आणि वजन भरा!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post('https://api.nimbuspost.com/v1/courier/serviceability', {
+        pickup_postcode: formData.pickupPincode,
+        delivery_postcode: formData.dropPincode,
+        weight: formData.weight,
+        cod: formData.paymentMode === 'Prepaid' ? 0 : 1
+      }, {
+        headers: { 'Authorization': `Bearer ${process.env.REACT_APP_NIMBUS_API_KEY}` }
+      });
+
+      setRates(response.data.data);
+      alert("Live Rates अपडेट झाले आहेत!");
+    } catch (error) {
+      console.error("Rate Error:", error);
+      alert("दर तपासताना अडचण आली.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ २. बुकिंग फंक्शन - NimbusPost API सह
+  const handleFinalBooking = async (e) => {
     e.preventDefault();
-    const orderId = "CR-" + Math.floor(Math.random() * 100000);
-    const message = `New Booking: ${formData.serviceType} | Sender: ${formData.senderName} | Receiver: ${formData.receiverName} | From: ${formData.pickupPincode} to ${formData.dropPincode} | Weight: ${formData.weight}kg | Mode: ${formData.paymentMode}`;
-    sendWhatsAppNotification(formData.senderPhone, formData.senderName, message, orderId);
-    alert("Booking Request Sent Successfully!");
+    setLoading(true);
+
+    try {
+      // NimbusPost कडून टोकन मिळवणे
+      const loginRes = await axios.post('https://api.nimbuspost.com/v1/login', {
+        email: "7378502356+3802@automaticsignup.com",
+        password: "xa6KSELPyH"
+      });
+      const token = loginRes.data.data;
+
+      // शिपमेंट डेटा तयार करणे
+      const orderId = "CR-" + Math.floor(Math.random() * 100000);
+      const shipmentData = {
+        "order_number": orderId,
+        "consignee_name": formData.receiverName,
+        "consignee_phone": formData.receiverPhone,
+        "consignee_address": formData.receiverAddress,
+        "pickup_postcode": formData.pickupPincode,
+        "delivery_postcode": formData.dropPincode,
+        "weight": formData.weight,
+        "payment_type": formData.paymentMode.toLowerCase(),
+        "package_content": formData.parcelType
+      };
+
+      // API द्वारे बुकिंग करणे
+      const bookingRes = await axios.post('https://api.nimbuspost.com/v1/shipments', shipmentData, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const awb = bookingRes.data.data.awb_number;
+      const message = `Booking Confirmed! Order ID: ${orderId} | AWB: ${awb} | Sender: ${formData.senderName} | From: ${formData.pickupPincode} to ${formData.dropPincode} | Weight: ${formData.weight}kg`;
+      
+      sendWhatsAppNotification(formData.senderPhone, formData.senderName, message, orderId);
+      alert(`Booking Successful! Tracking ID: ${awb}`);
+    } catch (error) {
+      console.error("Booking Error:", error);
+      alert("Booking अयशस्वी झाले. कृपया क्रेडेंशियल्स तपासा.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,7 +137,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* 📝 CENTRED BOOKING FORM - DETAILED VERSION */}
+      {/* 📝 CENTRED BOOKING FORM */}
       <div className="max-w-5xl mx-auto -mt-16 px-6 relative z-50">
         <div className="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border-4 border-orange-50">
           <h2 className="text-3xl font-black text-[#002D5E] mb-10 flex items-center gap-3 border-b-2 border-slate-100 pb-4">
@@ -94,13 +163,34 @@ const CourierServiceDetail = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase text-slate-400 ml-4">Weight (kg)</label>
-                <input name="weight" required type="number" step="0.1" placeholder="e.g. 0.5" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
+                <div className="flex gap-2">
+                   <input name="weight" required type="number" step="0.1" placeholder="e.g. 0.5" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
+                   {/* ✅ Check Rates Button Added Here */}
+                   <button type="button" onClick={handleCheckRates} className="bg-blue-600 text-white px-4 rounded-2xl hover:bg-blue-700 transition flex items-center gap-2">
+                      <Search size={18}/> Rates
+                   </button>
+                </div>
               </div>
             </div>
 
+            {/* ✅ Live Rates Display Section */}
+            {rates && (
+              <div className="bg-green-50 p-6 rounded-3xl border-2 border-green-200">
+                 <h4 className="font-black text-green-800 uppercase text-xs mb-4">Available Courier Rates:</h4>
+                 <div className="flex gap-4 overflow-x-auto pb-2">
+                    {rates.map((courier, idx) => (
+                      <div key={idx} className="bg-white p-4 rounded-xl shadow-sm min-w-[150px] border border-green-100 text-center">
+                         <p className="text-[10px] font-black text-slate-400 uppercase">{courier.name}</p>
+                         <p className="text-lg font-black text-blue-900">₹{courier.total_amount}</p>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               
-              {/* --- SECTION 2: SENDER DETAILS (FROM) --- */}
+              {/* --- SECTION 2: SENDER DETAILS --- */}
               <div className="space-y-6 bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100">
                 <h3 className="text-lg font-black text-blue-800 uppercase tracking-widest flex items-center gap-2">
                   <User size={20}/> Sender (From)
@@ -113,7 +203,7 @@ const CourierServiceDetail = () => {
                 </div>
               </div>
 
-              {/* --- SECTION 3: RECEIVER DETAILS (TO) --- */}
+              {/* --- SECTION 3: RECEIVER DETAILS --- */}
               <div className="space-y-6 bg-orange-50/50 p-6 rounded-[2rem] border border-orange-100">
                 <h3 className="text-lg font-black text-orange-800 uppercase tracking-widest flex items-center gap-2">
                   <MapPin size={20}/> Receiver (To)
@@ -147,9 +237,10 @@ const CourierServiceDetail = () => {
               
               <button 
                 type="submit"
-                className="w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-3"
+                disabled={loading}
+                className={`w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-3 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Proceed with Booking <ChevronRight size={20}/>
+                {loading ? 'Processing...' : 'Proceed with Booking'} <ChevronRight size={20}/>
               </button>
             </div>
           </form>
