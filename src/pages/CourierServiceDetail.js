@@ -42,7 +42,6 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Updated handleCheckRates using Backend Proxy to avoid CORS
   const handleCheckRates = async () => {
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode) {
       alert("Please fill Pincode and Weight!");
@@ -75,7 +74,6 @@ const CourierServiceDetail = () => {
     }
   };
 
-  // ✅ Updated handleFinalBooking using Backend Proxy to avoid CORS
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -83,19 +81,33 @@ const CourierServiceDetail = () => {
     try {
       const orderId = "CR-" + Math.floor(Math.random() * 100000);
       
+      // ✅ Updated shipmentData with all mandatory NimbusPost fields
       const shipmentData = {
         "order_number": orderId,
+        "shipping_charges": 0,
+        "discount": 0,
+        "cod_charges": 0,
+        "order_type": formData.paymentMode === 'Prepaid' ? "Prepaid" : "COD",
+        "order_value": 500, // अंदाजे पार्सल मूल्य
+        
+        "pickup_name": formData.senderName,
+        "pickup_phone": formData.senderPhone,
+        "pickup_address": formData.senderAddress,
+        "pickup_postcode": formData.pickupPincode,
+        
         "consignee_name": formData.receiverName,
         "consignee_phone": formData.receiverPhone,
         "consignee_address": formData.receiverAddress,
-        "pickup_postcode": formData.pickupPincode,
-        "delivery_postcode": formData.dropPincode,
-        "weight": formData.weight,
-        "payment_type": formData.paymentMode.toLowerCase(),
-        "package_content": formData.parcelType
+        "consignee_postcode": formData.dropPincode,
+        
+        "weight": parseFloat(formData.weight),
+        "length": 10,  
+        "breadth": 10, 
+        "height": 10,  
+        "package_content": formData.parcelType,
+        "payment_type": formData.paymentMode.toLowerCase()
       };
 
-      // Calls your Vercel/Node backend which handles Nimbus login and shipment
       const bookingRes = await axios.post('/api/nimbus', {
         endpoint: 'shipments',
         data: shipmentData
@@ -121,7 +133,6 @@ const CourierServiceDetail = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans">
       
-      {/* 🟦 BLUE HEADER SECTION */}
       <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-16 relative overflow-hidden">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10 cursor-pointer">
           <ArrowLeft size={20}/> Back to Home
@@ -140,7 +151,6 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* 📝 CENTRED BOOKING FORM */}
       <div className="max-w-5xl mx-auto -mt-16 px-6 relative z-50">
         <div className="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border-4 border-orange-50">
           <h2 className="text-3xl font-black text-[#002D5E] mb-10 flex items-center gap-3 border-b-2 border-slate-100 pb-4">
@@ -149,7 +159,6 @@ const CourierServiceDetail = () => {
           
           <form onSubmit={handleFinalBooking} className="space-y-12">
             
-            {/* --- SECTION 1: SERVICE & TYPE --- */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase text-slate-400 ml-4">Select Service</label>
@@ -175,7 +184,6 @@ const CourierServiceDetail = () => {
               </div>
             </div>
 
-            {/* ✅ Live Rates Display Section */}
             {rates && (
               <div className="bg-green-50 p-6 rounded-3xl border-2 border-green-200">
                  <h4 className="font-black text-green-800 uppercase text-xs mb-4">Available Courier Rates:</h4>
@@ -192,7 +200,6 @@ const CourierServiceDetail = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               
-              {/* --- SECTION 2: SENDER DETAILS --- */}
               <div className="space-y-6 bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100">
                 <h3 className="text-lg font-black text-blue-800 uppercase tracking-widest flex items-center gap-2">
                   <User size={20}/> Sender (From)
@@ -205,7 +212,6 @@ const CourierServiceDetail = () => {
                 </div>
               </div>
 
-              {/* --- SECTION 3: RECEIVER DETAILS --- */}
               <div className="space-y-6 bg-orange-50/50 p-6 rounded-[2rem] border border-orange-100">
                 <h3 className="text-lg font-black text-orange-800 uppercase tracking-widest flex items-center gap-2">
                   <MapPin size={20}/> Receiver (To)
@@ -219,7 +225,6 @@ const CourierServiceDetail = () => {
               </div>
             </div>
 
-            {/* --- SECTION 4: PAYMENT & ACTION --- */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-100">
               <div className="flex items-center gap-4">
                 <label className="text-sm font-black text-slate-500 uppercase tracking-widest">Payment Mode:</label>
@@ -249,7 +254,6 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* 🖼️ OUR PREMIUM SERVICES SECTION */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-[0.2em]">Our Premium Services</h2>
@@ -275,7 +279,6 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* 🚛 TRUCK IMAGE SECTION */}
       <div className="max-w-7xl mx-auto px-6 mb-20">
         <div 
           className="w-full h-[450px] rounded-[3rem] overflow-hidden relative shadow-2xl flex items-center justify-center text-center px-4"
@@ -295,7 +298,6 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* 🚛 BRANDING SECTION */}
       <div className="w-full bg-[#002D5E] py-16 px-6 text-center text-white">
         <h2 className="text-3xl font-black mb-8 italic text-orange-400 tracking-tighter uppercase">Apni Manzil Logistics</h2>
         <div className="flex flex-wrap justify-center gap-12">
