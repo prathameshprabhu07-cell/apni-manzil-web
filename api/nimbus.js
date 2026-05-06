@@ -1,12 +1,16 @@
-// api/nimbus.js मध्ये हा बदल करा
-} catch (error) {
-    // एररचे डिटेल्स प्रिंट करा
-    const errorData = error.response ? error.response.data : error.message;
-    console.error("Nimbus API Error:", errorData);
-    
-    // युजरला नेमकी चूक पाठवा
-    return res.status(500).json({ 
-        message: "Internal Server Error", 
-        details: errorData 
-    });
+export default async function handler(req, res) {
+  // CORS साठी हे आवश्यक आहे
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed - Please use POST' });
+  }
+
+  // तुझा पुढचा Nimbus चा लॉगिन आणि बुकिंग कोड...
 }

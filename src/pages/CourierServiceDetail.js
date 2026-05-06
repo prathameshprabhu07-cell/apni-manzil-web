@@ -5,6 +5,7 @@ import {
   ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
   Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, Phone, User, Home, CreditCard, Search
 } from 'lucide-react';
+// खालील ओळ आपण WhatsApp साठी वापरतोय, पण सध्या Zapier 404 देत असल्याने आपण ती फंक्शनमध्ये वापरणार नाही
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const CourierServiceDetail = () => {
@@ -81,14 +82,13 @@ const CourierServiceDetail = () => {
     try {
       const orderId = "CR-" + Math.floor(Math.random() * 100000);
       
-      // ✅ Updated shipmentData with all mandatory NimbusPost fields
       const shipmentData = {
         "order_number": orderId,
         "shipping_charges": 0,
         "discount": 0,
         "cod_charges": 0,
         "order_type": formData.paymentMode === 'Prepaid' ? "Prepaid" : "COD",
-        "order_value": 500, // अंदाजे पार्सल मूल्य
+        "order_value": 500,
         
         "pickup_name": formData.senderName,
         "pickup_phone": formData.senderPhone,
@@ -117,7 +117,9 @@ const CourierServiceDetail = () => {
         const awb = bookingRes.data.data.awb_number;
         const message = `Booking Confirmed! Order ID: ${orderId} | AWB: ${awb} | Sender: ${formData.senderName} | From: ${formData.pickupPincode} to ${formData.dropPincode} | Weight: ${formData.weight}kg`;
         
-        await sendWhatsAppNotification(formData.senderPhone, formData.senderName, message, orderId);
+        // ही ओळ मी कमेंट केली आहे जेणेकरून Zapier चा 404 एरर बुकिंग थांबवणार नाही
+        // await sendWhatsAppNotification(formData.senderPhone, formData.senderName, message, orderId);
+        
         alert(`Booking Successful! Tracking ID: ${awb}`);
       } else {
         alert("Booking failed. Please check your credentials or API balance.");
