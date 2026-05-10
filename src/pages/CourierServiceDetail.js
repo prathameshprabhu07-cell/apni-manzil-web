@@ -43,6 +43,7 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // --- १. SHIPROCKET RATES CHECK KARNYASATHI AXIOS CODE ---
   const handleCheckRates = async () => {
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode) {
       alert("Please fill Pincode and Weight!");
@@ -51,82 +52,46 @@ const CourierServiceDetail = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/nimbus', {
-        endpoint: 'courier/serviceability',
-        data: {
-          pickup_postcode: formData.pickupPincode,
-          delivery_postcode: formData.dropPincode,
-          weight: formData.weight,
-          cod: formData.paymentMode === 'Prepaid' ? 0 : 1
-        }
+      // Ithe apan Shiprocket API la call karat ahot
+      const response = await axios.post('/api/shiprocket', {
+        pickup_details: {
+          name: formData.senderName || "Sender",
+          address: formData.senderAddress || "Address",
+          city: "City", // Shiprocket la lagte mhanun
+          state: "State",
+          pincode: formData.pickupPincode,
+          phone: formData.senderPhone || "9999999999"
+        },
+        delivery_pincode: formData.dropPincode,
+        weight: formData.weight,
+        cod: formData.paymentMode === 'Prepaid' ? 0 : 1
       });
 
-      if (response.data && response.data.data) {
-        setRates(response.data.data);
+      if (response.data.success && response.data.rates.data.available_courier_companies) {
+        setRates(response.data.rates.data.available_courier_companies);
         alert("Live Rates updated successfully!");
       } else {
-        throw new Error("Invalid response format");
+        alert("Rates not available for this route.");
       }
     } catch (error) {
       console.error("Rate Error:", error);
-      alert("Error checking rates. Please check console for details.");
+      alert("Error checking rates. Wallet balance check kara.");
     } finally {
       setLoading(false);
     }
   };
 
+  // --- २. FINAL BOOKING SATHI CODE ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const orderId = "CR-" + Math.floor(Math.random() * 100000);
-      
-      const shipmentData = {
-        "order_number": orderId,
-        "shipping_charges": 0,
-        "discount": 0,
-        "cod_charges": 0,
-        "order_type": formData.paymentMode === 'Prepaid' ? "Prepaid" : "COD",
-        "order_value": 500,
-        
-        "pickup_name": formData.senderName,
-        "pickup_phone": formData.senderPhone,
-        "pickup_address": formData.senderAddress,
-        "pickup_postcode": formData.pickupPincode,
-        
-        "consignee_name": formData.receiverName,
-        "consignee_phone": formData.receiverPhone,
-        "consignee_address": formData.receiverAddress,
-        "consignee_postcode": formData.dropPincode,
-        
-        "weight": parseFloat(formData.weight),
-        "length": 10,  
-        "breadth": 10, 
-        "height": 10,  
-        "package_content": formData.parcelType,
-        "payment_type": formData.paymentMode.toLowerCase()
-      };
-
-      const bookingRes = await axios.post('/api/nimbus', {
-        endpoint: 'shipments',
-        data: shipmentData
-      });
-
-      if (bookingRes.data && bookingRes.data.data) {
-        const awb = bookingRes.data.data.awb_number;
-        const message = `Booking Confirmed! Order ID: ${orderId} | AWB: ${awb} | Sender: ${formData.senderName} | From: ${formData.pickupPincode} to ${formData.dropPincode} | Weight: ${formData.weight}kg`;
-        
-        // ही ओळ मी कमेंट केली आहे जेणेकरून Zapier चा 404 एरर बुकिंग थांबवणार नाही
-        // await sendWhatsAppNotification(formData.senderPhone, formData.senderName, message, orderId);
-        
-        alert(`Booking Successful! Tracking ID: ${awb}`);
-      } else {
-        alert("Booking failed. Please check your credentials or API balance.");
-      }
+      // Ithe booking sathi logic yeil (Paytm kinva Direct Booking)
+      alert("Booking logic is being connected. Rates are live now!");
     } catch (error) {
       console.error("Booking Error:", error);
-      alert("Booking unsuccessful. Please check console errors.");
+      alert("Booking unsuccessful.");
     } finally {
       setLoading(false);
     }
@@ -186,14 +151,15 @@ const CourierServiceDetail = () => {
               </div>
             </div>
 
+            {/* ITHE RATES DISPLAY HOTIL (PROFIT SAHIT) */}
             {rates && (
               <div className="bg-green-50 p-6 rounded-3xl border-2 border-green-200">
                  <h4 className="font-black text-green-800 uppercase text-xs mb-4">Available Courier Rates:</h4>
                  <div className="flex gap-4 overflow-x-auto pb-2">
                     {rates.map((courier, idx) => (
                       <div key={idx} className="bg-white p-4 rounded-xl shadow-sm min-w-[150px] border border-green-100 text-center">
-                         <p className="text-[10px] font-black text-slate-400 uppercase">{courier.name}</p>
-                         <p className="text-lg font-black text-blue-900">₹{courier.total_amount}</p>
+                         <p className="text-[10px] font-black text-slate-400 uppercase">{courier.courier_name}</p>
+                         <p className="text-lg font-black text-blue-900">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
                       </div>
                     ))}
                  </div>
@@ -256,6 +222,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
+      {/* SERVICES SECTION - KAHIHI KAMI KELELE NAHI */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-[0.2em]">Our Premium Services</h2>
@@ -281,6 +248,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
+      {/* FOOTER & BANNER - KAHIHI KAMI KELELE NAHI */}
       <div className="max-w-7xl mx-auto px-6 mb-20">
         <div 
           className="w-full h-[450px] rounded-[3rem] overflow-hidden relative shadow-2xl flex items-center justify-center text-center px-4"
@@ -303,7 +271,7 @@ const CourierServiceDetail = () => {
       <div className="w-full bg-[#002D5E] py-16 px-6 text-center text-white">
         <h2 className="text-3xl font-black mb-8 italic text-orange-400 tracking-tighter uppercase">Apni Manzil Logistics</h2>
         <div className="flex flex-wrap justify-center gap-12">
-          <div><p className="text-2xl font-black">27k+</p><p className="text-[10px] font-bold uppercase text-blue-300 tracking-widest">Pincodes</p></div>
+          <div><p className="text-2xl font-black">19k+</p><p className="text-[10px] font-bold uppercase text-blue-300 tracking-widest">Pincodes</p></div>
           <div><p className="text-2xl font-black">24-48h</p><p className="text-[10px] font-bold uppercase text-blue-300 tracking-widest">Delivery</p></div>
           <div><p className="text-2xl font-black">Live</p><p className="text-[10px] font-bold uppercase text-blue-300 tracking-widest">Support</p></div>
         </div>
