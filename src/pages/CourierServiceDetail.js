@@ -12,7 +12,8 @@ const CourierServiceDetail = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [rates, setRates] = useState(null);
-  
+  const [selectedCourier, setSelectedCourier] = useState(null); // निवडलेला कुरिअर स्टोअर करण्यासाठी
+
   const [formData, setFormData] = useState({
     serviceType: 'Domestic Courier',
     senderName: '',
@@ -52,16 +53,8 @@ const CourierServiceDetail = () => {
 
     setLoading(true);
     try {
-      // Ithe apan Shiprocket API la call karat ahot
       const response = await axios.post('/api/shiprocket', {
-        pickup_details: {
-          name: formData.senderName || "Sender",
-          address: formData.senderAddress || "Address",
-          city: "City", // Shiprocket la lagte mhanun
-          state: "State",
-          pincode: formData.pickupPincode,
-          phone: formData.senderPhone || "9999999999"
-        },
+        pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
         weight: formData.weight,
         cod: formData.paymentMode === 'Prepaid' ? 0 : 1
@@ -84,14 +77,33 @@ const CourierServiceDetail = () => {
   // --- २. FINAL BOOKING SATHI CODE ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
+    
+    if(!selectedCourier) {
+      alert("Please select a Courier Service from the rates list first!");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Ithe booking sathi logic yeil (Paytm kinva Direct Booking)
-      alert("Booking logic is being connected. Rates are live now!");
+      // इथे आता प्रत्यक्ष बुकिंगसाठी डेटा पाठवला जाईल
+      const bookingData = {
+        ...formData,
+        courier_id: selectedCourier.courier_company_id,
+        shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20)
+      };
+
+      const bookingRes = await axios.post('/api/shiprocket/create-order', bookingData);
+
+      if (bookingRes.data.success) {
+        alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
+        navigate('/dashboard'); 
+      } else {
+        alert("Booking failed. Please try again.");
+      }
     } catch (error) {
       console.error("Booking Error:", error);
-      alert("Booking unsuccessful.");
+      alert("Booking unsuccessful. Please check details.");
     } finally {
       setLoading(false);
     }
@@ -151,15 +163,26 @@ const CourierServiceDetail = () => {
               </div>
             </div>
 
-            {/* ITHE RATES DISPLAY HOTIL (PROFIT SAHIT) */}
+            {/* ITHE RATES DISPLAY HOTIL (SELECTABLE LOGIC SAHIT) */}
             {rates && (
               <div className="bg-green-50 p-6 rounded-3xl border-2 border-green-200">
-                 <h4 className="font-black text-green-800 uppercase text-xs mb-4">Available Courier Rates:</h4>
-                 <div className="flex gap-4 overflow-x-auto pb-2">
+                 <h4 className="font-black text-green-800 uppercase text-xs mb-4">Select Courier & Rate:</h4>
+                 <div className="flex gap-4 overflow-x-auto pb-2 px-2">
                     {rates.map((courier, idx) => (
-                      <div key={idx} className="bg-white p-4 rounded-xl shadow-sm min-w-[150px] border border-green-100 text-center">
-                         <p className="text-[10px] font-black text-slate-400 uppercase">{courier.courier_name}</p>
-                         <p className="text-lg font-black text-blue-900">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
+                      <div 
+                        key={idx} 
+                        onClick={() => setSelectedCourier(courier)}
+                        className={`p-4 rounded-2xl shadow-sm min-w-[160px] border cursor-pointer transition-all duration-300 ${
+                          selectedCourier?.courier_company_id === courier.courier_company_id 
+                          ? 'bg-[#002D5E] text-white border-orange-400 scale-105 shadow-lg' 
+                          : 'bg-white text-slate-900 border-green-100 hover:border-blue-300'
+                        }`}
+                      >
+                         <p className={`text-[10px] font-black uppercase ${selectedCourier?.courier_company_id === courier.courier_company_id ? 'text-orange-400' : 'text-slate-400'}`}>
+                           {courier.courier_name}
+                         </p>
+                         <p className="text-lg font-black">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
+                         <p className="text-[9px] font-bold mt-1 opacity-80 uppercase tracking-tighter">Est. Delivery: {courier.etd}</p>
                       </div>
                     ))}
                  </div>
@@ -167,7 +190,6 @@ const CourierServiceDetail = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              
               <div className="space-y-6 bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100">
                 <h3 className="text-lg font-black text-blue-800 uppercase tracking-widest flex items-center gap-2">
                   <User size={20}/> Sender (From)
@@ -215,14 +237,13 @@ const CourierServiceDetail = () => {
                 disabled={loading}
                 className={`w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-3 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {loading ? 'Processing...' : 'Proceed with Booking'} <ChevronRight size={20}/>
+                {loading ? 'Processing...' : 'Confirm Booking'} <ChevronRight size={20}/>
               </button>
             </div>
           </form>
         </div>
       </div>
 
-      {/* SERVICES SECTION - KAHIHI KAMI KELELE NAHI */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-[0.2em]">Our Premium Services</h2>
@@ -248,7 +269,6 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* FOOTER & BANNER - KAHIHI KAMI KELELE NAHI */}
       <div className="max-w-7xl mx-auto px-6 mb-20">
         <div 
           className="w-full h-[450px] rounded-[3rem] overflow-hidden relative shadow-2xl flex items-center justify-center text-center px-4"
