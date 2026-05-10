@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const mongoose = require('mongoose'); // डेटाबेससाठी
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
@@ -18,8 +18,6 @@ mongoose.connect(mongoURI)
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
 // --- मॉडेल्स (Models) ---
-
-// ग्राहक लीड्ससाठी (Customer Leads)
 const PackersLead = mongoose.model('PackersLead', new mongoose.Schema({
   customerName: String,
   customerPhone: String,
@@ -31,7 +29,6 @@ const PackersLead = mongoose.model('PackersLead', new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 }));
 
-// नवीन: पार्टनर नोंदणीसाठी (Partner Registration - 11 Steps)
 const Partner = mongoose.model('Partner', new mongoose.Schema({
   ownerName: String,
   companyName: String,
@@ -45,12 +42,52 @@ const Partner = mongoose.model('Partner', new mongoose.Schema({
   vehicleTypes: [String],
   workerCount: Number,
   providesInsurance: String,
-  isVerified: { type: Boolean, default: false }, // मॅन्युअल अप्रूव्हलसाठी
+  isVerified: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 }));
 
 // ==========================================
-// २. NIMBUSPOST AUTHENTICATION (Courier Section)
+// २. SHIPROCKET AUTHENTICATION & RATES
+// ==========================================
+
+const getShiprocketToken = async () => {
+    try {
+        const response = await axios.post('https://apiv2.shiprocket.in/v1/external/auth/login', {
+            email: process.env.SHIPROCKET_EMAIL,
+            password: process.env.SHIPROCKET_PASSWORD
+        });
+        return response.data.token;
+    } catch (error) {
+        console.error("Shiprocket Login Error:", error.response ? error.response.data : error.message);
+        return null;
+    }
+};
+
+// Frontend sathi mukhya route (Rate check karnyasathi)
+app.post('/api/shiprocket/rates', async (req, res) => {
+    const token = await getShiprocketToken();
+    if (!token) return res.status(500).json({ success: false, message: "Shiprocket Login Failed" });
+
+    try {
+        const { pickup_pincode, delivery_pincode, weight, cod } = req.body;
+        const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
+            params: {
+                pickup_postcode: pickup_pincode,
+                delivery_postcode: delivery_pincode,
+                weight: weight,
+                cod: cod 
+            },
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        res.json({ success: true, rates: response.data });
+    } catch (error) {
+        console.error("Shiprocket Rate API Error:", error.response ? error.response.data : error.message);
+        res.status(500).json({ success: false, message: "Rates fetching failed" });
+    }
+});
+
+// ==========================================
+// ३. NIMBUSPOST (Tracking & Other)
 // ==========================================
 const getNimbusToken = async () => {
     try {
@@ -60,14 +97,10 @@ const getNimbusToken = async () => {
         });
         return response.data.data; 
     } catch (error) {
-        console.error("Nimbus Login Error:", error.response ? error.response.data : error.message);
         return null;
     }
 };
 
-// ==========================================
-// ३. API: COURIER (Tracking & Order)
-// ==========================================
 app.get('/api/track/:awb', async (req, res) => {
     const token = await getNimbusToken();
     if (!token) return res.status(500).json({ error: "Authentication Failed" });
@@ -79,19 +112,8 @@ app.get('/api/track/:awb', async (req, res) => {
     } catch (error) { res.status(500).json({ error: "Tracking Error" }); }
 });
 
-app.post('/api/create-order', async (req, res) => {
-    const token = await getNimbusToken();
-    if (!token) return res.status(500).json({ error: "Authentication Failed" });
-    try {
-        const response = await axios.post('https://api.nimbuspost.com/v1/shipments/create', req.body, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        res.json(response.data);
-    } catch (error) { res.status(500).json({ error: "Order Creation Failed" }); }
-});
-
 // ==========================================
-// ४. API: PACKERS & MOVERS (Customer Leads)
+// ४. PACKERS & MOVERS & PARTNERS
 // ==========================================
 app.post('/api/packers/post-lead', async (req, res) => {
     try {
@@ -101,33 +123,22 @@ app.post('/api/packers/post-lead', async (req, res) => {
     } catch (err) { res.status(500).json({ success: false, error: err.message }); }
 });
 
-app.get('/api/packers/leads/:city', async (req, res) => {
-    try {
-        const leads = await PackersLead.find({ fromCity: new RegExp(req.params.city, 'i') }).sort({ createdAt: -1 });
-        res.json(leads);
-    } catch (err) { res.status(500).json({ error: err.message }); }
-});
-
-// ==========================================
-// ५. नवीन API: PARTNER REGISTRATION (पार्टनर नोंदणी)
-// ==========================================
 app.post('/api/partners/register', async (req, res) => {
     try {
         const newPartner = new Partner(req.body);
         await newPartner.save();
-        res.status(201).json({ success: true, message: "Partner registered! Waiting for approval." });
+        res.status(201).json({ success: true, message: "Partner registered!" });
     } catch (err) {
-        if (err.code === 11000) return res.status(400).json({ success: false, message: "Mobile number already exists!" });
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
 app.get('/', (req, res) => {
-    res.send("Apni Manzil Master Backend is Live!");
+    res.send("Apni Manzil Master Backend is Live with Shiprocket & Nimbus!");
 });
 
 // ==========================================
-// ६. SERVER START
+// ५. SERVER START
 // ==========================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

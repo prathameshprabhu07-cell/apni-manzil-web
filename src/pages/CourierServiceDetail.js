@@ -44,7 +44,7 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- १. SHIPROCKET RATES CHECK KARNYASATHI AXIOS CODE ---
+  // --- १. SHIPROCKET RATES CHECK (SERVER.JS शी कनेक्टेड) ---
   const handleCheckRates = async () => {
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode) {
       alert("Please fill Pincode and Weight!");
@@ -53,7 +53,8 @@ const CourierServiceDetail = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/shiprocket', {
+      // तुझ्या नवीन server.js मधील /api/shiprocket/rates ला कॉल करतोय
+      const response = await axios.post('http://localhost:5000/api/shiprocket/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
         weight: formData.weight,
@@ -68,7 +69,7 @@ const CourierServiceDetail = () => {
       }
     } catch (error) {
       console.error("Rate Error:", error);
-      alert("Error checking rates. Wallet balance check kara.");
+      alert("Error checking rates. Backend chalu ahe ka te tapanun ghya.");
     } finally {
       setLoading(false);
     }
@@ -86,14 +87,14 @@ const CourierServiceDetail = () => {
     setLoading(true);
 
     try {
-      // इथे आता प्रत्यक्ष बुकिंगसाठी डेटा पाठवला जाईल
       const bookingData = {
         ...formData,
         courier_id: selectedCourier.courier_company_id,
         shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20)
       };
 
-      const bookingRes = await axios.post('/api/shiprocket/create-order', bookingData);
+      // Booking साठी /api/shiprocket/create-order कॉल (हा कोड तुझ्या सर्व्हरमध्ये असणे गरजेचे आहे)
+      const bookingRes = await axios.post('http://localhost:5000/api/shiprocket/create-order', bookingData);
 
       if (bookingRes.data.success) {
         alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
