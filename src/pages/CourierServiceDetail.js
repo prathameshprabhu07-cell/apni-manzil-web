@@ -94,7 +94,7 @@ const CourierServiceDetail = () => {
       };
 
       // Booking साठी /api/shiprocket/create-order कॉल (हा कोड तुझ्या सर्व्हरमध्ये असणे गरजेचे आहे)
-      const bookingRes = await axios.post('http://localhost:5000/api/shiprocket/create-order', bookingData);
+      const bookingRes = await axios.post('http://localhost:3000/api/shiprocket/create-order', bookingData);
 
       if (bookingRes.data.success) {
         alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
