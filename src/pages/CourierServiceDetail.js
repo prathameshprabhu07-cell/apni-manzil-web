@@ -46,6 +46,11 @@ const CourierServiceDetail = () => {
 
   // --- १. SHIPROCKET RATES CHECK (SERVER.JS शी कनेक्टेड) ---
   const handleCheckRates = async () => {
+    // --- तुला हव्या असलेल्या लाईन्स इथून सुरू होतात ---
+    console.log("Button Click Jhala!"); 
+    console.log("Current Form Data:", formData);
+    // --- संपल्या ---
+
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode) {
       alert("Please fill Pincode and Weight!");
       return;
@@ -53,13 +58,15 @@ const CourierServiceDetail = () => {
 
     setLoading(true);
     try {
-      // तुझ्या नवीन server.js मधील /api/shiprocket/rates ला कॉल करतोय
-      const response = await axios.post('http://localhost:5000/api/shiprocket/rates', {
+      // Vercel वर चालण्यासाठी 'http://localhost:5000' काढून फक्त '/api/...' ठेवले आहे
+      const response = await axios.post('/api/shiprocket/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
         weight: formData.weight,
         cod: formData.paymentMode === 'Prepaid' ? 0 : 1
       });
+
+      console.log("Response Data:", response.data);
 
       if (response.data.success && response.data.rates.data.available_courier_companies) {
         setRates(response.data.rates.data.available_courier_companies);
@@ -69,7 +76,7 @@ const CourierServiceDetail = () => {
       }
     } catch (error) {
       console.error("Rate Error:", error);
-      alert("Error checking rates. Backend chalu ahe ka te tapanun ghya.");
+      alert("Error: " + (error.response?.data?.message || "Backend issue. Please check console."));
     } finally {
       setLoading(false);
     }
@@ -93,8 +100,7 @@ const CourierServiceDetail = () => {
         shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20)
       };
 
-      // Booking साठी /api/shiprocket/create-order कॉल (हा कोड तुझ्या सर्व्हरमध्ये असणे गरजेचे आहे)
-      const bookingRes = await axios.post('http://localhost:5000/api/shiprocket/create-order', bookingData);
+      const bookingRes = await axios.post('/api/shiprocket/create-order', bookingData);
 
       if (bookingRes.data.success) {
         alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
@@ -164,7 +170,6 @@ const CourierServiceDetail = () => {
               </div>
             </div>
 
-            {/* ITHE RATES DISPLAY HOTIL (SELECTABLE LOGIC SAHIT) */}
             {rates && (
               <div className="bg-green-50 p-6 rounded-3xl border-2 border-green-200">
                  <h4 className="font-black text-green-800 uppercase text-xs mb-4">Select Courier & Rate:</h4>
