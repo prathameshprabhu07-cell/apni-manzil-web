@@ -1,11 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Apni Manzil Backend",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+  "engines": {
+    "node": "18.x"
   },
   "dependencies": {
     "axios": "^1.6.0",
