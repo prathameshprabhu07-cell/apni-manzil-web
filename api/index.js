@@ -13,12 +13,14 @@ app.use(express.json());
 // २. MONGODB CONNECTION (Serverless Optimized)
 const mongoURI = process.env.MONGO_URI;
 const connectDB = async () => {
+    // जर URI नसेल तर कनेक्ट करण्याचा प्रयत्न करू नका
+    if (!mongoURI) {
+        console.warn("⚠️ MONGODB_URI missing in Environment Variables.");
+        return;
+    }
     if (mongoose.connection.readyState >= 1) return;
     try {
-        await mongoose.connect(mongoURI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(mongoURI);
         console.log("✅ MongoDB Connected");
     } catch (err) {
         console.error("❌ MongoDB Connection Error:", err.message);
@@ -42,24 +44,23 @@ const getShiprocketToken = async () => {
 
 // ४. ROUTES
 
-// A. GET RATES
+// A. GET RATES (Courier Serviceability)
 app.post('/api/shiprocket/rates', async (req, res) => {
     try {
         await connectDB();
         
         const { pickup_pincode, delivery_pincode, weight, cod } = req.body;
         
-        // Input Validation
         if (!pickup_pincode || !delivery_pincode || !weight) {
-            return res.status(400).json({ success: false, message: "Missing required fields" });
+            return res.status(400).json({ success: false, message: "Missing required fields (Pincodes or Weight)" });
         }
 
         const token = await getShiprocketToken();
         if (!token) {
-            return res.status(500).json({ success: false, message: "Shiprocket Authentication Failed. Check Env Variables." });
+            return res.status(500).json({ success: false, message: "Shiprocket Login Failed. Check Env Variables." });
         }
 
-        console.log(`Fetching rates for: ${pickup_pincode} to ${delivery_pincode}, Weight: ${weight}`);
+        console.log(`Fetching rates for: ${pickup_pincode} to ${delivery_pincode}`);
 
         const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
             params: {
@@ -78,8 +79,6 @@ app.post('/api/shiprocket/rates', async (req, res) => {
 
     } catch (error) {
         console.error("❌ Shiprocket API Error:", error.response?.data || error.message);
-        
-        // Shiprocket कडून आलेली नेमकी एरर फ्रंटएंडला पाठवणे
         const errorMessage = error.response?.data?.message || "Internal Server Error in fetching rates";
         res.status(error.response?.status || 500).json({ 
             success: false, 
@@ -89,15 +88,15 @@ app.post('/api/shiprocket/rates', async (req, res) => {
     }
 });
 
-// B. CREATE ORDER (Optionally added back for full functionality)
+// B. CREATE ORDER
 app.post('/api/shiprocket/create-order', async (req, res) => {
     try {
         await connectDB();
         const token = await getShiprocketToken();
         if (!token) return res.status(500).json({ success: false, message: "Auth Failed" });
 
-        const d = req.body;
-        const response = await axios.post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', d, {
+        const orderData = req.body;
+        const response = await axios.post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', orderData, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         res.json({ success: true, data: response.data });
