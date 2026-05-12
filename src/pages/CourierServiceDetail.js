@@ -25,6 +25,9 @@ const CourierServiceDetail = () => {
     receiverAddress: '',
     dropPincode: '',
     weight: '',
+    length: '',  // नवीन ॲड केले
+    breadth: '', // नवीन ॲड केले
+    height: '',  // नवीन ॲड केले
     parcelType: 'Non-Document',
     paymentMode: 'Prepaid'
   });
@@ -46,23 +49,23 @@ const CourierServiceDetail = () => {
 
   // --- १. SHIPROCKET RATES CHECK (SERVER.JS शी कनेक्टेड) ---
   const handleCheckRates = async () => {
-    // --- तुला हव्या असलेल्या लाईन्स इथून सुरू होतात ---
     console.log("Button Click Jhala!"); 
     console.log("Current Form Data:", formData);
-    // --- संपल्या ---
 
-    if(!formData.dropPincode || !formData.weight || !formData.pickupPincode) {
-      alert("Please fill Pincode and Weight!");
+    if(!formData.dropPincode || !formData.weight || !formData.pickupPincode || !formData.length || !formData.breadth || !formData.height) {
+      alert("Please fill Pincode, Weight and all Dimensions (L, B, H)!");
       return;
     }
 
     setLoading(true);
     try {
-      // Vercel वर चालण्यासाठी 'http://localhost:5000' काढून फक्त '/api/...' ठेवले आहे
       const response = await axios.post('/api/shiprocket/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
         weight: formData.weight,
+        length: formData.length,
+        breadth: formData.breadth,
+        height: formData.height,
         cod: formData.paymentMode === 'Prepaid' ? 0 : 1
       });
 
@@ -160,12 +163,18 @@ const CourierServiceDetail = () => {
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 ml-4">Weight (kg)</label>
+                <label className="text-xs font-black uppercase text-slate-400 ml-4">Weight (kg) & Dimensions (cm)</label>
                 <div className="flex gap-2">
-                   <input name="weight" required type="number" step="0.1" placeholder="e.g. 0.5" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
+                   <input name="weight" required type="number" step="0.1" placeholder="Weight" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
                    <button type="button" onClick={handleCheckRates} className="bg-blue-600 text-white px-4 rounded-2xl hover:bg-blue-700 transition flex items-center gap-2">
                       <Search size={18}/> Rates
                    </button>
+                </div>
+                {/* नवीन Dimensions Box सुरू */}
+                <div className="flex gap-2 mt-2">
+                  <input name="length" required type="number" placeholder="L" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
+                  <input name="breadth" required type="number" placeholder="B" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
+                  <input name="height" required type="number" placeholder="H" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
                 </div>
               </div>
             </div>
