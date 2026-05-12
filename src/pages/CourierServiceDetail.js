@@ -47,7 +47,7 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- १. SHIPROCKET RATES CHECK (SERVER.JS शी कनेक्टेड) ---
+  // --- १. SHIPROCKET RATES CHECK ---
   const handleCheckRates = async () => {
     console.log("Button Click Jhala!"); 
     console.log("Current Form Data:", formData);
@@ -62,10 +62,10 @@ const CourierServiceDetail = () => {
       const response = await axios.post('/api/shiprocket/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
-        weight: formData.weight,
-        length: formData.length,
-        breadth: formData.breadth,
-        height: formData.height,
+        weight: parseFloat(formData.weight), // "1000gm" एरर काढण्यासाठी parseFloat वापरले
+        length: parseInt(formData.length) || 10,
+        breadth: parseInt(formData.breadth) || 10,
+        height: parseInt(formData.height) || 10,
         cod: formData.paymentMode === 'Prepaid' ? 0 : 1
       });
 
@@ -85,7 +85,7 @@ const CourierServiceDetail = () => {
     }
   };
 
-  // --- २. FINAL BOOKING SATHI CODE ---
+  // --- २. FINAL BOOKING ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     
@@ -170,7 +170,7 @@ const CourierServiceDetail = () => {
                       <Search size={18}/> Rates
                    </button>
                 </div>
-                {/* नवीन Dimensions Box सुरू */}
+                {/* Dimensions Box */}
                 <div className="flex gap-2 mt-2">
                   <input name="length" required type="number" placeholder="L" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
                   <input name="breadth" required type="number" placeholder="B" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
