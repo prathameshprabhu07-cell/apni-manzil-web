@@ -5,14 +5,13 @@ import {
   ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
   Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, Phone, User, Home, CreditCard, Search
 } from 'lucide-react';
-// खालील ओळ आपण WhatsApp साठी वापरतोय, पण सध्या Zapier 404 देत असल्याने आपण ती फंक्शनमध्ये वापरणार नाही
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [rates, setRates] = useState(null);
-  const [selectedCourier, setSelectedCourier] = useState(null); // निवडलेला कुरिअर स्टोअर करण्यासाठी
+  const [selectedCourier, setSelectedCourier] = useState(null);
 
   const [formData, setFormData] = useState({
     serviceType: 'Domestic Courier',
@@ -25,9 +24,9 @@ const CourierServiceDetail = () => {
     receiverAddress: '',
     dropPincode: '',
     weight: '',
-    length: '',  // नवीन ॲड केले
-    breadth: '', // नवीन ॲड केले
-    height: '',  // नवीन ॲड केले
+    length: '',  
+    breadth: '', 
+    height: '',  
     parcelType: 'Non-Document',
     paymentMode: 'Prepaid'
   });
@@ -49,9 +48,6 @@ const CourierServiceDetail = () => {
 
   // --- १. SHIPROCKET RATES CHECK ---
   const handleCheckRates = async () => {
-    console.log("Button Click Jhala!"); 
-    console.log("Current Form Data:", formData);
-
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode || !formData.length || !formData.breadth || !formData.height) {
       alert("Please fill Pincode, Weight and all Dimensions (L, B, H)!");
       return;
@@ -59,8 +55,8 @@ const CourierServiceDetail = () => {
 
     setLoading(true);
     try {
-      // EXACT URL: /api/rates (कारण Vercel api/index.js ला /api मानतो)
-      const response = await axios.post('/api/rates', {
+      // URL Update: FULL URL vaprat ahe jyamule Vercel var 404 yenar nahi
+      const response = await axios.post('https://www.apnimanzil.co.in/api/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
         weight: parseFloat(formData.weight),
@@ -69,8 +65,6 @@ const CourierServiceDetail = () => {
         height: parseInt(formData.height) || 10,
         cod: formData.paymentMode === 'Prepaid' ? 0 : 1
       });
-
-      console.log("Response Data:", response.data);
 
       if (response.data.success && response.data.rates.data.available_courier_companies) {
         setRates(response.data.rates.data.available_courier_companies);
@@ -104,8 +98,8 @@ const CourierServiceDetail = () => {
         shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20)
       };
 
-      // EXACT URL: /api/create-order
-      const bookingRes = await axios.post('/api/create-order', bookingData);
+      // URL Update: FULL URL sathi create-order route
+      const bookingRes = await axios.post('https://www.apnimanzil.co.in/api/create-order', bookingData);
 
       if (bookingRes.data.success) {
         alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
@@ -123,19 +117,16 @@ const CourierServiceDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans">
-      
       <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-16 relative overflow-hidden">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10 cursor-pointer">
           <ArrowLeft size={20}/> Back to Home
         </button>
-        
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex-1">
             <h1 className="text-4xl md:text-7xl font-black mb-2 tracking-tight">Book Your Parcel</h1>
             <p className="text-orange-400 text-lg md:text-xl font-black uppercase tracking-[0.2em] mb-4">Solutions for all delivery</p>
             <p className="text-blue-100/80 text-lg font-medium italic">"Fastest. Safest. Reliable."</p>
           </div>
-          
           <div className="flex-1 w-full max-w-md h-64 md:h-80 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white/10">
             <img src="/bg.png" alt="Logistics Network" className="w-full h-full object-cover" />
           </div>
@@ -149,7 +140,6 @@ const CourierServiceDetail = () => {
           </h2>
           
           <form onSubmit={handleFinalBooking} className="space-y-12">
-            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase text-slate-400 ml-4">Select Service</label>
@@ -172,7 +162,6 @@ const CourierServiceDetail = () => {
                       <Search size={18}/> Rates
                    </button>
                 </div>
-                {/* Dimensions Box */}
                 <div className="flex gap-2 mt-2">
                   <input name="length" required type="number" placeholder="L" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
                   <input name="breadth" required type="number" placeholder="B" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
@@ -261,13 +250,11 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* Services and Other section as it is */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-[0.2em]">Our Premium Services</h2>
           <p className="text-slate-400 font-bold mt-2">Professional Logistics for Every Need</p>
         </div>
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {subServices.map((s) => (
             <div 
@@ -314,7 +301,6 @@ const CourierServiceDetail = () => {
           <div><p className="text-2xl font-black">Live</p><p className="text-[10px] font-bold uppercase text-blue-300 tracking-widest">Support</p></div>
         </div>
       </div>
-
     </div>
   );
 };
