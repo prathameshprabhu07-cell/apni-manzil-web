@@ -1,23 +1,28 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors'); // Connectivity sathi mavahtvache
 const app = express();
-app.use(express.json());
 
-// 1. Shiprocket Login (Tujhya Credentials sah)
+app.use(express.json());
+app.use(cors()); // Frontend sobat connect honyasathi
+
+// 1. Shiprocket Login (Updated with Headers)
 const getShiprocketToken = async () => {
     try {
         const response = await axios.post('https://apiv2.shiprocket.in/v1/external/auth/login', {
-            email: "pprabhu07@gmail.com", // Tujha API Email
-            password: "aK&Iq6OX9B55JkbPsngHMidw#ilFrKhQ" // Tujha API Password
+            email: "pprabhu07@gmail.com",
+            password: "aK&Iq6OX9B55JkbPsngHMidw#ilFrKhQ"
+        }, {
+            headers: { 'Content-Type': 'application/json' }
         });
         return response.data.token;
     } catch (error) {
-        console.error("Login Error:", error.response?.data || error.message);
+        console.error("SHIPROCKET_AUTH_ERROR:", error.response?.data || error.message);
         throw new Error("Shiprocket Authentication Failed");
     }
 };
 
-// 2. Full Order Booking Route (Screenshots pramane)
+// 2. Full Order Booking Route
 app.post('/api/book-order', async (req, res) => {
     try {
         const token = await getShiprocketToken();
@@ -25,10 +30,10 @@ app.post('/api/book-order', async (req, res) => {
         const orderData = {
             order_id: `AM_${Date.now()}`, 
             order_date: new Date().toISOString().split('T')[0],
-            pickup_location: "Primary", // DASHBOARD MADHE HE NAV CHECK KAR
-            billing_customer_name: req.body.name, // Customer Name
+            pickup_location: "Primary", 
+            billing_customer_name: req.body.name, 
             billing_last_name: "",
-            billing_address: req.body.address, // Full Address
+            billing_address: req.body.address, 
             billing_city: req.body.city,
             billing_pincode: req.body.delivery_pincode,
             billing_state: req.body.state,
@@ -37,31 +42,39 @@ app.post('/api/book-order', async (req, res) => {
             shipping_is_billing: true,
             order_items: [
                 {
-                    name: req.body.product_name, // Product Name (Screenshot 1000232116.jpg)
-                    sku: "SKU001",
+                    name: req.body.product_name || "Konkani Product", 
+                    sku: `SKU_${Date.now()}`,
                     units: parseInt(req.body.quantity) || 1,
-                    selling_price: req.body.price, // Unit Price
+                    selling_price: req.body.price, 
                     discount: 0,
                     tax: 0
                 }
             ],
             payment_method: req.body.cod === 1 ? "COD" : "Prepaid",
             sub_total: req.body.price,
-            length: req.body.length || 10,
-            breadth: req.body.breadth || 10,
-            height: req.body.height || 10,
-            weight: req.body.weight // Dead Weight (Screenshot 1000232115.jpg)
+            length: parseFloat(req.body.length) || 10,
+            breadth: parseFloat(req.body.breadth) || 10,
+            height: parseFloat(req.body.height) || 10,
+            weight: parseFloat(req.body.weight)
         };
 
         const response = await axios.post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', orderData, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         });
 
         res.status(200).json({ success: true, booking: response.data });
     } catch (err) {
-        console.error("Booking Error:", err.response?.data || err.message);
-        res.status(500).json({ success: false, error: err.response?.data || err.message });
+        console.error("Booking Error Detail:", err.response?.data || err.message);
+        res.status(500).json({ 
+            success: false, 
+            message: "Booking Failed",
+            error: err.response?.data || err.message 
+        });
     }
 });
 
+// Vercel sathi export garjeche ahe
 module.exports = app;
