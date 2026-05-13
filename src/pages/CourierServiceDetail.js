@@ -46,7 +46,7 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- १. SHIPROCKET RATES CHECK ---
+  // --- १. SHIPROCKET RATES CHECK (FIXED URL) ---
   const handleCheckRates = async () => {
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode || !formData.length || !formData.breadth || !formData.height) {
       alert("Please fill Pincode, Weight and all Dimensions (L, B, H)!");
@@ -55,8 +55,8 @@ const CourierServiceDetail = () => {
 
     setLoading(true);
     try {
-      // URL Update: FULL URL vaprat ahe jyamule Vercel var 404 yenar nahi
-      const response = await axios.post('https://www.apnimanzil.co.in/api/rates', {
+      // Vercel वर '/api/rates' हा path 'api/index.js' कडे जातो (vercel.json मुळे)
+      const response = await axios.post('/api/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
         weight: parseFloat(formData.weight),
@@ -70,11 +70,13 @@ const CourierServiceDetail = () => {
         setRates(response.data.rates.data.available_courier_companies);
         alert("Live Rates updated successfully!");
       } else {
-        alert("Rates not available for this route.");
+        alert("Rates not available for this route. Check Pincodes.");
       }
     } catch (error) {
       console.error("Rate Error:", error);
-      alert("Error: " + (error.response?.data?.message || "Backend issue. Please check console."));
+      // Backend कडून येणारा खरा मेसेज दाखवण्यासाठी सुधारणा
+      const errorMsg = error.response?.data?.error?.message || error.response?.data?.message || "Backend unreachable (500). Please check Vercel Logs.";
+      alert("Error: " + errorMsg);
     } finally {
       setLoading(false);
     }
@@ -98,18 +100,18 @@ const CourierServiceDetail = () => {
         shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20)
       };
 
-      // URL Update: FULL URL sathi create-order route
-      const bookingRes = await axios.post('https://www.apnimanzil.co.in/api/create-order', bookingData);
+      // Backend route /api/create-order कॉल होतोय
+      const bookingRes = await axios.post('/api/create-order', bookingData);
 
       if (bookingRes.data.success) {
         alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
         navigate('/dashboard'); 
       } else {
-        alert("Booking failed. Please try again.");
+        alert("Booking failed: " + (bookingRes.data.message || "Unknown error"));
       }
     } catch (error) {
       console.error("Booking Error:", error);
-      alert("Booking unsuccessful. Please check details.");
+      alert("Booking unsuccessful. Server returned error 500.");
     } finally {
       setLoading(false);
     }
