@@ -59,10 +59,11 @@ const CourierServiceDetail = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/shiprocket/rates', {
+      // EXACT URL: /api/rates (कारण Vercel api/index.js ला /api मानतो)
+      const response = await axios.post('/api/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
-        weight: parseFloat(formData.weight), // "1000gm" एरर काढण्यासाठी parseFloat वापरले
+        weight: parseFloat(formData.weight),
         length: parseInt(formData.length) || 10,
         breadth: parseInt(formData.breadth) || 10,
         height: parseInt(formData.height) || 10,
@@ -103,7 +104,8 @@ const CourierServiceDetail = () => {
         shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20)
       };
 
-      const bookingRes = await axios.post('/api/shiprocket/create-order', bookingData);
+      // EXACT URL: /api/create-order
+      const bookingRes = await axios.post('/api/create-order', bookingData);
 
       if (bookingRes.data.success) {
         alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
@@ -259,6 +261,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
+      {/* Services and Other section as it is */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-[0.2em]">Our Premium Services</h2>
