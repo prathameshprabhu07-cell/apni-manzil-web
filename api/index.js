@@ -6,6 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// 1. Shiprocket Login Function
 const getShiprocketToken = async () => {
     try {
         const response = await axios.post('https://apiv2.shiprocket.in/v1/external/auth/login', {
@@ -14,34 +15,76 @@ const getShiprocketToken = async () => {
         });
         return response.data.token;
     } catch (error) {
-        console.error("AUTH_ERROR:", error.response?.data || error.message);
-        throw error;
+        console.error("SHIPROCKET_AUTH_ERROR:", error.response?.data || error.message);
+        throw new Error("Shiprocket Auth Failed");
     }
 };
 
-// Rates Route
+// 2. Rates / Serviceability Route
 app.post('/api/rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
-        const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
-            params: req.body,
+        const shiprocketRes = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
+            params: {
+                pickup_pincode: Number(req.body.pickup_pincode),
+                delivery_pincode: Number(req.body.delivery_pincode),
+                weight: parseFloat(req.body.weight) || 0.5,
+                cod: Number(req.body.cod) || 0,
+                length: 10, breadth: 10, height: 10
+            },
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        res.status(200).json({ success: true, rates: response.data });
+        res.status(200).json({ success: true, rates: shiprocketRes.data });
     } catch (err) {
         res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
 });
 
-// Order Booking Route
+// 3. Order Booking Route (Directly from Screenshots)
 app.post('/api/book-order', async (req, res) => {
     try {
         const token = await getShiprocketToken();
-        // (Tu mashi dilela orderData ithe vapar)
-        res.status(200).json({ success: true, message: "Order creation logic here" });
+        
+        const orderData = {
+            order_id: `AM_${Date.now()}`,
+            order_date: new Date().toISOString().split('T')[0],
+            pickup_location: "Primary", 
+            billing_customer_name: req.body.name,
+            billing_last_name: "",
+            billing_address: req.body.address,
+            billing_city: req.body.city,
+            billing_pincode: Number(req.body.delivery_pincode),
+            billing_state: req.body.state,
+            billing_country: "India",
+            billing_phone: req.body.phone,
+            shipping_is_billing: true,
+            order_items: [
+                {
+                    name: req.body.product_name || "Konkani Product",
+                    sku: `SKU_${Math.floor(Math.random() * 10000)}`,
+                    units: parseInt(req.body.quantity) || 1,
+                    selling_price: parseFloat(req.body.price),
+                    discount: 0, tax: 0
+                }
+            ],
+            payment_method: Number(req.body.cod) === 1 ? "Postpaid" : "Prepaid",
+            sub_total: parseFloat(req.body.price),
+            length: 10, breadth: 10, height: 10,
+            weight: parseFloat(req.body.weight) || 0.5
+        };
+
+        const response = await axios.post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', orderData, {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        res.status(200).json({ success: true, booking: response.data });
     } catch (err) {
         res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
 });
 
+// Vercel sathi he sarvaat mahatvache aahe
 module.exports = app;
