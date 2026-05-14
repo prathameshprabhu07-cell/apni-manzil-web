@@ -1,6 +1,12 @@
 // src/zapierService.js
 export const sendToZapier = async (mainService, subService, extraData = {}) => {
-  // तुझी नवीन अपडेटेड लिंक खाली दिली आहे
+  
+  // जर कुरियर किंवा शिपिंगचं काम असेल, तर Zapier कडे जाऊ नकोस
+  if (mainService === "Logistics" || mainService === "Shipping") {
+    console.log("Skipping Zapier for Logistics/Shipping to avoid 404.");
+    return; // इथूनच परत जा
+  }
+
   const url = "https://hooks.zapier.com/hooks/catch/27439476/uvczwl6/";
   
   const payload = {
@@ -12,6 +18,8 @@ export const sendToZapier = async (mainService, subService, extraData = {}) => {
   };
 
   try {
+    // direct API call ऐवजी आपण बॅकएंडला सुद्धा पाठवू शकतो, 
+    // पण तूर्तास हा no-cors मोड वापरूया
     await fetch(url, {
       method: "POST",
       mode: "no-cors", 
