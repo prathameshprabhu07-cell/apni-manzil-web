@@ -15,7 +15,8 @@ const getShiprocketToken = async () => {
         });
         return response.data.token;
     } catch (error) {
-        console.error("SHIPROCKET_AUTH_ERROR:", error.response?.data || error.message);
+        // AUTH ERROR साठी लॉग
+        console.error("❌ SHIPROCKET_AUTH_ERROR:", error.response?.data || error.message);
         throw new Error("Shiprocket Auth Failed");
     }
 };
@@ -24,6 +25,8 @@ const getShiprocketToken = async () => {
 app.post('/api/rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
+        console.log("🔍 Fetching rates for:", req.body.delivery_pincode);
+
         const shiprocketRes = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
             params: {
                 pickup_pincode: Number(req.body.pickup_pincode),
@@ -34,13 +37,19 @@ app.post('/api/rates', async (req, res) => {
             },
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        // रेट्स मिळाल्यावर टर्मिनलमध्ये रिस्पॉन्स बघण्यासाठी
+        console.log("✅ SHIPROCKET_RATES_RESPONSE:", JSON.stringify(shiprocketRes.data, null, 2));
         res.status(200).json({ success: true, rates: shiprocketRes.data });
+
     } catch (err) {
+        // एरर डिटेल्स बघण्यासाठी महत्त्वाची ओळ
+        console.error("❌ SHIPROCKET_RATES_ERROR:", JSON.stringify(err.response?.data, null, 2) || err.message);
         res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
 });
 
-// 3. Order Booking Route (Directly from Screenshots)
+// 3. Order Booking Route
 app.post('/api/book-order', async (req, res) => {
     try {
         const token = await getShiprocketToken();
@@ -48,7 +57,7 @@ app.post('/api/book-order', async (req, res) => {
         const orderData = {
             order_id: `AM_${Date.now()}`,
             order_date: new Date().toISOString().split('T')[0],
-            pickup_location: "Primary", 
+            pickup_location: "Primary", // 👈 खात्री करा की Shiprocket वर हेच नाव आहे
             billing_customer_name: req.body.name,
             billing_last_name: "",
             billing_address: req.body.address,
@@ -80,11 +89,14 @@ app.post('/api/book-order', async (req, res) => {
             }
         });
 
+        console.log("🚀 ORDER_BOOKED_SUCCESS:", response.data);
         res.status(200).json({ success: true, booking: response.data });
+
     } catch (err) {
+        // ऑर्डर फेल झाल्यावर एरर डिटेल्स बघण्यासाठी महत्त्वाची ओळ
+        console.error("❌ SHIPROCKET_BOOKING_ERROR:", JSON.stringify(err.response?.data, null, 2) || err.message);
         res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
 });
 
-// Vercel sathi he sarvaat mahatvache aahe
 module.exports = app;

@@ -5,21 +5,18 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.png" /> 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#002D5E" />
-    <meta
-      name="description"
-      content="Apni Manzil - India's AI Smart Logistics Platform"
-    />
+    <meta name="description" content="Apni Manzil - India's AI Smart Logistics Platform" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
+    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-          crossorigin=""/>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -36,25 +33,13 @@
     <title>Apni Manzil | AI Smart Logistics Platform</title>
     
     <style>
-      body {
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
-      }
-      /* Leaflet मॅप कंटेनरसाठी छोटी फिक्स */
-      .leaflet-container {
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-      }
+      body { margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+      .leaflet-container { width: 100%; height: 100%; z-index: 1; }
     </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
-            crossorigin=""></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   </body>
 </html>
