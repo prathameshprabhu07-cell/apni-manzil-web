@@ -5,7 +5,6 @@ import {
   ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
   Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, Phone, User, Home, CreditCard, Search
 } from 'lucide-react';
-import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
@@ -46,16 +45,16 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- १. SHIPROCKET RATES CHECK (FIXED URL) ---
+  // --- १. SHIPROCKET RATES CHECK (SAFE VERSION) ---
   const handleCheckRates = async () => {
     if(!formData.dropPincode || !formData.weight || !formData.pickupPincode || !formData.length || !formData.breadth || !formData.height) {
-      alert("Please fill Pincode, Weight and all Dimensions (L, B, H)!");
+      alert("Pincode, Weight आणि सर्व Dimensions (L, B, H) भरणे गरजेचे आहे!");
       return;
     }
 
     setLoading(true);
     try {
-      // Vercel वर '/api/rates' हा path 'api/index.js' कडे जातो (vercel.json मुळे)
+      // Backend ला कॉल
       const response = await axios.post('/api/rates', {
         pickup_pincode: formData.pickupPincode,
         delivery_pincode: formData.dropPincode,
@@ -66,28 +65,31 @@ const CourierServiceDetail = () => {
         cod: formData.paymentMode === 'Prepaid' ? 0 : 1
       });
 
-      if (response.data.success && response.data.rates.data.available_courier_companies) {
-        setRates(response.data.rates.data.available_courier_companies);
-        alert("Live Rates updated successfully!");
+      // रिस्पॉन्स चेक (Safe Access)
+      const availableCouriers = response.data?.rates?.data?.available_courier_companies;
+
+      if (response.data.success && availableCouriers && Array.isArray(availableCouriers)) {
+        setRates(availableCouriers);
+        alert("Live Rates अपडेट झाले आहेत!");
       } else {
-        alert("Rates not available for this route. Check Pincodes.");
+        alert("ह्या मार्गासाठी सेवा उपलब्ध नाहीये. पिनकोड तपासा.");
+        setRates(null);
       }
     } catch (error) {
       console.error("Rate Error:", error);
-      // Backend कडून येणारा खरा मेसेज दाखवण्यासाठी सुधारणा
-      const errorMsg = error.response?.data?.error?.message || error.response?.data?.message || "Backend unreachable (500). Please check Vercel Logs.";
+      const errorMsg = error.response?.data?.message || "Server Error (500). कृपया Vercel Logs तपासा.";
       alert("Error: " + errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
-  // --- २. FINAL BOOKING ---
+  // --- २. FINAL BOOKING (Zapier काढून टाकले आहे) ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     
     if(!selectedCourier) {
-      alert("Please select a Courier Service from the rates list first!");
+      alert("कृपया लिस्ट मधून एक कुरिअर सर्व्हिस निवडा!");
       return;
     }
 
@@ -100,18 +102,18 @@ const CourierServiceDetail = () => {
         shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20)
       };
 
-      // Backend route /api/create-order कॉल होतोय
+      // Backend route create-order कॉल
       const bookingRes = await axios.post('/api/create-order', bookingData);
 
       if (bookingRes.data.success) {
-        alert(`Booking Successful! Tracking ID: ${bookingRes.data.awb_code}`);
+        alert(`Booking यशस्वी! Tracking ID: ${bookingRes.data.awb_code}`);
         navigate('/dashboard'); 
       } else {
-        alert("Booking failed: " + (bookingRes.data.message || "Unknown error"));
+        alert("Booking अयशस्वी: " + (bookingRes.data.message || "Unknown error"));
       }
     } catch (error) {
       console.error("Booking Error:", error);
-      alert("Booking unsuccessful. Server returned error 500.");
+      alert("Booking यशस्वी होऊ शकली नाही. सर्व्हर एरर ५००.");
     } finally {
       setLoading(false);
     }
@@ -119,6 +121,7 @@ const CourierServiceDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans">
+      {/* Header Section */}
       <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-16 relative overflow-hidden">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10 cursor-pointer">
           <ArrowLeft size={20}/> Back to Home
@@ -135,6 +138,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
+      {/* Main Form Section */}
       <div className="max-w-5xl mx-auto -mt-16 px-6 relative z-50">
         <div className="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border-4 border-orange-50">
           <h2 className="text-3xl font-black text-[#002D5E] mb-10 flex items-center gap-3 border-b-2 border-slate-100 pb-4">
@@ -172,6 +176,7 @@ const CourierServiceDetail = () => {
               </div>
             </div>
 
+            {/* Rates Card Section */}
             {rates && (
               <div className="bg-green-50 p-6 rounded-3xl border-2 border-green-200">
                  <h4 className="font-black text-green-800 uppercase text-xs mb-4">Select Courier & Rate:</h4>
@@ -198,6 +203,7 @@ const CourierServiceDetail = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {/* Sender Details */}
               <div className="space-y-6 bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100">
                 <h3 className="text-lg font-black text-blue-800 uppercase tracking-widest flex items-center gap-2">
                   <User size={20}/> Sender (From)
@@ -210,6 +216,7 @@ const CourierServiceDetail = () => {
                 </div>
               </div>
 
+              {/* Receiver Details */}
               <div className="space-y-6 bg-orange-50/50 p-6 rounded-[2rem] border border-orange-100">
                 <h3 className="text-lg font-black text-orange-800 uppercase tracking-widest flex items-center gap-2">
                   <MapPin size={20}/> Receiver (To)
@@ -223,6 +230,7 @@ const CourierServiceDetail = () => {
               </div>
             </div>
 
+            {/* Bottom Actions */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-100">
               <div className="flex items-center gap-4">
                 <label className="text-sm font-black text-slate-500 uppercase tracking-widest">Payment Mode:</label>
@@ -252,6 +260,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
+      {/* Services Showcase */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-[0.2em]">Our Premium Services</h2>
@@ -276,6 +285,7 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
+      {/* Footer / CTA Section */}
       <div className="max-w-7xl mx-auto px-6 mb-20">
         <div 
           className="w-full h-[450px] rounded-[3rem] overflow-hidden relative shadow-2xl flex items-center justify-center text-center px-4"
