@@ -15,7 +15,6 @@ const getShiprocketToken = async () => {
         });
         return response.data.token;
     } catch (error) {
-        // AUTH ERROR साठी लॉग
         console.error("❌ SHIPROCKET_AUTH_ERROR:", error.response?.data || error.message);
         throw new Error("Shiprocket Auth Failed");
     }
@@ -25,25 +24,29 @@ const getShiprocketToken = async () => {
 app.post('/api/rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
-        console.log("🔍 Fetching rates for:", req.body.delivery_pincode);
+        
+        // 🛠️ फ्रंटएंडवरून येणाऱ्या रकान्यांची नावे इथे अचूक मॅप केली आहेत (pickup आणि drop)
+        const pickupPincode = req.body.pickup_pincode || req.body.pickup;
+        const deliveryPincode = req.body.delivery_pincode || req.body.drop;
+        const packageWeight = req.body.weight || req.body.dimensions;
+
+        console.log(`🔍 Fetching rates from: ${pickupPincode} to: ${deliveryPincode}`);
 
         const shiprocketRes = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
             params: {
-                pickup_pincode: Number(req.body.pickup_pincode),
-                delivery_pincode: Number(req.body.delivery_pincode),
-                weight: parseFloat(req.body.weight) || 0.5,
+                pickup_pincode: Number(pickupPincode),
+                delivery_pincode: Number(deliveryPincode),
+                weight: parseFloat(packageWeight) || 0.5,
                 cod: Number(req.body.cod) || 0,
                 length: 10, breadth: 10, height: 10
             },
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        // रेट्स मिळाल्यावर टर्मिनलमध्ये रिस्पॉन्स बघण्यासाठी
         console.log("✅ SHIPROCKET_RATES_RESPONSE:", JSON.stringify(shiprocketRes.data, null, 2));
         res.status(200).json({ success: true, rates: shiprocketRes.data });
 
     } catch (err) {
-        // एरर डिटेल्स बघण्यासाठी महत्त्वाची ओळ
         console.error("❌ SHIPROCKET_RATES_ERROR:", JSON.stringify(err.response?.data, null, 2) || err.message);
         res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
@@ -54,32 +57,36 @@ app.post('/api/book-order', async (req, res) => {
     try {
         const token = await getShiprocketToken();
         
+        const pickupPincode = req.body.pickup_pincode || req.body.pickup || req.body.pickupAddress;
+        const deliveryPincode = req.body.delivery_pincode || req.body.drop || req.body.dropAddress;
+        const packageWeight = req.body.weight || req.body.dimensions;
+
         const orderData = {
             order_id: `AM_${Date.now()}`,
             order_date: new Date().toISOString().split('T')[0],
-            pickup_location: "Primary", // 👈 खात्री करा की Shiprocket वर हेच नाव आहे
-            billing_customer_name: req.body.name,
+            pickup_location: "Primary", // 👈 आपण डॅशबोर्डवर मॅच केलेलं नाव
+            billing_customer_name: req.body.name || "Customer",
             billing_last_name: "",
-            billing_address: req.body.address,
-            billing_city: req.body.city,
-            billing_pincode: Number(req.body.delivery_pincode),
-            billing_state: req.body.state,
+            billing_address: req.body.address || "Complete Delivery Address",
+            billing_city: req.body.city || "Mumbai",
+            billing_pincode: Number(deliveryPincode),
+            billing_state: req.body.state || "Maharashtra",
             billing_country: "India",
-            billing_phone: req.body.phone,
+            billing_phone: req.body.phone || "7378502356",
             shipping_is_billing: true,
             order_items: [
                 {
                     name: req.body.product_name || "Konkani Product",
                     sku: `SKU_${Math.floor(Math.random() * 10000)}`,
                     units: parseInt(req.body.quantity) || 1,
-                    selling_price: parseFloat(req.body.price),
+                    selling_price: parseFloat(req.body.price) || 100,
                     discount: 0, tax: 0
                 }
             ],
             payment_method: Number(req.body.cod) === 1 ? "Postpaid" : "Prepaid",
-            sub_total: parseFloat(req.body.price),
+            sub_total: parseFloat(req.body.price) || 100,
             length: 10, breadth: 10, height: 10,
-            weight: parseFloat(req.body.weight) || 0.5
+            weight: parseFloat(packageWeight) || 0.5
         };
 
         const response = await axios.post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', orderData, {
@@ -93,7 +100,6 @@ app.post('/api/book-order', async (req, res) => {
         res.status(200).json({ success: true, booking: response.data });
 
     } catch (err) {
-        // ऑर्डर फेल झाल्यावर एरर डिटेल्स बघण्यासाठी महत्त्वाची ओळ
         console.error("❌ SHIPROCKET_BOOKING_ERROR:", JSON.stringify(err.response?.data, null, 2) || err.message);
         res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
