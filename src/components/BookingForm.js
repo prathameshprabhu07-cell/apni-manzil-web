@@ -17,9 +17,10 @@ const BookingForm = ({ serviceName, onClose }) => {
     date: ''
   });
 
-  // --- झॅपियर फंक्शन (स्वतंत्र ठेवले आहे) ---
+  // --- झॅपियर फंक्शन (नवीन वर्किंग लिंक अपडेट केली आहे) ---
   const sendToZapier = async (bookingData) => {
-    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/27439476/uvg4w4t/";
+    // ⚠️ इथे आपण जुनी एरर देणारी लिंक बदलून नवीन लिंक टाकली आहे
+    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/27439476/uvczwl6/";
     try {
       await fetch(ZAPIER_URL, {
         method: "POST",
@@ -54,7 +55,7 @@ const BookingForm = ({ serviceName, onClose }) => {
       name: "Apni Manzil",
       description: `Shipping for ${serviceName}`,
       handler: async function (response) {
-        alert("✅ पेमेंट यशस्वी! तुमची ऑर्डर बुक झाली आहे.");
+        alert("✅ पेमेंट यशस्वी! तुमची आदेश बुक झाली आहे.");
         onClose();
       },
       prefill: {
@@ -100,14 +101,13 @@ const BookingForm = ({ serviceName, onClose }) => {
     } catch (error) {
       alert("❌ एरर: " + error.message);
     } finally {
+      closeLoading();
       setLoading(false);
     }
   };
 
-  // ... (बाकीचा रिटर्न UI कोड तसाच आहे, त्यात काही बदल नाही)
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto">
-      {/* ... (तुमचा पूर्ण UI कोड) ... */}
       <div className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] my-8 animate-in zoom-in duration-200">
         
         <button type="button" onClick={onClose} className="absolute top-6 right-6 text-slate-400 hover:text-black transition-colors">
@@ -142,7 +142,6 @@ const BookingForm = ({ serviceName, onClose }) => {
               <select value={formData.weight} onChange={(e) => setFormData({...formData, weight: e.target.value})} className="p-4 bg-slate-50 border-none rounded-2xl font-bold outline-none focus:ring-2 ring-[#FF5E00] text-sm">
                 <option value="0.5">0.5 KG</option>
                 <option value="1">1 KG</option>
-                <option value="5">5 KG</option>
                 <option value="5">5 KG</option>
               </select>
             </div>

@@ -100,13 +100,12 @@ const SeaFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'cent
 const Customs = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}><h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900' }}>Customs & Compliance</h1></div> );
 const TradeFinance = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}><h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900' }}>Logistics Trade Finance</h1></div> );
 
-// ✅ --- नवीन जोडलेली ट्रॅकिंग सिस्टम ---
+// ✅ --- सुधारलेली ट्रॅकिंग सिस्टम (एरर फिक्स केला) ---
 function RouteTracker() {
   const location = useLocation();
 
   useEffect(() => {
     const sendToZapier = async () => {
-      // होम पेज आणि लॉगिन सोडून इतर कोणत्याही सर्व्हिसवर युजर गेला की डेटा जाईल
       if (location.pathname !== "/" && location.pathname !== "/login") {
         const payload = {
           service_path: location.pathname,
@@ -117,8 +116,8 @@ function RouteTracker() {
         };
 
         try {
-          // आपण ठरवल्याप्रमाणे Webhook URL वापरला आहे
-          await fetch("https://hooks.zapier.com/hooks/catch/27439476/uvg4w4t/", {
+          // ⚠️ आपण आधी ठरवल्याप्रमाणे नवीन आणि वर्किंग लिंक इथे अपडेट केली आहे
+          await fetch("https://hooks.zapier.com/hooks/catch/27439476/uvczwl6/", {
             method: "POST",
             mode: "no-cors",
             body: JSON.stringify(payload),
@@ -135,153 +134,153 @@ function RouteTracker() {
 }
 
 function App() {
-  const [isMSMERegistered, setIsMSMERegistered] = useState(false);
-  const [businessName, setBusinessName] = useState("");
-  const [loading, setLoading] = useState(true);
-  
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null); 
+  const [isMSMERegistered, setIsMSMERegistered] = useState(false);
+  const [businessName, setBusinessName] = useState("");
+  const [loading, setLoading] = useState(true);
+  
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null); 
 
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
 
-    const q = query(collection(db, "msme_profile"), limit(1));
-    const unsubscribeMSME = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const data = snapshot.docs[0].data();
-        if (data.isRegistered) {
-          setIsMSMERegistered(true);
-          setBusinessName(data.businessName || "Your Business");
-        }
-      } else {
-        setIsMSMERegistered(false);
-      }
-      setLoading(false);
-    }, (error) => {
-      console.error("Auth Check Error:", error);
-      setLoading(false);
-    });
+    const q = query(collection(db, "msme_profile"), limit(1));
+    const unsubscribeMSME = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        if (data.isRegistered) {
+          setIsMSMERegistered(true);
+          setBusinessName(data.businessName || "Your Business");
+        }
+      } else {
+        setIsMSMERegistered(false);
+      }
+      setLoading(false);
+    }, (error) => {
+      console.error("Auth Check Error:", error);
+      setLoading(false);
+    });
 
-    if (localStorage.getItem('isSuperAdmin') === 'true') setIsAdminAuthenticated(true);
+    if (localStorage.getItem('isSuperAdmin') === 'true') setIsAdminAuthenticated(true);
 
-    return () => {
-      unsubscribeAuth();
-      unsubscribeMSME();
-    };
-  }, []);
+    return () => {
+      unsubscribeAuth();
+      unsubscribeMSME();
+    };
+  }, []);
 
-  const handleAdminLogin = () => {
-    const password = prompt("अ‍ॅडमिन गुप्त पासवर्ड टाका:");
-    if (password === "AM@9922") { 
-      localStorage.setItem('isSuperAdmin', 'true');
-      setIsAdminAuthenticated(true);
-    } else {
-      alert("प्रवेश नाकारला!");
-    }
-  };
+  const handleAdminLogin = () => {
+    const password = prompt("अ‍ॅडमिन गुप्त पासवर्ड टाका:");
+    if (password === "AM@9922") { 
+      localStorage.setItem('isSuperAdmin', 'true');
+      setIsAdminAuthenticated(true);
+    } else {
+      alert("प्रवेश नाकारला!");
+    }
+  };
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#002D5E' }}>
-        <h2 style={{ color: 'white', fontWeight: 'bold' }}>APNI MANZIL LOADING...</h2>
-      </div>
-    );
-  }
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#002D5E' }}>
+        <h2 style={{ color: 'white', fontWeight: 'bold' }}>APNI MANZIL LOADING...</h2>
+      </div>
+    );
+  }
 
-  return (
-    <Router>
+  return (
+    <Router>
       {/* ✅ ही ओळ आता सर्व सर्व्हिसेस ट्रॅक करेल */}
       <RouteTracker /> 
 
-      <Layout user={currentUser}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about-us" element={<About />} />
-          <Route path="/help" element={<HelpCenter />} /> 
-          <Route path="/track" element={<Tracking />} /> 
-          
-          <Route path="/login" element={currentUser ? <Navigate to="/customer-dashboard" /> : <Auth />} />
-          <Route path="/register" element={<Auth />} />
-          <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
-          
-          {/* ✅ मुख्य कुरिअर पेज आणि नवीन बुकिंग पेज Route */}
-          <Route path="/courier-service" element={<CourierServiceDetail />} />
-          <Route path="/booking" element={<BookingPage />} />
+      <Layout user={currentUser}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about-us" element={<About />} />
+          <Route path="/help" element={<HelpCenter />} /> 
+          <Route path="/track" element={<Tracking />} /> 
+          
+          <Route path="/login" element={currentUser ? <Navigate to="/customer-dashboard" /> : <Auth />} />
+          <Route path="/register" element={<Auth />} />
+          <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
+          
+          {/* ✅ मुख्य कुरिअर पेज आणि नवीन बुकिंग पेज Route */}
+          <Route path="/courier-service" element={<CourierServiceDetail />} />
+          <Route path="/booking" element={<BookingPage />} />
 
-          <Route path="/hyperlocal-service" element={<HyperlocalService />} />
-          <Route path="/truck-transport" element={<TruckTransportService />} />
-          
-          <Route path="/book-truck" element={<BookTruck />} />
-          <Route path="/book-part-load" element={<BookPartLoad />} />
-          <Route path="/find-load" element={<FindLoad />} />
+          <Route path="/hyperlocal-service" element={<HyperlocalService />} />
+          <Route path="/truck-transport" element={<TruckTransportService />} />
+          
+          <Route path="/book-truck" element={<BookTruck />} />
+          <Route path="/book-part-load" element={<BookPartLoad />} />
+          <Route path="/find-load" element={<FindLoad />} />
 
-          {/* 📦 WAREHOUSE ROUTES */}
-          <Route path="/short-term-storage" element={<ShortTermStorageForm />} />
-          <Route path="/long-term-storage" element={<LongTermStorageForm />} />
-          <Route path="/fulfillment-storage" element={<FulfillmentWarehouseForm />} />
-          <Route path="/cold-storage" element={<ColdStorageForm />} />
-          <Route path="/inventory-management" element={<InventoryManagementForm />} />
-          <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
+          {/* 📦 WAREHOUSE ROUTES */}
+          <Route path="/short-term-storage" element={<ShortTermStorageForm />} />
+          <Route path="/long-term-storage" element={<LongTermStorageForm />} />
+          <Route path="/fulfillment-storage" element={<FulfillmentWarehouseForm />} />
+          <Route path="/cold-storage" element={<ColdStorageForm />} />
+          <Route path="/inventory-management" element={<InventoryManagementForm />} />
+          <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
 
-          <Route path="/importexport" element={<ImportExportDetail />} />
-          <Route path="/packers-movers" element={<PackersAndMovers />} />
-          
-          <Route path="/home-shifting" element={<HomeShifting />} />
-          <Route path="/office-shifting" element={<OfficeShiftingForm />} />
-          <Route path="/furniture-shifting" element={<FurnitureShiftingForm />} />
-          <Route path="/vehicle-transport" element={<VehicleTransportForm />} />
-          <Route path="/commercial-moving" element={<CommercialMovingForm />} />
+          <Route path="/importexport" element={<ImportExportDetail />} />
+          <Route path="/packers-movers" element={<PackersAndMovers />} />
+          
+          <Route path="/home-shifting" element={<HomeShifting />} />
+          <Route path="/office-shifting" element={<OfficeShiftingForm />} />
+          <Route path="/furniture-shifting" element={<FurnitureShiftingForm />} />
+          <Route path="/vehicle-transport" element={<VehicleTransportForm />} />
+          <Route path="/commercial-moving" element={<CommercialMovingForm />} />
 
-          <Route path="/same-day-delivery" element={<SameDayDelivery />} />
+          <Route path="/same-day-delivery" element={<SameDayDelivery />} />
 
-          <Route path="/warehouse-storage" element={<WarehouseStorage />} />
-          <Route path="/international-logistics" element={<InternationalLogistics />} />
-          <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
-          <Route path="/special-logistics" element={<SpecialLogistics />} />
-          <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
-          
-          <Route path="/airfreight" element={<AirFreight />} />
-          <Route path="/seafreight" element={<SeaFreight />} />
-          <Route path="/customs" element={<Customs />} />
-          <Route path="/tradefinance" element={<TradeFinance />} />
-          <Route path="/partner-registration" element={<PartnerRegistration />} />
-          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+          <Route path="/warehouse-storage" element={<WarehouseStorage />} />
+          <Route path="/international-logistics" element={<InternationalLogistics />} />
+          <Route path="/ecommerce-logistics" element={<EcommerceLogistics />} />
+          <Route path="/special-logistics" element={<SpecialLogistics />} />
+          <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
+          
+          <Route path="/airfreight" element={<AirFreight />} />
+          <Route path="/seafreight" element={<SeaFreight />} />
+          <Route path="/customs" element={<Customs />} />
+          <Route path="/tradefinance" element={<TradeFinance />} />
+          <Route path="/partner-registration" element={<PartnerRegistration />} />
+          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
 
-          {/* 🤝 नवीन पार्टनर विथ अस Route */}
-          <Route path="/partner-with-us" element={<PartnerWithUs />} />
-          
-          <Route 
-            path="/customer-dashboard" 
-            element={currentUser ? <CustomerDashboard /> : <Navigate to="/login" />} 
-          />
-          
-          <Route 
-            path="/exim-dashboard" 
-            element={currentUser ? <EXIMDashboard /> : <Navigate to="/exim-login" />} 
-          />
+          {/* 🤝 नवीन पार्टनर विथ अस Route */}
+          <Route path="/partner-with-us" element={<PartnerWithUs />} />
+          
+          <Route 
+            path="/customer-dashboard" 
+            element={currentUser ? <CustomerDashboard /> : <Navigate to="/login" />} 
+          />
+          
+          <Route 
+            path="/exim-dashboard" 
+            element={currentUser ? <EXIMDashboard /> : <Navigate to="/exim-login" />} 
+          />
 
-          <Route 
-            path="/super-secret-admin-99" 
-            element={isAdminAuthenticated ? <AdminDashboard /> : <div style={{textAlign:'center', padding:'100px'}}><button onClick={handleAdminLogin}>Unlock Admin Panel</button></div>} 
-          />
+          <Route 
+            path="/super-secret-admin-99" 
+            element={isAdminAuthenticated ? <AdminDashboard /> : <div style={{textAlign:'center', padding:'100px'}}><button onClick={handleAdminLogin}>Unlock Admin Panel</button></div>} 
+          />
 
-          <Route 
-            path="/msme" 
-            element={isMSMERegistered ? <MSMEDashboard businessName={businessName} /> : <Navigate to="/msme-registration" />} 
-          />
-          <Route 
-            path="/msme-registration" 
-            element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} 
-          />
-          
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Layout>
-      <ChatBot />
-    </Router>
-  );
+          <Route 
+            path="/msme" 
+            element={isMSMERegistered ? <MSMEDashboard businessName={businessName} /> : <Navigate to="/msme-registration" />} 
+          />
+          <Route 
+            path="/msme-registration" 
+            element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} 
+          />
+          
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Layout>
+      <ChatBot />
+    </Router>
+  );
 }
 
 export default App;
