@@ -14,7 +14,7 @@ const SameDayDelivery = () => {
   const [booked, setBooked] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
   
-  // State to hold live calculated rates dynamically from Shiprocket Quick
+  // State to hold live calculated rates dynamically
   const [partners, setPartners] = useState([
     { id: 'borzo', name: 'Borzo (WeFast)', price: 'Enter details to fetch', status: 'Pending' },
     { id: 'dunzo', name: 'Dunzo For Business', price: 'Enter details to fetch', status: 'Pending' },
@@ -33,7 +33,7 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Function to call our new Master Shiprocket Quick API and fetch ALL live rates at once
+  // Function to call our Master Shiprocket Quick API and fetch ALL live rates at once
   const fetchLiveRates = async () => {
     if (!formData.pickupPincode || !formData.deliveryPincode) {
       alert("Please fill complete pickup and delivery Pincodes to calculate rates.");
@@ -42,7 +42,7 @@ const SameDayDelivery = () => {
 
     setFetchingRates(true);
     try {
-      // Calling our newly pushed Master Hyperlocal Engine route
+      // Calling our localhost backend server
       const response = await fetch('http://localhost:5000/api/hyperlocal/shiprocket-quick-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -59,17 +59,19 @@ const SameDayDelivery = () => {
       if (result.success && result.data && result.data.data && result.data.data.available_courier_companies) {
         const courierList = result.data.data.available_courier_companies;
         
-        // Dynamically mapping Shiprocket response array directly into our 3 card systems
+        // Dynamically mapping response directly into our 3 card systems
         const updatedPartners = partners.map(partner => {
-          // Find if this partner exists in shiprocket response array
-          const liveData = courierList.find(c => c.courier_name.toLowerCase().includes(partner.id));
+          // 🔥 फिक्स: जोडी जुळवण्यासाठी नावे छोट्या अक्षरात करून शोधणे (case-insensitive check)
+          const liveData = courierList.find(c => 
+            c.courier_name.toLowerCase().includes(partner.id.toLowerCase())
+          );
           
           if (liveData) {
             return {
               ...partner,
               price: `₹${liveData.rate}`,
               status: 'Available',
-              raw_courier_id: liveData.courier_company_id // stored for final booking pipeline
+              raw_courier_id: liveData.courier_company_id
             };
           } else {
             return {
@@ -82,7 +84,6 @@ const SameDayDelivery = () => {
 
         setPartners(updatedPartners);
       } else {
-        // Fallback or Alert if route lacks serviceability bounds
         alert("No hyperlocal fleets available for this specific route right now.");
         setPartners(partners.map(p => ({ ...p, price: 'Unavailable', status: 'Unavailable' })));
       }
@@ -126,7 +127,7 @@ const SameDayDelivery = () => {
           <CheckCircle size={80} className="mx-auto text-green-500 animate-bounce" />
           <h1 className="text-3xl font-[950] italic uppercase">Booking Confirmed!</h1>
           <p className="font-bold text-slate-500">Your shipment request has been recorded. Logistics partner will arrive shortly.</p>
-          <button onClick={() => navigate('/')} className="bg-[#002D5E] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition hover:scale-105">Go To Home</button>
+          <button type="button" onClick={() => navigate('/')} className="bg-[#002D5E] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition hover:scale-105">Go To Home</button>
         </div>
       </div>
     );
@@ -136,7 +137,7 @@ const SameDayDelivery = () => {
     <div className="min-h-screen bg-slate-50 pb-20 font-sans">
       {/* Header Panel */}
       <div className="bg-black text-white p-6 flex items-center justify-between sticky top-0 z-50">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full"><ArrowLeft size={20}/></button>
+        <button type="button" onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full"><ArrowLeft size={20}/></button>
         <h1 className="text-lg font-black italic uppercase tracking-tighter">Same Day <span className="text-blue-400">Booking Form</span></h1>
         <div className="w-10"></div>
       </div>
@@ -144,7 +145,7 @@ const SameDayDelivery = () => {
       <div className="max-w-2xl mx-auto p-4 pt-8">
         <form onSubmit={handleFinalBooking} className="space-y-8">
           
-          {/* 👤 SECTION 1: SENDER DETAILS (Where is your Pickup) */}
+          {/* 👤 SECTION 1: SENDER DETAILS */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-blue-600">
               <User size={18}/> 1. Where is your Pickup? (Sender)
@@ -157,7 +158,7 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
-          {/* 📍 SECTION 2: RECEIVER DETAILS (Where is your Drop) */}
+          {/* 📍 SECTION 2: RECEIVER DETAILS */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-green-600">
               <MapPin size={18}/> 2. Where is your Drop? (Receiver)
