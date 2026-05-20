@@ -14,18 +14,18 @@ const SameDayDelivery = () => {
   const [booked, setBooked] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
   
-  // State to hold live calculated rates from all 3 API aggregators
+  // State to hold live calculated rates dynamically from Shiprocket Quick
   const [partners, setPartners] = useState([
     { id: 'borzo', name: 'Borzo (WeFast)', price: 'Enter details to fetch', status: 'Pending' },
-    { id: 'dunzo', name: 'Dunzo For Business', price: 'Coming Soon', status: 'Unavailable' },
-    { id: 'shadowfax', name: 'Shadowfax Local', price: 'Coming Soon', status: 'Unavailable' }
+    { id: 'dunzo', name: 'Dunzo For Business', price: 'Enter details to fetch', status: 'Pending' },
+    { id: 'shadowfax', name: 'Shadowfax Local', price: 'Enter details to fetch', status: 'Pending' }
   ]);
 
-  // Form State Configuration
+  // Form State Configuration mapped perfectly for Shiprocket Quick requirements
   const [formData, setFormData] = useState({
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '',
     receiverName: '', receiverMobile: '', deliveryAddress: '', deliveryPincode: '',
-    packageType: 'Parcel', weight: '', size: 'Small',
+    packageType: 'Parcel', weight: '0.5', packageValue: '100', channelOrderId: '',
     vehicleType: 'Bike', deliverySpeed: 'Same Day', paymentMethod: 'Prepaid'
   });
 
@@ -33,36 +33,62 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Function to call our backend API and get real-time rates
+  // Function to call our new Master Shiprocket Quick API and fetch ALL live rates at once
   const fetchLiveRates = async () => {
-    if (!formData.pickupPincode || !formData.deliveryPincode || !formData.pickupAddress || !formData.deliveryAddress) {
-      alert("Please fill complete pickup and delivery addresses to calculate rates.");
+    if (!formData.pickupPincode || !formData.deliveryPincode) {
+      alert("Please fill complete pickup and delivery Pincodes to calculate rates.");
       return;
     }
 
     setFetchingRates(true);
     try {
-      const response = await fetch('http://localhost:5000/api/hyperlocal/borzo-rates', {
+      // Calling our newly pushed Master Hyperlocal Engine route
+      const response = await fetch('http://localhost:5000/api/hyperlocal/shiprocket-quick-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          pickupPincode: formData.pickupPincode,
+          deliveryPincode: formData.deliveryPincode,
+          weight: formData.weight,
+          packageType: formData.packageType
+        })
       });
       
       const result = await response.json();
       
-      if (result.success) {
-        // Update the state with live price received from Borzo API
-        setPartners([
-          { id: 'borzo', name: 'Borzo (WeFast)', price: `₹${result.delivery_fee}`, status: 'Available' },
-          { id: 'dunzo', name: 'Dunzo For Business', price: 'Coming Soon', status: 'Unavailable' },
-          { id: 'shadowfax', name: 'Shadowfax Local', price: 'Coming Soon', status: 'Unavailable' }
-        ]);
+      if (result.success && result.data && result.data.data && result.data.data.available_courier_companies) {
+        const courierList = result.data.data.available_courier_companies;
+        
+        // Dynamically mapping Shiprocket response array directly into our 3 card systems
+        const updatedPartners = partners.map(partner => {
+          // Find if this partner exists in shiprocket response array
+          const liveData = courierList.find(c => c.courier_name.toLowerCase().includes(partner.id));
+          
+          if (liveData) {
+            return {
+              ...partner,
+              price: `₹${liveData.rate}`,
+              status: 'Available',
+              raw_courier_id: liveData.courier_company_id // stored for final booking pipeline
+            };
+          } else {
+            return {
+              ...partner,
+              price: 'Not Serviceable',
+              status: 'Unavailable'
+            };
+          }
+        });
+
+        setPartners(updatedPartners);
       } else {
-        alert(result.message || "Could not fetch rates for this specific route.");
+        // Fallback or Alert if route lacks serviceability bounds
+        alert("No hyperlocal fleets available for this specific route right now.");
+        setPartners(partners.map(p => ({ ...p, price: 'Unavailable', status: 'Unavailable' })));
       }
     } catch (error) {
-      console.error("Failed fetching live hyperlocal rates:", error);
-      alert("Backend connectivity issue. Please check your local server configuration.");
+      console.error("Failed fetching live hyperlocal master rates:", error);
+      alert("Backend cluster connectivity issue. Make sure your server is live.");
     } finally {
       setFetchingRates(false);
     }
@@ -72,12 +98,12 @@ const SameDayDelivery = () => {
     e.preventDefault();
     
     if (!selectedPartner || selectedPartner.status === 'Unavailable') {
-      return alert("Please select an active and available courier partner to proceed.");
+      return alert("Please click 'Fetch Live Rates' and select an available courier partner.");
     }
 
     setLoading(true);
     try {
-      // Saving final structure into Firebase Firestore Database
+      // Saving final order matrix into Firebase Firestore Database
       await addDoc(collection(db, "same_day_bookings"), {
         ...formData,
         courierPartner: selectedPartner.name,
@@ -87,7 +113,7 @@ const SameDayDelivery = () => {
       });
       setBooked(true);
     } catch (error) {
-      alert("Error saving booking: " + error.message);
+      alert("Error saving booking to Firestore: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -118,70 +144,86 @@ const SameDayDelivery = () => {
       <div className="max-w-2xl mx-auto p-4 pt-8">
         <form onSubmit={handleFinalBooking} className="space-y-8">
           
-          {/* 👤 SECTION 1: SENDER DETAILS */}
+          {/* 👤 SECTION 1: SENDER DETAILS (Where is your Pickup) */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-blue-600">
-              <User size={18}/> 1. Sender Details
+              <User size={18}/> 1. Where is your Pickup? (Sender)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input name="senderName" placeholder="Sender Name" required className="form-input" onChange={handleChange} />
               <input name="senderMobile" placeholder="Mobile Number" required className="form-input" onChange={handleChange} />
-              <input name="pickupAddress" placeholder="Pickup Address" required className="form-input md:col-span-2" onChange={handleChange} />
-              <input name="pickupPincode" placeholder="Pincode" required className="form-input" onChange={handleChange} />
+              <input name="pickupAddress" placeholder="Full Pickup Address" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="pickupPincode" placeholder="Pickup Pincode *" required className="form-input" onChange={handleChange} />
             </div>
           </section>
 
-          {/* 📦 SECTION 2: RECEIVER DETAILS */}
+          {/* 📍 SECTION 2: RECEIVER DETAILS (Where is your Drop) */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-green-600">
-              <MapPin size={18}/> 2. Receiver Details
+              <MapPin size={18}/> 2. Where is your Drop? (Receiver)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input name="receiverName" placeholder="Receiver Name" required className="form-input" onChange={handleChange} />
               <input name="receiverMobile" placeholder="Mobile Number" required className="form-input" onChange={handleChange} />
-              <input name="deliveryAddress" placeholder="Delivery Address" required className="form-input md:col-span-2" onChange={handleChange} />
-              <input name="deliveryPincode" placeholder="Pincode" required className="form-input" onChange={handleChange} />
+              <input name="deliveryAddress" placeholder="Full Delivery Address" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="deliveryPincode" placeholder="Drop Pincode *" required className="form-input" onChange={handleChange} />
             </div>
           </section>
 
-          {/* 📦 SECTION 3: PARCEL DETAILS */}
+          {/* 📦 SECTION 3: PACKAGE DETAILS */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-amber-600">
-              <Package size={18}/> 3. Parcel Details
+              <Package size={18}/> 3. Package Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <select name="packageType" className="form-input font-bold" onChange={handleChange}>
-                <option>Documents</option>
-                <option>Food</option>
-                <option>Parcel</option>
-                <option>Electronics</option>
-              </select>
-              <input name="weight" placeholder="Weight (kg)" className="form-input" onChange={handleChange} />
-              <select name="size" className="form-input font-bold md:col-span-2" onChange={handleChange}>
-                <option>Small</option>
-                <option>Medium</option>
-                <option>Large</option>
-              </select>
+              <div className="flex flex-col gap-1 md:col-span-2">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Package Type *</label>
+                <select name="packageType" className="form-input font-bold" onChange={handleChange} defaultValue="Parcel">
+                  <option value="Electronics">Electronics</option>
+                  <option value="Clothes">Clothes</option>
+                  <option value="Medicines">Medicines</option>
+                  <option value="Food">Food</option>
+                  <option value="Documents">Documents</option>
+                  <option value="Groceries">Groceries</option>
+                  <option value="Loose Goods">Loose Goods</option>
+                  <option value="Parcel">Others / General Parcel</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Package Value (₹) *</label>
+                <input name="packageValue" type="number" placeholder="Value in INR" required className="form-input" defaultValue="100" onChange={handleChange} />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Weight (kg) *</label>
+                <input name="weight" type="number" step="0.1" placeholder="Weight e.g. 0.5" required className="form-input" defaultValue="0.5" onChange={handleChange} />
+              </div>
+
+              <div className="flex flex-col gap-1 md:col-span-2">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Channel Order ID (Optional)</label>
+                <input name="channelOrderId" placeholder="e.g. AM_78361" className="form-input" onChange={handleChange} />
+              </div>
             </div>
           </section>
 
-          {/* 🚚 SECTION 4: VEHICLE & LOGISTICS ROUTING CONFIGURATION */}
+          {/* 🚚 SECTION 4: VEHICLE & LOGISTICS SPEEDS */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
-               <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 text-slate-400 italic">Vehicle Category</h2>
-               <select name="vehicleType" className="form-input font-black" onChange={handleChange}>
-                  <option value="Bike">Bike (0-5 kg)</option>
-                  <option value="Auto">Auto (5-50 kg)</option>
-                  <option value="Truck">Truck (50+ kg)</option>
-               </select>
+                <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 text-slate-400 italic">Vehicle Category</h2>
+                <select name="vehicleType" className="form-input font-black" onChange={handleChange}>
+                   <option value="Bike">Bike (0-5 kg)</option>
+                   <option value="Auto">Auto (5-50 kg)</option>
+                   <option value="Truck">Truck (50+ kg)</option>
+                </select>
             </div>
             <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
-               <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 text-slate-400 italic">Delivery Operational Speed</h2>
-               <select name="deliverySpeed" className="form-input font-black" onChange={handleChange}>
-                  <option>Express (2-3 hrs)</option>
-                  <option>Same Day (6-8 hrs)</option>
-                  <option>Scheduled</option>
-               </select>
+                <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 text-slate-400 italic">Delivery Operational Speed</h2>
+                <select name="deliverySpeed" className="form-input font-black" onChange={handleChange}>
+                   <option value="Express">Express (2-3 hrs)</option>
+                   <option value="Same Day">Same Day (6-8 hrs)</option>
+                   <option value="Scheduled">Scheduled</option>
+                </select>
             </div>
           </section>
 
@@ -189,7 +231,7 @@ const SameDayDelivery = () => {
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <div className="flex justify-between items-center mb-4">
               <h2 className="flex items-center gap-2 font-black uppercase text-sm text-[#002D5E]">
-                <Info size={18}/> 5. Compare & Select Delivery Fleet
+                <Info size={18}/> 4. Compare & Select Delivery Fleet
               </h2>
               <button 
                 type="button" 
@@ -228,10 +270,10 @@ const SameDayDelivery = () => {
           {/* 💰 SECTION 6: FINANCIAL SETTLEMENT & SUBMITTALS */}
           <div className="bg-[#002D5E] rounded-[2.5rem] p-8 text-white shadow-2xl overflow-hidden relative">
             <div className="relative z-10">
-              <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 opacity-60 italic">Payment Verification Method</h2>
+              <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 opacity-60 italic">Pay For Shipping *</h2>
               <div className="flex gap-4 mb-6">
                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'Prepaid'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all ${formData.paymentMethod === 'Prepaid' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Prepaid</button>
-                <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'COD'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all ${formData.paymentMethod === 'COD' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>COD</button>
+                <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'COD'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all ${formData.paymentMethod === 'COD' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Pay On Delivery</button>
               </div>
               <button disabled={loading} className="w-full bg-orange-500 text-white py-5 rounded-2xl font-[950] uppercase tracking-[2px] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 active:scale-95">
                 {loading ? "Processing Order..." : "Confirm Final Hyperlocal Booking"} <ChevronRight size={20}/>
