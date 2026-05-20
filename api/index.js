@@ -4,10 +4,15 @@ const cors = require('cors');
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+// CORS मध्ये तुझ्या मूळ वेबसाईटची लिंक इथे टाक, उदा. https://apni-manzil-web.vercel.app
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
 
 // ===================================================
-// SHIPROCKET LOGISTICS INTEGRATION (ORIGINAL)
+// SHIPROCKET LOGISTICS INTEGRATION
 // ===================================================
 
 const getShiprocketToken = async () => {
@@ -23,7 +28,7 @@ const getShiprocketToken = async () => {
     }
 };
 
-// 1. Rates / Serviceability Route
+// 1. Rates Route
 app.post('/api/rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
@@ -63,7 +68,7 @@ app.post('/api/book-order', async (req, res) => {
     }
 });
 
-// 3. SHIPROCKET QUICK HYPERLOCAL (PURE LIVE)
+// 3. HYPERLOCAL RATES
 app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
     const { pickupPincode, deliveryPincode, weight, packageType } = req.body;
     try {
@@ -78,18 +83,9 @@ app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
         });
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        // येथे फॉलबॅक काढला आहे, म्हणजे आता खोटा डेटा येणार नाही
-        console.error("❌ LIVE_RATE_ERROR:", err.response?.data || err.message);
-        res.status(500).json({ success: false, error: "Shiprocket API failed to return live rates." });
+        res.status(500).json({ success: false, error: "Shiprocket API failed." });
     }
 });
 
-// ===================================================
-// SERVER LISTENER
-// ===================================================
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`🚀 सर्व्हर पोर्ट ${PORT} वर चालू आहे!`);
-});
-
+// Vercel साठी export आवश्यक आहे
 module.exports = app;
