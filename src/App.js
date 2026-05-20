@@ -100,7 +100,7 @@ const SeaFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'cent
 const Customs = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}><h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900' }}>Customs & Compliance</h1></div> );
 const TradeFinance = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}><h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900' }}>Logistics Trade Finance</h1></div> );
 
-// ✅ --- सुधारलेली ट्रॅकिंग सिस्टम (एरर फिक्स केला) ---
+// ✅ --- सुधारलेली ट्रॅकिंग सिस्टम ---
 function RouteTracker() {
   const location = useLocation();
 
@@ -116,7 +116,7 @@ function RouteTracker() {
         };
 
         try {
-          // ⚠️ आपण आधी ठरवल्याप्रमाणे नवीन आणि वर्किंग लिंक इथे अपडेट केली आहे
+          // नवीन आणि चालू वेबहुक लिंक
           await fetch("https://hooks.zapier.com/hooks/catch/27439476/uvczwl6/", {
             method: "POST",
             mode: "no-cors",
@@ -191,7 +191,6 @@ function App() {
 
   return (
     <Router>
-      {/* ✅ ही ओळ आता सर्व सर्व्हिसेस ट्रॅक करेल */}
       <RouteTracker /> 
 
       <Layout user={currentUser}>
@@ -205,7 +204,6 @@ function App() {
           <Route path="/register" element={<Auth />} />
           <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
           
-          {/* ✅ मुख्य कुरिअर पेज आणि नवीन बुकिंग पेज Route */}
           <Route path="/courier-service" element={<CourierServiceDetail />} />
           <Route path="/booking" element={<BookingPage />} />
 
@@ -248,7 +246,6 @@ function App() {
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
 
-          {/* 🤝 नवीन पार्टनर विथ अस Route */}
           <Route path="/partner-with-us" element={<PartnerWithUs />} />
           
           <Route 

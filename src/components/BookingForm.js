@@ -19,7 +19,6 @@ const BookingForm = ({ serviceName, onClose }) => {
 
   // --- झॅपियर फंक्शन (नवीन वर्किंग लिंक अपडेट केली आहे) ---
   const sendToZapier = async (bookingData) => {
-    // ⚠️ इथे आपण जुनी एरर देणारी लिंक बदलून नवीन लिंक टाकली आहे
     const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/27439476/uvczwl6/";
     try {
       await fetch(ZAPIER_URL, {
@@ -38,9 +37,28 @@ const BookingForm = ({ serviceName, onClose }) => {
     const fetchRates = async () => {
       if (formData.pickup.length === 6 && formData.drop.length === 6) {
         setRatesLoading(true);
-        const data = await getAllShippingRates(formData.pickup, formData.drop, formData.weight);
-        setCourierRates(data);
-        setRatesLoading(false);
+        try {
+          // 🛠️ सुधारणा: बॅकएंडला पूर्ण ऑब्जेक्ट स्वरूपात डेटा पाठवला जेणेकरून एक्सप्रेसला तो अचूक समजेल
+          const data = await getAllShippingRates({
+            pickup: formData.pickup,
+            drop: formData.drop,
+            weight: formData.weight
+          });
+          
+          // जर रिस्पॉन्स बॅकएंडच्या नव्या फॉरमॅटनुसार आला असेल तर तो सेट करा
+          if (data && data.success && data.rates && data.rates.data && data.rates.data.available_courier_companies) {
+            setCourierRates(data.rates.data.available_courier_companies);
+          } else if (Array.isArray(data)) {
+            setCourierRates(data);
+          } else {
+            setCourierRates([]);
+          }
+        } catch (err) {
+          console.error("Rates fetch error:", err);
+          setCourierRates([]);
+        } finally {
+          setRatesLoading(false);
+        }
       }
     };
     fetchRates();
@@ -82,26 +100,26 @@ const BookingForm = ({ serviceName, onClose }) => {
         dropAddress: formData.drop,
         dimensions: formData.weight,
         pickupDate: formData.date,
-        courierName: selectedCourier.name,
-        price: selectedCourier.rate,
+        courierName: selectedCourier.name || selectedCourier.courier_name,
+        price: selectedCourier.rate || selectedCourier.freight_charge,
         status: "Payment Pending",
-        createdAt: new Date().toISOString(), // झॅपियरसाठी साधी तारीख
+        createdAt: new Date().toISOString(), 
       };
 
       const docRef = await addDoc(collection(db, "bookings"), {
         ...bookingPayload,
-        createdAt: serverTimestamp(), // फायरबेससाठी सर्वर टाइमस्टॅम्प
+        createdAt: serverTimestamp(), 
       });
 
-      // --- झॅपियरला डेटा पाठवा (फायरबेस एंट्री झाल्यावर लगेच) ---
+      // --- झॅपियरला डेटा पाठवा ---
       sendToZapier(bookingPayload);
 
       // पेमेंट खिडकी उघडा
-      handlePayment(selectedCourier.rate, docRef.id);
+      handlePayment(selectedCourier.rate || selectedCourier.freight_charge, docRef.id);
     } catch (error) {
       alert("❌ एरर: " + error.message);
     } finally {
-      closeLoading();
+      // 🛠️ सुधारणा: क्रॅश होणारे closeLoading() फंक्शन काढून टाकले आहे
       setLoading(false);
     }
   };
@@ -125,7 +143,7 @@ const BookingForm = ({ serviceName, onClose }) => {
               <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Pickup Pincode</label>
               <div className="relative">
                 <MapPin className="absolute left-4 top-4 text-slate-400" size={18}/>
-                <input required maxLength={6} value={formData.pickup} onChange={(e) => setFormData({...formData, pickup: e.target.value})} className="w-full p-4 pl-12 bg-slate-50 border-none rounded-2xl font-bold outline-none focus:ring-2 ring-[#FF5E00] text-sm" placeholder="e.g. 411001" />
+                <input required maxLength={6} value={formData.pickup} onChange={(e) => setFormData({...formData, pickup: e.target.value})} className="w-full p-4 pl-12 bg-slate-50 border-none rounded-2xl font-bold outline-none focus:ring-2 ring-[#FF5E00] text-sm" placeholder="e.g. 416520" />
               </div>
             </div>
 
@@ -133,7 +151,7 @@ const BookingForm = ({ serviceName, onClose }) => {
               <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Drop Pincode</label>
               <div className="relative">
                 <MapPin className="absolute left-4 top-4 text-[#FF5E00]" size={18}/>
-                <input required maxLength={6} value={formData.drop} onChange={(e) => setFormData({...formData, drop: e.target.value})} className="w-full p-4 pl-12 bg-slate-50 border-none rounded-2xl font-bold outline-none focus:ring-2 ring-[#FF5E00] text-sm" placeholder="e.g. 400001" />
+                <input required maxLength={6} value={formData.drop} onChange={(e) => setFormData({...formData, drop: e.target.value})} className="w-full p-4 pl-12 bg-slate-50 border-none rounded-2xl font-bold outline-none focus:ring-2 ring-[#FF5E00] text-sm" placeholder="e.g. 400094" />
               </div>
             </div>
 
@@ -164,23 +182,29 @@ const BookingForm = ({ serviceName, onClose }) => {
               </div>
             ) : courierRates.length > 0 ? (
               <div className="grid grid-cols-1 gap-3 max-h-[200px] overflow-y-auto pr-2">
-                {courierRates.map((courier, index) => (
-                  <div 
-                    key={index} 
-                    onClick={() => setSelectedCourier(courier)}
-                    className={`flex items-center justify-between p-4 rounded-2xl cursor-pointer border-2 transition-all 
-                      ${selectedCourier?.name === courier.name ? 'border-[#FF5E00] bg-orange-50' : 'border-slate-100 bg-white'}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Package size={20} className="text-[#001D3D]"/>
-                      <div>
-                        <p className="text-xs font-black uppercase">{courier.name}</p>
-                        <p className="text-[8px] text-slate-400 font-bold uppercase italic">Est: {courier.etd}</p>
+                {courierRates.map((courier, index) => {
+                  const cName = courier.name || courier.courier_name;
+                  const cRate = courier.rate || courier.freight_charge;
+                  const cEtd = courier.etd || courier.estimated_delivery_days || "3-5 Days";
+                  
+                  return (
+                    <div 
+                      key={index} 
+                      onClick={() => setSelectedCourier(courier)}
+                      className={`flex items-center justify-between p-4 rounded-2xl cursor-pointer border-2 transition-all 
+                        ${(selectedCourier?.name === cName || selectedCourier?.courier_name === cName) ? 'border-[#FF5E00] bg-orange-50' : 'border-slate-100 bg-white'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Package size={20} className="text-[#001D3D]"/>
+                        <div>
+                          <p className="text-xs font-black uppercase">{cName}</p>
+                          <p className="text-[8px] text-slate-400 font-bold uppercase italic">Est: {cEtd}</p>
+                        </div>
                       </div>
+                      <p className="text-lg font-black text-[#FF5E00]">₹{cRate}</p>
                     </div>
-                    <p className="text-lg font-black text-[#FF5E00]">₹{courier.rate}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div className="p-6 text-center bg-slate-50 rounded-3xl text-[10px] font-black text-slate-400 uppercase italic">
