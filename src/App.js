@@ -50,7 +50,7 @@ import OfficeShiftingForm from './components/OfficeShiftingForm';
 import FurnitureShiftingForm from './components/FurnitureShiftingForm';
 
 // ✅ ✅ ✅ ✅ --- नवीन VEHICLE TRANSPORT IMPORT ---
-import VehicleTransportForm from './pages/VehicleTransportForm';
+import VehicleTransportForm from './components/VehicleTransportForm';
 
 // ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING IMPORT ---
 import CommercialMovingForm from './pages/CommercialMovingForm';
