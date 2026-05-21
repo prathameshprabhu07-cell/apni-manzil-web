@@ -56,18 +56,17 @@ app.post('/api/book-order', async (req, res) => {
 app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
-        // हायपरलोकल एंडपॉईंट
-        const response = await axios.post('https://apiv2.shiprocket.in/v1/external/courier/serviceability/local', {
-            pickup_pincode: req.body.pickupPincode,
-            delivery_pincode: req.body.deliveryPincode,
-            weight: req.body.weight || 0.5,
-            commodity_type: req.body.packageType || "Parcel"
-        }, {
+        // URL दुरुस्त केली आहे (Hyperlocal serviceability endpoint)
+        const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
+            params: { 
+                pickup_pincode: req.body.pickupPincode,
+                delivery_pincode: req.body.deliveryPincode,
+                weight: req.body.weight || 0.5
+            },
             headers: { 'Authorization': `Bearer ${token}` }
         });
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        // इथे एरर नीट फॉरमॅट केला आहे, ज्यामुळे फ्रंटएंडला 'Unexpected JSON' एरर येणार नाही
         console.error("Shiprocket API Error:", err.response?.data);
         res.status(500).json({ success: false, error: "Shiprocket API call failed" });
     }
