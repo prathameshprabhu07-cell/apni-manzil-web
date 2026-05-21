@@ -14,7 +14,6 @@ const SameDayDelivery = () => {
   const [booked, setBooked] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
   
-  // बदल: इथून 'Enter details to fetch' काढून रिकामी स्ट्रिंग केली आहे
   const [partners, setPartners] = useState([
     { id: 'borzo', name: 'Borzo (WeFast)', price: '', status: 'Pending' },
     { id: 'dunzo', name: 'Dunzo For Business', price: '', status: 'Pending' },
@@ -39,12 +38,11 @@ const SameDayDelivery = () => {
     }
 
     setFetchingRates(true);
-    // बदल: बटन दाबल्यावर 'Loading...' दिसेल
     setPartners(partners.map(p => ({ ...p, price: 'Loading...', status: 'Fetching...' })));
 
     try {
-      // टीप: लाईव्ह प्रोजेक्टसाठी इथे तुझी बॅकएंड URL वापर
-      const response = await fetch('http://localhost:5000/api/hyperlocal/shiprocket-quick-rates', {
+      // ✅ इथे तुझी Vercel ची लिंक पेस्ट कर:
+      const response = await fetch('YOUR_VERCEL_BACKEND_URL/api/hyperlocal/shiprocket-quick-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
