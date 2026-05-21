@@ -11,15 +11,9 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 const HyperlocalService = () => {
   const navigate = useNavigate();
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन (आता हे नवीन पेजवर घेऊन जाईल)
+  // ✅ बदल: आता व्हॉट्सॲप नोटिफिकेशन उघडणार नाही, फक्त फॉर्मवर नेईल
   const handleLocalBooking = (serviceName) => {
-    // व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा (तुझा मूळ लॉजिक)
-    const customerPhone = "7378502356"; 
-    const customerName = "Local Customer";
-    const orderId = "HL-" + Math.floor(Math.random() * 100000);
-    sendWhatsAppNotification(customerPhone, customerName, serviceName, orderId);
-    
-    // ✅ बदल: आता युजरला नवीन Same Day Delivery पेजवर पाठवा
+    // आम्ही फक्त navigate चा वापर करत आहोत जेणेकरून नवीन टॅब उघडणार नाही
     navigate('/same-day-delivery');
   };
 
@@ -91,11 +85,11 @@ const HyperlocalService = () => {
         <div className="bg-gradient-to-r from-[#002D5E] to-blue-800 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
            <div className="flex items-center gap-6 z-10">
               <div className="hidden md:block bg-white/10 p-4 rounded-2xl">
-                 <span className="text-4xl">🤖</span>
+                  <span className="text-4xl">🤖</span>
               </div>
               <div>
-                 <h2 className="text-2xl md:text-3xl font-black text-white">Get <span className="text-yellow-400">Delivery</span> Within the Hour!</h2>
-                 <p className="text-blue-100 font-medium mt-1 italic">Delivering <span className="text-orange-400">Anything, Anytime, Anywhere!</span></p>
+                  <h2 className="text-2xl md:text-3xl font-black text-white">Get <span className="text-yellow-400">Delivery</span> Within the Hour!</h2>
+                  <p className="text-blue-100 font-medium mt-1 italic">Delivering <span className="text-orange-400">Anything, Anytime, Anywhere!</span></p>
               </div>
            </div>
            
@@ -109,7 +103,7 @@ const HyperlocalService = () => {
         </div>
       </section>
 
-      {/* ४. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      {/* 4. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative"
         style={{

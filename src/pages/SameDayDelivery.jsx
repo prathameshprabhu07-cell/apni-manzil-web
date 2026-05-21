@@ -14,14 +14,13 @@ const SameDayDelivery = () => {
   const [booked, setBooked] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
   
-  // State to hold live calculated rates dynamically
+  // बदल: इथून 'Enter details to fetch' काढून रिकामी स्ट्रिंग केली आहे
   const [partners, setPartners] = useState([
-    { id: 'borzo', name: 'Borzo (WeFast)', price: 'Enter details to fetch', status: 'Pending' },
-    { id: 'dunzo', name: 'Dunzo For Business', price: 'Enter details to fetch', status: 'Pending' },
-    { id: 'shadowfax', name: 'Shadowfax Local', price: 'Enter details to fetch', status: 'Pending' }
+    { id: 'borzo', name: 'Borzo (WeFast)', price: '', status: 'Pending' },
+    { id: 'dunzo', name: 'Dunzo For Business', price: '', status: 'Pending' },
+    { id: 'shadowfax', name: 'Shadowfax Local', price: '', status: 'Pending' }
   ]);
 
-  // Form State Configuration mapped perfectly for Shiprocket Quick requirements
   const [formData, setFormData] = useState({
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '',
     receiverName: '', receiverMobile: '', deliveryAddress: '', deliveryPincode: '',
@@ -33,7 +32,6 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Function to call our Master Shiprocket Quick API and fetch ALL live rates at once
   const fetchLiveRates = async () => {
     if (!formData.pickupPincode || !formData.deliveryPincode) {
       alert("Please fill complete pickup and delivery Pincodes to calculate rates.");
@@ -41,8 +39,11 @@ const SameDayDelivery = () => {
     }
 
     setFetchingRates(true);
+    // बदल: बटन दाबल्यावर 'Loading...' दिसेल
+    setPartners(partners.map(p => ({ ...p, price: 'Loading...', status: 'Fetching...' })));
+
     try {
-      // Calling our localhost backend server
+      // टीप: लाईव्ह प्रोजेक्टसाठी इथे तुझी बॅकएंड URL वापर
       const response = await fetch('http://localhost:5000/api/hyperlocal/shiprocket-quick-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -59,9 +60,7 @@ const SameDayDelivery = () => {
       if (result.success && result.data && result.data.data && result.data.data.available_courier_companies) {
         const courierList = result.data.data.available_courier_companies;
         
-        // Dynamically mapping response directly into our 3 card systems
         const updatedPartners = partners.map(partner => {
-          // 🔥 फिक्स: जोडी जुळवण्यासाठी नावे छोट्या अक्षरात करून शोधणे (case-insensitive check)
           const liveData = courierList.find(c => 
             c.courier_name.toLowerCase().includes(partner.id.toLowerCase())
           );
@@ -90,6 +89,7 @@ const SameDayDelivery = () => {
     } catch (error) {
       console.error("Failed fetching live hyperlocal master rates:", error);
       alert("Backend cluster connectivity issue. Make sure your server is live.");
+      setPartners(partners.map(p => ({ ...p, price: 'Error', status: 'Unavailable' })));
     } finally {
       setFetchingRates(false);
     }
@@ -104,7 +104,6 @@ const SameDayDelivery = () => {
 
     setLoading(true);
     try {
-      // Saving final order matrix into Firebase Firestore Database
       await addDoc(collection(db, "same_day_bookings"), {
         ...formData,
         courierPartner: selectedPartner.name,
@@ -135,7 +134,6 @@ const SameDayDelivery = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 font-sans">
-      {/* Header Panel */}
       <div className="bg-black text-white p-6 flex items-center justify-between sticky top-0 z-50">
         <button type="button" onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full"><ArrowLeft size={20}/></button>
         <h1 className="text-lg font-black italic uppercase tracking-tighter">Same Day <span className="text-blue-400">Booking Form</span></h1>
@@ -144,8 +142,6 @@ const SameDayDelivery = () => {
 
       <div className="max-w-2xl mx-auto p-4 pt-8">
         <form onSubmit={handleFinalBooking} className="space-y-8">
-          
-          {/* 👤 SECTION 1: SENDER DETAILS */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-blue-600">
               <User size={18}/> 1. Where is your Pickup? (Sender)
@@ -158,7 +154,6 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
-          {/* 📍 SECTION 2: RECEIVER DETAILS */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-green-600">
               <MapPin size={18}/> 2. Where is your Drop? (Receiver)
@@ -171,7 +166,6 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
-          {/* 📦 SECTION 3: PACKAGE DETAILS */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-amber-600">
               <Package size={18}/> 3. Package Details
@@ -190,17 +184,14 @@ const SameDayDelivery = () => {
                   <option value="Parcel">Others / General Parcel</option>
                 </select>
               </div>
-
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-bold text-slate-400 uppercase italic">Package Value (₹) *</label>
                 <input name="packageValue" type="number" placeholder="Value in INR" required className="form-input" defaultValue="100" onChange={handleChange} />
               </div>
-
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-bold text-slate-400 uppercase italic">Weight (kg) *</label>
                 <input name="weight" type="number" step="0.1" placeholder="Weight e.g. 0.5" required className="form-input" defaultValue="0.5" onChange={handleChange} />
               </div>
-
               <div className="flex flex-col gap-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-400 uppercase italic">Channel Order ID (Optional)</label>
                 <input name="channelOrderId" placeholder="e.g. AM_78361" className="form-input" onChange={handleChange} />
@@ -208,7 +199,6 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
-          {/* 🚚 SECTION 4: VEHICLE & LOGISTICS SPEEDS */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
                 <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 text-slate-400 italic">Vehicle Category</h2>
@@ -228,7 +218,6 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
-          {/* 🛠️ SECTION 5: LIVE COURIER PARTNER PRICE COMPARISON MATRIX */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <div className="flex justify-between items-center mb-4">
               <h2 className="flex items-center gap-2 font-black uppercase text-sm text-[#002D5E]">
@@ -268,7 +257,6 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
-          {/* 💰 SECTION 6: FINANCIAL SETTLEMENT & SUBMITTALS */}
           <div className="bg-[#002D5E] rounded-[2.5rem] p-8 text-white shadow-2xl overflow-hidden relative">
             <div className="relative z-10">
               <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 opacity-60 italic">Pay For Shipping *</h2>
@@ -282,7 +270,6 @@ const SameDayDelivery = () => {
             </div>
             <Truck className="absolute -bottom-10 -right-10 text-white/5" size={250}/>
           </div>
-
         </form>
       </div>
 
