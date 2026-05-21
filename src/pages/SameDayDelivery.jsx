@@ -41,7 +41,6 @@ const SameDayDelivery = () => {
     setPartners(partners.map(p => ({ ...p, price: 'Loading...', status: 'Fetching...' })));
 
     try {
-      // ✅ इथे तुझी Vercel ची लिंक पेस्ट कर:
       const response = await fetch('/api/hyperlocal/shiprocket-quick-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,10 +53,12 @@ const SameDayDelivery = () => {
       });
       
       const result = await response.json();
+      console.log("Full API Response:", result);
+
+      // येथे रिस्पॉन्स स्ट्रक्चर तपासले आहे
+      const courierList = result.data?.available_courier_companies || [];
       
-      if (result.success && result.data && result.data.data && result.data.data.available_courier_companies) {
-        const courierList = result.data.data.available_courier_companies;
-        
+      if (courierList.length > 0) {
         const updatedPartners = partners.map(partner => {
           const liveData = courierList.find(c => 
             c.courier_name.toLowerCase().includes(partner.id.toLowerCase())
@@ -66,19 +67,14 @@ const SameDayDelivery = () => {
           if (liveData) {
             return {
               ...partner,
-              price: `₹${liveData.rate}`,
+              price: `₹${liveData.rate || 0}`,
               status: 'Available',
               raw_courier_id: liveData.courier_company_id
             };
           } else {
-            return {
-              ...partner,
-              price: 'Not Serviceable',
-              status: 'Unavailable'
-            };
+            return { ...partner, price: 'Not Serviceable', status: 'Unavailable' };
           }
         });
-
         setPartners(updatedPartners);
       } else {
         alert("No hyperlocal fleets available for this specific route right now.");
@@ -95,11 +91,9 @@ const SameDayDelivery = () => {
 
   const handleFinalBooking = async (e) => {
     e.preventDefault();
-    
     if (!selectedPartner || selectedPartner.status === 'Unavailable') {
       return alert("Please click 'Fetch Live Rates' and select an available courier partner.");
     }
-
     setLoading(true);
     try {
       await addDoc(collection(db, "same_day_bookings"), {
