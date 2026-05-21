@@ -42,7 +42,7 @@ const SameDayDelivery = () => {
 
     try {
       // ✅ इथे तुझी Vercel ची लिंक पेस्ट कर:
-      const response = await fetch('YOUR_VERCEL_BACKEND_URL/api/hyperlocal/shiprocket-quick-rates', {
+      const response = await fetch('/api/hyperlocal/shiprocket-quick-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
