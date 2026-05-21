@@ -20,14 +20,13 @@ app.post('/api/rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
         const { pickup, drop, weight } = req.body;
-
         const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
             params: { pickup_pincode: pickup, delivery_pincode: drop, weight: weight || 0.5 },
             headers: { 'Authorization': `Bearer ${token}` }
         });
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.response?.data || err.message });
+        res.status(500).json({ success: false, error: err.response?.data?.message || err.message });
     }
 });
 
@@ -49,7 +48,7 @@ app.post('/api/book-order', async (req, res) => {
         });
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.response?.data || err.message });
+        res.status(500).json({ success: false, error: err.response?.data?.message || err.message });
     }
 });
 
@@ -57,6 +56,7 @@ app.post('/api/book-order', async (req, res) => {
 app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
+        // हायपरलोकल एंडपॉईंट
         const response = await axios.post('https://apiv2.shiprocket.in/v1/external/courier/serviceability/local', {
             pickup_pincode: req.body.pickupPincode,
             delivery_pincode: req.body.deliveryPincode,
@@ -65,10 +65,11 @@ app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
         }, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        // ✅ फ्रंटएंडच्या गरजेनुसार success: true जोडले आहे
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.response?.data || "API Error" });
+        // इथे एरर नीट फॉरमॅट केला आहे, ज्यामुळे फ्रंटएंडला 'Unexpected JSON' एरर येणार नाही
+        console.error("Shiprocket API Error:", err.response?.data);
+        res.status(500).json({ success: false, error: "Shiprocket API call failed" });
     }
 });
 
