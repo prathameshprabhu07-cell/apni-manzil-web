@@ -53,7 +53,7 @@ import FurnitureShiftingForm from './components/FurnitureShiftingForm';
 import VehicleTransportForm from './components/VehicleTransportForm';
 
 // ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING IMPORT ---
-import CommercialMovingForm from './pages/CommercialMovingForm';
+import CommercialMovingForm from './components/CommercialMovingForm';
 
 // 🚀 ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन SAME DAY DELIVERY (BORZO) IMPORT ---
 import SameDayDelivery from './pages/SameDayDelivery'; 
