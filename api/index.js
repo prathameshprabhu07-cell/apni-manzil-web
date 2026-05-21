@@ -25,9 +25,9 @@ app.post('/api/rates', async (req, res) => {
             params: { pickup_pincode: pickup, delivery_pincode: drop, weight: weight || 0.5 },
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        res.json(response.data);
+        res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        res.status(500).json({ error: err.response?.data || err.message });
+        res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
 });
 
@@ -47,13 +47,13 @@ app.post('/api/book-order', async (req, res) => {
         const response = await axios.post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', orderData, { 
             headers: { 'Authorization': `Bearer ${token}` } 
         });
-        res.json(response.data);
+        res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        res.status(500).json({ error: err.response?.data || err.message });
+        res.status(500).json({ success: false, error: err.response?.data || err.message });
     }
 });
 
-// 3. हायपरलोकल रेट्स (शुद्ध आणि अचूक)
+// 3. हायपरलोकल रेट्स
 app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
@@ -65,9 +65,10 @@ app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
         }, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        res.json(response.data);
+        // ✅ फ्रंटएंडच्या गरजेनुसार success: true जोडले आहे
+        res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        res.status(500).json({ error: err.response?.data || "API Error" });
+        res.status(500).json({ success: false, error: err.response?.data || "API Error" });
     }
 });
 
