@@ -21,7 +21,6 @@ app.post('/api/rates', async (req, res) => {
         const token = await getShiprocketToken();
         const { drop, weight, length, breadth, height, cod } = req.body;
         
-        // इथं आपण '400092' हा पत्ता 'Force' केला आहे जो शिप्राकेटवर 'ON' आहे
         const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
             params: { 
                 pickup_pincode: '400092', 
@@ -35,9 +34,15 @@ app.post('/api/rates', async (req, res) => {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        res.status(200).json({ success: true, rates: response.data });
+        // जर कुरिअर उपलब्ध नसतील तर फ्रंटएंडला स्पष्ट मेसेज पाठवू
+        if (!response.data.data.available_courier_companies || response.data.data.available_courier_companies.length === 0) {
+            return res.status(200).json({ success: false, message: "या पिनकोडसाठी कोणतीही कुरिअर सेवा उपलब्ध नाही." });
+        }
+        
+        res.status(200).json({ success: true, rates: response.data.data });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.response?.data?.message || err.message });
+        console.error("API Error:", err.response?.data || err.message);
+        res.status(500).json({ success: false, error: "API द्वारे माहिती मिळवण्यात अडचण येत आहे." });
     }
 });
 
@@ -51,7 +56,6 @@ app.post('/api/book-order', async (req, res) => {
             billing_customer_name: req.body.name,
             billing_address: req.body.address,
             billing_pincode: String(req.body.delivery_pincode),
-            // पिकअप पिनकोड साठी हा पत्ता पाठवा
             pickup_location: "Home", 
             order_items: [{ name: req.body.product_name, sku: "SKU1", units: 1, selling_price: 100 }],
             weight: req.body.weight || 0.5,
@@ -68,13 +72,13 @@ app.post('/api/book-order', async (req, res) => {
     }
 });
 
-// 3. हायपरलोकल रेट्स
+// 3. हायपरलोकल रेट्स`
 app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
         const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
             params: { 
-                pickup_pincode: '400092', // इथंही 400092 वापरला आहे
+                pickup_pincode: '400092',
                 delivery_pincode: String(req.body.deliveryPincode),
                 weight: req.body.weight || 0.5,
                 length: req.body.length || 10,
@@ -86,7 +90,7 @@ app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
         
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.response?.data?.message || "Shiprocket API call failed" });
+        res.status(500).json({ success: false, error: "Shiprocket API call failed" });
     }
 });
 
