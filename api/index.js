@@ -15,17 +15,29 @@ const getShiprocketToken = async () => {
     return response.data.token;
 };
 
-// 1. सर्विसिबिलिटी चेक
+// 1. सर्विसिबिलिटी चेक (Domestic)
 app.post('/api/rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
-        const { pickup, drop, weight } = req.body;
+        const { pickup, drop, weight, length, breadth, height, cod } = req.body;
+        
         const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
-            params: { pickup_pincode: pickup, delivery_pincode: drop, weight: weight || 0.5 },
+            params: { 
+                pickup_pincode: String(pickup), 
+                delivery_pincode: String(drop), 
+                weight: weight || 0.5,
+                length: length || 10,
+                breadth: breadth || 10,
+                height: height || 10,
+                cod: cod || 0
+            },
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        res.status(200).json({ success: true, data: response.data });
+        
+        console.log("Domestic Rates Response:", JSON.stringify(response.data, null, 2));
+        res.status(200).json({ success: true, rates: response.data });
     } catch (err) {
+        console.error("Domestic Rates Error:", err.response?.data);
         res.status(500).json({ success: false, error: err.response?.data?.message || err.message });
     }
 });
@@ -39,15 +51,19 @@ app.post('/api/book-order', async (req, res) => {
             order_date: new Date().toISOString().split('T')[0],
             billing_customer_name: req.body.name,
             billing_address: req.body.address,
-            billing_pincode: req.body.delivery_pincode,
+            billing_pincode: String(req.body.delivery_pincode),
             order_items: [{ name: req.body.product_name, sku: "SKU1", units: 1, selling_price: 100 }],
-            weight: req.body.weight || 0.5 
+            weight: req.body.weight || 0.5,
+            length: req.body.length || 10,
+            breadth: req.body.breadth || 10,
+            height: req.body.height || 10
         };
         const response = await axios.post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', orderData, { 
             headers: { 'Authorization': `Bearer ${token}` } 
         });
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
+        console.error("Booking Error:", err.response?.data);
         res.status(500).json({ success: false, error: err.response?.data?.message || err.message });
     }
 });
@@ -56,19 +72,23 @@ app.post('/api/book-order', async (req, res) => {
 app.post('/api/hyperlocal/shiprocket-quick-rates', async (req, res) => {
     try {
         const token = await getShiprocketToken();
-        // URL दुरुस्त केली आहे (Hyperlocal serviceability endpoint)
         const response = await axios.get('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
             params: { 
-                pickup_pincode: req.body.pickupPincode,
-                delivery_pincode: req.body.deliveryPincode,
-                weight: req.body.weight || 0.5
+                pickup_pincode: String(req.body.pickupPincode),
+                delivery_pincode: String(req.body.deliveryPincode),
+                weight: req.body.weight || 0.5,
+                length: req.body.length || 10,
+                breadth: req.body.breadth || 10,
+                height: req.body.height || 10
             },
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        
+        console.log("Hyperlocal Response:", JSON.stringify(response.data, null, 2));
         res.status(200).json({ success: true, data: response.data });
     } catch (err) {
-        console.error("Shiprocket API Error:", err.response?.data);
-        res.status(500).json({ success: false, error: "Shiprocket API call failed" });
+        console.error("Shiprocket Hyperlocal Error:", err.response?.data);
+        res.status(500).json({ success: false, error: err.response?.data?.message || "Shiprocket API call failed" });
     }
 });
 
