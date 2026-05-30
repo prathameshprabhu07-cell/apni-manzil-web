@@ -3,6 +3,10 @@ import axios from 'axios';
 import { Home, Building2, Sofa, Truck, ShieldCheck, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 
+// Firebase Imports
+import { db } from "../lib/firebase"; 
+import { collection, addDoc } from "firebase/firestore";
+
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const PackersAndMovers = () => {
@@ -18,16 +22,23 @@ const PackersAndMovers = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/packers/post-lead', formData);
-      if (res.data.success) {
-        const serviceMsg = `Shifting: ${formData.houseType} from ${formData.fromCity} to ${formData.toCity}`;
-        const orderId = "PM-" + Math.floor(Math.random() * 100000);
-        sendWhatsAppNotification(formData.customerPhone, formData.customerName, serviceMsg, orderId);
-        alert("तुमची रॅक्युयरमेंट सेव्ह झाली आहे आणि व्हॉट्सॲपवर माहिती पाठवली आहे! ✅");
-        setIsModalOpen(false);
-      }
+      // १. डेटा फायरबेसमध्ये सेव्ह करा
+      await addDoc(collection(db, "leads"), {
+        ...formData,
+        createdAt: new Date().toISOString()
+      });
+
+      // २. व्हॉट्सॲप नोटिफिकेशन आणि अलर्ट (तुझं जुनं लॉजिक जसंच तसं)
+      const serviceMsg = `Shifting: ${formData.houseType} from ${formData.fromCity} to ${formData.toCity}`;
+      const orderId = "PM-" + Math.floor(Math.random() * 100000);
+      sendWhatsAppNotification(formData.customerPhone, formData.customerName, serviceMsg, orderId);
+      
+      alert("तुमची रॅक्युयरमेंट सेव्ह झाली आहे आणि व्हॉट्सॲपवर माहिती पाठवली आहे! ✅");
+      setIsModalOpen(false);
+      
     } catch (err) {
-      alert("Error: Backend चालू आहे का ते तपासा.");
+      console.error(err);
+      alert("Error: काहीतरी तांत्रिक अडचण आली, कृपया पुन्हा प्रयत्न करा.");
     } finally { setLoading(false); }
   };
 
@@ -82,7 +93,7 @@ const PackersAndMovers = () => {
           </div>
           <div className="md:w-1/2 mt-10 md:mt-0">
              <img src="https://images.unsplash.com/photo-1600518464441-9154a4dba246?auto=format&fit=crop&q=80&w=800" 
-                  alt="Relocation" className="rounded-2xl shadow-2xl border-4 border-white/20" />
+                 alt="Relocation" className="rounded-2xl shadow-2xl border-4 border-white/20" />
           </div>
         </div>
       </div>
@@ -94,7 +105,6 @@ const PackersAndMovers = () => {
           {services.map((s) => (
             <div 
               key={s.id} 
-              // ✅ ✅ ✅ --- NAVIGATION LOGIC UPDATE FOR COMMERCIAL MOVING ---
               onClick={() => {
                 if(s.title === "House Shifting") {
                   navigate('/home-shifting');
@@ -105,9 +115,9 @@ const PackersAndMovers = () => {
                 } else if(s.title === "Vehicle Transport") {
                   navigate('/vehicle-transport');
                 } else if(s.title === "Commercial Moving") {
-                  navigate('/commercial-moving'); // <--- आता हा थेट कमर्शियल फॉर्मवर जाईल!
+                  navigate('/commercial-moving');
                 } else {
-                  setIsModalOpen(true); // फक्त 'Storage with Movers' साठी पॉप-अप उघडेल
+                  setIsModalOpen(true);
                 }
               }} 
               className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all group text-center cursor-pointer"
