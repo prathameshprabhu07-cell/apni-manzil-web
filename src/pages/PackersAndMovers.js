@@ -22,24 +22,30 @@ const PackersAndMovers = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // १. डेटा फायरबेसमध्ये सेव्ह करा
+      // फायरबेसमध्ये 'leads' कलेक्शनमध्ये डेटा सेव्ह करा
       await addDoc(collection(db, "leads"), {
-        ...formData,
+        customerName: formData.customerName,
+        customerPhone: formData.customerPhone,
+        fromCity: formData.fromCity,
+        toCity: formData.toCity,
+        houseType: formData.houseType,
+        moveDate: formData.moveDate,
         createdAt: new Date().toISOString()
       });
 
-      // २. व्हॉट्सॲप नोटिफिकेशन आणि अलर्ट (तुझं जुनं लॉजिक जसंच तसं)
+      // व्हॉट्सॲप नोटिफिकेशन
       const serviceMsg = `Shifting: ${formData.houseType} from ${formData.fromCity} to ${formData.toCity}`;
       const orderId = "PM-" + Math.floor(Math.random() * 100000);
       sendWhatsAppNotification(formData.customerPhone, formData.customerName, serviceMsg, orderId);
       
       alert("तुमची रॅक्युयरमेंट सेव्ह झाली आहे आणि व्हॉट्सॲपवर माहिती पाठवली आहे! ✅");
       setIsModalOpen(false);
-      
     } catch (err) {
       console.error(err);
       alert("Error: काहीतरी तांत्रिक अडचण आली, कृपया पुन्हा प्रयत्न करा.");
-    } finally { setLoading(false); }
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   const services = [
@@ -54,7 +60,7 @@ const PackersAndMovers = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col relative">
       
-      {/* --- FORM MODAL (फक्त Storage साठी उरेल) --- */}
+      {/* --- FORM MODAL --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[999] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl relative">
@@ -152,7 +158,6 @@ const PackersAndMovers = () => {
           </h2>
         </div>
       </div>
-
     </div>
   );
 };
