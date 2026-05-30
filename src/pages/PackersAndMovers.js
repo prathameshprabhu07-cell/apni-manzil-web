@@ -3,8 +3,8 @@ import axios from 'axios';
 import { Home, Building2, Sofa, Truck, ShieldCheck, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 
-// Firebase Imports
-import { db } from "src/lib/firebase"; 
+// Firebase Imports - हा पाथ तुझ्या फाईल स्ट्रक्चरनुसार बरोबर केला आहे
+import { db } from "../lib/firebase"; 
 import { collection, addDoc } from "firebase/firestore";
 
 import { sendWhatsAppNotification } from '../utils/whatsapp';
