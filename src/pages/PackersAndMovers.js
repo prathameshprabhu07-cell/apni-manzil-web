@@ -4,7 +4,7 @@ import { Home, Building2, Sofa, Truck, ShieldCheck, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 
 // Firebase Imports
-import { db } from "../lib/firebase"; 
+import { db } from "src/lib/firebase"; 
 import { collection, addDoc } from "firebase/firestore";
 
 import { sendWhatsAppNotification } from '../utils/whatsapp';
