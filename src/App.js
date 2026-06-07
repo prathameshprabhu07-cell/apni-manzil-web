@@ -18,7 +18,6 @@ import Home from './pages/Home';
 import About from './pages/About'; 
 import ImportExportDetail from './pages/ImportExportDetail'; 
 import CourierServiceDetail from './pages/CourierServiceDetail'; 
-// ✅ नवीन बुकिंग पेज इम्पोर्ट केले आहे
 import BookingPage from './pages/BookingPage'; 
 import HyperlocalService from './pages/HyperlocalService'; 
 import TruckTransportService from './pages/TruckTransportService'; 
@@ -29,6 +28,7 @@ import PartnerRegistration from './pages/PartnerRegistration';
 import MSMEDashboard from './components/MSMEDashboard'; 
 import MSMERegistration from './pages/MSMERegistration'; 
 import ChatBot from './components/ChatBot'; 
+import Dashboard from './pages/Dashboard'; // ✅ डॅशबोर्ड इम्पोर्ट
 
 // --- नवीन पेजेसचे इम्पोर्ट्स ---
 import PackersAndMovers from './pages/PackersAndMovers'; 
@@ -40,55 +40,23 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import VendorDashboard from './pages/VendorDashboard'; 
 import CustomerDashboard from './components/CustomerDashboard'; 
 
-// ✅ --- नवीन HOME SHIFTING IMPORT ---
 import HomeShifting from './pages/HomeShifting'; 
-
-// ✅ ✅ --- नवीन OFFICE SHIFTING IMPORT ---
 import OfficeShiftingForm from './components/OfficeShiftingForm'; 
-
-// ✅ ✅ ✅ --- नवीन FURNITURE SHIFTING IMPORT ---
 import FurnitureShiftingForm from './components/FurnitureShiftingForm';
-
-// ✅ ✅ ✅ ✅ --- नवीन VEHICLE TRANSPORT IMPORT ---
 import VehicleTransportForm from './components/VehicleTransportForm';
-
-// ✅ ✅ ✅ ✅ ✅ --- नवीन COMMERCIAL MOVING IMPORT ---
 import CommercialMovingForm from './components/CommercialMovingForm';
-
-// 🚀 ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन SAME DAY DELIVERY (BORZO) IMPORT ---
 import SameDayDelivery from './pages/SameDayDelivery'; 
-
-// ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन TRUCK BOOKING IMPORT ---
 import BookTruck from './pages/BookTruck'; 
-
-// 🚛 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन PART LOAD IMPORT ---
 import BookPartLoad from './pages/BookPartLoad'; 
-
-// 🚛 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन FIND LOAD IMPORT (ADDED) ---
-import FindLoad from './pages/FindLoad'; 
-
-// 📦 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन SHORT TERM STORAGE IMPORT ---
+import FindLoad from './pages/FindLoad';
 import ShortTermStorageForm from './pages/ShortTermStorageForm';
-
-// 🏢 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन LONG TERM STORAGE IMPORT ---
 import LongTermStorageForm from './pages/LongTermStorageForm';
-
-// 📦 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन FULFILLMENT WAREHOUSE IMPORT (Path Fixed) ---
 import FulfillmentWarehouseForm from './pages/FulfillmentWarehouseForm';
-
-// ❄️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन COLD STORAGE IMPORT (Path Fixed) ---
 import ColdStorageForm from './pages/ColdStorageForm';
-
-// 📊 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन INVENTORY MANAGEMENT IMPORT (Path Fixed) ---
 import InventoryManagementForm from './pages/InventoryManagementForm';
-
-// 🏗️ 🚀 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन BULK & PALLET STORAGE IMPORT (Path Fixed) ---
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
-
-// 🤝 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ --- नवीन PARTNER WITH US IMPORT ---
 import PartnerWithUs from './pages/PartnerWithUs'; 
 
-// --- ✅ नवीन AUTHENTICATION PAGE ---
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
 
@@ -171,6 +139,7 @@ function App() {
           
           <Route path="/courier-service" element={<CourierServiceDetail />} />
           <Route path="/booking" element={<BookingPage />} />
+          <Route path="/dashboard" element={<Dashboard />} /> {/* ✅ नवीन राऊट */}
 
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
@@ -179,7 +148,6 @@ function App() {
           <Route path="/book-part-load" element={<BookPartLoad />} />
           <Route path="/find-load" element={<FindLoad />} />
 
-          {/* 📦 WAREHOUSE ROUTES */}
           <Route path="/short-term-storage" element={<ShortTermStorageForm />} />
           <Route path="/long-term-storage" element={<LongTermStorageForm />} />
           <Route path="/fulfillment-storage" element={<FulfillmentWarehouseForm />} />
