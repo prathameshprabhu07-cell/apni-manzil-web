@@ -168,7 +168,7 @@ const Home = () => {
                   </div>
                   <h4 className="font-extrabold text-sm text-slate-800 text-center px-4 leading-snug">{s.name}</h4>
                   
-                  {/* ✅ नवीन बदल: Explore बटण जे नेहमी दिसेल */}
+                  {/* ✅ बटन कार्डच्या खाली */}
                   <div className="absolute bottom-4 flex items-center gap-1 text-[11px] font-black text-white bg-orange-500 px-4 py-1.5 rounded-full uppercase shadow-md transition-all group-hover:scale-105 group-hover:bg-[#002D5E]">
                     Explore <ChevronRight size={14}/>
                   </div>
@@ -340,59 +340,68 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ✅ नवीन ॲड केलेला: 7. CUSTOMER REVIEWS SECTION */}
-      <section className="max-w-7xl mx-auto px-6 py-20 bg-white mt-12 rounded-[4rem] shadow-sm border border-slate-50 mb-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] uppercase italic tracking-tighter">What Our Customers Say</h2>
+      {/* 7. CUSTOMER REVIEWS SECTION (WITH POSTER BACKGROUND) */}
+      <section className="relative max-w-7xl mx-auto px-6 py-20 mt-12 rounded-[4rem] overflow-hidden mb-10">
+        {/* Background Poster Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=2000" 
+            alt="Review Background" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-[#002D5E]/90 backdrop-blur-sm"></div>
+        </div>
+
+        <div className="relative z-10 text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter">What Our Customers Say</h2>
           <div className="w-24 h-2 bg-orange-500 mx-auto mt-6 rounded-full"></div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-          
+
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
           {/* Review 1 */}
-          <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-500 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:border-orange-500 hover:bg-white transition-all duration-300 group">
             <div className="flex text-orange-400 mb-6 group-hover:scale-105 transition-transform origin-left">
               <Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} />
             </div>
-            <p className="text-slate-600 font-bold mb-8 italic text-lg">"Apni Manzil made my home shifting so easy! The packers were professional and the price was very reasonable. Highly recommended!"</p>
+            <p className="text-white font-bold mb-8 italic text-lg group-hover:text-slate-800">"Apni Manzil made my home shifting so easy! The packers were professional and the price was very reasonable. Highly recommended!"</p>
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-[#002D5E] font-black text-2xl border-2 border-white shadow-sm">R</div>
+              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-2xl border-2 border-white/50 shadow-sm group-hover:bg-[#002D5E] group-hover:text-white">R</div>
               <div>
-                <h4 className="font-black text-[#002D5E] uppercase">Rahul Sharma</h4>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mumbai, MH</p>
+                <h4 className="font-black text-white uppercase group-hover:text-[#002D5E]">Rahul Sharma</h4>
+                <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest group-hover:text-slate-400">Mumbai, MH</p>
               </div>
             </div>
           </div>
 
           {/* Review 2 */}
-          <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-500 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:border-orange-500 hover:bg-white transition-all duration-300 group">
             <div className="flex text-orange-400 mb-6 group-hover:scale-105 transition-transform origin-left">
               <Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} />
             </div>
-            <p className="text-slate-600 font-bold mb-8 italic text-lg">"I booked a truck for my business cargo. The AI suggested the best and cheapest rate. Delivery was 100% on time."</p>
+            <p className="text-white font-bold mb-8 italic text-lg group-hover:text-slate-800">"I booked a truck for my business cargo. The AI suggested the best and cheapest rate. Delivery was 100% on time."</p>
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-black text-2xl border-2 border-white shadow-sm">A</div>
+              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-2xl border-2 border-white/50 shadow-sm group-hover:bg-orange-500 group-hover:text-white">A</div>
               <div>
-                <h4 className="font-black text-[#002D5E] uppercase">Amit Desai</h4>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pune, MH</p>
+                <h4 className="font-black text-white uppercase group-hover:text-[#002D5E]">Amit Desai</h4>
+                <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest group-hover:text-slate-400">Pune, MH</p>
               </div>
             </div>
           </div>
 
           {/* Review 3 */}
-          <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-500 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:border-orange-500 hover:bg-white transition-all duration-300 group">
             <div className="flex text-orange-400 mb-6 group-hover:scale-105 transition-transform origin-left">
               <Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} />
             </div>
-            <p className="text-slate-600 font-bold mb-8 italic text-lg">"The live tracking feature is awesome! I sent an urgent courier to Delhi and could track it every single minute."</p>
+            <p className="text-white font-bold mb-8 italic text-lg group-hover:text-slate-800">"The live tracking feature is awesome! I sent an urgent courier to Delhi and could track it every single minute."</p>
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-black text-2xl border-2 border-white shadow-sm">S</div>
+              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-2xl border-2 border-white/50 shadow-sm group-hover:bg-green-600 group-hover:text-white">S</div>
               <div>
-                <h4 className="font-black text-[#002D5E] uppercase">Sneha Patil</h4>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Delhi, NCR</p>
+                <h4 className="font-black text-white uppercase group-hover:text-[#002D5E]">Sneha Patil</h4>
+                <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest group-hover:text-slate-400">Delhi, NCR</p>
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
