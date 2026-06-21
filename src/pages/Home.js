@@ -156,12 +156,12 @@ const Home = () => {
               <div className="h-10 w-2 bg-orange-500 rounded-full"></div>
               <h2 className="text-3xl font-black text-[#002D5E] tracking-tight">Popular Logistics Services</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
               {mainServices.map((s) => (
                 <div 
                   key={s.id} 
                   onClick={() => navigate(s.path)}
-                  className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center justify-center h-52 relative overflow-hidden shadow-sm"
+                  className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center justify-center h-58 relative overflow-hidden shadow-sm"
                 >
                   <div className={`${s.bg} ${s.color} p-5 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     {s.icon}
