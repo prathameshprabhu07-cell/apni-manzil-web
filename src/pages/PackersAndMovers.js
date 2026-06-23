@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Home, Building2, Sofa, Truck, ShieldCheck, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 
-// Firebase Imports - हा पाथ तुझ्या फाईल स्ट्रक्चरनुसार बरोबर केला आहे
+// Firebase Imports
 import { db } from "../firebase"; 
 import { collection, addDoc } from "firebase/firestore";
 
@@ -22,7 +22,7 @@ const PackersAndMovers = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // फायरबेसमध्ये 'leads' कलेक्शनमध्ये डेटा सेव्ह करा
+      // १. फायरबेसमध्ये डेटा सेव्ह करा
       await addDoc(collection(db, "leads"), {
         customerName: formData.customerName,
         customerPhone: formData.customerPhone,
@@ -33,7 +33,18 @@ const PackersAndMovers = () => {
         createdAt: new Date().toISOString()
       });
 
-      // व्हॉट्सॲप नोटिफिकेशन
+      // २. n8n ला डेटा पाठवा
+      try {
+        await fetch("https://apnimanzil.app.n8n.cloud/webhook-test/Packer-booking", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+      } catch (n8nErr) {
+        console.error("n8n Webhook Error:", n8nErr);
+      }
+
+      // ३. व्हॉट्सॲप नोटिफिकेशन
       const serviceMsg = `Shifting: ${formData.houseType} from ${formData.fromCity} to ${formData.toCity}`;
       const orderId = "PM-" + Math.floor(Math.random() * 100000);
       sendWhatsAppNotification(formData.customerPhone, formData.customerName, serviceMsg, orderId);
@@ -99,7 +110,7 @@ const PackersAndMovers = () => {
           </div>
           <div className="md:w-1/2 mt-10 md:mt-0">
              <img src="https://images.unsplash.com/photo-1600518464441-9154a4dba246?auto=format&fit=crop&q=80&w=800" 
-                 alt="Relocation" className="rounded-2xl shadow-2xl border-4 border-white/20" />
+                  alt="Relocation" className="rounded-2xl shadow-2xl border-4 border-white/20" />
           </div>
         </div>
       </div>
