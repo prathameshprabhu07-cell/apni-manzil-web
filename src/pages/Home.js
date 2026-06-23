@@ -161,15 +161,15 @@ const Home = () => {
                 <div 
                   key={s.id} 
                   onClick={() => navigate(s.path)}
-                  className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center justify-center h-64 relative overflow-hidden shadow-sm"
+                  className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center h-64 relative overflow-hidden shadow-sm pt-10"
                 >
                   <div className={`${s.bg} ${s.color} p-5 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     {s.icon}
                   </div>
                   <h4 className="font-extrabold text-sm text-slate-800 text-center px-4 leading-snug">{s.name}</h4>
                   
-                  {/* ✅ बटन कार्डच्या खाली */}
-                  <div className="absolute bottom-4 flex items-center gap-1 text-[11px] font-black text-white bg-orange-500 px-4 py-1.5 rounded-full uppercase shadow-md transition-all group-hover:scale-105 group-hover:bg-[#002D5E]">
+                  {/* ✅ फिक्स केलेलं बटन (absolute तळाला) */}
+                  <div className="absolute bottom-6 flex items-center gap-1 text-[11px] font-black text-white bg-orange-500 px-6 py-2 rounded-full uppercase shadow-md transition-all group-hover:scale-105 group-hover:bg-[#002D5E]">
                     Explore <ChevronRight size={14}/>
                   </div>
                 </div>
