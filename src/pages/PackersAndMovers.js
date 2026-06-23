@@ -33,9 +33,9 @@ const PackersAndMovers = () => {
         createdAt: new Date().toISOString()
       });
 
-      // २. n8n ला डेटा पाठवा
+      // २. n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
       try {
-        await fetch("https://apnimanzil.app.n8n.cloud/webhook-test/Packer-booking", {
+        await fetch("https://apnimanzil.app.n8n.cloud/webhook/Packer-booking", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
@@ -110,7 +110,7 @@ const PackersAndMovers = () => {
           </div>
           <div className="md:w-1/2 mt-10 md:mt-0">
              <img src="https://images.unsplash.com/photo-1600518464441-9154a4dba246?auto=format&fit=crop&q=80&w=800" 
-                  alt="Relocation" className="rounded-2xl shadow-2xl border-4 border-white/20" />
+                 alt="Relocation" className="rounded-2xl shadow-2xl border-4 border-white/20" />
           </div>
         </div>
       </div>
