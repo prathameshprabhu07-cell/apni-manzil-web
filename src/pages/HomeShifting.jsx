@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Minus, MessageSquare, Truck, PackageCheck, AlertCircle, MapPin, User, Phone, Layers } from 'lucide-react';
+import { Plus, Minus, MessageSquare, Truck, PackageCheck, MapPin, User, Phone, Layers } from 'lucide-react';
 import { INVENTORY_DATA } from '../constants/InventoryConstants';
 
 const ApniManzilFinalForm = () => {
@@ -7,8 +7,8 @@ const ApniManzilFinalForm = () => {
   const [extraNote, setExtraNote] = useState("");
   const [hasLift, setHasLift] = useState(false);
   const [needInstallation, setNeedInstallation] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // --- New Logistics States ---
   const [details, setDetails] = useState({
     ownerName: "",
     contactNo: "",
@@ -32,6 +32,26 @@ const ApniManzilFinalForm = () => {
       setCart(rest);
     } else {
       setCart({ ...cart, [id]: next });
+    }
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const finalData = { ...details, cart, extraNote, hasLift, needInstallation, createdAt: new Date().toISOString() };
+    
+    try {
+      // n8n ला डेटा पाठवा
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook-test/Packer-booking", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData)
+      });
+      alert("तुमची माहिती यशस्वीरित्या पाठवली आहे! ✅");
+    } catch (err) {
+      console.error(err);
+      alert("काहीतरी तांत्रिक अडचण आली.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,8 +175,8 @@ const ApniManzilFinalForm = () => {
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Total Items</span>
           <span className="text-2xl font-black text-[#002D5E]">{totalItems}</span>
         </div>
-        <button className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl active:scale-95 transition-all">
-          Proceed to Rates <Truck size={20} />
+        <button onClick={handleSubmit} disabled={loading} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl active:scale-95 transition-all">
+          {loading ? "Processing..." : "Proceed to Rates"} <Truck size={20} />
         </button>
       </div>
     </div>

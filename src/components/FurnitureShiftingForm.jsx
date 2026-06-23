@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, Minus, Sofa, Truck, Wrench, Package, ArrowRight, ShieldCheck, MessageSquare, Info, MapPin, User, Phone, Calendar } from 'lucide-react';
+import { Plus, Minus, Sofa, ArrowRight, MessageSquare, MapPin, User, Phone, Calendar } from 'lucide-react';
 import { FURNITURE_INVENTORY_DATA } from '../constants/FurnitureInventoryConstants';
 
 const FurnitureShiftingForm = () => {
   const [cart, setCart] = useState({});
   const [extraNote, setExtraNote] = useState("");
-  // --- ✅ CONTACT & ADDRESS STATE ---
+  const [loading, setLoading] = useState(false);
+  
   const [userDetails, setUserDetails] = useState({
     name: '', phone: '', pickupAddress: '', pickupPincode: '', 
     dropAddress: '', dropPincode: '', moveDate: ''
@@ -22,6 +23,31 @@ const FurnitureShiftingForm = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    setLoading(true);
+    const finalData = { 
+      ...userDetails, 
+      cart, 
+      extraNote, 
+      serviceType: "Furniture Shifting", 
+      createdAt: new Date().toISOString() 
+    };
+    
+    try {
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook-test/Packer-booking", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData)
+      });
+      alert("तुमची माहिती यशस्वीरित्या पाठवली आहे! ✅");
+    } catch (err) {
+      console.error(err);
+      alert("काहीतरी तांत्रिक अडचण आली.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
 
   return (
@@ -34,7 +60,7 @@ const FurnitureShiftingForm = () => {
 
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         
-        {/* --- ✅ 1. CUSTOMER & ADDRESS DETAILS SECTION --- */}
+        {/* 1. CUSTOMER & ADDRESS DETAILS SECTION */}
         <div className="mb-10 bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-blue-100">
           <h2 className="text-xs font-black text-blue-600 uppercase tracking-widest mb-6 flex items-center gap-2">
             <User size={16} /> Contact & Address Details
@@ -111,7 +137,6 @@ const FurnitureShiftingForm = () => {
             onChange={(e) => setExtraNote(e.target.value)}
           ></textarea>
         </div>
-
       </div>
 
       {/* Footer Summary */}
@@ -120,8 +145,8 @@ const FurnitureShiftingForm = () => {
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Total Items</span>
           <span className="text-2xl font-black text-[#002D5E]">{totalItems}</span>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
-          Confirm Order <ArrowRight size={20} />
+        <button onClick={handleSubmit} disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
+          {loading ? "Processing..." : "Confirm Order"} <ArrowRight size={20} />
         </button>
       </div>
     </div>

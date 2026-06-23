@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Plus, Minus, MessageSquare, Truck, PackageCheck, AlertCircle, ShieldCheck, Cpu, MapPin, Layers } from 'lucide-react';
+import { Plus, Minus, MessageSquare, Truck, PackageCheck, MapPin } from 'lucide-react';
 import { OFFICE_INVENTORY_DATA } from '../constants/OfficeInventoryConstants';
 
 const OfficeShiftingForm = () => {
   const [cart, setCart] = useState({});
   const [extraNote, setExtraNote] = useState("");
+  const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     companyName: "",
     contactNo: "",
@@ -25,6 +26,33 @@ const OfficeShiftingForm = () => {
       setCart(rest);
     } else {
       setCart({ ...cart, [id]: next });
+    }
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const finalData = { 
+      ...details, 
+      cart, 
+      extraNote, 
+      itSupport, 
+      insurance, 
+      serviceType: "Office Shifting", 
+      createdAt: new Date().toISOString() 
+    };
+    
+    try {
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook-test/Packer-booking", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData)
+      });
+      alert("तुमची माहिती यशस्वीरित्या पाठवली आहे! ✅");
+    } catch (err) {
+      console.error(err);
+      alert("काहीतरी तांत्रिक अडचण आली.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,12 +133,11 @@ const OfficeShiftingForm = () => {
           </div>
         </div>
 
-        {/* 5. Special Instructions (The "ETC" Box) */}
+        {/* 5. Special Instructions */}
         <div className="bg-[#EEF2FF] rounded-[2rem] p-8 border-2 border-dashed border-indigo-200 mb-12">
           <h2 className="text-sm font-black text-indigo-600 uppercase tracking-widest mb-4 flex items-center gap-2">
             <MessageSquare size={20} /> Special Shifting Instructions
           </h2>
-          <p className="text-xs text-indigo-700/70 mb-4 font-medium">Mention if you have large Server Racks, CCTV wires removal, Medical equipment, or Employee-wise box labeling needs.</p>
           <textarea 
             className="w-full p-5 bg-white rounded-2xl border-none shadow-sm focus:ring-2 ring-indigo-400 text-sm font-medium text-slate-700"
             rows="5"
@@ -127,8 +154,8 @@ const OfficeShiftingForm = () => {
           <span className="text-[10px] font-black text-slate-400 uppercase">Total Office Assets</span>
           <span className="text-2xl font-black text-[#002D5E]">{totalItems}</span>
         </div>
-        <button className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 transition-all active:scale-95">
-          Get Office Quote <Truck size={20} />
+        <button onClick={handleSubmit} disabled={loading} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 transition-all active:scale-95">
+          {loading ? "Processing..." : "Get Office Quote"} <Truck size={20} />
         </button>
       </div>
     </div>

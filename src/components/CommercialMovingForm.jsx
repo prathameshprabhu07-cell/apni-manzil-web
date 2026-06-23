@@ -2,17 +2,50 @@ import React, { useState } from 'react';
 import { Building2, Package, Truck, ArrowRight, MessageSquare, ClipboardList, Info, Monitor, Utensils, Zap, Clock } from 'lucide-react';
 
 const CommercialMovingForm = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     businessType: 'Office',
     name: '', phone: '',
     pickup: '', drop: '',
     moveTiming: 'Day',
-    extraNote: ''
+    extraNote: '',
+    services: []
   });
 
-  const businessTypes = [
-    "Office", "Shop / Retail", "Warehouse", "Restaurant", "Clinic / Hospital", "Salon / Spa"
-  ];
+  const businessTypes = ["Office", "Shop / Retail", "Warehouse", "Restaurant", "Clinic / Hospital", "Salon / Spa"];
+  const serviceOptions = ["Labelling", "Dismantling", "Unpacking", "Insurance", "Security"];
+
+  const handleServiceToggle = (service) => {
+    setFormData(prev => ({
+      ...prev,
+      services: prev.services.includes(service) 
+        ? prev.services.filter(s => s !== service) 
+        : [...prev.services, service]
+    }));
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const finalData = { 
+      ...formData, 
+      serviceType: "Commercial Shifting", 
+      createdAt: new Date().toISOString() 
+    };
+    
+    try {
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook-test/Packer-booking", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData)
+      });
+      alert("तुमची चौकशी (Inquiry) यशस्वीरित्या पाठवली आहे! ✅");
+    } catch (err) {
+      console.error(err);
+      alert("काहीतरी तांत्रिक अडचण आली.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 pb-40">
@@ -24,7 +57,7 @@ const CommercialMovingForm = () => {
 
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         
-        {/* 1. Business Type Selection */}
+        {/* 1. Business Type */}
         <div className="mb-8 bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-slate-100">
           <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
             <Building2 size={16} className="text-blue-600" /> 1. Business Type
@@ -48,10 +81,14 @@ const CommercialMovingForm = () => {
             <Clock size={16} className="text-orange-500" /> 2. Contact & Timing
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input type="text" placeholder="Contact Person Name" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" />
-            <input type="text" placeholder="Business Phone Number" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" />
+            <input type="text" placeholder="Contact Person Name" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, name: e.target.value})} />
+            <input type="text" placeholder="Business Phone Number" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <input type="text" placeholder="Pickup Address" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, pickup: e.target.value})} />
+              <input type="text" placeholder="Drop Address" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, drop: e.target.value})} />
+            </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <label className="text-[10px] font-black text-slate-400 uppercase ml-2">Shifting Preference</label>
               <select 
                 className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold text-slate-700"
@@ -65,58 +102,34 @@ const CommercialMovingForm = () => {
           </div>
         </div>
 
-        {/* 3. Items Checklist (Quick Categorization) */}
+        {/* 3. Inventory Overview */}
         <div className="mb-8 bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-slate-100">
           <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
             <ClipboardList size={16} className="text-purple-600" /> 3. Inventory Overview
           </h2>
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              <span className="px-4 py-2 bg-slate-100 rounded-full text-xs font-bold text-slate-600 flex items-center gap-2"><Zap size={14}/> IT / Computers</span>
-              <span className="px-4 py-2 bg-slate-100 rounded-full text-xs font-bold text-slate-600 flex items-center gap-2"><Monitor size={14}/> Office Furniture</span>
-              <span className="px-4 py-2 bg-slate-100 rounded-full text-xs font-bold text-slate-600 flex items-center gap-2"><Package size={14}/> Stock / Raw Material</span>
-              <span className="px-4 py-2 bg-slate-100 rounded-full text-xs font-bold text-slate-600 flex items-center gap-2"><Utensils size={14}/> Heavy Machinery</span>
-            </div>
-            
-            {/* ETC / EXTRA ITEMS BOX - तुझी मेन रिक्वायरमेंट */}
-            <div className="mt-4">
-              <label className="text-[10px] font-black text-blue-600 uppercase ml-2 mb-2 flex items-center gap-2">
-                <MessageSquare size={14}/> Mention Items & Special Instructions (ETC)
-              </label>
-              <textarea 
-                className="w-full p-5 bg-slate-50 rounded-[1.5rem] border-2 border-dashed border-slate-200 outline-none focus:border-blue-500 font-bold text-sm"
-                rows="5"
-                placeholder="उदा. 10 ऑफिस चेअर्स, 2 सर्वर रॅक, काचेचे काऊंटर, किंवा इतर कोणतेही सामान..."
-                value={formData.extraNote}
-                onChange={(e) => setFormData({...formData, extraNote: e.target.value})}
-              ></textarea>
-            </div>
-          </div>
+          <textarea 
+            className="w-full p-5 bg-slate-50 rounded-[1.5rem] border-2 border-dashed border-slate-200 outline-none focus:border-blue-500 font-bold text-sm"
+            rows="5"
+            placeholder="Mention items like office chairs, server racks, glass counters, etc..."
+            value={formData.extraNote}
+            onChange={(e) => setFormData({...formData, extraNote: e.target.value})}
+          ></textarea>
         </div>
 
-        {/* 4. Services Required */}
+        {/* 4. Service Add-ons */}
         <div className="mb-8 bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-slate-100">
           <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
             <Truck size={16} className="text-green-600" /> 4. Service Add-ons
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {["Labelling", "Dismantling", "Unpacking", "Insurance", "Security"].map(service => (
+            {serviceOptions.map(service => (
               <label key={service} className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 accent-blue-600" />
+                <input type="checkbox" className="w-4 h-4 accent-blue-600" onChange={() => handleServiceToggle(service)} />
                 <span className="text-xs font-bold text-slate-700">{service}</span>
               </label>
             ))}
           </div>
         </div>
-
-        {/* Alert Info */}
-        <div className="bg-blue-50 p-6 rounded-[2rem] border border-blue-100 flex gap-4 items-start">
-          <Info className="text-blue-600 shrink-0" size={20} />
-          <p className="text-[10px] font-bold text-blue-800 uppercase leading-relaxed">
-            Note: Commercial shifting leads are assigned to our premium partners who specialize in quick and safe business relocation.
-          </p>
-        </div>
-
       </div>
 
       {/* Footer Summary */}
@@ -125,8 +138,8 @@ const CommercialMovingForm = () => {
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Business Type</span>
           <span className="text-xl font-black text-[#002D5E]">{formData.businessType}</span>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
-          Send Inquiry <ArrowRight size={20} />
+        <button onClick={handleSubmit} disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
+          {loading ? "Processing..." : "Send Inquiry"} <ArrowRight size={20} />
         </button>
       </div>
     </div>
