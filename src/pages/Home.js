@@ -1,13 +1,14 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react'; // १. useState जोडला
 import { useNavigate } from 'react-router-dom';
 
-import HeroLogisticsImage from '../assets/global-logistics.png'; 
-import TrackingAppImage from '../assets/tracking-app.png'; 
+// १. इमेजेस इम्पोर्ट करा (खात्री करा की या फाईल्स assets फोल्डरमध्ये आहेत)
+import HeroLogisticsImage from '../assets/global-logistics.png';
+import TrackingAppImage from '../assets/tracking-app.png';
 
 // All icons from lucide-react
-import { 
-  Package, Truck, Bike, Home as HomeIcon, Warehouse, Globe, Zap, Bot, Star, 
-  Search, HelpCircle, Box, Boxes, ChevronRight, CheckCircle, ArrowRight, MapPin 
+import {
+  Package, Truck, Bike, Home as HomeIcon, Warehouse, Globe, Zap, Bot, Star,
+  Search, HelpCircle, Box, Boxes, ChevronRight, CheckCircle, ArrowRight, MapPin
 } from 'lucide-react';
 
 const Home = () => {
@@ -16,10 +17,10 @@ const Home = () => {
   // ✅ निवडलेली सर्व्हिस सेव्ह करण्यासाठी स्टेट
   const [selectedPath, setSelectedPath] = useState('');
 
-  // १. मुख्य सर्व्हिसेस डेटा 
+  // १. मुख्य सर्व्हिसेस डेटा (प्रत्येक सर्व्हिसला 'path' जोडला आहे)
   const mainServices = [
     { id: 1, name: "Courier & Parcel Delivery", icon: <Package size={32} />, color: "text-blue-600", bg: "bg-blue-50", isCourier: true, path: '/courier-service' },
-    { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50", isHyperlocal: true, path: '/hyperlocal-service' }, 
+    { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50", isHyperlocal: true, path: '/hyperlocal-service' },
     { id: 3, name: "Truck & Transport Booking", icon: <Truck size={32} />, color: "text-green-600", bg: "bg-green-50", isTruck: true, path: '/truck-transport' },
     { id: 4, name: "Packers & Movers", icon: <HomeIcon size={32} />, color: "text-amber-700", bg: "bg-amber-50", isPackers: true, path: '/packers-movers' },
     { id: 5, name: "Warehouse & Storage", icon: <Warehouse size={32} />, color: "text-slate-600", bg: "bg-slate-50", isWarehouse: true, path: '/warehouse-storage' },
@@ -59,13 +60,13 @@ const Home = () => {
           animation: 'tickerMove 25s linear infinite'
         }}>
           <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
-            👉 “Fast, Reliable Delivery Across India” 
+            👉 “Fast, Reliable Delivery Across India”
           </span>
           <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
             👉 “Book Courier, Transport & Packers in 1 Click”
           </span>
           <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
-            👉 “Fast, Reliable Delivery Across India” 
+            👉 “Fast, Reliable Delivery Across India”
           </span>
           <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
             👉 “Book Courier, Transport & Packers in 1 Click”
@@ -85,9 +86,9 @@ const Home = () => {
     {/* 1. HERO SECTION */}
 <section className="relative w-full h-[400px] md:h-[450px] flex items-center justify-center overflow-hidden">
   <div className="absolute inset-0 z-0">
-    <img 
-      src={HeroLogisticsImage} 
-      alt="Apni Manzil Global Logistics" 
+    <img
+      src={HeroLogisticsImage}
+      alt="Apni Manzil Global Logistics"
       className="w-full h-full object-cover"
     />
     <div className="absolute inset-0 bg-[#001D3D]/65 backdrop-blur-[1px]"></div>
@@ -113,10 +114,10 @@ const Home = () => {
           <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
         </div>
 
-        {/* ३. Select Service Box */}
+        {/* ✅ दुरुस्त केलेला: ३. Select Service Box */}
         <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
           <Box size={20} className="text-blue-600" />
-          <select 
+          <select
             className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800 cursor-pointer appearance-none"
             value={selectedPath}
             onChange={(e) => setSelectedPath(e.target.value)}
@@ -131,11 +132,11 @@ const Home = () => {
           <ChevronRight size={16} className="text-slate-400 rotate-90" />
         </div>
 
-        {/* ४. Dynamic Compare Services Button */}
-        <button 
+        {/* ✅ ४. Dynamic Compare Services Button */}
+        <button
           onClick={() => {
             if(selectedPath) {
-              navigate(selectedPath); 
+              navigate(selectedPath); // युजरने निवडलेल्या पेजवर जाईल
             } else {
               alert("कृपया आधी एक सर्व्हिस निवडा!");
             }
@@ -156,21 +157,19 @@ const Home = () => {
               <div className="h-10 w-2 bg-orange-500 rounded-full"></div>
               <h2 className="text-3xl font-black text-[#002D5E] tracking-tight">Popular Logistics Services</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {mainServices.map((s) => (
-                <div 
-                  key={s.id} 
+                <div
+                  key={s.id}
                   onClick={() => navigate(s.path)}
-                  className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center h-64 relative overflow-hidden shadow-sm pt-10"
+                  className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-orange-400 hover:shadow-2xl transition-all cursor-pointer group flex flex-col items-center justify-center h-52 relative overflow-hidden shadow-sm"
                 >
                   <div className={`${s.bg} ${s.color} p-5 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     {s.icon}
                   </div>
                   <h4 className="font-extrabold text-sm text-slate-800 text-center px-4 leading-snug">{s.name}</h4>
-                  
-                  {/* ✅ फिक्स केलेलं बटन (absolute तळाला) */}
-                  <div className="absolute bottom-6 flex items-center gap-1 text-[11px] font-black text-white bg-orange-500 px-6 py-2 rounded-full uppercase shadow-md transition-all group-hover:scale-105 group-hover:bg-[#002D5E]">
-                    Explore <ChevronRight size={14}/>
+                  <div className="absolute bottom-4 flex items-center gap-1 text-[10px] font-black text-orange-500 uppercase opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 text-center">
+                    View Categories <ChevronRight size={12}/>
                   </div>
                 </div>
               ))}
@@ -201,6 +200,7 @@ const Home = () => {
                      <span className="font-black text-orange-400 text-2xl tracking-tighter">24H</span>
                    </div>
                 </div>
+                {/* ✅ POWERFUL BUTTON 2 */}
                 <button className="w-full bg-orange-500 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-white hover:text-[#002D5E] transition-all shadow-xl shadow-black/20 active:scale-95 duration-300">
                   Compare All Rates
                 </button>
@@ -214,12 +214,12 @@ const Home = () => {
         <div className="bg-white rounded-[3.5rem] p-8 md:p-14 shadow-2xl border border-slate-50 flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
           <div className="lg:w-1/3 w-full flex justify-center">
             <div className="relative w-full max-w-[320px]">
-              <img 
-                src={TrackingAppImage} 
-                alt="Live GPS Tracking" 
+              <img
+                src={TrackingAppImage}
+                alt="Live GPS Tracking"
                 className="w-full h-auto rounded-[3rem] shadow-2xl border-4 border-slate-900 ring-8 ring-orange-500/10"
                 onError={(e) => {
-                  e.target.onerror = null; 
+                  e.target.onerror = null;
                   e.target.src="https://img.freepik.com/premium-vector/tracking-delivery-service-home-with-smartphone_101884-754.jpg"
                 }}
               />
@@ -242,12 +242,13 @@ const Home = () => {
             <div className="flex flex-col md:flex-row gap-4 bg-slate-50 p-3 rounded-[2.5rem] border border-slate-100 shadow-inner">
               <div className="flex-1 flex items-center gap-4 px-6 py-4">
                 <Search className="text-orange-500" size={24} />
-                <input 
-                  type="text" 
-                  placeholder="Enter Tracking ID (e.g. AMZ12345)" 
-                  className="bg-transparent w-full outline-none font-black text-slate-700 placeholder:text-slate-300 text-lg" 
+                <input
+                  type="text"
+                  placeholder="Enter Tracking ID (e.g. AMZ12345)"
+                  className="bg-transparent w-full outline-none font-black text-slate-700 placeholder:text-slate-300 text-lg"
                 />
               </div>
+              {/* ✅ POWERFUL BUTTON 3 */}
               <button className="bg-[#002D5E] text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:shadow-[0_10px_20px_rgba(249,115,22,0.3)] transition-all shadow-xl flex items-center justify-center gap-3 group active:scale-95 duration-300">
                 Track Shipment <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
               </button>
@@ -265,7 +266,8 @@ const Home = () => {
                 Become a <span className="text-orange-400">Logistics Partner</span>
               </h2>
               <p className="text-blue-100 text-lg font-medium italic opacity-90">"Road, Rail, Air or Sea - We deliver everywhere. Join our network today!"</p>
-              <button 
+              {/* ✅ POWERFUL BUTTON 4 */}
+              <button
                 onClick={() => navigate('/partner-registration')}
                 className="bg-orange-500 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-orange-600 transition shadow-[0_15px_30px_rgba(0,0,0,0.3)] flex items-center gap-3 mx-auto md:mx-0 group active:scale-95 duration-300"
               >
@@ -340,78 +342,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 7. CUSTOMER REVIEWS SECTION (WITH POSTER BACKGROUND) */}
-      <section className="relative max-w-7xl mx-auto px-6 py-20 mt-12 rounded-[4rem] overflow-hidden mb-10">
-        {/* Background Poster Image */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=2000" 
-            alt="Review Background" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-[#002D5E]/90 backdrop-blur-sm"></div>
-        </div>
-
-        <div className="relative z-10 text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter">What Our Customers Say</h2>
-          <div className="w-24 h-2 bg-orange-500 mx-auto mt-6 rounded-full"></div>
-        </div>
-
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-          {/* Review 1 */}
-          <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:border-orange-500 hover:bg-white transition-all duration-300 group">
-            <div className="flex text-orange-400 mb-6 group-hover:scale-105 transition-transform origin-left">
-              <Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} />
-            </div>
-            <p className="text-white font-bold mb-8 italic text-lg group-hover:text-slate-800">"Apni Manzil made my home shifting so easy! The packers were professional and the price was very reasonable. Highly recommended!"</p>
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-2xl border-2 border-white/50 shadow-sm group-hover:bg-[#002D5E] group-hover:text-white">R</div>
-              <div>
-                <h4 className="font-black text-white uppercase group-hover:text-[#002D5E]">Rahul Sharma</h4>
-                <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest group-hover:text-slate-400">Mumbai, MH</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Review 2 */}
-          <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:border-orange-500 hover:bg-white transition-all duration-300 group">
-            <div className="flex text-orange-400 mb-6 group-hover:scale-105 transition-transform origin-left">
-              <Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} />
-            </div>
-            <p className="text-white font-bold mb-8 italic text-lg group-hover:text-slate-800">"I booked a truck for my business cargo. The AI suggested the best and cheapest rate. Delivery was 100% on time."</p>
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-2xl border-2 border-white/50 shadow-sm group-hover:bg-orange-500 group-hover:text-white">A</div>
-              <div>
-                <h4 className="font-black text-white uppercase group-hover:text-[#002D5E]">Amit Desai</h4>
-                <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest group-hover:text-slate-400">Pune, MH</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Review 3 */}
-          <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:border-orange-500 hover:bg-white transition-all duration-300 group">
-            <div className="flex text-orange-400 mb-6 group-hover:scale-105 transition-transform origin-left">
-              <Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} /><Star fill="currentColor" size={20} />
-            </div>
-            <p className="text-white font-bold mb-8 italic text-lg group-hover:text-slate-800">"The live tracking feature is awesome! I sent an urgent courier to Delhi and could track it every single minute."</p>
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-2xl border-2 border-white/50 shadow-sm group-hover:bg-green-600 group-hover:text-white">S</div>
-              <div>
-                <h4 className="font-black text-white uppercase group-hover:text-[#002D5E]">Sneha Patil</h4>
-                <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest group-hover:text-slate-400">Delhi, NCR</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. FINAL BRANDING TRUCK SECTION */}
-      <section className="w-full mt-10 mb-10 px-6">
+      {/* 7. FINAL BRANDING TRUCK SECTION */}
+      <section className="w-full mt-20 mb-10 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="relative overflow-hidden rounded-[3.5rem] shadow-2xl border-4 border-white group">
-            <img 
-              src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=1200" 
-              alt="Apni Manzil Logistics Truck" 
+            <img
+              src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=1200"
+              alt="Apni Manzil Logistics Truck"
               className="w-full h-[400px] md:h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#002D5E]/60 to-transparent flex items-center px-12">
