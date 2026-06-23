@@ -1,7 +1,7 @@
-import React, { useState } from 'react'; // १. useState जोडला
+import React, { useState } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 
-// १. इमेजेस इम्पोर्ट करा (खात्री करा की या फाईल्स assets फोल्डरमध्ये आहेत)
+// इमेजेस इम्पोर्ट
 import HeroLogisticsImage from '../assets/global-logistics.png';
 import TrackingAppImage from '../assets/tracking-app.png';
 
@@ -17,7 +17,7 @@ const Home = () => {
   // ✅ निवडलेली सर्व्हिस सेव्ह करण्यासाठी स्टेट
   const [selectedPath, setSelectedPath] = useState('');
 
-  // १. मुख्य सर्व्हिसेस डेटा (प्रत्येक सर्व्हिसला 'path' जोडला आहे)
+  // १. मुख्य सर्व्हिसेस डेटा
   const mainServices = [
     { id: 1, name: "Courier & Parcel Delivery", icon: <Package size={32} />, color: "text-blue-600", bg: "bg-blue-50", isCourier: true, path: '/courier-service' },
     { id: 2, name: "Hyperlocal / Bike Delivery", icon: <Bike size={32} />, color: "text-orange-500", bg: "bg-orange-50", isHyperlocal: true, path: '/hyperlocal-service' },
@@ -43,7 +43,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       
-      {/* ✅ MOVING TICKER LINE */}
+      {/* MOVING TICKER LINE */}
       <div style={{
         background: '#002D5E',
         color: 'white',
@@ -84,70 +84,66 @@ const Home = () => {
       </div>
 
     {/* 1. HERO SECTION */}
-<section className="relative w-full h-[400px] md:h-[450px] flex items-center justify-center overflow-hidden">
-  <div className="absolute inset-0 z-0">
-    <img
-      src={HeroLogisticsImage}
-      alt="Apni Manzil Global Logistics"
-      className="w-full h-full object-cover"
-    />
-    <div className="absolute inset-0 bg-[#001D3D]/65 backdrop-blur-[1px]"></div>
-  </div>
+    <section className="relative w-full h-[400px] md:h-[450px] flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <img
+          src={HeroLogisticsImage}
+          alt="Apni Manzil Global Logistics"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#001D3D]/65 backdrop-blur-[1px]"></div>
+      </div>
 
-  <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
-    <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tighter leading-tight italic uppercase">
-      India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Aggregator Platform
-    </h1>
-    <p className="text-white/80 font-bold mb-10 text-sm md:text-lg uppercase tracking-[0.4em]">One Solution for All Delivery</p>
-    
-    <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-2 border border-white/20">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
+        <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tighter leading-tight italic uppercase">
+          India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Aggregator Platform
+        </h1>
+        <p className="text-white/80 font-bold mb-10 text-sm md:text-lg uppercase tracking-[0.4em]">One Solution for All Delivery</p>
         
-        {/* १. Pickup Pincode */}
-        <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-          <MapPin size={20} className="text-orange-500" />
-          <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
-        </div>
+        <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-2 border border-white/20">
+            
+            <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+              <MapPin size={20} className="text-orange-500" />
+              <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
+            </div>
 
-        {/* २. Delivery Pincode */}
-        <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-          <Search size={20} className="text-gray-400" />
-          <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
-        </div>
+            <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+              <Search size={20} className="text-gray-400" />
+              <input type="text" placeholder="Delivery Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
+            </div>
 
-        {/* ✅ दुरुस्त केलेला: ३. Select Service Box */}
-        <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
-          <Box size={20} className="text-blue-600" />
-          <select
-            className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800 cursor-pointer appearance-none"
-            value={selectedPath}
-            onChange={(e) => setSelectedPath(e.target.value)}
-          >
-            <option value="" disabled>Select Service</option>
-            {mainServices.map((service) => (
-              <option key={service.id} value={service.path}>
-                {service.name}
-              </option>
-            ))}
-          </select>
-          <ChevronRight size={16} className="text-slate-400 rotate-90" />
-        </div>
+            <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
+              <Box size={20} className="text-blue-600" />
+              <select
+                className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800 cursor-pointer appearance-none"
+                value={selectedPath}
+                onChange={(e) => setSelectedPath(e.target.value)}
+              >
+                <option value="" disabled>Select Service</option>
+                {mainServices.map((service) => (
+                  <option key={service.id} value={service.path}>
+                    {service.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronRight size={16} className="text-slate-400 rotate-90" />
+            </div>
 
-        {/* ✅ ४. Dynamic Compare Services Button */}
-        <button
-          onClick={() => {
-            if(selectedPath) {
-              navigate(selectedPath); // युजरने निवडलेल्या पेजवर जाईल
-            } else {
-              alert("कृपया आधी एक सर्व्हिस निवडा!");
-            }
-          }}
-          className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-[0_10px_20px_rgba(249,115,22,0.4)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.6)] hover:-translate-y-1 active:scale-95 duration-300 flex items-center justify-center gap-2 group"
-        >
-          Compare Services <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform"/>
-        </button>
-    </div>
-  </div>
-</section>
+            <button
+              onClick={() => {
+                if(selectedPath) {
+                  navigate(selectedPath); 
+                } else {
+                  alert("कृपया आधी एक सर्व्हिस निवडा!");
+                }
+              }}
+              className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-[0_10px_20px_rgba(249,115,22,0.4)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.6)] hover:-translate-y-1 active:scale-95 duration-300 flex items-center justify-center gap-2 group"
+            >
+              Compare Services <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform"/>
+            </button>
+        </div>
+      </div>
+    </section>
 
       {/* 2. MAIN SERVICES SECTION */}
       <section id="services" className="max-w-7xl mx-auto px-6 py-16">
@@ -167,7 +163,10 @@ const Home = () => {
                   <div className={`${s.bg} ${s.color} p-5 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     {s.icon}
                   </div>
-                  <h4 className="font-extrabold text-sm text-slate-800 text-center px-4 leading-snug">{s.name}</h4>
+                  {/* इथे बदल केला आहे (Blue to Orange on hover) */}
+                  <h4 className="font-extrabold text-sm text-[#002D5E] group-hover:text-orange-500 text-center px-4 leading-snug transition-colors duration-300">
+                    {s.name}
+                  </h4>
                   <div className="absolute bottom-4 flex items-center gap-1 text-[10px] font-black text-orange-500 uppercase opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 text-center">
                     View Categories <ChevronRight size={12}/>
                   </div>
@@ -200,7 +199,6 @@ const Home = () => {
                      <span className="font-black text-orange-400 text-2xl tracking-tighter">24H</span>
                    </div>
                 </div>
-                {/* ✅ POWERFUL BUTTON 2 */}
                 <button className="w-full bg-orange-500 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-white hover:text-[#002D5E] transition-all shadow-xl shadow-black/20 active:scale-95 duration-300">
                   Compare All Rates
                 </button>
@@ -248,7 +246,6 @@ const Home = () => {
                   className="bg-transparent w-full outline-none font-black text-slate-700 placeholder:text-slate-300 text-lg"
                 />
               </div>
-              {/* ✅ POWERFUL BUTTON 3 */}
               <button className="bg-[#002D5E] text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:shadow-[0_10px_20px_rgba(249,115,22,0.3)] transition-all shadow-xl flex items-center justify-center gap-3 group active:scale-95 duration-300">
                 Track Shipment <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
               </button>
@@ -266,7 +263,6 @@ const Home = () => {
                 Become a <span className="text-orange-400">Logistics Partner</span>
               </h2>
               <p className="text-blue-100 text-lg font-medium italic opacity-90">"Road, Rail, Air or Sea - We deliver everywhere. Join our network today!"</p>
-              {/* ✅ POWERFUL BUTTON 4 */}
               <button
                 onClick={() => navigate('/partner-registration')}
                 className="bg-orange-500 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-orange-600 transition shadow-[0_15px_30px_rgba(0,0,0,0.3)] flex items-center gap-3 mx-auto md:mx-0 group active:scale-95 duration-300"
