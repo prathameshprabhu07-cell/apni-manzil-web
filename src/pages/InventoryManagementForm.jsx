@@ -28,13 +28,26 @@ const InventoryManagementForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const bookingData = {
+      ...formData,
+      serviceType: "Inventory Management",
+      status: "Pending",
+      timestamp: new Date().toISOString()
+    };
+
     try {
-      await addDoc(collection(db, "warehouse_requests"), {
-        ...formData,
-        serviceType: "Inventory Management",
-        status: "Pending",
-        timestamp: new Date()
+      // १. Firebase मध्ये सेव्ह करा
+      await addDoc(collection(db, "warehouse_requests"), bookingData);
+
+      // २. n8n कडे डेटा पाठवा
+      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/Packer-booking";
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData),
       });
+
       alert("Inventory Management inquiry submitted successfully!");
       navigate(-1);
     } catch (error) {

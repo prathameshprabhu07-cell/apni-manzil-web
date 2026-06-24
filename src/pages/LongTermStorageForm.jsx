@@ -29,7 +29,6 @@ const LongTermStorageForm = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // 💡 ऑटोमॅटिक वेअरहाऊस सजेशन लॉजिक
     if (name === "rackingNeeded" && value === "Yes") {
       setSuggestion("Recommended: Premium High-Bay Warehouse with Racking System.");
     } else if (name === "insuranceRequired" && value === "Yes") {
@@ -42,13 +41,27 @@ const LongTermStorageForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
+    // पूर्ण डेटा
+    const bookingData = {
+      ...formData,
+      serviceType: "Long Term Storage",
+      status: "Pending",
+      timestamp: new Date().toISOString()
+    };
+
     try {
-      await addDoc(collection(db, "warehouse_requests"), {
-        ...formData,
-        serviceType: "Long Term Storage",
-        status: "Pending",
-        timestamp: new Date()
+      // १. Firebase मध्ये सेव्ह
+      await addDoc(collection(db, "warehouse_requests"), bookingData);
+
+      // २. n8n ला डेटा पाठवा
+      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/Packer-booking";
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData),
       });
+
       alert("Long Term Storage inquiry submitted successfully!");
       navigate(-1);
     } catch (error) {
@@ -74,7 +87,6 @@ const LongTermStorageForm = () => {
       </div>
 
       <div className="max-w-2xl mx-auto p-4 mt-4">
-        
         {/* 📸 Image Section */}
         <div className="mb-6 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
           <img 
@@ -85,8 +97,6 @@ const LongTermStorageForm = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          
-          {/* 📌 Step 1: Basic Info */}
           <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
             <h3 className="flex items-center gap-2 font-black text-[11px] text-blue-700 uppercase tracking-widest mb-4">
               <Building2 size={14}/> Step 1: Basic Info
@@ -97,7 +107,6 @@ const LongTermStorageForm = () => {
             </div>
           </div>
 
-          {/* 📌 Step 2: Storage Details */}
           <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
             <h3 className="flex items-center gap-2 font-black text-[11px] text-orange-600 uppercase tracking-widest mb-4">
               <Package size={14}/> Step 2: Storage Details
@@ -109,14 +118,12 @@ const LongTermStorageForm = () => {
             </div>
           </div>
 
-          {/* 📌 Step 3: Space & Setup */}
           <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
             <h3 className="flex items-center gap-2 font-black text-[11px] text-green-700 uppercase tracking-widest mb-4">
               <Ruler size={14}/> Step 3: Space & Setup
             </h3>
             <div className="space-y-4">
               <input name="areaRequired" placeholder="Area Required (Sq. Ft.)" required className="form-input" onChange={handleChange} />
-              
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-400 ml-2 uppercase">Racking Needed?</label>
@@ -136,7 +143,6 @@ const LongTermStorageForm = () => {
             </div>
           </div>
 
-          {/* 📌 Step 4: Additional Services */}
           <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
             <h3 className="flex items-center gap-2 font-black text-[11px] text-purple-700 uppercase tracking-widest mb-4">
               <ShieldCheck size={14}/> Step 4: Additional Services
@@ -153,7 +159,6 @@ const LongTermStorageForm = () => {
             </div>
           </div>
 
-          {/* 💡 AI Suggestion Alert */}
           {suggestion && (
             <div className="bg-blue-600 text-white p-5 rounded-[2rem] flex items-start gap-3 animate-bounce shadow-xl border-b-4 border-blue-900">
               <Info className="shrink-0" size={24}/>
@@ -168,7 +173,6 @@ const LongTermStorageForm = () => {
             {loading ? "Processing..." : "Get Enterprise Quote"}
             <ChevronRight size={20}/>
           </button>
-
         </form>
       </div>
 

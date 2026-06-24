@@ -23,16 +23,29 @@ const ShortTermStorageForm = () => {
     e.preventDefault();
     setLoading(true);
     const finalMaterial = formData.materialType === "Other" ? formData.otherMaterial : formData.materialType;
+    
+    // पूर्ण डेटा एकत्र केला
+    const bookingData = {
+      ...formData,
+      materialType: finalMaterial,
+      serviceType: "Short Term Storage",
+      status: "Pending",
+      timestamp: new Date().toISOString()
+    };
 
     try {
-      await addDoc(collection(db, "warehouse_requests"), {
-        ...formData,
-        materialType: finalMaterial,
-        serviceType: "Short Term Storage",
-        status: "Pending",
-        timestamp: new Date()
+      // १. Firebase मध्ये सेव्ह करा
+      await addDoc(collection(db, "warehouse_requests"), bookingData);
+
+      // २. n8n कडे डेटा पाठवा
+      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/Packer-booking";
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData),
       });
-      alert("Storage inquiry submitted!");
+
+      alert("Storage inquiry submitted successfully!");
       navigate(-1);
     } catch (error) {
       alert("Error: " + error.message);
@@ -52,8 +65,6 @@ const ShortTermStorageForm = () => {
       </div>
 
       <div className="max-w-xl mx-auto p-4">
-        
-        {/* 📸 Warehouse Image Section */}
         <div className="mt-4 mb-6 relative overflow-hidden rounded-[2.5rem] shadow-xl border-4 border-white">
           <img 
             src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&q=80&w=1000" 
@@ -68,10 +79,8 @@ const ShortTermStorageForm = () => {
           </div>
         </div>
 
-        {/* 📝 Form Section */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-4">
-            
             <h2 className="text-[10px] font-black uppercase text-blue-700 tracking-[0.2em] ml-2">Fill Details Below</h2>
 
             <input name="location" placeholder="City / Area" required className="form-input" onChange={handleChange} />
@@ -79,12 +88,7 @@ const ShortTermStorageForm = () => {
             <input name="storageDuration" placeholder="Duration (e.g. 15 Days)" required className="form-input" onChange={handleChange} />
 
             <div className="space-y-2">
-              <select 
-                name="materialType" 
-                className="form-input font-bold" 
-                onChange={handleChange}
-                value={formData.materialType}
-              >
+              <select name="materialType" className="form-input font-bold" onChange={handleChange} value={formData.materialType}>
                 <option value="General Goods">General Goods</option>
                 <option value="Household Items">Household Items</option>
                 <option value="Industrial Material">Industrial Material</option>
@@ -96,13 +100,7 @@ const ShortTermStorageForm = () => {
             {formData.materialType === "Other" && (
               <div className="relative animate-in slide-in-from-top-2 duration-300">
                 <Edit3 size={18} className="absolute left-4 top-4 text-orange-500" />
-                <input 
-                  name="otherMaterial" 
-                  placeholder="Specify material type" 
-                  required 
-                  className="form-input pl-12 border-orange-200 bg-orange-50/30" 
-                  onChange={handleChange} 
-                />
+                <input name="otherMaterial" placeholder="Specify material type" required className="form-input pl-12 border-orange-200 bg-orange-50/30" onChange={handleChange} />
               </div>
             )}
 

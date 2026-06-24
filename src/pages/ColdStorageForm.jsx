@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ThermometerSnowflake, Box, Calendar, Clock, MapPin, Phone, User, CheckCircle2, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { db } from '../firebase'; // ✅ Firebase इम्पोर्ट
+import { collection, addDoc } from 'firebase/firestore'; // ✅ Firestore इम्पोर्ट
 
 const ColdStorageDetail = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -18,10 +21,36 @@ const ColdStorageDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Cold Storage Booking Request Sent! We will contact you soon.");
-    console.log(formData);
+    setLoading(true);
+
+    const bookingData = {
+      ...formData,
+      serviceType: "Cold Storage",
+      status: "Pending",
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      // १. Firebase मध्ये सेव्ह करा
+      await addDoc(collection(db, "warehouse_requests"), bookingData);
+
+      // २. n8n ला डेटा पाठवा
+      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/Packer-booking";
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData),
+      });
+
+      alert("Cold Storage Booking Request Sent Successfully!");
+      navigate(-1);
+    } catch (error) {
+      alert("Error: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -101,8 +130,8 @@ const ColdStorageDetail = () => {
               </div>
             </div>
 
-            <button type="submit" className="w-full py-5 bg-[#004080] text-white rounded-2xl font-black text-xl uppercase tracking-[0.2em] shadow-xl hover:bg-blue-800 transition active:scale-95 flex items-center justify-center gap-3">
-              Request Booking <ChevronRight size={24}/>
+            <button type="submit" disabled={loading} className="w-full py-5 bg-[#004080] text-white rounded-2xl font-black text-xl uppercase tracking-[0.2em] shadow-xl hover:bg-blue-800 transition active:scale-95 flex items-center justify-center gap-3">
+              {loading ? "Sending..." : "Request Booking"} <ChevronRight size={24}/>
             </button>
           </form>
         </div>
