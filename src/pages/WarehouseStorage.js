@@ -21,7 +21,7 @@ const WarehouseStorage = () => {
     if (serviceTitle === "Bulk & Pallet Storage") { navigate('/bulk-pallet-storage'); return; }
 
     // n8n ला डेटा पाठवण्यासाठी लिंक
-    const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/Packer-booking";
+    const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/warehouse-booking";
 
     try {
       const response = await fetch(webhookUrl, {

@@ -55,7 +55,7 @@ const LongTermStorageForm = () => {
       await addDoc(collection(db, "warehouse_requests"), bookingData);
 
       // २. n8n ला डेटा पाठवा
-      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/Packer-booking";
+      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/warehouse-booking";
       await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
