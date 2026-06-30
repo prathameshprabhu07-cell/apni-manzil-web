@@ -207,7 +207,7 @@ const Layout = ({ children }) => {
               <li className="flex items-center gap-3"><MapPin size={16} className="text-[#FF5E00]"/> KUDAL, SUNDHUDURG, 416520, MAHARASHTRA, INDIA</li>
               <li className="flex items-center gap-3">
                 <Mail size={16} className="text-[#FF5E00]"/> 
-                <a href="mailto:help@APNIMANZIL.COM" className="hover:text-white">help@APNIMANZIL.COM</a>
+                <a href="mailto:help@APNIMANZIL.COM" className="hover:text-white">help@apnimanzil.co.in</a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={16} className="text-[#FF5E00]"/> 
