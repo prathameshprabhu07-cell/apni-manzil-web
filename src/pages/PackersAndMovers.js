@@ -12,6 +12,9 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 const PackersAndMovers = () => {
   const navigate = useNavigate(); 
   
+  // n8n प्रोडक्शन URL
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,21 +27,16 @@ const PackersAndMovers = () => {
     try {
       // १. फायरबेसमध्ये डेटा सेव्ह करा
       await addDoc(collection(db, "leads"), {
-        customerName: formData.customerName,
-        customerPhone: formData.customerPhone,
-        fromCity: formData.fromCity,
-        toCity: formData.toCity,
-        houseType: formData.houseType,
-        moveDate: formData.moveDate,
+        ...formData,
         createdAt: new Date().toISOString()
       });
 
-      // २. n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
+      // २. n8n ला डेटा पाठवा (Production URL)
       try {
-        await fetch("https://apnimanzil.app.n8n.cloud/webhook/Packer-booking", {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
+        await axios.post(n8nUrl, {
+          ...formData,
+          service: "Packers and Movers",
+          timestamp: new Date().toISOString()
         });
       } catch (n8nErr) {
         console.error("n8n Webhook Error:", n8nErr);

@@ -17,18 +17,20 @@ const BookingForm = ({ serviceName, onClose }) => {
     date: ''
   });
 
-  // --- झॅपियर फंक्शन (नवीन वर्किंग लिंक अपडेट केली आहे) ---
+  // --- n8n Webhook फंक्शन (अपडेटेड) ---
   const sendToZapier = async (bookingData) => {
-    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/27439476/uvczwl6/";
+    const PRODUCTION_URL = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
     try {
-      await fetch(ZAPIER_URL, {
+      await fetch(PRODUCTION_URL, {
         method: "POST",
-        mode: "no-cors", 
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(bookingData),
       });
-      console.log("Zapier ला डेटा पाठवला!");
+      console.log("n8n ला डेटा यशस्वीरीत्या पाठवला!");
     } catch (err) {
-      console.error("Zapier Error:", err);
+      console.error("n8n Webhook Error:", err);
     }
   };
 
@@ -38,14 +40,12 @@ const BookingForm = ({ serviceName, onClose }) => {
       if (formData.pickup.length === 6 && formData.drop.length === 6) {
         setRatesLoading(true);
         try {
-          // 🛠️ सुधारणा: बॅकएंडला पूर्ण ऑब्जेक्ट स्वरूपात डेटा पाठवला जेणेकरून एक्सप्रेसला तो अचूक समजेल
           const data = await getAllShippingRates({
             pickup: formData.pickup,
             drop: formData.drop,
             weight: formData.weight
           });
           
-          // जर रिस्पॉन्स बॅकएंडच्या नव्या फॉरमॅटनुसार आला असेल तर तो सेट करा
           if (data && data.success && data.rates && data.rates.data && data.rates.data.available_courier_companies) {
             setCourierRates(data.rates.data.available_courier_companies);
           } else if (Array.isArray(data)) {
@@ -111,7 +111,7 @@ const BookingForm = ({ serviceName, onClose }) => {
         createdAt: serverTimestamp(), 
       });
 
-      // --- झॅपियरला डेटा पाठवा ---
+      // --- n8n ला डेटा पाठवा ---
       sendToZapier(bookingPayload);
 
       // पेमेंट खिडकी उघडा
@@ -119,7 +119,6 @@ const BookingForm = ({ serviceName, onClose }) => {
     } catch (error) {
       alert("❌ एरर: " + error.message);
     } finally {
-      // 🛠️ सुधारणा: क्रॅश होणारे closeLoading() फंक्शन काढून टाकले आहे
       setLoading(false);
     }
   };

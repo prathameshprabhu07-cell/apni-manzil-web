@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   PackageCheck, ShoppingCart, Banknote, RefreshCcw, Box, 
   ChevronRight, CheckCircle, MapPin, ArrowRight
@@ -11,17 +12,31 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 const EcommerceLogistics = () => {
   const navigate = useNavigate();
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
-  const handleEcommerceQuery = (serviceTitle) => {
-    // युजरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन (n8n URL अपडेट केली आहे)
+  const handleEcommerceQuery = async (serviceTitle) => {
+    // युजरचा डेटा
     const customerPhone = "7378502356"; 
     const customerName = "E-com Vendor";
     const orderId = "EC-" + Math.floor(Math.random() * 100000);
+    const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
 
-    // व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
+    // १. व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
     
-    alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या व्हॉट्सॲपवर पाठवली आहे!`);
+    // २. n8n ला डेटा पाठवा
+    try {
+      await axios.post(n8nUrl, {
+        service: serviceTitle,
+        customerName: customerName,
+        phone: customerPhone,
+        orderId: orderId,
+        timestamp: new Date().toISOString()
+      });
+      alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवली आहे!`);
+    } catch (error) {
+      console.error("Error sending to n8n:", error);
+      alert("चौकशी पाठवताना एरर आला, पण नोटिफिकेशन पाठवले आहे.");
+    }
   };
 
   const ecommerceServices = [
@@ -143,7 +158,7 @@ const EcommerceLogistics = () => {
         </div>
       </div>
 
-      {/* ४. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      {/* 4. Final branded section */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
         style={{

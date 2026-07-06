@@ -12,6 +12,9 @@ const LongTermStorageForm = () => {
   const [loading, setLoading] = useState(false);
   const [suggestion, setSuggestion] = useState("");
 
+  // n8n प्रोडक्शन URL
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+
   const [formData, setFormData] = useState({
     companyName: '',
     contactPerson: '',
@@ -51,12 +54,11 @@ const LongTermStorageForm = () => {
     };
 
     try {
-      // १. Firebase मध्ये सेव्ह
+      // १. Firebase मध्ये सेव्ह करा
       await addDoc(collection(db, "warehouse_requests"), bookingData);
 
       // २. n8n ला डेटा पाठवा
-      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/warehouse-booking";
-      await fetch(webhookUrl, {
+      await fetch(n8nUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingData),
@@ -65,6 +67,7 @@ const LongTermStorageForm = () => {
       alert("Long Term Storage inquiry submitted successfully!");
       navigate(-1);
     } catch (error) {
+      console.error("Submission Error:", error);
       alert("Error: " + error.message);
     } finally {
       setLoading(false);

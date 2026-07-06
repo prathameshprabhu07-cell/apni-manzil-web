@@ -14,6 +14,9 @@ const SameDayDelivery = () => {
   const [booked, setBooked] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
   
+  // n8n प्रोडक्शन URL
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+  
   const [partners, setPartners] = useState([
     { id: 'borzo', name: 'Borzo (WeFast)', price: '', status: 'Pending' },
     { id: 'dunzo', name: 'Dunzo For Business', price: '', status: 'Pending' },
@@ -53,9 +56,7 @@ const SameDayDelivery = () => {
       });
       
       const result = await response.json();
-      console.log("Full API Response:", result);
-
-      // येथे रिस्पॉन्स स्ट्रक्चर तपासले आहे
+      
       const courierList = result.data?.available_courier_companies || [];
       
       if (courierList.length > 0) {
@@ -82,7 +83,7 @@ const SameDayDelivery = () => {
       }
     } catch (error) {
       console.error("Failed fetching live hyperlocal master rates:", error);
-      alert("Backend cluster connectivity issue. Make sure your server is live.");
+      alert("Backend cluster connectivity issue.");
       setPartners(partners.map(p => ({ ...p, price: 'Error', status: 'Unavailable' })));
     } finally {
       setFetchingRates(false);
@@ -95,17 +96,30 @@ const SameDayDelivery = () => {
       return alert("Please click 'Fetch Live Rates' and select an available courier partner.");
     }
     setLoading(true);
+    
+    const bookingPayload = {
+      ...formData,
+      courierPartner: selectedPartner.name,
+      finalPrice: selectedPartner.price,
+      status: "Pending",
+      timestamp: new Date().toISOString()
+    };
+
     try {
-      await addDoc(collection(db, "same_day_bookings"), {
-        ...formData,
-        courierPartner: selectedPartner.name,
-        finalPrice: selectedPartner.price,
-        status: "Pending",
-        timestamp: new Date()
+      // १. Firestore मध्ये सेव्ह
+      await addDoc(collection(db, "same_day_bookings"), bookingPayload);
+
+      // २. n8n ला डेटा पाठवा
+      await fetch(n8nUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingPayload),
       });
+
       setBooked(true);
     } catch (error) {
-      alert("Error saving booking to Firestore: " + error.message);
+      console.error("Booking Error:", error);
+      alert("Error: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -126,6 +140,7 @@ const SameDayDelivery = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 font-sans">
+      {/* (बाकीचा कोड जसा आहे तसाच राहिला आहे) */}
       <div className="bg-black text-white p-6 flex items-center justify-between sticky top-0 z-50">
         <button type="button" onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full"><ArrowLeft size={20}/></button>
         <h1 className="text-lg font-black italic uppercase tracking-tighter">Same Day <span className="text-blue-400">Booking Form</span></h1>
@@ -134,6 +149,7 @@ const SameDayDelivery = () => {
 
       <div className="max-w-2xl mx-auto p-4 pt-8">
         <form onSubmit={handleFinalBooking} className="space-y-8">
+          {/* ... (Form sections remain unchanged) ... */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-blue-600">
               <User size={18}/> 1. Where is your Pickup? (Sender)
@@ -264,7 +280,8 @@ const SameDayDelivery = () => {
           </div>
         </form>
       </div>
-
+      
+      {/* ... (CSS block) ... */}
       <style jsx>{`
         .form-input {
           width: 100%;

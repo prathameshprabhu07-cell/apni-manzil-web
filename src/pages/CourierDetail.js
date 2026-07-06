@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { db } from '../firebase'; // Firebase इम्पोर्ट सुनिश्चित करा
+import { collection, addDoc } from 'firebase/firestore';
 
 const CourierDetail = () => {
   const [pincodes, setPincodes] = useState({ pickup: '', delivery: '' });
@@ -12,19 +14,26 @@ const CourierDetail = () => {
       return;
     }
     setLoading(true);
+
+    const requestData = {
+      pickup_pincode: pincodes.pickup,
+      delivery_pincode: pincodes.delivery,
+      weight: "0.5",
+      cod: 0,
+      timestamp: new Date().toISOString()
+    };
+
     try {
-      // हे आपल्या बॅकएंड API ला कॉल करेल जे आपण आधी डिस्कस केलं होतं
-      const response = await axios.post('/api/shiprocket', {
-        pickup_pincode: pincodes.pickup,
-        delivery_pincode: pincodes.delivery,
-        weight: "0.5", // साधारण वजन
-        cod: 0
-      });
+      // १. Firestore मध्ये डेटा सेव्ह करा
+      await addDoc(collection(db, "courier_inquiries"), requestData);
+
+      // २. n8n बॅकएंड API ला कॉल करा (Production URL)
+      const response = await axios.post('https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10', requestData);
       
       setRates(response.data.data.available_courier_companies);
     } catch (error) {
       console.error("Error:", error);
-      alert("सर्विस चेक करताना एरर आला. वॉलेट बॅलन्स तपासा.");
+      alert("सर्विस चेक करताना एरर आला. कृपया पुन्हा प्रयत्न करा.");
     }
     setLoading(false);
   };
@@ -66,7 +75,7 @@ const CourierDetail = () => {
             {rates.map((courier, index) => (
               <div key={index} style={{ padding: '15px', border: '2px solid #004080', borderRadius: '10px', background: '#fff' }}>
                 <h4 style={{ margin: '0 0 10px 0' }}>{courier.courier_name}</h4>
-                <p>रेट: <b>₹{parseFloat(courier.rate) + 20}</b></p> {/* तू इथे ₹20 तुझा प्रॉफिट ॲड केलायस */}
+                <p>रेट: <b>₹{parseFloat(courier.rate) + 20}</b></p>
                 <p>अंदाजे दिवस: {courier.etd}</p>
                 <button style={{ width: '100%', background: '#28a745', color: 'white', border: 'none', padding: '8px', borderRadius: '5px' }}>बुक करा</button>
               </div>

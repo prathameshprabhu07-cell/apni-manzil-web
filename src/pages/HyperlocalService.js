@@ -1,19 +1,31 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   ShoppingCart, Apple, Pill, Package, 
   CheckCircle, MapPin, BadgePercent, Smartphone
 } from 'lucide-react';
 
-// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
-import { sendWhatsAppNotification } from '../utils/whatsapp';
-
 const HyperlocalService = () => {
   const navigate = useNavigate();
 
-  // ✅ बदल: आता व्हॉट्सॲप नोटिफिकेशन उघडणार नाही, फक्त फॉर्मवर नेईल
-  const handleLocalBooking = (serviceName) => {
-    // आम्ही फक्त navigate चा वापर करत आहोत जेणेकरून नवीन टॅब उघडणार नाही
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+
+  // ट्रॅकिंग फंक्शन
+  const trackBooking = async (serviceName) => {
+    try {
+      await axios.post(n8nUrl, {
+        action: "Hyperlocal_Booking_Click",
+        service_name: serviceName,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Tracking Error:", error);
+    }
+  };
+
+  const handleLocalBooking = async (serviceName) => {
+    await trackBooking(serviceName);
     navigate('/same-day-delivery');
   };
 

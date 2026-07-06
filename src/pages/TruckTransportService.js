@@ -7,11 +7,14 @@ import {
 
 const TruckTransportService = () => {
   const navigate = useNavigate();
+  
+  // n8n प्रोडक्शन URL
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans overflow-x-hidden text-slate-900">
       
-      {/* 🚛 १. हिरो सेक्शन (No Changes) */}
+      {/* 🚛 १. हिरो सेक्शन */}
       <div 
         className="relative text-white pt-12 pb-48 px-6 md:px-16 overflow-hidden bg-[#002D5E]"
         style={{
@@ -69,9 +72,9 @@ const TruckTransportService = () => {
             </button>
           </div>
 
-          {/* OPTION 2: FIND LOADS (FIXED NAVIGATION) */}
+          {/* OPTION 2: FIND LOADS */}
           <div 
-            onClick={() => navigate('/find-load')} // 👈 हे आपण ॲड केलं आहे
+            onClick={() => navigate('/find-load')}
             className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
           >
             <div className="bg-blue-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-[#002D5E] transition-all duration-500 shadow-inner">
@@ -106,7 +109,7 @@ const TruckTransportService = () => {
         </div>
       </div>
 
-      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन (No Changes) */}
+      {/* 🚛 ३. खालचा ब्रँडेड सेक्शन */}
       <div 
         className="w-full h-[600px] flex items-end justify-center text-center pb-[100px] relative overflow-hidden rounded-t-[4rem] md:rounded-t-[6rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
         style={{

@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Send } from 'lucide-react';
+import { ArrowLeft, Send } from 'lucide-react';
 
 const BookingPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     senderName: '',
     senderPhone: '',
     pickupPincode: '',
     dropPincode: '',
     weight: '',
+    address: '',
     serviceType: 'Domestic Courier'
   });
 
@@ -17,11 +19,31 @@ const BookingPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // इथे आपण पुढे Backend जोडू, सध्या फक्त अलर्ट दाखवू
-    alert(`Order Placed for ${formData.senderName}! We will contact you on WhatsApp.`);
-    navigate('/'); // बुकिंग झाल्यावर होम पेजवर परत जाण्यासाठी
+    setLoading(true);
+
+    const finalData = {
+      ...formData,
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      // n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData)
+      });
+      
+      alert(`धन्यवाद, ${formData.senderName}! तुमची बुकिंग यशस्वीरित्या नोंदवली आहे. ✅`);
+      navigate('/'); // बुकिंग झाल्यावर होम पेजवर परत जाण्यासाठी
+    } catch (err) {
+      console.error(err);
+      alert("काहीतरी तांत्रिक अडचण आली, कृपया पुन्हा प्रयत्न करा.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,6 +116,7 @@ const BookingPage = () => {
               <label className="text-xs font-black uppercase text-slate-400 ml-4">Delivery Address Details</label>
               <textarea 
                 name="address" 
+                required
                 rows="3"
                 placeholder="Enter full destination address..." 
                 className="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
@@ -103,9 +126,14 @@ const BookingPage = () => {
 
             <button 
               type="submit" 
+              disabled={loading}
               className="md:col-span-2 bg-orange-500 text-white py-6 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all flex items-center justify-center gap-3 active:scale-95"
             >
-              <Send size={20} /> CONFIRM BOOKING NOW
+              {loading ? "Processing..." : (
+                <>
+                  <Send size={20} /> CONFIRM BOOKING NOW
+                </>
+              )}
             </button>
           </form>
         </div>

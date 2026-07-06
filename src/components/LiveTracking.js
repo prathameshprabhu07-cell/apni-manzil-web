@@ -21,17 +21,31 @@ const LiveTracking = ({ orderId }) => {
   // डिफॉल्ट लोकेशन (पुणे)
   const [position, setPosition] = useState([18.5204, 73.8567]);
 
-  // ३. खऱ्या लोकेशनसाठी 'Geolocation' वापरणे
+  // ३. खऱ्या लोकेशनसाठी 'Geolocation' आणि n8n Webhook वापरणे
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
-        setPosition([pos.coords.latitude, pos.coords.longitude]);
+        const newCoords = [pos.coords.latitude, pos.coords.longitude];
+        setPosition(newCoords);
+
+        // n8n ला लोकेशन अपडेट पाठवा
+        fetch("https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: orderId,
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            timestamp: new Date().toISOString()
+          })
+        }).catch(err => console.error("Webhook Error:", err));
+
       },
       (err) => console.error("Location Error:", err),
       { enableHighAccuracy: true }
     );
     return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
+  }, [orderId]);
 
   return (
     <div className="bg-white rounded-[32px] p-6 shadow-2xl border border-slate-100">

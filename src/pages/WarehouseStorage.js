@@ -9,6 +9,9 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const WarehouseStorage = () => {
   const navigate = useNavigate(); 
+  
+  // n8n प्रोडक्शन URL
+  const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
 
   // ✅ हा तुमचा सुधारित कोड आहे
   const handleWarehouseBooking = async (serviceTitle) => {
@@ -20,9 +23,7 @@ const WarehouseStorage = () => {
     if (serviceTitle === "Inventory Management") { navigate('/inventory-management'); return; }
     if (serviceTitle === "Bulk & Pallet Storage") { navigate('/bulk-pallet-storage'); return; }
 
-    // n8n ला डेटा पाठवण्यासाठी लिंक
-    const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/warehouse-booking";
-
+    // n8n ला डेटा पाठवण्यासाठी फेच रिक्वेस्ट
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',

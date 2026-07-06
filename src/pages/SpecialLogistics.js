@@ -4,20 +4,42 @@ import {
   ShieldCheck, MapPin
 } from 'lucide-react';
 
-// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+// ✅ फाईल पाथ
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const SpecialLogistics = () => {
 
+  // n8n प्रोडक्शन URL
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+
   // ✅ बुकिंग हाताळण्यासाठी फंक्शन
-  const handleSpecialBooking = (serviceTitle) => {
-    // कस्टमरचा डेटा (टेस्टिंगसाठी तुझा नंबर)
+  const handleSpecialBooking = async (serviceTitle) => {
+    // कस्टमरचा डेटा
     const customerPhone = "7378502356"; 
     const customerName = "Special Logistics Client";
     const orderId = "SPEC-" + Math.floor(Math.random() * 100000);
 
-    // व्हॉट्सॲप मेसेज पाठवा
+    const bookingData = {
+      customerName,
+      customerPhone,
+      serviceTitle,
+      orderId,
+      timestamp: new Date().toISOString()
+    };
+
+    // १. व्हॉट्सॲप मेसेज पाठवा
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
+    
+    // २. n8n ला डेटा पाठवा
+    try {
+      await fetch(n8nUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData),
+      });
+    } catch (error) {
+      console.error("Webhook error:", error);
+    }
     
     alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवण्यात आली आहे!`);
   };

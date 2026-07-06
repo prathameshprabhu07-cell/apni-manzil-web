@@ -39,12 +39,14 @@ const FulfillmentWarehouseForm = () => {
       timestamp: new Date().toISOString()
     };
 
+    // तुझी Production URL
+    const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/warehouse-booking";
+
     try {
       // १. Firebase मध्ये सेव्ह करा
       await addDoc(collection(db, "warehouse_requests"), bookingData);
 
       // २. n8n ला डेटा पाठवा
-      const webhookUrl = "https://apnimanzil.app.n8n.cloud/webhook/warehouse-booking";
       await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,6 +56,7 @@ const FulfillmentWarehouseForm = () => {
       alert("Fulfillment inquiry submitted! Our team will contact your brand soon.");
       navigate(-1);
     } catch (error) {
+      console.error("Submission Error:", error);
       alert("Error: " + error.message);
     } finally {
       setLoading(false);

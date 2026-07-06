@@ -11,17 +11,32 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 const AISmartLogistics = () => {
   const navigate = useNavigate();
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
-  const handleAIQuery = (serviceTitle) => {
-    // समजा आपण डमी डेटा वापरतोय, रिअल टाइममध्ये हा डेटा फॉर्ममधून येईल
-    const customerPhone = "7378502356"; // टेस्टसाठी तुझा नंबर किंवा युजरचा नंबर
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन (Production URL सह)
+  const handleAIQuery = async (serviceTitle) => {
+    const customerPhone = "7378502356"; 
     const customerName = "Valued Client";
     const orderId = "AI-" + Math.floor(Math.random() * 100000);
 
-    // व्हॉट्सॲप नोटिफिकेशन पाठवा
+    // १. व्हॉट्सॲप नोटिफिकेशन (उपलब्ध असल्यास)
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
     
-    alert(`${serviceTitle} साठी तुमची चौकशी (Query) व्हॉट्सॲपवर पाठवली आहे!`);
+    // २. n8n ला डेटा पाठवा
+    try {
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service: serviceTitle,
+          orderId: orderId,
+          customerName: customerName,
+          timestamp: new Date().toISOString()
+        })
+      });
+      alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या नोंदवली आहे! ✅`);
+    } catch (err) {
+      console.error("Webhook Error:", err);
+      alert("काहीतरी तांत्रिक अडचण आली, कृपया पुन्हा प्रयत्न करा.");
+    }
   };
 
   const aiServices = [

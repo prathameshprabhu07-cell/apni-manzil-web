@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   ArrowLeft, Phone, MessageCircle, 
   Truck, ChevronRight, Share2 
@@ -9,7 +10,21 @@ const FindLoad = () => {
   const navigate = useNavigate();
 
   // तुझे नंबर येथे बदलू शकतोस
-  const contactNumber = "9XXXXXXXXX"; 
+  const contactNumber = "7378502356"; 
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+
+  // n8n ला डेटा पाठवण्यासाठी फंक्शन
+  const trackInteraction = async (type) => {
+    try {
+      await axios.post(n8nUrl, {
+        action: "FindLoad_Interaction",
+        contact_type: type,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Tracking Error:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
@@ -64,6 +79,7 @@ const FindLoad = () => {
               {/* Call Button */}
               <a 
                 href={`tel:${contactNumber}`} 
+                onClick={() => trackInteraction("Phone Call")}
                 className="flex items-center justify-center gap-3 bg-blue-50 text-[#002D5E] p-6 rounded-2xl font-black hover:bg-blue-100 transition-all border-2 border-blue-100 active:scale-95 shadow-sm"
               >
                 <Phone size={24} /> 📞 Call
@@ -74,6 +90,7 @@ const FindLoad = () => {
                 href={`https://wa.me/91${contactNumber}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
+                onClick={() => trackInteraction("WhatsApp")}
                 className="flex items-center justify-center gap-3 bg-green-50 text-green-700 p-6 rounded-2xl font-black hover:bg-green-100 transition-all border-2 border-green-100 active:scale-95 shadow-sm"
               >
                 <MessageCircle size={24} /> 📲 WhatsApp

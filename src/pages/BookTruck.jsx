@@ -17,7 +17,7 @@ const BookTruck = () => {
     drop: '',
     date: '',
     materialType: 'Industrial Goods',
-    otherMaterial: '', // New field for 'Other' option
+    otherMaterial: '', 
     weight: '',
     truckCategory: '', 
     truckSize: '',
@@ -54,17 +54,32 @@ const BookTruck = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const finalData = {
+      ...bookingData,
+      status: "Pending",
+      timestamp: new Date().toISOString()
+    };
+
     try {
-      await addDoc(collection(db, "truck_bookings"), {
-        ...bookingData,
-        status: "Pending",
-        timestamp: new Date()
+      // १. Firestore मध्ये डेटा सेव्ह करा
+      await addDoc(collection(db, "truck_bookings"), finalData);
+
+      // २. n8n ला डेटा पाठवा (Production URL)
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData)
       });
+
       alert("Booking Successful! Our team will contact you shortly.");
       navigate('/truck-transport');
     } catch (error) {
+      console.error(error);
       alert("Error saving booking. Please try again.");
-    } finally { setLoading(false); }
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   return (
@@ -105,7 +120,6 @@ const BookTruck = () => {
                   <option value="Other">Other (Please Specify)</option>
                 </select>
 
-                {/* Conditional Input for 'Other' */}
                 {bookingData.materialType === 'Other' && (
                   <div className="relative animate-in zoom-in-95 duration-200">
                     <Edit3 size={18} className="absolute left-4 top-4 text-orange-500" />
@@ -197,7 +211,6 @@ const BookTruck = () => {
             </div>
           )}
 
-          {/* 🚛 ✅ UPDATED: Fleet Photo Made Larger and More Impactful */}
           <div className="mt-12 -mx-4 md:-mx-12 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white animate-in fade-in slide-in-from-bottom-8">
             <img 
               src="/fleet-all-logistics.png" 

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   Globe, Plane, Ship, ArrowRightLeft, FileText, 
   ShieldCheck, Zap, ChevronRight 
@@ -8,18 +10,34 @@ import {
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const InternationalLogistics = () => {
+  const navigate = useNavigate();
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
 
   // ✅ बुकिंग हाताळण्यासाठी फंक्शन
-  const handleGlobalBooking = (serviceTitle) => {
-    // कस्टमरचा डेटा (सध्या तुझा नंबर टेस्टिंगसाठी)
+  const handleGlobalBooking = async (serviceTitle) => {
+    // कस्टमरचा डेटा
     const customerPhone = "7378502356"; 
     const customerName = "Global Client";
     const orderId = "INT-" + Math.floor(Math.random() * 100000);
 
-    // व्हॉट्सॲप मेसेज पाठवा
+    // १. व्हॉट्सॲप नोटिफिकेशन पाठवा
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
     
-    alert(`${serviceTitle} साठी तुमची चौकशी व्हॉट्सॲपवर पाठवण्यात आली आहे!`);
+    // २. n8n ला डेटा पाठवा (Production URL)
+    try {
+      await axios.post(n8nUrl, {
+        action: "International_Logistics_Booking",
+        service: serviceTitle,
+        customerName: customerName,
+        phone: customerPhone,
+        orderId: orderId,
+        timestamp: new Date().toISOString()
+      });
+      alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या नोंदवली आहे!`);
+    } catch (error) {
+      console.error("n8n Error:", error);
+      alert("चौकशी पाठवताना तांत्रिक अडचण आली.");
+    }
   };
 
   const globalServices = [
@@ -68,7 +86,7 @@ const InternationalLogistics = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 z-10 space-y-6">
             <div className="inline-block bg-orange-500/20 px-4 py-1 rounded-full border border-orange-500/30">
-                <p className="text-xs font-black text-orange-400 uppercase tracking-widest">Global Network • 190+ Countries</p>
+               <p className="text-xs font-black text-orange-400 uppercase tracking-widest">Global Network • 190+ Countries</p>
             </div>
             <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tighter">
               International <br/><span className="text-orange-400">Logistics</span>
@@ -148,7 +166,7 @@ const InternationalLogistics = () => {
         </div>
       </div>
 
-      {/* ४. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      {/* 4. FINAL SECTION */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
         style={{

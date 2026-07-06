@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { 
   ArrowLeft, MapPin, Calendar, Package, 
-  Weight, Phone, CheckCircle2, MessageSquare, Info
+  Weight, CheckCircle2, MessageSquare, Info
 } from 'lucide-react';
 
 const BookPartLoad = () => {
@@ -28,16 +28,29 @@ const BookPartLoad = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const finalData = {
+      ...formData,
+      status: "Pending",
+      bookingType: "Part Load",
+      timestamp: new Date().toISOString()
+    };
+
     try {
-      await addDoc(collection(db, "part_load_bookings"), {
-        ...formData,
-        status: "Pending",
-        bookingType: "Part Load",
-        timestamp: new Date()
+      // १. Firestore मध्ये डेटा सेव्ह करा
+      await addDoc(collection(db, "part_load_bookings"), finalData);
+
+      // २. n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
+      await fetch("https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData)
       });
+
       alert("Part Load Request Received! Our team will contact you for pricing.");
       navigate('/truck-transport');
     } catch (error) {
+      console.error(error);
       alert("Error: " + error.message);
     } finally {
       setLoading(false);

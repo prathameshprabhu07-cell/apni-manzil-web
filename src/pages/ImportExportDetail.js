@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // n8n साठी axios जोडले
 import { Globe, ShieldCheck, Ship, Plane, FileText } from 'lucide-react';
-
-// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const ImportExportDetail = () => {
@@ -13,15 +12,27 @@ const ImportExportDetail = () => {
     description: ''
   });
 
-  const handleSubmit = (e) => {
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
+    // १. व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
     const serviceName = `${formData.type} to/from ${formData.country}`;
     const orderId = "EXIM-" + Math.floor(Math.random() * 100000);
-    
-    // टेस्टसाठी तुझा नंबर किंवा युजरचा नंबर
     sendWhatsAppNotification("7378502356", formData.name, serviceName, orderId);
+
+    // २. n8n ला डेटा पाठवा
+    try {
+      await axios.post(n8nUrl, {
+        ...formData,
+        service: serviceName,
+        orderId: orderId,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("n8n Webhook Error:", error);
+    }
 
     alert("Thank you! Our Export-Import experts will contact you soon on WhatsApp.");
     console.log(formData);

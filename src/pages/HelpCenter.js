@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   Search, 
   MessageCircle, 
@@ -16,8 +17,24 @@ const HelpCenter = () => {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(null);
 
+  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+
+  // ट्रॅकिंग फंक्शन
+  const trackInteraction = async (type) => {
+    try {
+      await axios.post(n8nUrl, {
+        action: "HelpCenter_Interaction",
+        contact_type: type,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Tracking Error:", error);
+    }
+  };
+
   // ✅ WhatsApp Open करण्यासाठी फंक्शन
   const openWhatsApp = () => {
+    trackInteraction("WhatsApp");
     const phoneNumber = "7378502356"; 
     const message = "नमस्कार Apni Manzil Support, मला मदतीची गरज आहे.";
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -49,20 +66,20 @@ const HelpCenter = () => {
       title: "Call Us", 
       detail: "+91 7378502356", 
       color: "#008a5e",
-      action: () => window.open('tel:+917378502356') 
+      action: () => { trackInteraction("Phone Call"); window.open('tel:+917378502356'); }
     },
     { 
       icon: <Mail size={24} />, 
       title: "Email Us", 
       detail: "help@apnimanzil.co.in", 
       color: "#e64a19",
-      action: () => window.open('mailto:help@apnimanzil.co.in')
+      action: () => { trackInteraction("Email"); window.open('mailto:help@apnimanzil.co.in'); }
     },
     { 
       icon: <MessageCircle size={24} />, 
       title: "Live Chat (WhatsApp)", 
       detail: "Available 24/7", 
-      color: "#25D366", // WhatsApp Green Color
+      color: "#25D366",
       action: openWhatsApp 
     }
   ];
