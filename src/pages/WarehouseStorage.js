@@ -11,7 +11,7 @@ const WarehouseStorage = () => {
   const navigate = useNavigate(); 
   
   // n8n प्रोडक्शन URL
-  const webhookUrl = "http://localhost:5678/webhook/2609871b-9719-4510-80b3-9dd3667e6127";
+  const webhookUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
 
   // ✅ हा तुमचा सुधारित कोड आहे
