@@ -11,10 +11,11 @@ const ShortTermStorageForm = () => {
   const [loading, setLoading] = useState(false);
   
   // n8n प्रोडक्शन URL
-  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+  const n8nUrl = "http://localhost:5678/webhook/2609871b-9719-4510-80b3-9dd3667e6127"
+
   
   const [formData, setFormData] = useState({
-    location: '', storageDuration: '', spaceNeeded: '', 
+    location: '', storageDuration: '', spaceNeeded: '',
     materialType: 'General Goods', otherMaterial: '', 
     mobile: '', additionalNotes: ''
   });
