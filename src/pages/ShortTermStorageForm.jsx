@@ -11,7 +11,7 @@ const ShortTermStorageForm = () => {
   const [loading, setLoading] = useState(false);
   
   // n8n प्रोडक्शन URL
-  const n8nUrl = "http://localhost:5678/webhook/2609871b-9719-4510-80b3-9dd3667e6127"
+  const n8nUrl = "http://localhost:5678/webhook/2609871b-9719-4510-80b3-9dd3667e6127";
 
   
   const [formData, setFormData] = useState({
