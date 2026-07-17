@@ -18,7 +18,7 @@ const EcommerceLogistics = () => {
     const customerPhone = "7378502356"; 
     const customerName = "E-com Vendor";
     const orderId = "EC-" + Math.floor(Math.random() * 100000);
-    const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+    const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
     // १. व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);

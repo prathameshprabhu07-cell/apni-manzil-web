@@ -22,7 +22,7 @@ const AISmartLogistics = () => {
     
     // २. n8n ला डेटा पाठवा
     try {
-      await fetch("https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10", {
+      await fetch("http://localhost:5678/webhook/apni-manzil-logistics", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

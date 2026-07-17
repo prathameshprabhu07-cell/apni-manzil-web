@@ -19,7 +19,7 @@ const BookingForm = ({ serviceName, onClose }) => {
 
   // --- n8n Webhook फंक्शन (अपडेटेड) ---
   const sendToZapier = async (bookingData) => {
-    const PRODUCTION_URL = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+    const PRODUCTION_URL = "http://localhost:5678/webhook/apni-manzil-logistics";
     try {
       await fetch(PRODUCTION_URL, {
         method: "POST",

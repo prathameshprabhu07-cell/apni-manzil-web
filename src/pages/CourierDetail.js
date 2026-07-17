@@ -28,7 +28,7 @@ const CourierDetail = () => {
       await addDoc(collection(db, "courier_inquiries"), requestData);
 
       // २. n8n बॅकएंड API ला कॉल करा (Production URL)
-      const response = await axios.post('https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10', requestData);
+      const response = await axios.post('http://localhost:5678/webhook/apni-manzil-logistics', requestData);
       
       setRates(response.data.data.available_courier_companies);
     } catch (error) {

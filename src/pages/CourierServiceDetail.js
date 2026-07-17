@@ -104,7 +104,7 @@ const CourierServiceDetail = () => {
       const bookingRes = await axios.post('/api/create-order', bookingData);
 
       // २. n8n कडे डेटा फॉरवर्ड करा (Production URL)
-      await axios.post('https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10', bookingData);
+      await axios.post('http://localhost:5678/webhook/apni-manzil-logistics', bookingData);
 
       if (bookingRes.data.success) {
         alert(`Booking यशस्वी! Tracking ID: ${bookingRes.data.awb_code}`);

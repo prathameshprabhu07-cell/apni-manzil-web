@@ -9,7 +9,7 @@ const TruckTransportService = () => {
   const navigate = useNavigate();
   
   // n8n प्रोडक्शन URL
-  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+  const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans overflow-x-hidden text-slate-900">

@@ -17,7 +17,7 @@ const HelpCenter = () => {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(null);
 
-  const n8nUrl = "https://apnimanzil.app.n8n.cloud/webhook/364283f9-0af4-4054-aae1-f8f68cda1a10";
+  const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
   // ट्रॅकिंग फंक्शन
   const trackInteraction = async (type) => {
