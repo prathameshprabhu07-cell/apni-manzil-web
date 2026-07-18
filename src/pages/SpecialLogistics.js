@@ -128,7 +128,25 @@ const SpecialLogistics = () => {
         </div>
       </section>
 
-      {/* 4. CALL TO ACTION (Bottom Blue Bar) */}
+      {/* 4. DETAILED INFORMATION SECTION */}
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="space-y-12">
+          {[
+            { title: "Cold Chain Logistics", desc: "Keep your perishables fresh and intact with our advanced temperature-controlled transport solutions. We leverage cutting-edge refrigeration technology to ensure the perfect environment for your sensitive goods from origin to destination, maintaining quality at every step." },
+            { title: "Medicine Transport", desc: "Trust in our specialized care for life-saving pharmaceuticals and vaccines. Our dedicated team follows rigorous safety protocols and climate-controlled handling procedures to ensure your vital medicine arrives safely, securely, and right on time." },
+            { title: "Fragile Item Shipping", desc: "Handle your delicate and valuable goods with absolute precision. We combine protective packaging expertise with gentle, secure handling techniques to minimize risk and ensure your fragile items reach their destination in pristine condition." },
+            { title: "Heavy Machinery Transport", desc: "Move complex, oversized, and heavy industrial equipment with confidence. Our team offers specialized logistics planning, expert loading services, and robust transport solutions to ensure the safe, efficient, and reliable delivery of your heaviest assets." },
+            { title: "Dangerous Goods Transport", desc: "Safety is our top priority when handling hazardous materials. With certified, experienced personnel and fully compliant protocols, we provide secure and reliable transport solutions tailored to the strict regulatory requirements of dangerous goods." }
+          ].map((item, index) => (
+            <div key={index} className="border-l-4 border-orange-500 pl-6 hover:bg-slate-50 p-4 transition-all rounded-r-2xl">
+              <h4 className="text-xl font-black text-slate-800 mb-2">{item.title}</h4>
+              <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. CALL TO ACTION (Bottom Blue Bar) */}
       <div className="max-w-6xl mx-auto mb-20 px-4">
         <div className="bg-[#002D5E] rounded-[2.5rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between text-white shadow-2xl relative overflow-hidden">
           <div className="flex items-center gap-6 relative z-10 text-center md:text-left flex-col md:flex-row">
@@ -150,7 +168,7 @@ const SpecialLogistics = () => {
         </div>
       </div>
 
-      {/* ५. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
+      {/* 6. FINAL BRANDED TRUCK IMAGE SECTION */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
         style={{
