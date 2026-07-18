@@ -121,19 +121,12 @@ const PackersAndMovers = () => {
             <div 
               key={s.id} 
               onClick={() => {
-                if(s.title === "House Shifting") {
-                  navigate('/home-shifting');
-                } else if(s.title === "Office Shifting") {
-                  navigate('/office-shifting');
-                } else if(s.title === "Furniture Moving") {
-                  navigate('/furniture-shifting');
-                } else if(s.title === "Vehicle Transport") {
-                  navigate('/vehicle-transport');
-                } else if(s.title === "Commercial Moving") {
-                  navigate('/commercial-moving');
-                } else {
-                  setIsModalOpen(true);
-                }
+                if(s.title === "House Shifting") { navigate('/home-shifting'); }
+                else if(s.title === "Office Shifting") { navigate('/office-shifting'); }
+                else if(s.title === "Furniture Moving") { navigate('/furniture-shifting'); }
+                else if(s.title === "Vehicle Transport") { navigate('/vehicle-transport'); }
+                else if(s.title === "Commercial Moving") { navigate('/commercial-moving'); }
+                else { setIsModalOpen(true); }
               }} 
               className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all group text-center cursor-pointer"
             >
@@ -149,6 +142,25 @@ const PackersAndMovers = () => {
           ))}
         </div>
       </div>
+
+      {/* DETAILED SERVICES INFORMATION */}
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="space-y-12">
+          {[
+            { title: "House Shifting", desc: "Make your house shifting process stress-free with our expert packing and moving solutions. We handle your belongings with the utmost care, ensuring a safe and smooth transition to your new home." },
+            { title: "Office Shifting", desc: "Minimize downtime and ensure a seamless move for your business with our professional office relocation services. Our team is trained to handle office equipment, furniture, and critical documents with precision and efficiency." },
+            { title: "Furniture Moving", desc: "Safely transport your valuable furniture and heavy items without the hassle. We use specialized equipment and protective techniques to ensure your heavy assets are moved securely and reach their destination in perfect condition." },
+            { title: "Vehicle Transport", desc: "Trust us for the safe and secure transportation of your car or bike. Whether local or long-distance, we ensure your vehicles are handled with professional care throughout the moving process." },
+            { title: "Storage with Movers", desc: "Need extra space during your move? We provide secure, flexible storage solutions to keep your goods protected for as long as you need, giving you peace of mind during your transition." },
+            { title: "Commercial Moving", desc: "Expertly managed commercial and industrial relocation services designed to handle complex logistics requirements. We ensure efficient, timely, and safe moving of your industrial assets to keep your business operations on track." }
+          ].map((item, index) => (
+            <div key={index} className="border-l-4 border-blue-600 pl-6 hover:bg-slate-50 p-4 transition-all rounded-r-2xl">
+              <h4 className="text-xl font-black text-slate-800 mb-2">{item.title}</h4>
+              <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Footer Image Section */}
       <div 

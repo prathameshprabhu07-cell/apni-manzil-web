@@ -13,7 +13,6 @@ const WarehouseStorage = () => {
   // n8n प्रोडक्शन URL
   const webhookUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
-
   // ✅ हा तुमचा सुधारित कोड आहे
   const handleWarehouseBooking = async (serviceTitle) => {
     // 🚀 नेव्हिगेशन लॉजिक जसे होते तसे
@@ -91,6 +90,25 @@ const WarehouseStorage = () => {
               >
                 Get Quote
               </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* DETAILED SERVICE INFORMATION */}
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="space-y-12">
+          {[
+            { title: "Short Term Storage", desc: "Flexible weekly or monthly storage for temporary needs. Whether you are dealing with seasonal spikes or temporary space constraints, our short-term storage provides a scalable and cost-effective solution tailored to your immediate business demands." },
+            { title: "Long Term Storage", desc: "Secure long-term solutions for your excess inventory. Keep your stock safe and organized over extended periods with our reliable, climate-monitored facilities designed to protect your goods until you are ready to ship them." },
+            { title: "Fulfillment Warehouse", desc: "Complete pick, pack, and ship services for e-commerce. We streamline your order fulfillment process by managing the entire cycle—from receiving orders to professional packing and final shipment—ensuring your customers receive their items promptly." },
+            { title: "Cold Storage", desc: "Temperature controlled storage for perishable goods. Preserve the quality and shelf life of your sensitive products with our advanced, temperature-regulated cold storage units, specially designed to meet the highest safety standards for perishables." },
+            { title: "Inventory Management", desc: "Real-time tracking and management of your stock. Gain complete visibility over your inventory with our sophisticated tracking system, allowing you to monitor stock levels, predict demand, and optimize your operations with precision." },
+            { title: "Bulk & Pallet Storage", desc: "Spacious areas for large items and heavy pallets. Our expansive warehouse facilities are optimized to accommodate large-volume shipments, offering secure and easily accessible storage space for your bulk goods and heavy pallets." }
+          ].map((item, index) => (
+            <div key={index} className="border-l-4 border-blue-600 pl-6 hover:bg-slate-50 p-4 transition-all rounded-r-2xl">
+              <h4 className="text-xl font-black text-slate-800 mb-2">{item.title}</h4>
+              <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>

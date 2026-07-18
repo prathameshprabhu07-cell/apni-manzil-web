@@ -137,7 +137,25 @@ const EcommerceLogistics = () => {
         </div>
       </section>
 
-      {/* 3. Call to Action Banner */}
+      {/* 3. Detailed Information Section */}
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="space-y-12">
+          {[
+            { title: "Order Fulfillment", desc: "Complete responsibility from order picking to packing and shipping. We handle your entire fulfillment process with care, ensuring every package is meticulously prepared and dispatched to your customers quickly and accurately." },
+            { title: "Marketplace Shipping", desc: "Easy integration with Amazon, Flipkart, and Shopify stores. Seamlessly connect your online storefronts with our logistics platform to automate shipping, streamline order management, and provide reliable delivery across all your sales channels." },
+            { title: "COD Shipping", desc: "Fast Cash on Delivery payment facility for your business. Enhance your customer experience and boost your sales with our secure and rapid COD processing, ensuring your cash flow remains consistent and hassle-free." },
+            { title: "Returns Management", desc: "Simple management of RTO and reverse logistics. We turn the challenge of returns into a streamlined process, efficiently handling pickups and processing reverse logistics so you can focus on growing your business." },
+            { title: "Inventory Handling", desc: "Smart stock tracking and inventory management system. Gain full control and visibility over your stock with our intelligent tracking solutions, helping you optimize inventory levels and prevent stockouts in real-time." }
+          ].map((item, index) => (
+            <div key={index} className="border-l-4 border-blue-600 pl-6 hover:bg-slate-50 p-4 transition-all rounded-r-2xl">
+              <h4 className="text-xl font-black text-slate-800 mb-2">{item.title}</h4>
+              <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Call to Action Banner */}
       <div className="max-w-7xl mx-auto px-6 mb-24">
         <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-[3rem] p-10 md:p-16 flex flex-col md:flex-row items-center gap-10 shadow-2xl">
             <div className="md:w-2/3 space-y-6 text-white text-center md:text-left">
@@ -158,7 +176,7 @@ const EcommerceLogistics = () => {
         </div>
       </div>
 
-      {/* 4. Final branded section */}
+      {/* 5. Final branded section */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
         style={{

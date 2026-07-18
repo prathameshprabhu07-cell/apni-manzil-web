@@ -85,15 +85,49 @@ const HyperlocalService = () => {
         </div>
       </section>
 
+      {/* DETAILED SERVICES & WHY CHOOSE US */}
+      <section className="max-w-7xl mx-auto px-6 md:px-16 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="space-y-8">
+                {[
+                    { title: "Food Delivery", desc: "Enjoy your favorite meals delivered fresh and hot to your doorstep. Our rapid local network ensures your food arrives quickly, maintaining quality and taste every single time." },
+                    { title: "Grocery Delivery", desc: "Simplify your daily routine with our efficient grocery delivery service. We ensure your essential household items and fresh produce reach you promptly, making shopping easier than ever." },
+                    { title: "Medicine Delivery", desc: "Your health is our priority. Get your essential medicines and healthcare products delivered safely and securely to your home within 24 hours, ensuring you never run out of what you need." },
+                    { title: "Same City Parcel", desc: "Need to send a package across the city? Our same-city parcel service handles everything from small documents to larger items with care, offering a reliable, affordable, and convenient way to stay connected locally." }
+                ].map((item, index) => (
+                    <div key={index} className="border-l-4 border-orange-500 pl-6">
+                        <h4 className="text-lg font-black text-[#002D5E] mb-1">{item.title}</h4>
+                        <p className="text-slate-600 text-sm font-medium leading-relaxed">{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+
+            <div className="bg-[#002D5E] rounded-3xl p-8 text-white">
+                <h3 className="text-2xl font-black mb-6 border-b border-white/20 pb-4">Why Choose Us?</h3>
+                <ul className="space-y-6">
+                    <li className="flex gap-4">
+                        <CheckCircle className="text-orange-400 mt-1 flex-shrink-0" />
+                        <div><strong className="block text-white">Quick & Reliable:</strong> We prioritize speed to ensure timely deliveries.</div>
+                    </li>
+                    <li className="flex gap-4">
+                        <MapPin className="text-orange-400 mt-1 flex-shrink-0" />
+                        <div><strong className="block text-white">Live Tracking:</strong> Stay updated with real-time tracking for every order.</div>
+                    </li>
+                    <li className="flex gap-4">
+                        <BadgePercent className="text-orange-400 mt-1 flex-shrink-0" />
+                        <div><strong className="block text-white">Affordable Rates:</strong> Experience premium delivery services at budget-friendly prices.</div>
+                    </li>
+                    <li className="flex gap-4">
+                        <Smartphone className="text-orange-400 mt-1 flex-shrink-0" />
+                        <div><strong className="block text-white">Easy-To-Use:</strong> Our platform is designed for a seamless and user-friendly experience.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+      </section>
+
       {/* 3. AI Feature Bar & Book Now Banner */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 mb-24">
-        <div className="flex flex-wrap justify-between bg-white p-4 rounded-2xl shadow-md border border-slate-100 mb-6 gap-4">
-           <div className="flex items-center gap-2 font-bold text-sm text-slate-600"><CheckCircle className="text-blue-500" size={18}/> Quick & Reliable</div>
-           <div className="flex items-center gap-2 font-bold text-sm text-slate-600"><MapPin className="text-blue-500" size={18}/> Live Tracking</div>
-           <div className="flex items-center gap-2 font-bold text-sm text-slate-600"><BadgePercent className="text-blue-500" size={18}/> Affordable Rates</div>
-           <div className="flex items-center gap-2 font-bold text-sm text-slate-600"><Smartphone className="text-blue-500" size={18}/> Easy-To-Use</div>
-        </div>
-
         <div className="bg-gradient-to-r from-[#002D5E] to-blue-800 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
            <div className="flex items-center gap-6 z-10">
               <div className="hidden md:block bg-white/10 p-4 rounded-2xl">

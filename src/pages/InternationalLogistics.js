@@ -98,7 +98,7 @@ const InternationalLogistics = () => {
           <div className="md:w-1/2 mt-12 md:mt-0 relative flex justify-center">
             <div className="absolute -inset-10 bg-blue-400/20 blur-[100px] rounded-full animate-pulse"></div>
             <div className="bg-white/5 backdrop-blur-xl p-8 rounded-[4rem] border border-white/10 relative z-10">
-                <Globe size={220} className="text-orange-400 animate-[spin_20s_linear_infinite]" />
+               <Globe size={220} className="text-orange-400 animate-[spin_20s_linear_infinite]" />
             </div>
           </div>
         </div>
@@ -134,7 +134,25 @@ const InternationalLogistics = () => {
         </div>
       </section>
 
-      {/* 3. TRUST BANNER */}
+      {/* 3. DETAILED INFORMATION SECTION */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <div className="space-y-12">
+          {[
+            { title: "International Courier", desc: "Fast and reliable door-to-door delivery across 190+ countries. We bridge the global distance with our widespread courier network, ensuring your packages reach their international destinations quickly, safely, and with complete transparency." },
+            { title: "Air Cargo", desc: "Priority air freight for time-sensitive international shipments. When speed is of the essence, our air cargo solutions provide the fastest route to your global markets, ensuring your urgent shipments arrive on schedule, every time." },
+            { title: "Sea Freight", desc: "Cost-effective shipping solutions for bulk and large cargo. Ideal for substantial shipments, our sea freight services offer a reliable and economical way to move your goods across oceans, optimized for efficiency and scale." },
+            { title: "Import / Export Shipping", desc: "End-to-end logistics support for your global business trade. We simplify your international trade operations by managing the complexities of import and export logistics, providing you with a seamless and stress-free global shipping experience." },
+            { title: "Customs Clearance", desc: "Hassle-free documentation and compliance for smooth delivery. We navigate the intricacies of international customs regulations on your behalf, ensuring your goods move through borders without delays or compliance issues." }
+          ].map((item, index) => (
+            <div key={index} className="border-l-4 border-blue-800 pl-6 hover:bg-slate-50 p-4 transition-all rounded-r-2xl">
+              <h4 className="text-xl font-black text-slate-800 mb-2">{item.title}</h4>
+              <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. TRUST BANNER */}
       <div className="max-w-7xl mx-auto px-6 mb-24">
         <div className="bg-[#002D5E] rounded-[4rem] p-12 md:p-20 flex flex-col md:flex-row items-center gap-12 shadow-2xl relative overflow-hidden text-white border-b-[12px] border-orange-500">
           <div className="md:w-1/2 space-y-8">
@@ -166,7 +184,7 @@ const InternationalLogistics = () => {
         </div>
       </div>
 
-      {/* 4. FINAL SECTION */}
+      {/* 5. FINAL SECTION */}
       <div 
         className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
         style={{
