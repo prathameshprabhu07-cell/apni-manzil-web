@@ -35,7 +35,7 @@ const FurnitureShiftingForm = () => {
     
     try {
       // n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
-      await fetch("http://localhost:5678/webhook/apni-manzil-logistics", {
+      await fetch("http://localhost:5678/webhook/e9a71614-7bae-49d6-bc42-74fdb4b02d87", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finalData)
