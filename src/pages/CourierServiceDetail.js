@@ -81,7 +81,7 @@ const CourierServiceDetail = () => {
     }
   };
 
-  // --- २. FINAL BOOKING (Production URL सह) ---
+  // --- २. FINAL BOOKING (Webhook सह) ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     
@@ -100,17 +100,14 @@ const CourierServiceDetail = () => {
         timestamp: new Date().toISOString()
       };
 
-      // १. आधी बॅकएंडला ऑडर पाठवा
-      const bookingRes = await axios.post('/api/create-order', bookingData);
+      // थेट n8n वेबहुककडे डेटा पाठवत आहे (ज्यामध्ये तुम्ही टोकन सेट केले आहे)
+      const bookingRes = await axios.post('http://localhost:5678/webhook/apni-manzil-logistics', bookingData);
 
-      // २. n8n कडे डेटा फॉरवर्ड करा (Production URL)
-      await axios.post('http://localhost:5678/webhook/apni-manzil-logistics', bookingData);
-
-      if (bookingRes.data.success) {
-        alert(`Booking यशस्वी! Tracking ID: ${bookingRes.data.awb_code}`);
+      if (bookingRes.status === 200 || bookingRes.data) {
+        alert(`Booking यशस्वी!`);
         navigate('/dashboard'); 
       } else {
-        alert("Booking अयशस्वी: " + (bookingRes.data.message || "Unknown error"));
+        alert("Booking अयशस्वी: Unknown error");
       }
     } catch (error) {
       console.error("Booking Error:", error);
@@ -197,8 +194,8 @@ const CourierServiceDetail = () => {
                          <p className="text-lg font-black">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
                          <p className="text-[9px] font-bold mt-1 opacity-80 uppercase tracking-tighter">Est. Delivery: {courier.etd}</p>
                       </div>
-                    ))}
-                 </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -256,8 +253,6 @@ const CourierServiceDetail = () => {
           </form>
         </div>
       </div>
-      
-      {/* ... (baki cha code jasa cha tasa) ... */}
     </div>
   );
 };

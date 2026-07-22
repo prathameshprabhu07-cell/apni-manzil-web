@@ -30,7 +30,16 @@ const CourierDetail = () => {
       // २. n8n बॅकएंड API ला कॉल करा (Production URL)
       const response = await axios.post('http://localhost:5678/webhook/apni-manzil-logistics', requestData);
       
-      setRates(response.data.data.available_courier_companies);
+      // सुरक्षितपणे कुरिअर डेटा फेच करण्यासाठी चेक (n8n स्ट्रक्चरनुसार)
+      const courierList = response.data?.data?.available_courier_companies || response.data?.available_courier_companies || response.data;
+      
+      if (Array.isArray(courierList)) {
+        setRates(courierList);
+      } else {
+        console.error("Invalid data format from n8n:", response.data);
+        alert("डेटा मिळाला पण फॉर्मेट योग्य नाही.");
+      }
+
     } catch (error) {
       console.error("Error:", error);
       alert("सर्विस चेक करताना एरर आला. कृपया पुन्हा प्रयत्न करा.");
