@@ -27,6 +27,7 @@ const PackersAndMovers = () => {
       // १. फायरबेसमध्ये डेटा सेव्ह करा
       await addDoc(collection(db, "leads"), {
         ...formData,
+        service: "Packers and Movers",
         createdAt: new Date().toISOString()
       });
 
