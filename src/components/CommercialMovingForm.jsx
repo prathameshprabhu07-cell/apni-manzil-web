@@ -83,7 +83,24 @@ const CommercialMovingForm = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input type="text" placeholder="Contact Person Name" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, name: e.target.value})} />
-            <input type="text" placeholder="Business Phone Number" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            
+            {/* इथे मोबाईल नंबरसाठी +91 चा बॉक्स जोडला आहे */}
+            <div className="flex items-center bg-slate-50 rounded-2xl overflow-hidden">
+              <span className="pl-4 pr-2 text-slate-500 font-bold select-none bg-slate-50">
+                +91
+              </span>
+              <input 
+                type="tel" 
+                maxLength="10" 
+                placeholder="Business Phone Number" 
+                className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" 
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({...formData, phone: val});
+                }} 
+              />
+            </div>
+
             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
               <input type="text" placeholder="Pickup Address" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, pickup: e.target.value})} />
               <input type="text" placeholder="Drop Address" className="p-4 bg-slate-50 rounded-2xl border-none font-bold" onChange={(e) => setFormData({...formData, drop: e.target.value})} />
