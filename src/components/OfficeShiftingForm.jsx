@@ -74,7 +74,24 @@ const OfficeShiftingForm = () => {
           <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Company Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input name="companyName" placeholder="Company Name" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-indigo-500 text-sm font-bold" />
-            <input name="contactNo" placeholder="Contact Person Number" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-indigo-500 text-sm font-bold" />
+            
+            {/* कॉन्टॅक्ट नंबरसाठी +91 चा बॉक्स जोडला आहे */}
+            <div className="flex items-center bg-slate-50 rounded-2xl overflow-hidden focus-within:ring-2 ring-indigo-500">
+              <span className="pl-4 pr-2 text-slate-500 font-bold select-none bg-slate-50 text-sm">
+                +91
+              </span>
+              <input 
+                type="tel" 
+                maxLength="10" 
+                name="contactNo" 
+                placeholder="Contact Person Number" 
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setDetails({ ...details, contactNo: val });
+                }} 
+                className="w-full p-4 bg-slate-50 border-none outline-none text-sm font-bold" 
+              />
+            </div>
           </div>
         </div>
 

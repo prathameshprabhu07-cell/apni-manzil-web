@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { 
   ArrowLeft, Warehouse, PackageCheck, Truck, CalendarClock, 
-  ChevronRight, Building2, Layers, HardHat
+  ChevronRight, Building2, Layers, HardHat, Phone
 } from 'lucide-react';
 
 const BulkPalletStorageForm = () => {
@@ -13,6 +13,7 @@ const BulkPalletStorageForm = () => {
 
   const [formData, setFormData] = useState({
     companyName: '',
+    mobile: '',
     palletCount: '',
     palletType: 'Standard',
     forkliftNeeded: 'No',
@@ -61,7 +62,7 @@ const BulkPalletStorageForm = () => {
     <div className="min-h-screen bg-slate-50 pb-12 font-sans">
       {/* 🟦 Header */}
       <div className="bg-amber-600 text-white p-6 flex items-center gap-4 sticky top-0 z-50 shadow-lg">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition">
+        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition cursor-pointer">
           <ArrowLeft size={20}/>
         </button>
         <div>
@@ -92,10 +93,11 @@ const BulkPalletStorageForm = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           
           {/* 📌 Step 1: Basic Info */}
-          <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
+          <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-4">
             <h3 className="flex items-center gap-2 font-black text-[11px] text-amber-700 uppercase tracking-widest mb-4">
               <Building2 size={14}/> Step 1: Basic Info
             </h3>
+            
             <input 
               name="companyName" 
               placeholder="Name / Company Name" 
@@ -103,6 +105,24 @@ const BulkPalletStorageForm = () => {
               className="form-input" 
               onChange={handleChange} 
             />
+
+            <div className="flex items-center bg-[#f8fafc] rounded-[1.5rem] border-2 border-[#f1f5f9] overflow-hidden focus-within:border-amber-600 transition-all">
+              <span className="pl-5 pr-2 font-black text-slate-400 bg-[#f8fafc] select-none text-sm">
+                +91
+              </span>
+              <input 
+                type="tel" 
+                name="mobile" 
+                placeholder="Mobile Number" 
+                required 
+                className="w-full py-4 pr-4 bg-[#f8fafc] border-none outline-none font-black tracking-widest text-[#1e293b] text-sm" 
+                maxLength="10" 
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({ ...formData, mobile: val });
+                }} 
+              />
+            </div>
           </div>
 
           {/* 📌 Step 2: Pallet Details */}
@@ -123,7 +143,7 @@ const BulkPalletStorageForm = () => {
                <div className="flex gap-2">
                   {['Standard', 'Heavy'].map((opt) => (
                     <button key={opt} type="button" onClick={() => setFormData({...formData, palletType: opt})}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${formData.palletType === opt ? 'bg-blue-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all cursor-pointer ${formData.palletType === opt ? 'bg-blue-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
                   ))}
                </div>
             </div>
@@ -140,7 +160,7 @@ const BulkPalletStorageForm = () => {
                <div className="flex gap-2">
                   {['No', 'Yes'].map((opt) => (
                     <button key={opt} type="button" onClick={() => setFormData({...formData, forkliftNeeded: opt})}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${formData.forkliftNeeded === opt ? 'bg-orange-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all cursor-pointer ${formData.forkliftNeeded === opt ? 'bg-orange-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
                   ))}
                </div>
             </div>
@@ -150,7 +170,7 @@ const BulkPalletStorageForm = () => {
                <div className="flex gap-2">
                   {['No', 'Yes'].map((opt) => (
                     <button key={opt} type="button" onClick={() => setFormData({...formData, handlingRequired: opt})}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${formData.handlingRequired === opt ? 'bg-orange-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all cursor-pointer ${formData.handlingRequired === opt ? 'bg-orange-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
                   ))}
                </div>
             </div>
@@ -173,7 +193,7 @@ const BulkPalletStorageForm = () => {
                <div className="flex gap-2">
                   {['Monthly', 'Yearly', 'Project Base'].map((opt) => (
                     <button key={opt} type="button" onClick={() => setFormData({...formData, contractType: opt})}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${formData.contractType === opt ? 'bg-emerald-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all cursor-pointer ${formData.contractType === opt ? 'bg-emerald-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>
                   ))}
                </div>
             </div>
@@ -181,7 +201,7 @@ const BulkPalletStorageForm = () => {
 
           <button 
             disabled={loading} 
-            className={`w-full py-6 rounded-3xl font-black uppercase tracking-[0.2em] shadow-2xl transition-all flex items-center justify-center gap-3 ${loading ? 'bg-slate-400' : 'bg-amber-600 text-white hover:bg-amber-700 active:scale-95'}`}
+            className={`w-full py-6 rounded-3xl font-black uppercase tracking-[0.2em] shadow-2xl transition-all flex items-center justify-center gap-3 cursor-pointer ${loading ? 'bg-slate-400' : 'bg-amber-600 text-white hover:bg-amber-700 active:scale-95'}`}
           >
             {loading ? "Processing..." : "Submit Storage Request"}
             <ChevronRight size={20}/>

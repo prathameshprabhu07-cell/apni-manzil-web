@@ -61,7 +61,7 @@ const BookPartLoad = () => {
     <div className="min-h-screen bg-slate-50 font-sans pb-12">
       {/* Header */}
       <div className="bg-green-700 text-white p-6 flex items-center gap-4 sticky top-0 z-50 shadow-lg">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition">
+        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition cursor-pointer">
           <ArrowLeft size={20}/>
         </button>
         <div>
@@ -135,18 +135,27 @@ const BookPartLoad = () => {
 
           {/* 📱 Contact & Submit */}
           <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-6">
-            <div className="relative">
-              <span className="absolute left-5 top-4 font-black text-slate-400">+91</span>
+            <div className="flex items-center bg-[#f8fafc] rounded-[1.25rem] border-2 border-[#f1f5f9] overflow-hidden focus-within:border-green-600 transition-all">
+              <span className="pl-5 pr-2 font-black text-slate-500 bg-[#f8fafc] select-none text-sm">
+                +91
+              </span>
               <input 
-                type="tel" name="mobile" placeholder="Mobile Number" 
-                required className="form-input pl-14 font-black tracking-widest" 
-                maxLength="10" onChange={handleChange} 
+                type="tel" 
+                name="mobile" 
+                placeholder="Mobile Number" 
+                required 
+                className="w-full py-4 pr-4 bg-[#f8fafc] border-none outline-none font-black tracking-widest text-[#1e293b]" 
+                maxLength="10" 
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({ ...formData, mobile: val });
+                }} 
               />
             </div>
 
             <button 
               disabled={loading} 
-              className={`w-full py-5 rounded-[1.5rem] font-black uppercase tracking-widest shadow-xl transition-all flex items-center justify-center gap-3 ${loading ? 'bg-slate-400' : 'bg-green-700 text-white hover:bg-green-800 active:scale-95'}`}
+              className={`w-full py-5 rounded-[1.5rem] font-black uppercase tracking-widest shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer ${loading ? 'bg-slate-400' : 'bg-green-700 text-white hover:bg-green-800 active:scale-95'}`}
             >
               {loading ? "Sending..." : "Request Best Price"}
               {!loading && <CheckCircle2 size={20}/>}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, MapPin, Clock, CheckCircle, Search, X, Calendar, Navigation, Loader2 } from 'lucide-react';
+import { Package, MapPin, Clock, CheckCircle, Search, X, Calendar, Navigation, Loader2, Phone } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -25,6 +25,7 @@ const BookingForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     pickup: '',
     drop: '',
+    phone: '',
     service: 'Express Courier',
     date: ''
   });
@@ -38,6 +39,7 @@ const BookingForm = ({ onClose }) => {
       const docRef = await addDoc(collection(db, "bookings"), {
         pickupAddress: formData.pickup,
         dropAddress: formData.drop,
+        customerPhone: `+91${formData.phone}`,
         serviceType: formData.service,
         pickupDate: formData.date,
         status: "Pending",
@@ -83,6 +85,27 @@ const BookingForm = ({ onClose }) => {
             <div className="relative">
               <MapPin className="absolute left-4 top-4 text-[#FF5E00]" size={18}/>
               <input required onChange={(e)=>setFormData({...formData, drop: e.target.value})} className="w-full p-4 pl-12 bg-slate-50 border-none rounded-2xl font-bold outline-none ring-2 ring-transparent focus:ring-[#FF5E00] transition shadow-inner text-sm" placeholder="Full Destination Address" />
+            </div>
+          </div>
+
+          {/* मोबाईल नंबर इनपुट +91 सह */}
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Phone Number</label>
+            <div className="flex items-center bg-slate-50 rounded-2xl overflow-hidden ring-2 ring-transparent focus-within:ring-[#FF5E00] shadow-inner">
+              <span className="pl-4 pr-2 text-slate-500 font-bold select-none bg-slate-50 text-sm">
+                +91
+              </span>
+              <input 
+                type="tel" 
+                maxLength="10" 
+                required 
+                onChange={(e)=>{
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({...formData, phone: val});
+                }} 
+                className="w-full p-4 bg-slate-50 border-none font-bold outline-none text-sm" 
+                placeholder="Mobile Number" 
+              />
             </div>
           </div>
 
@@ -186,7 +209,7 @@ const CustomerDashboard = () => {
 
       {/* Universal Search */}
       <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-10 text-center">
-        <h3 className="text-lg font-black text-[#001D3D] mb-4 uppercase italic italic tracking-tighter">AI LOGISTICS SEARCH</h3>
+        <h3 className="text-lg font-black text-[#001D3D] mb-4 uppercase italic tracking-tighter">AI LOGISTICS SEARCH</h3>
         <div className="flex flex-col md:flex-row gap-4">
           <input className="flex-1 p-4 border border-slate-200 rounded-xl focus:ring-2 ring-[#FF5E00] outline-none" placeholder="Pickup Pincode" />
           <input className="flex-1 p-4 border border-slate-200 rounded-xl focus:ring-2 ring-[#FF5E00] outline-none" placeholder="Drop Pincode" />
@@ -196,7 +219,7 @@ const CustomerDashboard = () => {
         </div>
       </div>
 
-      {/* Shipment List (येथील डेटा आता खऱ्या ऑर्डर्स दाखवेल) */}
+      {/* Shipment List */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center">
           <h3 className="text-lg font-black text-[#001D3D] uppercase italic">My Recent Shipments</h3>

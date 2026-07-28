@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { 
   ArrowLeft, Store, ShoppingBag, Box, Settings, 
-  ChevronRight, Truck, Database, Globe
+  ChevronRight, Truck, Database, Globe, Phone
 } from 'lucide-react';
 
 const FulfillmentWarehouseForm = () => {
@@ -12,6 +12,7 @@ const FulfillmentWarehouseForm = () => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
+    customerPhone: '',
     brandName: '',
     storeLink: '',
     monthlyOrders: '',
@@ -30,6 +31,13 @@ const FulfillmentWarehouseForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // मोबाईल नंबर व्हॅलिडेट करा
+    if (!formData.customerPhone || formData.customerPhone.length < 10) {
+      alert("कृपया १० अंकी वैध मोबाईल नंबर भरा!");
+      return;
+    }
+
     setLoading(true);
 
     const bookingData = {
@@ -67,7 +75,7 @@ const FulfillmentWarehouseForm = () => {
     <div className="min-h-screen bg-slate-50 pb-12 font-sans">
       {/* 🟦 Header */}
       <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-0 z-50 shadow-lg">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition">
+        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/25 transition">
           <ArrowLeft size={20}/>
         </button>
         <div>
@@ -96,13 +104,38 @@ const FulfillmentWarehouseForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* 📌 Step 1: Business Info */}
+          {/* 📌 Step 1: Business Info & Mobile Number */}
           <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
             <h3 className="flex items-center gap-2 font-black text-[11px] text-blue-700 uppercase tracking-widest mb-4">
-              <Store size={14}/> Step 1: Business Info
+              <Store size={14}/> Step 1: Business Info & Contact
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
+              
+              {/* Mobile Number Field with +91 Prefix */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 ml-2 uppercase">Mobile Number</label>
+                <div className="flex items-center bg-[#f8fafc] rounded-[1.5rem] border-2 border-[#f1f5f9] overflow-hidden focus-within:border-[#002D5E] focus-within:bg-white transition">
+                  <span className="bg-slate-200 px-4 py-[1.1rem] text-slate-700 font-extrabold border-r border-slate-300 select-none">
+                    +91
+                  </span>
+                  <input 
+                    type="tel"
+                    maxLength="10"
+                    name="customerPhone"
+                    value={formData.customerPhone}
+                    placeholder="Enter 10 digit mobile number"
+                    required
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setFormData({ ...formData, customerPhone: val });
+                    }}
+                    className="w-full px-4 py-[1.1rem] bg-transparent font-bold outline-none border-none text-slate-900 text-sm"
+                  />
+                </div>
+              </div>
+
               <input name="brandName" placeholder="Brand Name" required className="form-input" onChange={handleChange} />
+              
               <div className="relative">
                 <Globe size={16} className="absolute left-4 top-4 text-slate-400" />
                 <input name="storeLink" placeholder="Website / Store Link (Optional)" className="form-input pl-12" onChange={handleChange} />

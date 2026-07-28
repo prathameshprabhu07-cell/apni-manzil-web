@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { Ship, Package, FileCheck, MapPin, LogOut, Globe, Clock } from 'lucide-react';
+import { Ship, Package, FileCheck, MapPin, LogOut, Globe, Clock, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 
@@ -94,6 +94,13 @@ const EXIMDashboard = () => {
                     <td style={{ padding: '15px' }}>
                       <div style={{ fontWeight: 'bold' }}>{s.cargoType || 'General Cargo'}</div>
                       <div style={{ fontSize: '11px', color: '#94a3b8' }}>ID: {s.id.slice(0, 10)}</div>
+                      {/* जर डेटाबेसमध्ये मोबाईल नंबर असेल तर तो +91 सह दिसेल */}
+                      {s.phone && (
+                        <div style={{ fontSize: '11px', color: '#002D5E', fontWeight: 'bold', marginTop: '2px' }}>
+                          <Phone size={10} style={{ verticalAlign: 'middle', marginRight: '3px' }} />
+                          +91 {s.phone.replace(/^\+91/, '')}
+                        </div>
+                      )}
                     </td>
                     <td style={{ padding: '15px' }}>
                       <div style={{ fontSize: '13px' }}>{s.pickupAddress} ➔ {s.dropAddress}</div>

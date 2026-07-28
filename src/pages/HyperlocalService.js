@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -9,6 +9,9 @@ import {
 const HyperlocalService = () => {
   const navigate = useNavigate();
 
+  // मोबाईल नंबर स्टेट (जर फॉर्ममध्ये वापरायचा असेल तर)
+  const [mobileNumber, setMobileNumber] = useState("");
+
   const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
   // ट्रॅकिंग फंक्शन
@@ -17,6 +20,7 @@ const HyperlocalService = () => {
       await axios.post(n8nUrl, {
         action: "Hyperlocal_Booking_Click",
         service_name: serviceName,
+        mobile_number: mobileNumber ? `+91${mobileNumber}` : "",
         timestamp: new Date().toISOString()
       });
     } catch (error) {
@@ -126,6 +130,28 @@ const HyperlocalService = () => {
         </div>
       </section>
 
+      {/* Optional Quick Mobile Number Input with +91 Prefix */}
+      <section className="max-w-xl mx-auto px-6 mb-16">
+        <div className="bg-white p-6 rounded-3xl shadow-md border border-slate-200 flex flex-col sm:flex-row items-center gap-4">
+          <div className="w-full flex items-center bg-slate-50 rounded-2xl overflow-hidden border border-slate-300 focus-within:ring-2 ring-blue-500">
+            <span className="bg-slate-200 px-4 py-3 text-slate-700 font-extrabold border-r border-slate-300 select-none text-sm">
+              +91
+            </span>
+            <input 
+              type="tel"
+              maxLength="10"
+              placeholder="Enter mobile number for updates"
+              value={mobileNumber}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setMobileNumber(val);
+              }}
+              className="w-full p-3 bg-transparent border-none outline-none text-sm font-bold text-slate-900"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* 3. AI Feature Bar & Book Now Banner */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 mb-24">
         <div className="bg-gradient-to-r from-[#002D5E] to-blue-800 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
@@ -143,7 +169,7 @@ const HyperlocalService = () => {
             onClick={() => handleLocalBooking("Urgent Hyperlocal Delivery")}
             className="mt-6 md:mt-0 bg-orange-500 text-white px-12 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-orange-600 transition transform hover:scale-105 z-10 cursor-pointer"
            >
-             Book Now
+              Book Now
            </button>
            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mt-16 -mr-16"></div>
         </div>

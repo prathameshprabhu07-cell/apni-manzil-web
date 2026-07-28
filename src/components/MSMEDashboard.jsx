@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Package, Truck, CreditCard, 
-  PlusCircle, MapPin, Search, Navigation, X, Clock, CheckCircle2 
+  PlusCircle, MapPin, Search, Navigation, X, Clock, CheckCircle2, Phone 
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -129,7 +129,16 @@ const MSMEDashboard = ({ businessName = "Apni Manzil Partner" }) => {
               <tbody className="divide-y divide-slate-50">
                 {orders.map((order) => (
                   <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-6 font-black text-[#002D5E] text-sm">#{order.id.substring(0,6)}</td>
+                    <td className="px-8 py-6 font-black text-[#002D5E] text-sm">
+                      #{order.id.substring(0,6)}
+                      {/* जर ऑर्डर्स डेटाबेसमध्ये फोन नंबर असेल तर तो +91 सह दिसेल */}
+                      {order.phone && (
+                        <div className="text-[11px] font-bold text-slate-500 mt-1 flex items-center gap-1">
+                          <Phone size={10} className="text-orange-500" />
+                          +91 {order.phone.replace(/^\+91/, '')}
+                        </div>
+                      )}
+                    </td>
                     <td className="px-8 py-6">
                       <span className="text-xs font-bold text-slate-500 uppercase">{order.serviceType}</span>
                     </td>

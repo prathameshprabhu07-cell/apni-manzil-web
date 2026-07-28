@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { 
   ArrowLeft, Building2, User, Clock, Package, 
-  Ruler, ShieldCheck, CheckCircle2, ChevronRight, Info
+  Ruler, ShieldCheck, CheckCircle2, ChevronRight, Info, Phone
 } from 'lucide-react';
 
 const LongTermStorageForm = () => {
@@ -18,6 +18,7 @@ const LongTermStorageForm = () => {
   const [formData, setFormData] = useState({
     companyName: '',
     contactPerson: '',
+    contactNo: '',
     duration: '',
     goodsType: '',
     inventorySize: '',
@@ -43,11 +44,19 @@ const LongTermStorageForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // मोबाईल नंबर व्हॅलिडेट करा
+    if (!formData.contactNo || formData.contactNo.length < 10) {
+      alert("कृपया १० अंकी वैध संपर्क क्रमांक भरा!");
+      return;
+    }
+
     setLoading(true);
     
     // पूर्ण डेटा
     const bookingData = {
       ...formData,
+      contactNo: `+91${formData.contactNo}`,
       serviceType: "Long Term Storage",
       status: "Pending",
       timestamp: new Date().toISOString()
@@ -107,6 +116,25 @@ const LongTermStorageForm = () => {
             <div className="space-y-3">
               <input name="companyName" placeholder="Company Name" required className="form-input" onChange={handleChange} />
               <input name="contactPerson" placeholder="Contact Person Name" required className="form-input" onChange={handleChange} />
+              
+              {/* Contact Number with +91 Prefix */}
+              <div className="flex items-center bg-[#f8fafc] rounded-[1.5rem] overflow-hidden border-2 border-[#f1f5f9] focus-within:border-[#002D5E] focus-within:bg-white transition-all">
+                <span className="bg-slate-200 px-4 py-4 text-slate-700 font-extrabold border-r border-slate-300 select-none text-sm">
+                  +91
+                </span>
+                <input 
+                  type="tel"
+                  maxLength="10"
+                  name="contactNo"
+                  placeholder="Contact Number"
+                  value={formData.contactNo}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setFormData({ ...formData, contactNo: val });
+                  }}
+                  className="w-full p-4 bg-transparent border-none outline-none text-sm font-bold text-slate-900" 
+                />
+              </div>
             </div>
           </div>
 

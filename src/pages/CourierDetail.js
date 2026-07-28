@@ -4,11 +4,15 @@ import { db } from '../firebase'; // Firebase इम्पोर्ट सुन
 import { collection, addDoc } from 'firebase/firestore';
 
 const CourierDetail = () => {
-  const [pincodes, setPincodes] = useState({ pickup: '', delivery: '' });
+  const [pincodes, setPincodes] = useState({ mobile: '', pickup: '', delivery: '' });
   const [rates, setRates] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const checkServiceability = async () => {
+    if (!pincodes.mobile || pincodes.mobile.length < 10) {
+      alert("कृपया १० अंकी वैध मोबाईल नंबर भरा!");
+      return;
+    }
     if (!pincodes.pickup || !pincodes.delivery) {
       alert("कृपया दोन्ही पिनकोड भरा!");
       return;
@@ -16,6 +20,7 @@ const CourierDetail = () => {
     setLoading(true);
 
     const requestData = {
+      mobile: pincodes.mobile,
       pickup_pincode: pincodes.pickup,
       delivery_pincode: pincodes.delivery,
       weight: "0.5",
@@ -54,7 +59,25 @@ const CourierDetail = () => {
       
       {/* Rate Check Form */}
       <div style={{ background: '#f9f9f9', padding: '20px', borderRadius: '15px', marginTop: '20px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
-        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+          
+          {/* Mobile Number Field with +91 Prefix */}
+          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', border: '1px solid #ccc', borderRadius: '5px', overflow: 'hidden', width: '250px' }}>
+            <span style={{ padding: '10px 12px', background: '#f1f5f9', fontWeight: 'bold', color: '#64748b', borderRight: '1px solid #ccc', userSelect: 'none' }}>
+              +91
+            </span>
+            <input 
+              type="tel" 
+              placeholder="मोबाईल नंबर" 
+              maxLength="10"
+              style={{ padding: '10px', border: 'none', outline: 'none', width: '100%', fontWeight: 'bold' }}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setPincodes({ ...pincodes, mobile: val });
+              }} 
+            />
+          </div>
+
           <input 
             type="text" 
             placeholder="पिकअप पिनकोड (उदा. मुंबई: 400001)" 
@@ -86,7 +109,7 @@ const CourierDetail = () => {
                 <h4 style={{ margin: '0 0 10px 0' }}>{courier.courier_name}</h4>
                 <p>रेट: <b>₹{parseFloat(courier.rate) + 20}</b></p>
                 <p>अंदाजे दिवस: {courier.etd}</p>
-                <button style={{ width: '100%', background: '#28a745', color: 'white', border: 'none', padding: '8px', borderRadius: '5px' }}>बुक करा</button>
+                <button style={{ width: '100%', background: '#28a745', color: 'white', border: 'none', padding: '8px', borderRadius: '5px', cursor: 'pointer' }}>बुक करा</button>
               </div>
             ))}
           </div>

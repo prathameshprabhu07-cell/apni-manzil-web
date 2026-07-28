@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Car, Info, MapPin, ShieldCheck, ArrowRight, ClipboardList, Fuel } from 'lucide-react';
+import { Truck, Car, Info, MapPin, ShieldCheck, ArrowRight, ClipboardList, Fuel, Phone, User } from 'lucide-react';
 
 const VehicleTransportForm = () => {
   const [loading, setLoading] = useState(false);
@@ -44,6 +44,47 @@ const VehicleTransportForm = () => {
 
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         
+        {/* --- 0. Customer Contact Info ( नाव आणि +91 मोबाईल नंबर ) --- */}
+        <div className="mb-8 bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-slate-100">
+          <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <User size={16} className="text-blue-600" /> Customer Details
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase ml-2">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-4 top-4 text-slate-400" size={18} />
+                <input 
+                  type="text" 
+                  placeholder="Enter your full name" 
+                  className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold focus:ring-2 ring-orange-500 text-sm"
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase ml-2">Mobile Number</label>
+              <div className="flex items-center bg-slate-50 rounded-2xl overflow-hidden focus-within:ring-2 ring-orange-500">
+                <span className="pl-4 pr-2 text-slate-500 font-bold select-none bg-slate-50 text-sm">
+                  +91
+                </span>
+                <input 
+                  type="tel" 
+                  maxLength="10" 
+                  placeholder="Enter mobile number" 
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setFormData({...formData, phone: val});
+                  }} 
+                  className="w-full p-4 bg-slate-50 border-none outline-none text-sm font-bold" 
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* --- 1. Vehicle Selection & Basic Info --- */}
         <div className="mb-8 bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-slate-100">
           <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">

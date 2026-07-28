@@ -36,6 +36,12 @@ const ApniManzilFinalForm = () => {
   };
 
   const handleSubmit = async () => {
+    // मोबाईल नंबर व्हॅलिडेट करा
+    if (!details.contactNo || details.contactNo.length < 10) {
+      alert("कृपया १० अंकी वैध संपर्क क्रमांक भरा!");
+      return;
+    }
+
     setLoading(true);
     const finalData = { 
       ...details, 
@@ -87,9 +93,24 @@ const ApniManzilFinalForm = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input name="ownerName" placeholder="Full Name" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-indigo-500 text-sm font-bold" />
-            <div className="relative">
-              <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input name="contactNo" placeholder="Contact Number" onChange={handleChange} className="w-full p-4 pl-12 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-indigo-500 text-sm font-bold" />
+            
+            {/* Contact Number with +91 Prefix */}
+            <div className="flex items-center bg-slate-50 rounded-2xl overflow-hidden focus-within:ring-2 ring-indigo-500">
+              <span className="bg-slate-200 px-4 py-4 text-slate-700 font-extrabold border-r border-slate-300 select-none text-sm">
+                +91
+              </span>
+              <input 
+                type="tel"
+                maxLength="10"
+                name="contactNo"
+                placeholder="Contact Number"
+                value={details.contactNo}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setDetails({ ...details, contactNo: val });
+                }}
+                className="w-full p-4 bg-transparent border-none outline-none text-sm font-bold text-slate-900" 
+              />
             </div>
           </div>
         </div>

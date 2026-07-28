@@ -81,13 +81,24 @@ const BookingPage = () => {
 
             <div className="space-y-2">
               <label className="text-xs font-black uppercase text-slate-400 ml-4">WhatsApp Number</label>
-              <input 
-                name="senderPhone" 
-                required 
-                placeholder="+91 0000000000" 
-                className="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
-                onChange={handleInputChange} 
-              />
+              {/* व्हॉट्सॲप नंबरसाठी +91 चा बॉक्स जोडला आहे */}
+              <div className="flex items-center bg-slate-50 rounded-2xl border-2 border-transparent focus-within:border-orange-400 overflow-hidden transition-all">
+                <span className="pl-5 pr-2 text-slate-500 font-bold select-none bg-slate-50">
+                  +91
+                </span>
+                <input 
+                  type="tel"
+                  maxLength="10"
+                  name="senderPhone" 
+                  required 
+                  placeholder="0000000000" 
+                  className="w-full p-5 pl-0 bg-slate-50 border-none outline-none font-bold"
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setFormData({ ...formData, senderPhone: val });
+                  }} 
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -127,7 +138,7 @@ const BookingPage = () => {
             <button 
               type="submit" 
               disabled={loading}
-              className="md:col-span-2 bg-orange-500 text-white py-6 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all flex items-center justify-center gap-3 active:scale-95"
+              className="md:col-span-2 bg-orange-500 text-white py-6 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all flex items-center justify-center gap-3 active:scale-95 cursor-pointer"
             >
               {loading ? "Processing..." : (
                 <>

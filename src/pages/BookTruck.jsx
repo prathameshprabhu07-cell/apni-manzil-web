@@ -85,7 +85,7 @@ const BookTruck = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-10">
       <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-0 z-50 shadow-lg">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition"><ArrowLeft size={20}/></button>
+        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition cursor-pointer"><ArrowLeft size={20}/></button>
         <h1 className="text-xl font-black italic uppercase tracking-tighter">Book <span className="text-orange-400">Truck</span></h1>
       </div>
 
@@ -148,7 +148,7 @@ const BookTruck = () => {
                       key={cat}
                       type="button"
                       onClick={() => handleCategoryChange(cat)}
-                      className={`py-3 text-[11px] font-black uppercase rounded-xl border-2 transition-all ${bookingData.truckCategory === cat ? 'border-[#002D5E] bg-[#002D5E] text-white shadow-md' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                      className={`py-3 text-[11px] font-black uppercase rounded-xl border-2 transition-all cursor-pointer ${bookingData.truckCategory === cat ? 'border-[#002D5E] bg-[#002D5E] text-white shadow-md' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
                     >
                       {cat} Body
                     </button>
@@ -178,7 +178,7 @@ const BookTruck = () => {
                 type="button" 
                 onClick={() => isFirstStepValid() ? setStep(2) : alert("Please fill all details and select a truck.")}
                 disabled={!isFirstStepValid()}
-                className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all flex items-center justify-center gap-3 ${isFirstStepValid() ? 'bg-[#002D5E] text-white hover:bg-blue-900' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer ${isFirstStepValid() ? 'bg-[#002D5E] text-white hover:bg-blue-900' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
               >
                 Continue to Contact <ChevronRight size={20}/>
               </button>
@@ -191,22 +191,33 @@ const BookTruck = () => {
                 </div>
                 <h2 className="text-2xl font-[1000] uppercase italic tracking-tighter">Quick Verification</h2>
                 <p className="text-slate-500 font-bold leading-tight">Enter your mobile number to confirm the booking request.</p>
-                <div className="relative">
-                  <span className="absolute left-5 top-4 font-black text-slate-400">+91</span>
+                
+                <div className="flex items-center bg-[#f8fafc] rounded-[1.25rem] border-2 border-[#f1f5f9] overflow-hidden focus-within:border-[#002D5E] transition-all">
+                  <span className="pl-5 pr-2 font-black text-slate-400 bg-[#f8fafc] select-none text-xl">
+                    +91
+                  </span>
                   <input 
-                    type="tel" name="mobile" placeholder="Mobile Number" 
-                    required className="form-input text-center text-xl tracking-[0.3em] pl-12" 
-                    maxLength="10" onChange={handleChange} 
+                    type="tel" 
+                    name="mobile" 
+                    placeholder="Mobile Number" 
+                    required 
+                    className="w-full py-4 pr-4 bg-[#f8fafc] border-none outline-none font-black text-xl tracking-[0.2em] text-[#1e293b]" 
+                    maxLength="10" 
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setBookingData({ ...bookingData, mobile: val });
+                    }} 
                   />
                 </div>
+
                 <button 
                   disabled={loading || bookingData.mobile.length < 10} 
-                  className={`group w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 ${bookingData.mobile.length === 10 ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-400'}`}
+                  className={`group w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer ${bookingData.mobile.length === 10 ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
                 >
                   {loading ? "Processing..." : "Confirm Booking"}
                   {!loading && <CheckCircle2 size={20} className="group-hover:scale-125 transition-transform"/>}
                 </button>
-                <button type="button" onClick={() => setStep(1)} className="text-slate-400 font-bold text-xs uppercase underline tracking-tighter hover:text-slate-600 transition">Back to Details</button>
+                <button type="button" onClick={() => setStep(1)} className="text-slate-400 font-bold text-xs uppercase underline tracking-tighter hover:text-slate-600 transition cursor-pointer">Back to Details</button>
               </div>
             </div>
           )}

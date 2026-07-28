@@ -57,7 +57,7 @@ const ColdStorageDetail = () => {
     <div className="min-h-screen bg-[#F0F9FF] font-sans">
       {/* Header */}
       <div className="bg-[#004080] text-white pt-12 pb-24 px-6 md:px-16 relative">
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 text-cyan-400 mb-8 font-bold hover:text-cyan-300 transition">
+        <button onClick={() => navigate('/')} className="flex items-center gap-2 text-cyan-400 mb-8 font-bold hover:text-cyan-300 transition cursor-pointer">
           <ArrowLeft size={20}/> Back to Services
         </button>
         <h1 className="text-4xl md:text-6xl font-black mb-2 tracking-tight">Cold Storage Booking</h1>
@@ -77,18 +77,32 @@ const ColdStorageDetail = () => {
                 <label className="text-xs font-black uppercase text-slate-400 ml-2">Personal Information</label>
                 <div className="relative">
                   <User className="absolute left-4 top-4 text-slate-400" size={20}/>
-                  <input name="fullName" required placeholder="Full Name" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition" onChange={handleInputChange} />
+                  <input name="fullName" required placeholder="Full Name" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition text-slate-800" onChange={handleInputChange} />
                 </div>
-                <div className="relative">
-                  <Phone className="absolute left-4 top-4 text-slate-400" size={20}/>
-                  <input name="phone" required placeholder="Phone Number" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition" onChange={handleInputChange} />
+                
+                <div className="flex items-center bg-slate-50 rounded-2xl border-2 border-transparent focus-within:border-blue-500 overflow-hidden transition">
+                  <span className="pl-4 pr-1 font-black text-slate-400 bg-slate-50 select-none text-sm">
+                    +91
+                  </span>
+                  <input 
+                    type="tel" 
+                    name="phone" 
+                    required 
+                    placeholder="Phone Number" 
+                    maxLength="10"
+                    className="w-full py-4 pr-4 bg-slate-50 border-none font-bold outline-none text-slate-800 text-sm tracking-widest" 
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setFormData({ ...formData, phone: val });
+                    }} 
+                  />
                 </div>
               </div>
 
               {/* Product Details */}
               <div className="space-y-4">
                 <label className="text-xs font-black uppercase text-slate-400 ml-2">Storage Requirements</label>
-                <select name="productType" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition" onChange={handleInputChange}>
+                <select name="productType" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition text-slate-800" onChange={handleInputChange}>
                   <option>Fruits & Vegetables</option>
                   <option>Dairy Products</option>
                   <option>Pharmaceuticals</option>
@@ -97,7 +111,7 @@ const ColdStorageDetail = () => {
                 </select>
                 <div className="relative">
                   <Box className="absolute left-4 top-4 text-slate-400" size={20}/>
-                  <input name="quantity" required placeholder="Quantity (e.g. 500kg / 10 Crates)" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition" onChange={handleInputChange} />
+                  <input name="quantity" required placeholder="Quantity (e.g. 500kg / 10 Crates)" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition text-slate-800" onChange={handleInputChange} />
                 </div>
               </div>
             </div>
@@ -106,7 +120,7 @@ const ColdStorageDetail = () => {
               {/* Temp & Duration */}
               <div className="space-y-4">
                 <label className="text-xs font-black uppercase text-slate-400 ml-2">Temperature Range</label>
-                <select name="temperature" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition" onChange={handleInputChange}>
+                <select name="temperature" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition text-slate-800" onChange={handleInputChange}>
                   <option>-20°C to -10°C (Deep Freeze)</option>
                   <option>-5°C to 0°C (Chilled)</option>
                   <option>2°C to 8°C (Cool)</option>
@@ -117,7 +131,7 @@ const ColdStorageDetail = () => {
                 <label className="text-xs font-black uppercase text-slate-400 ml-2">Storage Duration</label>
                 <div className="relative">
                   <Calendar className="absolute left-4 top-4 text-slate-400" size={20}/>
-                  <input name="duration" required placeholder="Duration (e.g. 1 Month)" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition" onChange={handleInputChange} />
+                  <input name="duration" required placeholder="Duration (e.g. 1 Month)" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition text-slate-800" onChange={handleInputChange} />
                 </div>
               </div>
             </div>
@@ -126,11 +140,11 @@ const ColdStorageDetail = () => {
               <label className="text-xs font-black uppercase text-slate-400 ml-2">Location for Pickup (Optional)</label>
               <div className="relative">
                 <MapPin className="absolute left-4 top-4 text-slate-400" size={20}/>
-                <textarea name="pickupLocation" rows="2" placeholder="Full Pickup Address" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition" onChange={handleInputChange}></textarea>
+                <textarea name="pickupLocation" rows="2" placeholder="Full Pickup Address" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-blue-500 transition text-slate-800"></textarea>
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="w-full py-5 bg-[#004080] text-white rounded-2xl font-black text-xl uppercase tracking-[0.2em] shadow-xl hover:bg-blue-800 transition active:scale-95 flex items-center justify-center gap-3">
+            <button type="submit" disabled={loading} className="w-full py-5 bg-[#004080] text-white rounded-2xl font-black text-xl uppercase tracking-[0.2em] shadow-xl hover:bg-blue-800 transition active:scale-95 flex items-center justify-center gap-3 cursor-pointer">
               {loading ? "Sending..." : "Request Booking"} <ChevronRight size={24}/>
             </button>
           </form>

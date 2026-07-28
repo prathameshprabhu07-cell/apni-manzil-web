@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   PackageCheck, ShoppingCart, Banknote, RefreshCcw, Box, 
-  ChevronRight, CheckCircle, MapPin, ArrowRight
+  ChevronRight, CheckCircle, MapPin, ArrowRight, Phone
 } from 'lucide-react';
 
 // ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
@@ -11,11 +11,17 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const EcommerceLogistics = () => {
   const navigate = useNavigate();
+  const [customerPhone, setCustomerPhone] = useState('');
 
   // ✅ बुकिंग हाताळण्यासाठी फंक्शन (n8n URL अपडेट केली आहे)
-  const handleEcommerceQuery = async (serviceTitle) => {
+  const handleEcommerceQuery = (serviceTitle) => {
+    // मोबाईल नंबर व्हॅलिडेट करा
+    if (!customerPhone || customerPhone.length < 10) {
+      alert("कृपया चौकशी करण्यापूर्वी १० अंकी वैध मोबाईल नंबर भरा!");
+      return;
+    }
+
     // युजरचा डेटा
-    const customerPhone = "7378502356"; 
     const customerName = "E-com Vendor";
     const orderId = "EC-" + Math.floor(Math.random() * 100000);
     const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
@@ -24,19 +30,20 @@ const EcommerceLogistics = () => {
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
     
     // २. n8n ला डेटा पाठवा
-    try {
-      await axios.post(n8nUrl, {
-        service: serviceTitle,
-        customerName: customerName,
-        phone: customerPhone,
-        orderId: orderId,
-        timestamp: new Date().toISOString()
-      });
+    axios.post(n8nUrl, {
+      service: serviceTitle,
+      customerName: customerName,
+      phone: customerPhone,
+      orderId: orderId,
+      timestamp: new Date().toISOString()
+    })
+    .then(() => {
       alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवली आहे!`);
-    } catch (error) {
+    })
+    .catch((error) => {
       console.error("Error sending to n8n:", error);
       alert("चौकशी पाठवताना एरर आला, पण नोटिफिकेशन पाठवले आहे.");
-    }
+    });
   };
 
   const ecommerceServices = [
@@ -90,6 +97,30 @@ const EcommerceLogistics = () => {
             <p className="text-xl opacity-90 font-medium max-w-lg mx-auto md:mx-0">
               Grow your online business with India's most reliable fulfillment network.
             </p>
+
+            {/* Mobile Number Box with +91 Prefix */}
+            <div className="max-w-md mx-auto md:mx-0 bg-white/10 p-3 rounded-2xl backdrop-blur-md border border-white/20">
+              <label className="block text-xs font-bold text-orange-300 uppercase mb-2 tracking-wider text-left pl-1">
+                तुमचा मोबाईल नंबर टाका
+              </label>
+              <div className="flex items-center bg-white rounded-xl overflow-hidden shadow-lg">
+                <span className="bg-slate-100 px-4 py-3 text-slate-700 font-bold border-r border-slate-200 select-none">
+                  +91
+                </span>
+                <input 
+                  type="tel"
+                  maxLength="10"
+                  value={customerPhone}
+                  placeholder="मोबाईल नंबर (उदा. 7378502356)"
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setCustomerPhone(val);
+                  }}
+                  className="w-full p-3 text-slate-900 font-bold outline-none border-none text-base"
+                />
+              </div>
+            </div>
+
             <button 
               onClick={() => handleEcommerceQuery("Full E-commerce Setup")}
               className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-xl cursor-pointer"
@@ -170,7 +201,7 @@ const EcommerceLogistics = () => {
                 onClick={() => handleEcommerceQuery("E-com Business Growth")}
                 className="bg-white text-[#002D5E] px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:text-white transition shadow-xl cursor-pointer"
                >
-                 Get Started
+                  Get Started
                </button>
             </div>
         </div>

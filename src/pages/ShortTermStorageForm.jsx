@@ -26,12 +26,20 @@ const ShortTermStorageForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // मोबाईल नंबर व्हॅलिडेट करा
+    if (!formData.mobile || formData.mobile.length < 10) {
+      alert("कृपया १० अंकी वैध मोबाईल नंबर भरा!");
+      return;
+    }
+
     setLoading(true);
     const finalMaterial = formData.materialType === "Other" ? formData.otherMaterial : formData.materialType;
     
     // पूर्ण डेटा एकत्र केला
     const bookingData = {
       ...formData,
+      mobile: `+91${formData.mobile}`,
       materialType: finalMaterial,
       serviceType: "Short Term Storage",
       status: "Pending",
@@ -110,9 +118,24 @@ const ShortTermStorageForm = () => {
 
             <textarea name="additionalNotes" placeholder="Special requirements (CCTV, Pallets, etc.)" rows="3" className="form-input pt-4" onChange={handleChange}></textarea>
             
-            <div className="relative">
-              <Phone size={18} className="absolute left-5 top-4 text-slate-400" />
-              <input type="tel" name="mobile" placeholder="Mobile Number" required maxLength="10" className="form-input pl-14 font-black tracking-[2px]" onChange={handleChange} />
+            {/* Mobile Number with +91 Prefix */}
+            <div className="flex items-center bg-[#f8fafc] rounded-[1.25rem] overflow-hidden border-2 border-[#f1f5f9] focus-within:border-[#002D5E] focus-within:bg-white transition-all">
+              <span className="bg-slate-200 px-4 py-4 text-slate-700 font-extrabold border-r border-slate-300 select-none text-sm">
+                +91
+              </span>
+              <input 
+                type="tel" 
+                name="mobile" 
+                placeholder="Mobile Number" 
+                required 
+                maxLength="10" 
+                value={formData.mobile}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({ ...formData, mobile: val });
+                }}
+                className="w-full p-4 bg-transparent border-none outline-none text-sm font-black tracking-[2px] text-slate-900" 
+              />
             </div>
             
             <button 

@@ -162,7 +162,7 @@ const CourierServiceDetail = () => {
                 <label className="text-xs font-black uppercase text-slate-400 ml-4">Weight (kg) & Dimensions (cm)</label>
                 <div className="flex gap-2">
                    <input name="weight" required type="number" step="0.1" placeholder="Weight" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
-                   <button type="button" onClick={handleCheckRates} className="bg-blue-600 text-white px-4 rounded-2xl hover:bg-blue-700 transition flex items-center gap-2">
+                   <button type="button" onClick={handleCheckRates} className="bg-blue-600 text-white px-4 rounded-2xl hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer">
                       <Search size={18}/> Rates
                    </button>
                 </div>
@@ -194,8 +194,8 @@ const CourierServiceDetail = () => {
                          <p className="text-lg font-black">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
                          <p className="text-[9px] font-bold mt-1 opacity-80 uppercase tracking-tighter">Est. Delivery: {courier.etd}</p>
                       </div>
-                  ))}
-                </div>
+                    ))}
+                 </div>
               </div>
             )}
 
@@ -206,7 +206,25 @@ const CourierServiceDetail = () => {
                 </h3>
                 <div className="space-y-4">
                   <input name="senderName" required placeholder="Sender Full Name" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
-                  <input name="senderPhone" required placeholder="WhatsApp Number" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
+                  
+                  {/* Sender Phone with +91 */}
+                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden border border-transparent focus-within:border-orange-500">
+                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r border-slate-200 select-none">+91</span>
+                    <input 
+                      name="senderPhone" 
+                      required 
+                      type="tel" 
+                      maxLength="10" 
+                      placeholder="WhatsApp Number" 
+                      className="w-full p-4 bg-white border-none font-bold outline-none" 
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        e.target.value = val;
+                        handleInputChange(e);
+                      }} 
+                    />
+                  </div>
+
                   <input name="pickupPincode" required placeholder="Pickup Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
                   <textarea name="senderAddress" required rows="3" placeholder="Complete Pickup Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange}></textarea>
                 </div>
@@ -218,7 +236,25 @@ const CourierServiceDetail = () => {
                 </h3>
                 <div className="space-y-4">
                   <input name="receiverName" required placeholder="Receiver Full Name" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
-                  <input name="receiverPhone" required placeholder="Contact Number" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
+                  
+                  {/* Receiver Phone with +91 */}
+                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden border border-transparent focus-within:border-orange-500">
+                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r border-slate-200 select-none">+91</span>
+                    <input 
+                      name="receiverPhone" 
+                      required 
+                      type="tel" 
+                      maxLength="10" 
+                      placeholder="Contact Number" 
+                      className="w-full p-4 bg-white border-none font-bold outline-none" 
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        e.target.value = val;
+                        handleInputChange(e);
+                      }} 
+                    />
+                  </div>
+
                   <input name="dropPincode" required placeholder="Delivery Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
                   <textarea name="receiverAddress" required rows="3" placeholder="Complete Delivery Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange}></textarea>
                 </div>
@@ -234,7 +270,7 @@ const CourierServiceDetail = () => {
                       key={mode}
                       type="button"
                       onClick={() => setFormData({...formData, paymentMode: mode})}
-                      className={`px-6 py-2 rounded-full font-black text-xs uppercase tracking-widest transition ${formData.paymentMode === mode ? 'bg-[#002D5E] text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                      className={`px-6 py-2 rounded-full font-black text-xs uppercase tracking-widest transition cursor-pointer ${formData.paymentMode === mode ? 'bg-[#002D5E] text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
                     >
                       {mode}
                     </button>
@@ -245,7 +281,7 @@ const CourierServiceDetail = () => {
               <button 
                 type="submit"
                 disabled={loading}
-                className={`w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-3 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-3 cursor-pointer ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {loading ? 'Processing...' : 'Confirm Booking'} <ChevronRight size={20}/>
               </button>

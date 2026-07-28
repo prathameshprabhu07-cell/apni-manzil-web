@@ -73,11 +73,25 @@ const FurnitureShiftingForm = () => {
                 <input required type="text" placeholder="Full Name" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-blue-500 font-bold" 
                   onChange={(e) => setUserDetails({...userDetails, name: e.target.value})} />
               </div>
-              <div className="relative">
-                <Phone className="absolute left-4 top-4 text-slate-400" size={18} />
-                <input required type="text" placeholder="Contact Number" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-blue-500 font-bold" 
-                  onChange={(e) => setUserDetails({...userDetails, phone: e.target.value})} />
+
+              {/* कॉन्टॅक्ट नंबरसाठी +91 चा बॉक्स जोडला आहे */}
+              <div className="flex items-center bg-slate-50 rounded-2xl overflow-hidden focus-within:ring-2 ring-blue-500">
+                <span className="pl-4 pr-2 text-slate-500 font-bold select-none bg-slate-50 text-sm">
+                  +91
+                </span>
+                <input 
+                  required 
+                  type="tel" 
+                  maxLength="10" 
+                  placeholder="Contact Number" 
+                  className="w-full p-4 bg-slate-50 border-none outline-none font-bold text-sm" 
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setUserDetails({...userDetails, phone: val});
+                  }} 
+                />
               </div>
+
               <div className="relative">
                 <Calendar className="absolute left-4 top-4 text-slate-400" size={18} />
                 <input required type="date" className="w-full pl-12 p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-blue-500 font-bold text-slate-500" 

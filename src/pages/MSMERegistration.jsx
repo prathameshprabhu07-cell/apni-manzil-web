@@ -17,6 +17,13 @@ const MSMERegistration = ({ setRegistered, setBusinessName }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // मोबाईल नंबर व्हॅलिडेट करा
+    if (!formData.mobile || formData.mobile.length < 10) {
+      alert("कृपया १० अंकी वैध मोबाईल नंबर भरा!");
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -27,7 +34,7 @@ const MSMERegistration = ({ setRegistered, setBusinessName }) => {
       await set(userRef, {
         businessName: formData.businessName,
         gstNumber: formData.gstNumber,
-        mobile: formData.mobile,
+        mobile: `+91${formData.mobile}`,
         isRegistered: true,
         registrationDate: new Date().toISOString()
       });
@@ -109,19 +116,25 @@ const MSMERegistration = ({ setRegistered, setBusinessName }) => {
             </div>
           </div>
 
-          {/* Mobile Number */}
+          {/* Mobile Number with +91 Prefix */}
           <div style={{ marginBottom: '30px' }}>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Mobile Number</label>
-            <div style={{ position: 'relative' }}>
-              <Phone size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: '#999' }} />
+            <div style={{ display: 'flex', alignItems: 'center', borderRadius: '6px', border: '1px solid #ddd', overflow: 'hidden' }}>
+              <span style={{ backgroundColor: '#e9ecef', padding: '10px 12px', fontWeight: 'bold', color: '#495057', borderRight: '1px solid #ddd', fontSize: '14px', userSelect: 'none' }}>
+                +91
+              </span>
               <input 
                 type="tel" 
+                maxLength="10"
                 name="mobile"
                 required
                 placeholder="99XXXXXXXX"
                 value={formData.mobile}
-                onChange={handleChange}
-                style={{ width: '100%', padding: '10px 10px 10px 40px', borderRadius: '6px', border: '1px solid #ddd' }}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({ ...formData, mobile: val });
+                }}
+                style={{ width: '100%', padding: '10px', border: 'none', outline: 'none', fontSize: '14px' }}
               />
             </div>
           </div>
