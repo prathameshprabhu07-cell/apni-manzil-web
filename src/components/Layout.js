@@ -182,7 +182,7 @@ const Layout = ({ children }) => {
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/help-center">Help Center</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/track">Service Areas</Link></li>
               {/* ✅ इथेही पाथ /partner-registration केला आहे */}
-              <li className="hover:text-white cursor-pointer transition-all"><Link to="/partner-registration">Partner With Us</Link></li>
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/partner-registration">Become a Partner</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/privacy-policy">Privacy Policy</Link></li>
             </ul>
           </div>

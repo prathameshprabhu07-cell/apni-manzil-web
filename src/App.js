@@ -28,7 +28,7 @@ import PartnerRegistration from './pages/PartnerRegistration';
 import MSMEDashboard from './components/MSMEDashboard'; 
 import MSMERegistration from './pages/MSMERegistration'; 
 import ChatBot from './components/ChatBot'; 
-import Dashboard from './pages/Dashboard'; // ✅ डॅशबोर्ड इम्पोर्ट
+import Dashboard from './pages/Dashboard'; 
 
 // --- नवीन पेजेसचे इम्पोर्ट्स ---
 import PackersAndMovers from './pages/PackersAndMovers'; 
@@ -40,9 +40,6 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import VendorDashboard from './pages/VendorDashboard'; 
 import CustomerDashboard from './components/CustomerDashboard'; 
 
-// --- वेंडर रजिस्ट्रेशन फॉर्म इम्पोर्ट (नवीन जोडले) ---
-import VendorRegistrationForm from './components/VendorRegistrationForm'; 
-
 import HomeShifting from './pages/HomeShifting'; 
 import OfficeShiftingForm from './components/OfficeShiftingForm'; 
 import FurnitureShiftingForm from './components/FurnitureShiftingForm';
@@ -52,12 +49,12 @@ import SameDayDelivery from './pages/SameDayDelivery';
 import BookTruck from './pages/BookTruck'; 
 import BookPartLoad from './pages/BookPartLoad'; 
 import FindLoad from './pages/FindLoad';
-import ShortTermStorageForm from './components/ShortTermStorageForm';
-import LongTermStorageForm from './components/LongTermStorageForm';
-import FulfillmentWarehouseForm from './components/FulfillmentWarehouseForm';
-import ColdStorageForm from './components/ColdStorageForm';
-import InventoryManagementForm from './components/InventoryManagementForm';
-import BulkPalletStorageForm from './components/BulkPalletStorageForm';
+import ShortTermStorageForm from './pages/ShortTermStorageForm';
+import LongTermStorageForm from './pages/LongTermStorageForm';
+import FulfillmentWarehouseForm from './pages/FulfillmentWarehouseForm';
+import ColdStorageForm from './pages/ColdStorageForm';
+import InventoryManagementForm from './pages/InventoryManagementForm';
+import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 import PartnerWithUs from './pages/PartnerWithUs'; 
 
 import Auth from './Auth'; 
@@ -158,9 +155,6 @@ function App() {
           <Route path="/inventory-management" element={<InventoryManagementForm />} />
           <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
 
-          {/* ✅ इथे पाथ /partner-registration केला आहे जेणेकरून लेआउटमधील लिंकशी मॅच होईल */}
-          <Route path="/partner-registration" element={<VendorRegistrationForm />} />
-
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />
           
@@ -182,8 +176,11 @@ function App() {
           <Route path="/seafreight" element={<SeaFreight />} />
           <Route path="/customs" element={<Customs />} />
           <Route path="/tradefinance" element={<TradeFinance />} />
+          
+          {/* ✅ पार्टनर रजिस्ट्रेशन राऊट लिंक केला आहे */}
+          <Route path="/partner-registration" element={<PartnerRegistration />} />
+          
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
-
           <Route path="/partner-with-us" element={<PartnerWithUs />} />
           
           <Route 
