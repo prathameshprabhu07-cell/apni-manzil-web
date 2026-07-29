@@ -10,7 +10,7 @@ const RatingComponent = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // फेस इमोटिकॉन्स लिस्ट
+  // Face Emoticons List
   const moodList = [
     { label: 'Very Bad', emoji: '😡', color: 'hover:bg-red-100 border-red-200' },
     { label: 'Bad', emoji: '🙁', color: 'hover:bg-orange-100 border-orange-200' },
@@ -22,7 +22,7 @@ const RatingComponent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0 && !mood) {
-      alert("कृपया किमान स्टार रेटिंग किंवा फेस इमोटिकॉन निवडा!");
+      alert("Please select at least a star rating or a face emoticon!");
       return;
     }
 
@@ -37,7 +37,7 @@ const RatingComponent = () => {
       setSubmitted(true);
     } catch (error) {
       console.error("Error saving feedback: ", error);
-      alert("क काहीतरी चूक झाली, पुन्हा प्रयत्न करा.");
+      alert("Something went wrong, please try again.");
     } finally {
       setLoading(false);
     }
@@ -52,14 +52,14 @@ const RatingComponent = () => {
               Feedback & Rating
             </span>
             <h3 className="text-xl font-black text-slate-900 mt-2 tracking-tight">
-              तुमचा अनुभव कसा होता?
+              How was your experience?
             </h3>
             <p className="text-xs text-slate-500 font-medium mt-1">
-              Apni Manzil अधिक सुधारण्यासाठी तुमचे मत आमच्यासाठी महत्त्वाचे आहे.
+              Your feedback helps us improve Apni Manzil services.
             </p>
           </div>
 
-          {/* फेस इमोजिस सेक्शन */}
+          {/* Face Emojis Section */}
           <div className="flex justify-between items-center gap-2 pt-2">
             {moodList.map((item, idx) => (
               <button
@@ -78,7 +78,7 @@ const RatingComponent = () => {
             ))}
           </div>
 
-          {/* स्टार रेटिंग सेक्शन */}
+          {/* Star Rating Section */}
           <div className="flex flex-col items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
             <p className="text-xs font-black text-slate-700 mb-2 uppercase tracking-wide">Star Rating</p>
             <div className="flex gap-2">
@@ -102,36 +102,36 @@ const RatingComponent = () => {
             </div>
           </div>
 
-          {/* फीडबॅक टेक्स्ट बॉक्स */}
+          {/* Feedback Text Box */}
           <div>
             <textarea
               rows="3"
-              placeholder="काही सूचना किंवा अभिप्राय द्यायचा आहे का? (Optional)"
+              placeholder="Any suggestions or feedback? (Optional)"
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
               className="w-full p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 font-medium text-xs text-slate-800 outline-none focus:border-[#002D5E] focus:bg-white transition-all resize-none"
             />
           </div>
 
-          {/* सबमिट बटन */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
             className="w-full py-4 bg-[#002D5E] hover:bg-blue-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 transition active:scale-95"
           >
             <Send size={16} />
-            {loading ? "सबमिट होत आहे..." : "अभिप्राय पाठवा"}
+            {loading ? "Submitting..." : "Submit Feedback"}
           </button>
         </form>
       ) : (
-        /* थँक्यू स्क्रीन */
+        /* Thank You Screen */
         <div className="text-center py-8 space-y-3">
           <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
             <CheckCircle2 size={36} />
           </div>
-          <h3 className="text-xl font-black text-slate-900">खूप खूप धन्यवाद!</h3>
+          <h3 className="text-xl font-black text-slate-900">Thank You Very Much!</h3>
           <p className="text-xs text-slate-500 font-medium max-w-xs mx-auto">
-            तुमचा अमूल्य अभिप्राय आमच्यापर्यंत पोहोचला आहे. यामुळे आम्हाला सेवा अधिक सुधारण्यास मदत होईल.
+            Your valuable feedback has been received. This will help us improve our services further.
           </p>
           <button
             onClick={() => {
@@ -142,7 +142,7 @@ const RatingComponent = () => {
             }}
             className="mt-4 text-xs font-bold text-blue-600 hover:underline"
           >
-            दुसरा अभिप्राय द्या
+            Give Another Feedback
           </button>
         </div>
       )}
