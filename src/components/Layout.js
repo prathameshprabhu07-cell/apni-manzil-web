@@ -179,7 +179,7 @@ const Layout = ({ children }) => {
             <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Support & Info</h5>
             <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-slate-300">
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/about">About Us</Link></li>
-              <li className="hover:text-white cursor-pointer transition-all"><Link to="/help-center">Help Center</Link></li>
+              <li className="hover:text-white cursor-pointer transition-all"><Link to="/help">Help Center</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/track">Service Areas</Link></li>
               {/* ✅ इथेही पाथ /partner-registration केला आहे */}
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/partner-registration">Become a Partner</Link></li>
