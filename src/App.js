@@ -40,6 +40,9 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import VendorDashboard from './pages/VendorDashboard'; 
 import CustomerDashboard from './components/CustomerDashboard'; 
 
+// --- वेंडर रजिस्ट्रेशन फॉर्म इम्पोर्ट (नवीन जोडले) ---
+import VendorRegistrationForm from './components/VendorRegistrationForm'; 
+
 import HomeShifting from './pages/HomeShifting'; 
 import OfficeShiftingForm from './components/OfficeShiftingForm'; 
 import FurnitureShiftingForm from './components/FurnitureShiftingForm';
@@ -139,7 +142,7 @@ function App() {
           
           <Route path="/courier-service" element={<CourierServiceDetail />} />
           <Route path="/booking" element={<BookingPage />} />
-          <Route path="/dashboard" element={<Dashboard />} /> {/* ✅ नवीन राऊट */}
+          <Route path="/dashboard" element={<Dashboard />} />
 
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
@@ -154,6 +157,9 @@ function App() {
           <Route path="/cold-storage" element={<ColdStorageForm />} />
           <Route path="/inventory-management" element={<InventoryManagementForm />} />
           <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
+
+          {/* ✅ नवीन वेंडर रजिस्ट्रेशन फॉर्म राऊट */}
+          <Route path="/vendor-register" element={<VendorRegistrationForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />
