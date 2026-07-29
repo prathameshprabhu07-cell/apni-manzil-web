@@ -55,7 +55,6 @@ import FulfillmentWarehouseForm from './pages/FulfillmentWarehouseForm';
 import ColdStorageForm from './pages/ColdStorageForm';
 import InventoryManagementForm from './pages/InventoryManagementForm';
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
-import PartnerWithUs from './pages/PartnerWithUs'; 
 
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
@@ -181,7 +180,6 @@ function App() {
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
-          <Route path="/partner-with-us" element={<PartnerWithUs />} />
           
           <Route 
             path="/customer-dashboard" 
