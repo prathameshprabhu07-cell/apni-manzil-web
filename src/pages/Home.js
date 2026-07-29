@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import HeroLogisticsImage from '../assets/global-logistics.png';
 import TrackingAppImage from '../assets/tracking-app.png';
 
+// हा आहे आपला फीडबॅक आणि रेटिंग कंपोनंट (तुझा पाथ तपासून घे)
+import RatingComponent from '../components/RatingComponent';
+
 // All icons from lucide-react
 import {
   Package, Truck, Bike, Home as HomeIcon, Warehouse, Globe, Zap, Bot, Star,
@@ -163,7 +166,6 @@ const Home = () => {
                   <div className={`${s.bg} ${s.color} p-5 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     {s.icon}
                   </div>
-                  {/* इथे बदल केला आहे (Blue to Orange on hover) */}
                   <h4 className="font-extrabold text-sm text-[#002D5E] group-hover:text-orange-500 text-center px-4 leading-snug transition-colors duration-300">
                     {s.name}
                   </h4>
@@ -338,8 +340,23 @@ const Home = () => {
         </div>
       </section>
 
+      {/* ⭐ FEEDBACK / RATING COMPONENT (ट्रक सेक्शनच्या बरोबर वर ऍड केला आहे) */}
+      <section className="max-w-7xl mx-auto px-6 mt-20">
+        <div className="bg-white rounded-[3.5rem] p-8 md:p-12 shadow-sm border border-slate-100">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-tighter">
+              तुमचा <span className="text-orange-500">अभिप्राय</span> आम्हाला सांगा
+            </h2>
+            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs mt-2">
+              तुमचे रेटिंग आमच्या सेवा सुधारण्यास मदत करते
+            </p>
+          </div>
+          <RatingComponent />
+        </div>
+      </section>
+
       {/* 7. FINAL BRANDING TRUCK SECTION */}
-      <section className="w-full mt-20 mb-10 px-6">
+      <section className="w-full mt-16 mb-10 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="relative overflow-hidden rounded-[3.5rem] shadow-2xl border-4 border-white group">
             <img

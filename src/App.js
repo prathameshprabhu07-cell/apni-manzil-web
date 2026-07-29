@@ -59,6 +59,9 @@ import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
 
+// ✅ फीडबॅक / रेटिंग कंपोनंट इम्पोर्ट (पाथ तपासून घे)
+import RatingComponent from './components/RatingComponent'; 
+
 // ==========================================
 // 3. SERVICE PLACEHOLDER COMPONENTS
 // ==========================================
@@ -178,6 +181,15 @@ function App() {
           
           {/* ✅ पार्टनर रजिस्ट्रेशन राऊट लिंक केला आहे */}
           <Route path="/partner-registration" element={<PartnerRegistration />} />
+          
+          {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊट ऍड केला आहे */}
+          <Route path="/rating" element={
+            <div className="max-w-4xl mx-auto px-6 py-16">
+              <div className="bg-white rounded-[3rem] p-8 shadow-sm border border-slate-100">
+                <RatingComponent />
+              </div>
+            </div>
+          } />
           
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
           
