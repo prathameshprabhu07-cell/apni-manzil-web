@@ -49,12 +49,15 @@ import SameDayDelivery from './pages/SameDayDelivery';
 import BookTruck from './pages/BookTruck'; 
 import BookPartLoad from './pages/BookPartLoad'; 
 import FindLoad from './pages/FindLoad';
-import ShortTermStorageForm from './components/ShortTermStorageForm';
-import LongTermStorageForm from './components/LongTermStorageForm';
-import FulfillmentWarehouseForm from './components/FulfillmentWarehouseForm';
-import ColdStorageForm from './components/ColdStorageForm';
-import InventoryManagementForm from './components/InventoryManagementForm';
-import BulkPalletStorageForm from './components/BulkPalletStorageForm';
+
+// स्टोरेज फॉर्म्सचे इम्पोर्ट्स (योग्य पाथ सह)
+import ShortTermStorageForm from './pages/ShortTermStorageForm';
+import LongTermStorageForm from './pages/LongTermStorageForm';
+import FulfillmentWarehouseForm from './pages/FulfillmentWarehouseForm';
+import ColdStorageForm from './pages/ColdStorageForm';
+import InventoryManagementForm from './pages/InventoryManagementForm';
+import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
+
 import PartnerWithUs from './pages/PartnerWithUs'; 
 
 import Auth from './Auth'; 
