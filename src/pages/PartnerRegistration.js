@@ -115,7 +115,6 @@ const PartnerRegistration = () => {
     );
   }
 
-  // --- STEP 1 & 2: VENDOR DETAILS & BANK INFO ---
   return (
     <div className="min-h-screen bg-[#F4F7FA] flex flex-col font-sans">
       <div className="flex-grow flex flex-col items-center py-16 px-6">
@@ -125,11 +124,11 @@ const PartnerRegistration = () => {
           <div className="lg:w-1/3 bg-[#002D5E] p-12 text-white flex flex-col justify-between">
             <div>
               <p className="text-[#ff5e00] font-black text-xs uppercase tracking-widest mb-4 italic underline decoration-2 underline-offset-4">Registration Portal</p>
-              <h2 className="text-3xl font-black uppercase italic leading-none mb-6">Step<br/>{step < 10 ? `0${step}` : step} <span className="text-blue-400">/ 3</span></h2>
-              <p className="text-xs text-blue-200 font-bold uppercase tracking-widest leading-relaxed">Verification of {category} partnership records.</p>
+              <h2 className="text-3xl font-black uppercase italic leading-none mb-6">Step<br/>0{step} <span className="text-blue-400">/ 4</span></h2>
+              <p className="text-xs text-blue-200 font-bold uppercase tracking-widest leading-relaxed">Complete onboarding for {category} partnership.</p>
             </div>
             <div className="mt-12 space-y-4">
-              {[1, 2, 3].map(s => (
+              {[1, 2, 3, 4].map(s => (
                 <div key={s} className={`h-1 w-full ${s <= step ? 'bg-[#ff5e00]' : 'bg-gray-700'}`}></div>
               ))}
             </div>
@@ -137,13 +136,13 @@ const PartnerRegistration = () => {
 
           {/* Form Area */}
           <div className="lg:w-2/3 p-12 md:p-16">
-            <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); nextStep(); }}>
+            <form onSubmit={step === 4 ? handleSubmit : (e) => { e.preventDefault(); nextStep(); }}>
               <div className="min-h-[400px]">
                 
-                {/* STEP 1: Business & Contact Details */}
+                {/* STEP 1: Business Details */}
                 {step === 1 && (
-                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
-                    <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-6 border-b-4 border-slate-800 w-fit pb-2">Business & Contact Info</h3>
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-5">
+                    <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-6 border-b-4 border-slate-800 w-fit pb-2">1. Business Information</h3>
                     
                     <div>
                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Company / Business Name</label>
@@ -159,9 +158,16 @@ const PartnerRegistration = () => {
                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">GST Number</label>
                       <input name="gstNumber" required onChange={handleInput} value={formData.gstNumber} type="text" className="w-full border-b-2 border-gray-200 p-3 font-bold text-base uppercase outline-none focus:border-[#004080]" placeholder="e.g. 27XXXXX0000X1Z5" />
                     </div>
+                  </div>
+                )}
 
+                {/* STEP 2: Contact & Service Details */}
+                {step === 2 && (
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-5">
+                    <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-6 border-b-4 border-orange-600 w-fit pb-2">2. Contact & Service Info</h3>
+                    
                     <div>
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Official Email</label>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Official Email Address</label>
                       <input name="officialEmail" type="email" required onChange={handleInput} value={formData.officialEmail} className="w-full border-b-2 border-gray-200 p-3 font-bold text-base outline-none focus:border-[#004080]" placeholder="e.g. info@apnilogistics.com" />
                     </div>
 
@@ -185,27 +191,26 @@ const PartnerRegistration = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 pt-2">
-                      <div>
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Service Offered</label>
-                        <input name="serviceType" required onChange={handleInput} value={formData.serviceType} type="text" className="w-full border-b-2 border-gray-200 p-3 font-bold text-sm outline-none focus:border-[#004080]" placeholder="e.g. Transport" />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Operating Areas</label>
-                        <input name="serviceArea" required onChange={handleInput} value={formData.serviceArea} type="text" className="w-full border-b-2 border-gray-200 p-3 font-bold text-sm outline-none focus:border-[#004080]" placeholder="e.g. Pune, Mumbai" />
-                      </div>
+                    <div>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Services Offered</label>
+                      <input name="serviceType" required onChange={handleInput} value={formData.serviceType} type="text" className="w-full border-b-2 border-gray-200 p-3 font-bold text-base outline-none focus:border-[#004080]" placeholder="e.g. Warehousing, Transport" />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Operating Service Areas / Cities</label>
+                      <input name="serviceArea" required onChange={handleInput} value={formData.serviceArea} type="text" className="w-full border-b-2 border-gray-200 p-3 font-bold text-base outline-none focus:border-[#004080]" placeholder="e.g. Pune, Mumbai, Nashik" />
                     </div>
                   </div>
                 )}
 
-                {/* STEP 2: Bank Account Details */}
-                {step === 2 && (
-                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
-                    <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-6 border-b-4 border-blue-600 w-fit pb-2">Bank Details (For Payouts)</h3>
+                {/* STEP 3: Bank Details */}
+                {step === 3 && (
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-5">
+                    <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-6 border-b-4 border-blue-600 w-fit pb-2">3. Bank Account Details</h3>
                     
                     <div>
                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Account Holder Name</label>
-                      <input name="accountHolderName" required onChange={handleInput} value={formData.accountHolderName} type="text" className="w-full border-b-2 border-gray-200 p-3 font-bold text-base outline-none focus:border-[#004080]" placeholder="As per passbook" />
+                      <input name="accountHolderName" required onChange={handleInput} value={formData.accountHolderName} type="text" className="w-full border-b-2 border-gray-200 p-3 font-bold text-base outline-none focus:border-[#004080]" placeholder="As per bank passbook" />
                     </div>
 
                     <div>
@@ -226,10 +231,10 @@ const PartnerRegistration = () => {
                   </div>
                 )}
 
-                {/* STEP 3: Compliance Agreement */}
-                {step === 3 && (
+                {/* STEP 4: Compliance Agreement */}
+                {step === 4 && (
                   <div className="animate-in fade-in duration-500">
-                    <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-6 border-b-4 border-orange-500 w-fit pb-2">Compliance Agreement</h3>
+                    <h3 className="text-2xl font-black text-slate-800 uppercase italic mb-6 border-b-4 border-green-600 w-fit pb-2">4. Compliance Agreement</h3>
                     <div className="bg-gray-50 p-6 border border-gray-200 h-56 overflow-y-auto text-[12px] font-bold text-gray-600 leading-relaxed mb-6 shadow-inner">
                       <p className="mb-4 uppercase text-[#004080] border-b border-gray-200 pb-2">1.0 Data Accuracy & Verification</p>
                       <p className="mb-4">The registering entity confirms that all statutory documents (GST, Bank details) provided to Apni Manzil are authentic and up-to-date. Fraudulent entries will lead to immediate legal termination.</p>
@@ -260,7 +265,7 @@ const PartnerRegistration = () => {
                   disabled={loading}
                   className="flex-[2] py-5 bg-[#004080] text-white font-black uppercase text-xs tracking-[0.2em] hover:bg-[#ff5e00] transition duration-500 flex items-center justify-center gap-2 shadow-2xl"
                 >
-                  {loading ? "Submitting..." : (step === 3 ? "Execute Registration" : "Proceed Next")} <ChevronRight size={16}/>
+                  {loading ? "Submitting..." : (step === 4 ? "Execute Registration" : "Proceed Next")} <ChevronRight size={16}/>
                 </button>
               </div>
             </form>
