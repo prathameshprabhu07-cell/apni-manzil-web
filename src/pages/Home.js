@@ -74,6 +74,7 @@ const Home = () => {
           <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
             👉 “Book Courier, Transport & Packers in 1 Click”
           </span>
+
         </div>
 
         <style>
@@ -137,7 +138,7 @@ const Home = () => {
                 if(selectedPath) {
                   navigate(selectedPath); 
                 } else {
-                  alert("कृपया आधी एक सर्व्हिस निवडा!");
+                  alert("Please select a service first!");
                 }
               }}
               className="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-[0_10px_20px_rgba(249,115,22,0.4)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.6)] hover:-translate-y-1 active:scale-95 duration-300 flex items-center justify-center gap-2 group"
@@ -340,15 +341,15 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ⭐ FEEDBACK / RATING COMPONENT (ट्रक सेक्शनच्या बरोबर वर ऍड केला आहे) */}
+      {/* ⭐ FEEDBACK / RATING COMPONENT */}
       <section className="max-w-7xl mx-auto px-6 mt-20">
         <div className="bg-white rounded-[3.5rem] p-8 md:p-12 shadow-sm border border-slate-100">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-tighter">
-              तुमचा <span className="text-orange-500">अभिप्राय</span> आम्हाला सांगा
+              Share Your <span className="text-orange-500">Feedback</span>
             </h2>
             <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs mt-2">
-              तुमचे रेटिंग आमच्या सेवा सुधारण्यास मदत करते
+              Your ratings help us improve our services
             </p>
           </div>
           <RatingComponent />
