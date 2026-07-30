@@ -190,14 +190,14 @@ const Home = () => {
                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
                      <div className="text-left">
                        <p className="text-[10px] font-bold uppercase opacity-50 tracking-widest">Cheapest Rate</p>
-                       <p className="font-bold text-lg">Delhivery</p>
+                       <p className="font-bold text-lg">Delivery</p>
                      </div>
                      <span className="font-black text-orange-400 text-2xl tracking-tighter">₹ 79</span>
                    </div>
                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-3xl flex justify-between items-center border border-white/5">
                      <div className="text-left">
                        <p className="text-[10px] font-bold uppercase opacity-50 tracking-widest">Fastest Time</p>
-                       <p className="font-bold text-lg">DTDC Air</p>
+                       <p className="font-bold text-lg">Air Cargo</p>
                      </div>
                      <span className="font-black text-orange-400 text-2xl tracking-tighter">24H</span>
                    </div>
