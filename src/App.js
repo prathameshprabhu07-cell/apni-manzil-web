@@ -56,10 +56,13 @@ import ColdStorageForm from './pages/ColdStorageForm';
 import InventoryManagementForm from './pages/InventoryManagementForm';
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 
+// ✅ कोल्ड चेन फॉर्म इम्पोर्ट (नवीन ॲड केला)
+import ColdChainForm from './pages/ColdChainForm';
+
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
 
-// ✅ फीडबॅक / रेटिंग कंपोनंट इम्पोर्ट (पाथ तपासून घे)
+// ✅ फीडबॅक / रेटिंग कंपोनंट इम्पोर्ट
 import RatingComponent from './components/RatingComponent'; 
 
 // ==========================================
@@ -156,6 +159,9 @@ function App() {
           <Route path="/cold-storage" element={<ColdStorageForm />} />
           <Route path="/inventory-management" element={<InventoryManagementForm />} />
           <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
+
+          {/* ✅ कोल्ड चेन लॉजिस्टिक्स राऊत (नवीन ॲड केला) */}
+          <Route path="/cold-chain" element={<ColdChainForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />

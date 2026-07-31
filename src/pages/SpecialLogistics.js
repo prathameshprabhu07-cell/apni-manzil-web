@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ नवीन: पेज नेव्हिगेट करण्यासाठी
 import { 
   Snowflake, Pill, GlassWater, HardHat, Flame, 
   ShieldCheck, MapPin
@@ -8,13 +9,13 @@ import {
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const SpecialLogistics = () => {
+  const navigate = useNavigate(); // ✅ नेव्हिगेशन हुक
 
   // n8n प्रोडक्शन URL
   const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  // ✅ बुकिंग हाताळण्यासाठी फंक्शन (इतर सर्व्हिसेससाठी जसेच्या तसे)
   const handleSpecialBooking = async (serviceTitle) => {
-    // कस्टमरचा डेटा
     const customerPhone = "7378502356"; 
     const customerName = "Special Logistics Client";
     const orderId = "SPEC-" + Math.floor(Math.random() * 100000);
@@ -50,7 +51,7 @@ const SpecialLogistics = () => {
       title: "Cold Chain Logistics",
       desc: "Temperature Controlled shipping for perishables.",
       icon: <Snowflake size={40} className="text-blue-500" />,
-      tag: "Explore"
+      tag: "Book Now" // ✅ युजरसाठी स्पष्ट समजेल असे टॅग केले
     },
     {
       id: 2,
@@ -117,12 +118,22 @@ const SpecialLogistics = () => {
               <h3 className="font-black text-lg text-slate-800 mb-2">{s.title}</h3>
               <p className="text-slate-400 text-xs font-bold mb-6">{s.desc}</p>
               
-              <button 
-                onClick={() => handleSpecialBooking(s.title)}
-                className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
-              >
-                {s.tag}
-              </button>
+              {/* ✅ कोल्ड चेनसाठी वेगळे एक्शन बटन आणि इतरांसाठी जुने फंक्शन */}
+              {s.id === 1 ? (
+                <button 
+                  onClick={() => navigate('/cold-chain')}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
+                >
+                  {s.tag}
+                </button>
+              ) : (
+                <button 
+                  onClick={() => handleSpecialBooking(s.title)}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
+                >
+                  {s.tag}
+                </button>
+              )}
             </div>
           ))}
         </div>
