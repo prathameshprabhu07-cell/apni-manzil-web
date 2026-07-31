@@ -66,8 +66,17 @@ import FragileItemShippingForm from './pages/FragileItemShippingForm';
 // ✅ Heavy Machinery Transport फॉर्म इम्पोर्ट
 import HeavyMachineryTransportForm from './pages/HeavyMachineryTransportForm'; 
 
-// ✅ Dangerous Goods Transport फॉर्म इम्पोर्ट (नवीन जोडला)
+// ✅ Dangerous Goods Transport फॉर्म इम्पोर्ट
 import DangerousGoodsTransportForm from './pages/DangerousGoodsTransportForm'; 
+
+// ✅ Air Cargo फॉर्म इम्पोर्ट
+import AirCargoForm from './pages/AirCargoForm'; 
+
+// ✅ Sea Freight फॉर्म इम्पोर्ट
+import SeaFreightForm from './components/SeaFreightForm'; 
+
+// ✅ Customs Clearance Form इम्पोर्ट (नवीन जोडला)
+import CustomsClearanceForm from './pages/CustomsClearanceForm'; 
 
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
@@ -79,7 +88,6 @@ import RatingComponent from './components/RatingComponent';
 // 3. SERVICE PLACEHOLDER COMPONENTS
 // ==========================================
 const AirFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0f9ff' }}><h1 style={{ color: '#0369a1', fontSize: '3rem', fontWeight: '900' }}>International Air Freight</h1></div> );
-const SeaFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0fdf4' }}><h1 style={{ color: '#15803d', fontSize: '3rem', fontWeight: '900' }}>Global Sea Freight</h1></div> );
 const Customs = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}><h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900' }}>Customs & Compliance</h1></div> );
 const TradeFinance = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}><h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900' }}>Logistics Trade Finance</h1></div> );
 
@@ -180,8 +188,17 @@ function App() {
           {/* ✅ Heavy Machinery Transport राऊत */}
           <Route path="/heavy-machinery-transport" element={<HeavyMachineryTransportForm />} />
 
-          {/* ✅ Dangerous Goods Transport राऊत (नवीन जोडला) */}
+          {/* ✅ Dangerous Goods Transport राऊत */}
           <Route path="/dangerous-goods-transport" element={<DangerousGoodsTransportForm />} />
+
+          {/* ✅ Air Cargo Form राऊत */}
+          <Route path="/air-cargo" element={<AirCargoForm />} />
+
+          {/* ✅ Sea Freight Form राऊत */}
+          <Route path="/sea-freight" element={<SeaFreightForm />} />
+
+          {/* ✅ Customs Clearance Form राऊत (नवीन जोडला आहे) */}
+          <Route path="/customs-clearance" element={<CustomsClearanceForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />
@@ -201,7 +218,6 @@ function App() {
           <Route path="/ai-smart-logistics" element={<AISmartLogistics />} />
           
           <Route path="/airfreight" element={<AirFreight />} />
-          <Route path="/seafreight" element={<SeaFreight />} />
           <Route path="/customs" element={<Customs />} />
           <Route path="/tradefinance" element={<TradeFinance />} />
           

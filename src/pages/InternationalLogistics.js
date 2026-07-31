@@ -6,24 +6,22 @@ import {
   ShieldCheck, Zap, ChevronRight 
 } from 'lucide-react';
 
-// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const InternationalLogistics = () => {
   const navigate = useNavigate();
   const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन
+  // Function to handle standard bookings
   const handleGlobalBooking = async (serviceTitle) => {
-    // कस्टमरचा डेटा
     const customerPhone = "7378502356"; 
     const customerName = "Global Client";
     const orderId = "INT-" + Math.floor(Math.random() * 100000);
 
-    // १. व्हॉट्सॲप नोटिफिकेशन पाठवा
+    // 1. Send WhatsApp notification
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
     
-    // २. n8n ला डेटा पाठवा (Production URL)
+    // 2. Send data to n8n webhook
     try {
       await axios.post(n8nUrl, {
         action: "International_Logistics_Booking",
@@ -33,10 +31,10 @@ const InternationalLogistics = () => {
         orderId: orderId,
         timestamp: new Date().toISOString()
       });
-      alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या नोंदवली आहे!`);
+      alert(`Your inquiry for ${serviceTitle} has been registered successfully!`);
     } catch (error) {
       console.error("n8n Error:", error);
-      alert("चौकशी पाठवताना तांत्रिक अडचण आली.");
+      alert("An error occurred while sending the inquiry.");
     }
   };
 
@@ -123,12 +121,36 @@ const InternationalLogistics = () => {
               <h3 className="text-2xl font-black text-slate-800">{service.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
               
-              <button 
-                onClick={() => handleGlobalBooking(service.title)}
-                className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
-              >
-                Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-              </button>
+              {service.id === 2 ? (
+                <button 
+                  onClick={() => navigate('/air-cargo')}
+                  className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
+                >
+                  Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              ) : service.id === 3 ? (
+                <button 
+                  onClick={() => navigate('/sea-freight')}
+                  className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
+                >
+                  Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              ) : service.id === 5 ? (
+                /* ✅ Customs Clearance साठी नवीन फॉर्म राऊत जोडला आहे */
+                <button 
+                  onClick={() => navigate('/customs-clearance')}
+                  className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
+                >
+                  Clear Customs <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              ) : (
+                <button 
+                  onClick={() => handleGlobalBooking(service.title)}
+                  className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
+                >
+                  Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              )}
             </div>
           ))}
         </div>
