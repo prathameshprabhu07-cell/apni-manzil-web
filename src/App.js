@@ -56,7 +56,7 @@ import ColdStorageForm from './pages/ColdStorageForm';
 import InventoryManagementForm from './pages/InventoryManagementForm';
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 
-// ✅ कोल्ड चेन फॉर्म इम्पोर्ट (नवीन ॲड केला)
+// ✅ कोल्ड चेन फॉर्म इम्पोर्ट (एकच ठेवलं आहे)
 import ColdChainForm from './pages/ColdChainForm';
 
 import Auth from './Auth'; 
@@ -160,7 +160,7 @@ function App() {
           <Route path="/inventory-management" element={<InventoryManagementForm />} />
           <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
 
-          {/* ✅ कोल्ड चेन लॉजिस्टिक्स राऊत (नवीन ॲड केला) */}
+          {/* ✅ कोल्ड चेन लॉजिस्टिक्स राऊत */}
           <Route path="/cold-chain" element={<ColdChainForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
@@ -185,10 +185,10 @@ function App() {
           <Route path="/customs" element={<Customs />} />
           <Route path="/tradefinance" element={<TradeFinance />} />
           
-          {/* ✅ पार्टनर रजिस्ट्रेशन राऊट लिंक केला आहे */}
+          {/* ✅ पार्टनर रजिस्ट्रेशन राऊत लिंक केला आहे */}
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           
-          {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊट ऍड केला आहे */}
+          {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊत ऍड केला आहे */}
           <Route path="/rating" element={
             <div className="max-w-4xl mx-auto px-6 py-16">
               <div className="bg-white rounded-[3rem] p-8 shadow-sm border border-slate-100">
