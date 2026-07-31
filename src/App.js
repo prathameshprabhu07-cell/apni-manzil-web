@@ -72,10 +72,10 @@ import DangerousGoodsTransportForm from './pages/DangerousGoodsTransportForm';
 // ✅ Air Cargo फॉर्म इम्पोर्ट
 import AirCargoForm from './pages/AirCargoForm'; 
 
-// ✅ Sea Freight फॉर्म इम्पोर्ट
-import SeaFreightForm from './components/SeaFreightForm'; 
+// ✅ Sea Freight Form इम्पोर्ट (पाथ दुरुस्त केला आहे)
+import SeaFreightForm from './pages/SeaFreightForm'; 
 
-// ✅ Customs Clearance Form इम्पोर्ट (नवीन जोडला)
+// ✅ Customs Clearance Form इम्पोर्ट
 import CustomsClearanceForm from './pages/CustomsClearanceForm'; 
 
 import Auth from './Auth'; 
@@ -197,7 +197,7 @@ function App() {
           {/* ✅ Sea Freight Form राऊत */}
           <Route path="/sea-freight" element={<SeaFreightForm />} />
 
-          {/* ✅ Customs Clearance Form राऊत (नवीन जोडला आहे) */}
+          {/* ✅ Customs Clearance Form राऊत */}
           <Route path="/customs-clearance" element={<CustomsClearanceForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
