@@ -1,20 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ नवीन: पेज नेव्हिगेट करण्यासाठी
+import { useNavigate } from 'react-router-dom';
 import { 
   Snowflake, Pill, GlassWater, HardHat, Flame, 
   ShieldCheck, MapPin
 } from 'lucide-react';
 
-// ✅ फाईल पाथ
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const SpecialLogistics = () => {
-  const navigate = useNavigate(); // ✅ नेव्हिगेशन हुक
+  const navigate = useNavigate();
 
-  // n8n प्रोडक्शन URL
   const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन (इतर सर्व्हिसेससाठी जसेच्या तसे)
   const handleSpecialBooking = async (serviceTitle) => {
     const customerPhone = "7378502356"; 
     const customerName = "Special Logistics Client";
@@ -28,10 +25,8 @@ const SpecialLogistics = () => {
       timestamp: new Date().toISOString()
     };
 
-    // १. व्हॉट्सॲप मेसेज पाठवा
     sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
-    
-    // २. n8n ला डेटा पाठवा
+  
     try {
       await fetch(n8nUrl, {
         method: 'POST',
@@ -41,8 +36,8 @@ const SpecialLogistics = () => {
     } catch (error) {
       console.error("Webhook error:", error);
     }
-    
-    alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवण्यात आली आहे!`);
+  
+    alert(`${serviceTitle} enquiry has been sent successfully!`);
   };
 
   const specialServices = [
@@ -51,14 +46,14 @@ const SpecialLogistics = () => {
       title: "Cold Chain Logistics",
       desc: "Temperature Controlled shipping for perishables.",
       icon: <Snowflake size={40} className="text-blue-500" />,
-      tag: "Book Now" // ✅ युजरसाठी स्पष्ट समजेल असे टॅग केले
+      tag: "Book Now" 
     },
     {
       id: 2,
       title: "Medicine Transport",
       desc: "Safe Delivery of Medicines and Vaccines.",
       icon: <Pill size={40} className="text-red-500" />,
-      tag: "Explore"
+      tag: "Book Now"
     },
     {
       id: 3,
@@ -98,7 +93,6 @@ const SpecialLogistics = () => {
                <img src="https://cdn-icons-png.flaticon.com/512/4151/4151113.png" alt="Truck" className="w-64 h-64 object-contain opacity-20" />
             </div>
          </div>
-         {/* Background Curves */}
          <div className="absolute bottom-0 left-0 w-full h-12 bg-white rounded-t-[3rem]"></div>
       </div>
 
@@ -117,11 +111,39 @@ const SpecialLogistics = () => {
               </div>
               <h3 className="font-black text-lg text-slate-800 mb-2">{s.title}</h3>
               <p className="text-slate-400 text-xs font-bold mb-6">{s.desc}</p>
-              
-              {/* ✅ कोल्ड चेनसाठी वेगळे एक्शन बटन आणि इतरांसाठी जुने फंक्शन */}
+ 
               {s.id === 1 ? (
                 <button 
                   onClick={() => navigate('/cold-chain')}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
+                >
+                  {s.tag}
+                </button>
+              ) : s.id === 2 ? (
+                <button 
+                  onClick={() => navigate('/pharma-cold-chain')}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
+                >
+                  {s.tag}
+                </button>
+              ) : s.id === 3 ? (
+                <button 
+                  onClick={() => navigate('/fragile-item-shipping')}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
+                >
+                  {s.tag}
+                </button>
+              ) : s.id === 4 ? (
+                <button 
+                  onClick={() => navigate('/heavy-machinery-transport')}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
+                >
+                  {s.tag}
+                </button>
+              ) : s.id === 5 ? (
+                {/* ✅ Dangerous Goods Transport साठी राऊत सक्रिय केला आहे */}
+                <button 
+                  onClick={() => navigate('/dangerous-goods-transport')}
                   className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
                 >
                   {s.tag}
@@ -169,7 +191,7 @@ const SpecialLogistics = () => {
               <p className="text-blue-100/70 font-bold uppercase tracking-widest text-xs">Request a Customized Logistics Solution Today!</p>
             </div>
           </div>
-          
+ 
           <button 
             onClick={() => handleSpecialBooking("Special Handling Quote Request")}
             className="bg-orange-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-xl mt-8 md:mt-0 relative z-10 cursor-pointer"

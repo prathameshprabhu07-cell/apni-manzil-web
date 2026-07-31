@@ -56,8 +56,18 @@ import ColdStorageForm from './pages/ColdStorageForm';
 import InventoryManagementForm from './pages/InventoryManagementForm';
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 
-// ✅ कोल्ड चेन फॉर्म इम्पोर्ट (एकच ठेवलं आहे)
+// ✅ कोल्ड चेन आणि फार्मा कोल्ड चेन फॉर्म इम्पोर्ट्स
 import ColdChainForm from './pages/ColdChainForm';
+import PharmaColdChainForm from './pages/PharmaColdChainForm'; 
+
+// ✅ Fragile Item Shipping फॉर्म इम्पोर्ट
+import FragileItemShippingForm from './pages/FragileItemShippingForm'; 
+
+// ✅ Heavy Machinery Transport फॉर्म इम्पोर्ट
+import HeavyMachineryTransportForm from './pages/HeavyMachineryTransportForm'; 
+
+// ✅ Dangerous Goods Transport फॉर्म इम्पोर्ट (नवीन जोडला)
+import DangerousGoodsTransportForm from './pages/DangerousGoodsTransportForm'; 
 
 import Auth from './Auth'; 
 import EXIMDashboard from './components/EXIMDashboard'; 
@@ -160,8 +170,18 @@ function App() {
           <Route path="/inventory-management" element={<InventoryManagementForm />} />
           <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
 
-          {/* ✅ कोल्ड चेन लॉजिस्टिक्स राऊत */}
+          {/* ✅ कोल्ड चेन आणि फार्मा कोल्ड चेन लॉजिस्टिक्स राऊट्स */}
           <Route path="/cold-chain" element={<ColdChainForm />} />
+          <Route path="/pharma-cold-chain" element={<PharmaColdChainForm />} />
+
+          {/* ✅ Fragile Item Shipping राऊत */}
+          <Route path="/fragile-item-shipping" element={<FragileItemShippingForm />} />
+
+          {/* ✅ Heavy Machinery Transport राऊत */}
+          <Route path="/heavy-machinery-transport" element={<HeavyMachineryTransportForm />} />
+
+          {/* ✅ Dangerous Goods Transport राऊत (नवीन जोडला) */}
+          <Route path="/dangerous-goods-transport" element={<DangerousGoodsTransportForm />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />
