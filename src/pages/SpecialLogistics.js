@@ -141,7 +141,6 @@ const SpecialLogistics = () => {
                   {s.tag}
                 </button>
               ) : s.id === 5 ? (
-                {/* ✅ Dangerous Goods Transport साठी राऊत सक्रिय केला आहे */}
                 <button 
                   onClick={() => navigate('/dangerous-goods-transport')}
                   className="w-full bg-orange-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
