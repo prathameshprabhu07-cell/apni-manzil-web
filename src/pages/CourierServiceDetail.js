@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { db } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import { 
-  ArrowLeft, Truck, Zap, Clock, Calendar, FileText, 
-  Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, User, Search
+  ArrowLeft, Truck, Zap, Calendar, FileText, 
+  Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, User, Search, IndianRupee, Ruler
 } from 'lucide-react';
+
+const N8N_BASE_URL = 'http://localhost:5678';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [rates, setRates] = useState(null);
   const [selectedCourier, setSelectedCourier] = useState(null);
+  const [rateCheckLoading, setRateCheckLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     serviceType: 'Domestic Courier',
@@ -22,10 +27,10 @@ const CourierServiceDetail = () => {
     receiverPhone: '',
     receiverAddress: '',
     dropPincode: '',
-    weight: '',
-    length: '',  
-    breadth: '', 
-    height: '',  
+    weight: '0.5',
+    length: '10',  
+    breadth: '10', 
+    height: '10',  
     parcelType: 'Non-Document',
     paymentMode: 'Prepaid'
   });
@@ -33,60 +38,73 @@ const CourierServiceDetail = () => {
   const subServices = [
     { id: 1, name: "Domestic Courier", desc: "Shipping across India", icon: <Truck size={24} />, color: "text-blue-600", bg: "bg-blue-50" },
     { id: 2, name: "Express Courier", desc: "Urgent delivery", icon: <Zap size={24} />, color: "text-orange-500", bg: "bg-orange-50" },
-    { id: 3, name: "Same Day Delivery", desc: "Within same city", icon: <Clock size={24} />, color: "text-green-600", bg: "bg-green-50" },
-    { id: 4, name: "Next Day Delivery", desc: "Guaranteed tomorrow", icon: <Calendar size={24} />, color: "text-amber-700", bg: "bg-amber-50" },
-    { id: 5, name: "Document Courier", desc: "Paper & letters", icon: <FileText size={24} />, color: "text-slate-600", bg: "bg-slate-50" },
-    { id: 6, name: "Parcel Delivery", desc: "Reliable item shipping", icon: <Package size={24} />, color: "text-indigo-600", bg: "bg-indigo-50" },
-    { id: 7, name: "Bulk Shipping", desc: "Large volume orders", icon: <Boxes size={24} />, color: "text-pink-600", bg: "bg-pink-50" },
-    { id: 8, name: "Reverse Pickup", desc: "Returns and pickups", icon: <RefreshCcw size={24} />, color: "text-cyan-600", bg: "bg-cyan-50" }
   ];
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- १. SHIPROCKET RATES CHECK ---
-  const handleCheckRates = async () => {
-    if(!formData.dropPincode || !formData.weight || !formData.pickupPincode || !formData.length || !formData.breadth || !formData.height) {
-      alert("Pincode, Weight आणि सर्व Dimensions (L, B, H) भरणे गरजेचे आहे!");
+  // --- Live Rates & Firestore Inquiry Integration ---
+  const handleCheckLiveRates = async () => {
+    if(!formData.pickupPincode || !formData.dropPincode || !formData.weight) {
+      alert("Please fill in the pickup pincode, delivery pincode, and weight!");
       return;
     }
 
-    setLoading(true);
+    setRateCheckLoading(true);
+    setRates(null);
+    setSelectedCourier(null);
+
+    const rateRequestData = {
+      mobile: formData.senderPhone || '9999999999',
+      pickup_pincode: formData.pickupPincode,
+      delivery_pincode: formData.dropPincode,
+      weight: parseFloat(formData.weight),
+      length: parseFloat(formData.length) || 10,
+      breadth: parseFloat(formData.breadth) || 10,
+      height: parseFloat(formData.height) || 10,
+      cod: formData.paymentMode === 'Prepaid' ? 0 : 1,
+      timestamp: new Date().toISOString()
+    };
+
     try {
-      const response = await axios.post('/api/rates', {
-        pickup_pincode: formData.pickupPincode,
-        delivery_pincode: formData.dropPincode,
-        weight: parseFloat(formData.weight),
-        length: parseInt(formData.length) || 10,
-        breadth: parseInt(formData.breadth) || 10,
-        height: parseInt(formData.height) || 10,
-        cod: formData.paymentMode === 'Prepaid' ? 0 : 1
-      });
+      // 1. Save Inquiry to Firebase Firestore
+      await addDoc(collection(db, "courier_inquiries"), rateRequestData);
 
-      const availableCouriers = response.data?.rates?.data?.available_courier_companies;
+      // 2. Fetch Live Rates from n8n Webhook
+      const response = await axios.post(`${N8N_BASE_URL}/webhook/apni-manzil-logistics`, rateRequestData);
+      
+      const availableCouriers = response.data?.data?.available_courier_companies || 
+                                response.data?.available_courier_companies || 
+                                response.data;
 
-      if (response.data.success && availableCouriers && Array.isArray(availableCouriers)) {
+      if (Array.isArray(availableCouriers) && availableCouriers.length > 0) {
         setRates(availableCouriers);
-        alert("Live Rates अपडेट झाले आहेत!");
       } else {
-        alert("ह्या मार्गासाठी सेवा उपलब्ध नाहीये. पिनकोड तपासा.");
+        alert("Currently no service available for this route or weight.");
         setRates(null);
       }
     } catch (error) {
-      console.error("Rate Error:", error);
-      alert("Error: " + (error.response?.data?.message || "Server Error"));
+      console.error("Rate Check Error:", error);
+      alert("An error occurred while checking rates.");
+      setRates(null);
     } finally {
-      setLoading(false);
+      setRateCheckLoading(false);
     }
   };
 
-  // --- २. FINAL BOOKING (Webhook सह) ---
+  // --- Final Booking (Sending complete data to n8n webhook) ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     
     if(!selectedCourier) {
-      alert("कृपया लिस्ट मधून एक कुरिअर सर्व्हिस निवडा!");
+      alert("Please select a courier service from the list!");
+      return;
+    }
+
+    if (!formData.senderName || !formData.senderPhone || !formData.senderAddress || !formData.pickupPincode ||
+        !formData.receiverName || !formData.receiverPhone || !formData.receiverAddress || !formData.dropPincode) {
+      alert("Please fill in all sender and receiver information.");
       return;
     }
 
@@ -96,30 +114,35 @@ const CourierServiceDetail = () => {
       const bookingData = {
         ...formData,
         courier_id: selectedCourier.courier_company_id,
+        courier_name: selectedCourier.courier_name,
         shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20),
+        delivery_date: selectedCourier.etd,
         timestamp: new Date().toISOString()
       };
 
-      // थेट n8n वेबहुककडे डेटा पाठवत आहे (ज्यामध्ये तुम्ही टोकन सेट केले आहे)
-      const bookingRes = await axios.post('http://localhost:5678/webhook/apni-manzil-logistics', bookingData);
+      const bookingRes = await axios.post(`${N8N_BASE_URL}/webhook/apni-manzil-logistics`, bookingData);
 
       if (bookingRes.status === 200 || bookingRes.data) {
-        alert(`Booking यशस्वी!`);
-        navigate('/dashboard'); 
+        alert(`Booking Successful!`);
+        navigate('/dashboard');
       } else {
-        alert("Booking अयशस्वी: Unknown error");
+        alert("Booking Failed.");
       }
     } catch (error) {
       console.error("Booking Error:", error);
-      alert("Booking यशस्वी होऊ शकली नाही.");
+      alert("Could not connect to the booking server.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handlePhoneInput = (e, fieldName) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setFormData({...formData, [fieldName]: val});
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans">
-      {/* Header Section */}
       <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-16 relative overflow-hidden">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10 cursor-pointer">
           <ArrowLeft size={20}/> Back to Home
@@ -136,141 +159,158 @@ const CourierServiceDetail = () => {
         </div>
       </div>
 
-      {/* Main Form Section */}
       <div className="max-w-5xl mx-auto -mt-16 px-6 relative z-50">
         <div className="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border-4 border-orange-50">
           <h2 className="text-3xl font-black text-[#002D5E] mb-10 flex items-center gap-3 border-b-2 border-slate-100 pb-4">
-            <CheckCircle2 className="text-green-500" size={32}/> Shipment & Address Details
+            <Package className="text-orange-500" size={32}/> Shipment & Rate Details
           </h2>
           
           <form onSubmit={handleFinalBooking} className="space-y-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 ml-4">Select Service</label>
-                <select name="serviceType" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none ring-2 ring-transparent focus:ring-orange-500 transition" onChange={handleInputChange}>
-                  {subServices.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 ml-4">Parcel Type</label>
-                <select name="parcelType" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange}>
-                  <option value="Non-Document">Non-Document (Parcel)</option>
-                  <option value="Document">Document (Letters/Papers)</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 ml-4">Weight (kg) & Dimensions (cm)</label>
-                <div className="flex gap-2">
-                   <input name="weight" required type="number" step="0.1" placeholder="Weight" className="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none" onChange={handleInputChange} />
-                   <button type="button" onClick={handleCheckRates} className="bg-blue-600 text-white px-4 rounded-2xl hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer">
-                      <Search size={18}/> Rates
-                   </button>
+            {/* 1. Quick Rate Check Section */}
+            <div className="bg-slate-50 p-6 md:p-8 rounded-[2rem] border-2 border-slate-100 mb-12">
+              <h3 className="text-xl font-black text-[#002D5E] mb-6 flex items-center gap-2">
+                <IndianRupee size={24} className="text-blue-600"/> 1. Check Rates & Service Availability
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2">Pickup Pincode</label>
+                  <input name="pickupPincode" value={formData.pickupPincode} onChange={handleInputChange} required placeholder="Ex. 400001" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
                 </div>
-                <div className="flex gap-2 mt-2">
-                  <input name="length" required type="number" placeholder="L" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
-                  <input name="breadth" required type="number" placeholder="B" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
-                  <input name="height" required type="number" placeholder="H" className="w-1/3 p-3 bg-slate-50 rounded-xl border-none font-bold outline-none ring-1 ring-slate-100 focus:ring-orange-500" onChange={handleInputChange} />
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2">Delivery Pincode</label>
+                  <input name="dropPincode" value={formData.dropPincode} onChange={handleInputChange} required placeholder="Ex. 110001" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2">Approx. Weight (Kg)</label>
+                  <input name="weight" value={formData.weight} onChange={handleInputChange} required type="number" step="0.1" placeholder="0.5" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
                 </div>
               </div>
-            </div>
 
-            {rates && (
-              <div className="bg-green-50 p-6 rounded-3xl border-2 border-green-200">
-                 <h4 className="font-black text-green-800 uppercase text-xs mb-4">Select Courier & Rate:</h4>
-                 <div className="flex gap-4 overflow-x-auto pb-2 px-2">
+              {/* Dimensions Section */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 items-end mb-6">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2 flex items-center gap-1">
+                    <Ruler size={14} className="text-orange-500"/> Length (cm)
+                  </label>
+                  <input name="length" value={formData.length} onChange={handleInputChange} required type="number" step="0.1" placeholder="10" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2 flex items-center gap-1">
+                    <Ruler size={14} className="text-orange-500"/> Breadth (cm)
+                  </label>
+                  <input name="breadth" value={formData.breadth} onChange={handleInputChange} required type="number" step="0.1" placeholder="10" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2 flex items-center gap-1">
+                    <Ruler size={14} className="text-orange-500"/> Height (cm)
+                  </label>
+                  <input name="height" value={formData.height} onChange={handleInputChange} required type="number" step="0.1" placeholder="10" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <button 
+                  type="button" 
+                  onClick={handleCheckLiveRates}
+                  disabled={rateCheckLoading}
+                  className="w-full sm:w-auto px-8 py-4 h-[56px] bg-blue-600 text-white rounded-2xl font-black uppercase tracking-wider hover:bg-blue-700 transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {rateCheckLoading ? <RefreshCcw size={20} className="animate-spin"/> : <Search size={20}/>}
+                  {rateCheckLoading ? 'Checking Rates...' : 'Check Rates'}
+                </button>
+              </div>
+
+              {rates && (
+                <div className="mt-8 bg-white p-6 rounded-2xl border border-green-100">
+                  <h4 className="font-black text-green-800 uppercase text-sm mb-4">Available Courier Companies:</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {rates.map((courier, idx) => (
                       <div 
-                        key={idx} 
+                        key={idx}
                         onClick={() => setSelectedCourier(courier)}
-                        className={`p-4 rounded-2xl shadow-sm min-w-[160px] border cursor-pointer transition-all duration-300 ${
+                        className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
                           selectedCourier?.courier_company_id === courier.courier_company_id 
-                          ? 'bg-[#002D5E] text-white border-orange-400 scale-105 shadow-lg' 
-                          : 'bg-white text-slate-900 border-green-100 hover:border-blue-300'
+                          ? 'bg-[#002D5E] text-white border-orange-400 shadow-lg scale-[1.02]' 
+                          : 'bg-slate-50 border-slate-100'
                         }`}
                       >
-                         <p className={`text-[10px] font-black uppercase ${selectedCourier?.courier_company_id === courier.courier_company_id ? 'text-orange-400' : 'text-slate-400'}`}>
-                            {courier.courier_name}
-                         </p>
-                         <p className="text-lg font-black">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
-                         <p className="text-[9px] font-bold mt-1 opacity-80 uppercase tracking-tighter">Est. Delivery: {courier.etd}</p>
+                        <div>
+                          <p className="font-black text-sm">{courier.courier_name}</p>
+                          <p className="text-xs mt-1 opacity-80">Est. Delivery: {courier.etd || 'N/A'}</p>
+                        </div>
+                        <p className="text-2xl font-black mt-3 text-orange-400">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
                       </div>
                     ))}
-                 </div>
-              </div>
-            )}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* 2. Sender and Receiver Details Form */}
+            <div className="pt-10 border-t-2 border-slate-100">
+              <h3 className="text-xl font-black text-[#002D5E] mb-6 flex items-center gap-2">
+                <CheckCircle2 size={24} className="text-green-500"/> 2. Sender and Receiver Details
+              </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="space-y-6 bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100">
-                <h3 className="text-lg font-black text-blue-800 uppercase tracking-widest flex items-center gap-2">
-                  <User size={20}/> Sender (From)
-                </h3>
-                <div className="space-y-4">
-                  <input name="senderName" required placeholder="Sender Full Name" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                {/* Sender */}
+                <div className="space-y-5 bg-blue-50/50 p-6 md:p-8 rounded-[2rem] border border-blue-100">
+                  <h4 className="text-lg font-black text-blue-900 flex items-center gap-2"><User size={18}/> Sender (From)</h4>
+                  <input name="senderName" value={formData.senderName} onChange={handleInputChange} required placeholder="Full Name" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" />
                   
-                  {/* Sender Phone with +91 */}
-                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden border border-transparent focus-within:border-orange-500">
-                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r border-slate-200 select-none">+91</span>
+                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden">
+                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r">+91</span>
                     <input 
                       name="senderPhone" 
+                      value={formData.senderPhone}
                       required 
                       type="tel" 
                       maxLength="10" 
-                      placeholder="WhatsApp Number" 
-                      className="w-full p-4 bg-white border-none font-bold outline-none" 
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                        e.target.value = val;
-                        handleInputChange(e);
-                      }} 
+                      placeholder="Mobile Number" 
+                      className="w-full p-4 border-none font-bold outline-none" 
+                      onChange={(e) => handlePhoneInput(e, 'senderPhone')} 
                     />
                   </div>
-
-                  <input name="pickupPincode" required placeholder="Pickup Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
-                  <textarea name="senderAddress" required rows="3" placeholder="Complete Pickup Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange}></textarea>
+                  <input name="pickupPincode" value={formData.pickupPincode} onChange={handleInputChange} required placeholder="Pickup Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" />
+                  <textarea name="senderAddress" value={formData.senderAddress} onChange={handleInputChange} required rows="3" placeholder="Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"></textarea>
                 </div>
-              </div>
 
-              <div className="space-y-6 bg-orange-50/50 p-6 rounded-[2rem] border border-orange-100">
-                <h3 className="text-lg font-black text-orange-800 uppercase tracking-widest flex items-center gap-2">
-                  <MapPin size={20}/> Receiver (To)
-                </h3>
-                <div className="space-y-4">
-                  <input name="receiverName" required placeholder="Receiver Full Name" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
+                {/* Receiver */}
+                <div className="space-y-5 bg-orange-50/50 p-6 md:p-8 rounded-[2rem] border border-orange-100">
+                  <h4 className="text-lg font-black text-orange-900 flex items-center gap-2"><MapPin size={18}/> Receiver (To)</h4>
+                  <input name="receiverName" value={formData.receiverName} onChange={handleInputChange} required placeholder="Full Name" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" />
                   
-                  {/* Receiver Phone with +91 */}
-                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden border border-transparent focus-within:border-orange-500">
-                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r border-slate-200 select-none">+91</span>
+                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden">
+                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r">+91</span>
                     <input 
                       name="receiverPhone" 
+                      value={formData.receiverPhone}
                       required 
                       type="tel" 
                       maxLength="10" 
-                      placeholder="Contact Number" 
-                      className="w-full p-4 bg-white border-none font-bold outline-none" 
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                        e.target.value = val;
-                        handleInputChange(e);
-                      }} 
+                      placeholder="Mobile Number" 
+                      className="w-full p-4 border-none font-bold outline-none" 
+                      onChange={(e) => handlePhoneInput(e, 'receiverPhone')} 
                     />
                   </div>
-
-                  <input name="dropPincode" required placeholder="Delivery Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange} />
-                  <textarea name="receiverAddress" required rows="3" placeholder="Complete Delivery Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" onChange={handleInputChange}></textarea>
+                  <input name="dropPincode" value={formData.dropPincode} onChange={handleInputChange} required placeholder="Delivery Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" />
+                  <textarea name="receiverAddress" value={formData.receiverAddress} onChange={handleInputChange} required rows="3" placeholder="Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"></textarea>
                 </div>
               </div>
             </div>
 
+            {/* Submit Button Section */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-100">
               <div className="flex items-center gap-4">
-                <label className="text-sm font-black text-slate-500 uppercase tracking-widest">Payment Mode:</label>
+                <label className="text-sm font-black text-slate-500 uppercase">Payment Mode:</label>
                 <div className="flex gap-2">
                   {['Prepaid', 'COD'].map((mode) => (
                     <button 
                       key={mode}
                       type="button"
                       onClick={() => setFormData({...formData, paymentMode: mode})}
-                      className={`px-6 py-2 rounded-full font-black text-xs uppercase tracking-widest transition cursor-pointer ${formData.paymentMode === mode ? 'bg-[#002D5E] text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                      className={`px-6 py-2 rounded-full font-black text-xs uppercase cursor-pointer ${formData.paymentMode === mode ? 'bg-[#002D5E] text-white' : 'bg-slate-100 text-slate-400'}`}
                     >
                       {mode}
                     </button>
@@ -281,7 +321,7 @@ const CourierServiceDetail = () => {
               <button 
                 type="submit"
                 disabled={loading}
-                className={`w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-3 cursor-pointer ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className="w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 cursor-pointer"
               >
                 {loading ? 'Processing...' : 'Confirm Booking'} <ChevronRight size={20}/>
               </button>
