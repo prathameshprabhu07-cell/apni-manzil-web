@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 const N8N_BASE_URL = 'http://localhost:5678';
+const N8N_PRODUCTION_WEBHOOK = 'http://localhost:5678/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
@@ -71,8 +72,8 @@ const CourierServiceDetail = () => {
       // 1. Save Inquiry to Firebase Firestore
       await addDoc(collection(db, "courier_inquiries"), rateRequestData);
 
-      // 2. Fetch Live Rates from n8n Webhook
-      const response = await axios.post(`${N8N_BASE_URL}/webhook/apni-manzil-logistics`, rateRequestData);
+      // 2. Fetch Live Rates from n8n Production Webhook
+      const response = await axios.post(N8N_PRODUCTION_WEBHOOK, rateRequestData);
       
       const availableCouriers = response.data?.data?.available_courier_companies || 
                                 response.data?.available_courier_companies || 
@@ -93,7 +94,7 @@ const CourierServiceDetail = () => {
     }
   };
 
-  // --- Final Booking (Sending complete data to n8n webhook) ---
+  // --- Final Booking (Sending complete data to n8n Production webhook) ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     
@@ -120,7 +121,7 @@ const CourierServiceDetail = () => {
         timestamp: new Date().toISOString()
       };
 
-      const bookingRes = await axios.post(`${N8N_BASE_URL}/webhook/apni-manzil-logistics`, bookingData);
+      const bookingRes = await axios.post(N8N_PRODUCTION_WEBHOOK, bookingData);
 
       if (bookingRes.status === 200 || bookingRes.data) {
         alert(`Booking Successful!`);
