@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { db } from '../firebase'; // तुझ्या प्रोजेक्टमधील फायरबेस कॉन्फिग पाاث तपासून घ्यावा
+import { db } from '../firebase'; // तुझ्या प्रोजेक्टमधील फायरबेस कॉन्फिग पाथ तपासून घ्यावा
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ShoppingBag, Package, Truck, MapPin, Phone, Mail, User, Building, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 
@@ -40,7 +40,7 @@ const MarketplaceShipping = () => {
       });
 
       setLoading(false);
-      setSuccessMessage('🎉 तुमचे मार्केटप्लेस शिपिंग यशस्वीरित्या बुक झाले आहे! आमची टीम लवकरच पिकअपसाठी संपर्क करेल.');
+      setSuccessMessage('🎉 Your marketplace shipping has been successfully booked! Our team will contact you soon for pickup.');
       
       // फॉर्म रिसेट करणे
       setFormData({
@@ -61,7 +61,7 @@ const MarketplaceShipping = () => {
     } catch (error) {
       console.error("Error adding document: ", error);
       setLoading(false);
-      alert('काहीतरी तांत्रिक अडचण आली आहे. कृपया पुन्हा प्रयत्न करा.');
+      alert('Some technical error occurred. Please try again.');
     }
   };
 
@@ -72,46 +72,60 @@ const MarketplaceShipping = () => {
         <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
           <Zap size={16} /> E-Commerce Logistics Aggregator
         </div>
-        <h1 className="text-4xl font-ext500 sm:text-5xl text-slate-900 tracking-tight mb-4">
+        <h1 className="text-4xl font-extrabold sm:text-5xl text-slate-900 tracking-tight mb-4">
           Marketplace <span className="text-blue-600">Shipping & Fulfillment</span>
         </h1>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Amazon, Flipkart, Meesho, Shopify आणि WooCommerce च्या सर्व ऑर्डरसाठी एकाच ठिकाणावरून जलद आणि सुरक्षित शिपिंग बुक करा.
+          Book fast and secure shipping for all your orders from Amazon, Flipkart, Meesho, Shopify, and WooCommerce from a single dashboard.
         </p>
       </div>
 
       {/* Main Form Container */}
       <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 grid grid-cols-1 md:grid-cols-12">
         
-        {/* Left Info Panel with Image */}
+        {/* Left Info Panel with Marketplace Image Grid */}
         <div className="md:col-span-4 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 p-8 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
           
           <div className="relative z-10">
-            <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 border border-white/20">
+            <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 border border-white/20 shadow-inner">
               <ShoppingBag className="w-7 h-7 text-blue-300" />
             </div>
-            <h2 className="text-2xl font-bold mb-3">जलद आणि खात्रीशीर ईकॉमर्स डिलिव्हरी</h2>
+            
+            <h2 className="text-2xl font-bold mb-3">Fast & Reliable E-Commerce Delivery</h2>
             <p className="text-blue-200 text-sm leading-relaxed mb-6">
-              उत्कृष्ट रेट्स, रियल-टाइम ट्रॅकिंग आणि विनासायास COD रेमिटन्सचा आनंद घ्या.
+              Enjoy best shipping rates, real-time tracking, and hassle-free COD remittances.
             </p>
+
+            {/* Marketplace Brand Badges/Images Preview */}
+            <div className="mb-6 p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15">
+              <p className="text-xs font-semibold text-blue-200 mb-2 uppercase tracking-wider">Supported Platforms</p>
+              <div className="grid grid-cols-3 gap-2 text-center text-xs font-bold text-slate-800">
+                <div className="bg-amber-400 py-1.5 px-2 rounded-lg shadow-sm">Amazon</div>
+                <div className="bg-blue-400 py-1.5 px-2 rounded-lg shadow-sm text-white">Flipkart</div>
+                <div className="bg-pink-500 py-1.5 px-2 rounded-lg shadow-sm text-white">Meesho</div>
+                <div className="bg-emerald-500 py-1.5 px-2 rounded-lg shadow-sm text-white">Shopify</div>
+                <div className="bg-purple-600 py-1.5 px-2 rounded-lg shadow-sm text-white">WooCommerce</div>
+                <div className="bg-slate-700 py-1.5 px-2 rounded-lg shadow-sm text-white">Others</div>
+              </div>
+            </div>
             
             <div className="space-y-3 pt-4 border-t border-blue-700/50 text-sm text-blue-100">
               <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> ऑल-इन-वन मार्केटप्लेस सपोर्ट
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> All-in-One Marketplace Support
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> डोरस्टेप फ्री पिकअप
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> Doorstep Free Pickup
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> जलद COD रिफंड सायकल
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> Fast COD Refund Cycle
               </div>
             </div>
           </div>
 
           <div className="relative z-10 mt-8 pt-6 border-t border-blue-700/50 flex items-center gap-3">
             <ShieldCheck className="w-8 h-8 text-blue-300 shrink-0" />
-            <span className="text-xs text-blue-200">१००% सुरक्षित पार्सल हाताळणी आणि ट्रॅकिंग सुविधा.</span>
+            <span className="text-xs text-blue-200">100% secure parcel handling and tracking facility.</span>
           </div>
         </div>
 
@@ -128,7 +142,7 @@ const MarketplaceShipping = () => {
             
             {/* Seller & Company Details */}
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">१. विक्रेता आणि कंपनीची माहिती</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">1. Seller & Company Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Company Name</label>
@@ -140,7 +154,7 @@ const MarketplaceShipping = () => {
                       value={formData.companyName} 
                       onChange={handleChange} 
                       required 
-                      placeholder="उदा. अप्नी मंजिल स्टोअर्स"
+                      placeholder="e.g. Apni Manzil Stores"
                       className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                     />
                   </div>
@@ -156,7 +170,7 @@ const MarketplaceShipping = () => {
                       value={formData.sellerName} 
                       onChange={handleChange} 
                       required 
-                      placeholder="तुमचे नाव"
+                      placeholder="Your Full Name"
                       className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                     />
                   </div>
@@ -172,7 +186,7 @@ const MarketplaceShipping = () => {
                       value={formData.mobile} 
                       onChange={handleChange} 
                       required 
-                      placeholder="९८९८९८९८९८"
+                      placeholder="9898989898"
                       className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                     />
                   </div>
@@ -217,7 +231,7 @@ const MarketplaceShipping = () => {
             {/* Address Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Pickup Address (गोडाऊन/दुकान पत्ता)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Pickup Address (Warehouse / Store)</label>
                 <div className="relative">
                   <MapPin className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
                   <textarea 
@@ -226,14 +240,14 @@ const MarketplaceShipping = () => {
                     value={formData.pickupAddress} 
                     onChange={handleChange} 
                     required 
-                    placeholder="पिकअपचा संपूर्ण पत्ता व पिनकोड"
+                    placeholder="Enter complete pickup address with Pincode"
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
                   ></textarea>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Delivery Address (ग्राहक पत्ता)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Delivery Address (Customer)</label>
                 <div className="relative">
                   <Truck className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
                   <textarea 
@@ -242,7 +256,7 @@ const MarketplaceShipping = () => {
                     value={formData.deliveryAddress} 
                     onChange={handleChange} 
                     required 
-                    placeholder="डिलिव्हरीचा संपूर्ण पत्ता व पिनकोड"
+                    placeholder="Enter complete delivery address with Pincode"
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
                   ></textarea>
                 </div>
@@ -251,7 +265,7 @@ const MarketplaceShipping = () => {
 
             {/* Product & Parcel Details */}
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">२. उत्पादन आणि पार्सल तपशील</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">2. Product & Parcel Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="sm:col-span-3">
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Product Name</label>
@@ -263,7 +277,7 @@ const MarketplaceShipping = () => {
                       value={formData.productName} 
                       onChange={handleChange} 
                       required 
-                      placeholder="उत्पादनाचे नाव (उदा. Cotton Kurti)"
+                      placeholder="e.g. Cotton Kurti"
                       className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                     />
                   </div>
@@ -277,7 +291,7 @@ const MarketplaceShipping = () => {
                     value={formData.weight} 
                     onChange={handleChange} 
                     required 
-                    placeholder="उदा. 500g किंवा 1.2kg"
+                    placeholder="e.g. 500g or 1.2kg"
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />
                 </div>
@@ -289,7 +303,7 @@ const MarketplaceShipping = () => {
                     name="dimensions" 
                     value={formData.dimensions} 
                     onChange={handleChange} 
-                    placeholder="उदा. 20x15x10 cm"
+                    placeholder="e.g. 20x15x10 cm"
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />
                 </div>
@@ -302,7 +316,7 @@ const MarketplaceShipping = () => {
                     value={formData.parcelValue} 
                     onChange={handleChange} 
                     required 
-                    placeholder="उदा. 1499"
+                    placeholder="e.g. 1499"
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />
                 </div>
@@ -315,8 +329,8 @@ const MarketplaceShipping = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   >
-                    <option value="Prepaid">Prepaid (ऑनलाइन पेड)</option>
-                    <option value="COD">COD (कॅश ऑन डिलिव्हरी)</option>
+                    <option value="Prepaid">Prepaid</option>
+                    <option value="COD">COD (Cash on Delivery)</option>
                   </select>
                 </div>
 
@@ -342,10 +356,10 @@ const MarketplaceShipping = () => {
               className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 transition duration-200 disabled:opacity-50 text-base flex items-center justify-center gap-2"
             >
               {loading ? (
-                <span>प्रोसेस होत आहे...</span>
+                <span>Processing...</span>
               ) : (
                 <>
-                  <Truck className="w-5 h-5" /> <span>शिपिंग ऑर्डर बुक करा</span>
+                  <Truck className="w-5 h-5" /> <span>Book Shipping Order</span>
                 </>
               )}
             </button>

@@ -36,10 +36,11 @@ const EcommerceLogistics = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Function to handle booking/queries (Updated to route Marketplace Shipping to a separate page)
+  // ✅ Function to handle booking/queries (Updated to route to a separate page)
   const handleEcommerceQuery = (serviceTitle) => {
     if (serviceTitle === "Order Fulfillment") {
-      setShowFulfillmentModal(true);
+      // ✅ फक्त येथे बदल केला आहे: Modal उघडण्याऐवजी नवीन पेजवर नेईल
+      navigate('/order-fulfillment');
       return;
     }
 
@@ -246,7 +247,7 @@ const EcommerceLogistics = () => {
         </div>
       </div>
 
-      {/* Order Fulfillment Modal / Form */}
+      {/* Order Fulfillment Modal / Form (कोड कमी केलेला नाही) */}
       {showFulfillmentModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white max-w-2xl w-full p-6 rounded-3xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
