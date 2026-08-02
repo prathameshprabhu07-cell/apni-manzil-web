@@ -39,7 +39,6 @@ const EcommerceLogistics = () => {
   // ✅ Function to handle booking/queries (Updated to route to a separate page)
   const handleEcommerceQuery = (serviceTitle) => {
     if (serviceTitle === "Order Fulfillment") {
-      // ✅ फक्त येथे बदल केला आहे: Modal उघडण्याऐवजी नवीन पेजवर नेईल
       navigate('/order-fulfillment');
       return;
     }
@@ -47,6 +46,12 @@ const EcommerceLogistics = () => {
     // If the user clicks Marketplace Shipping, navigate directly to the dedicated page
     if (serviceTitle === "Marketplace Shipping") {
       navigate('/marketplace-shipping');
+      return;
+    }
+
+    // ✅ नवीन बदल: COD Shipping वर क्लिक केल्यावर स्वतंत्र पेजवर नेईल
+    if (serviceTitle === "COD Shipping") {
+      navigate('/cod-shipping');
       return;
     }
 
@@ -247,7 +252,7 @@ const EcommerceLogistics = () => {
         </div>
       </div>
 
-      {/* Order Fulfillment Modal / Form (कोड कमी केलेला नाही) */}
+      {/* Order Fulfillment Modal / Form */}
       {showFulfillmentModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white max-w-2xl w-full p-6 rounded-3xl shadow-2xl relative max-h-[90vh] overflow-y-auto">

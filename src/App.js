@@ -43,6 +43,9 @@ import CustomerDashboard from './components/CustomerDashboard';
 // ✅ Marketplace Shipping पेज इम्पोर्ट जोडले आहे
 import MarketplaceShipping from './pages/MarketplaceShipping'; 
 
+// ✅ COD Shipping पेज इम्पोर्ट जोडले आहे
+import CODShipping from './pages/CODShipping'; 
+
 // ✅ Order Fulfillment Form इम्पोर्ट (Pages फोल्डरमधून)
 import OrderFulfillmentForm from './pages/OrderFulfillmentForm';
 
@@ -177,8 +180,11 @@ function App() {
           <Route path="/book-part-load" element={<BookPartLoad />} />
           <Route path="/find-load" element={<FindLoad />} />
 
-          {/* ✅ Marketplace Shipping राऊत जोडला आहे */}
+          {/* ✅ Marketplace Shipping राऊत */}
           <Route path="/marketplace-shipping" element={<MarketplaceShipping />} />
+
+          {/* ✅ COD Shipping राऊत जोडला आहे */}
+          <Route path="/cod-shipping" element={<CODShipping />} />
 
           {/* ✅ Order Fulfillment Form राऊत */}
           <Route path="/order-fulfillment" element={<OrderFulfillmentForm />} />
