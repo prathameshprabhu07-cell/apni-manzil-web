@@ -11,29 +11,46 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const EcommerceLogistics = () => {
   const navigate = useNavigate();
-  const [customerPhone, setCustomerPhone] = useState('');
+
+  // 📦 Order Fulfillment Form State
+  const [showFulfillmentModal, setShowFulfillmentModal] = useState(false);
+  const [formData, setFormData] = useState({
+    companyName: '',
+    contactPerson: '',
+    mobileNumber: '',
+    email: '',
+    pickupAddress: '',
+    monthlyOrders: '100',
+    productCategory: '',
+    skuCount: '',
+    avgWeight: '',
+    avgDimensions: '',
+    packagingRequired: 'Yes',
+    labelPrinting: 'Yes',
+    invoicePrinting: 'Yes',
+    codRequired: 'Yes',
+    dailyPickup: 'Yes'
+  });
+
+  const handleFormChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   // ✅ बुकिंग हाताळण्यासाठी फंक्शन (n8n URL अपडेट केली आहे)
   const handleEcommerceQuery = (serviceTitle) => {
-    // मोबाईल नंबर व्हॅलिडेट करा
-    if (!customerPhone || customerPhone.length < 10) {
-      alert("कृपया चौकशी करण्यापूर्वी १० अंकी वैध मोबाईल नंबर भरा!");
+    if (serviceTitle === "Order Fulfillment") {
+      setShowFulfillmentModal(true);
       return;
     }
 
-    // युजरचा डेटा
     const customerName = "E-com Vendor";
     const orderId = "EC-" + Math.floor(Math.random() * 100000);
     const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
-    // १. व्हॉट्सॲप नोटिफिकेशन ट्रिगर करा
-    sendWhatsAppNotification(customerPhone, customerName, serviceTitle, orderId);
-    
-    // २. n8n ला डेटा पाठवा
+    // n8n ला डेटा पाठवा
     axios.post(n8nUrl, {
       service: serviceTitle,
       customerName: customerName,
-      phone: customerPhone,
       orderId: orderId,
       timestamp: new Date().toISOString()
     })
@@ -42,7 +59,28 @@ const EcommerceLogistics = () => {
     })
     .catch((error) => {
       console.error("Error sending to n8n:", error);
-      alert("चौकशी पाठवताना एरर आला, पण नोटिफिकेशन पाठवले आहे.");
+      alert("चौकशी पाठवताना एरर आला.");
+    });
+  };
+
+  const handleFulfillmentSubmit = (e) => {
+    e.preventDefault();
+    const orderId = "OF-" + Math.floor(Math.random() * 100000);
+    const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
+
+    axios.post(n8nUrl, {
+      service: "Order Fulfillment",
+      ...formData,
+      orderId: orderId,
+      timestamp: new Date().toISOString()
+    })
+    .then(() => {
+      alert('Order Fulfillment Inquiry Submitted Successfully!');
+      setShowFulfillmentModal(false);
+    })
+    .catch((error) => {
+      console.error("Error sending to n8n:", error);
+      alert("चौकशी पाठवताना एरर आला.");
     });
   };
 
@@ -98,31 +136,8 @@ const EcommerceLogistics = () => {
               Grow your online business with India's most reliable fulfillment network.
             </p>
 
-            {/* Mobile Number Box with +91 Prefix */}
-            <div className="max-w-md mx-auto md:mx-0 bg-white/10 p-3 rounded-2xl backdrop-blur-md border border-white/20">
-              <label className="block text-xs font-bold text-orange-300 uppercase mb-2 tracking-wider text-left pl-1">
-                तुमचा मोबाईल नंबर टाका
-              </label>
-              <div className="flex items-center bg-white rounded-xl overflow-hidden shadow-lg">
-                <span className="bg-slate-100 px-4 py-3 text-slate-700 font-bold border-r border-slate-200 select-none">
-                  +91
-                </span>
-                <input 
-                  type="tel"
-                  maxLength="10"
-                  value={customerPhone}
-                  placeholder="मोबाईल नंबर (उदा. 7378502356)"
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                    setCustomerPhone(val);
-                  }}
-                  className="w-full p-3 text-slate-900 font-bold outline-none border-none text-base"
-                />
-              </div>
-            </div>
-
             <button 
-              onClick={() => handleEcommerceQuery("Full E-commerce Setup")}
+              onClick={() => handleEcommerceQuery("Order Fulfillment")}
               className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-xl cursor-pointer"
             >
               Start Shipping Now
@@ -198,7 +213,7 @@ const EcommerceLogistics = () => {
             </div>
             <div className="md:w-1/3 flex justify-center">
                <button 
-                onClick={() => handleEcommerceQuery("E-com Business Growth")}
+                onClick={() => handleEcommerceQuery("Order Fulfillment")}
                 className="bg-white text-[#002D5E] px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:text-white transition shadow-xl cursor-pointer"
                >
                   Get Started
@@ -224,6 +239,133 @@ const EcommerceLogistics = () => {
           </h2>
         </div>
       </div>
+
+      {/* Order Fulfillment Modal / Form */}
+      {showFulfillmentModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white max-w-2xl w-full p-6 rounded-3xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={() => setShowFulfillmentModal(false)}
+              className="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-700 w-10 h-10 rounded-full font-bold flex items-center justify-center cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="text-center mb-6">
+              <img 
+                src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" 
+                alt="Order Fulfillment Warehouse" 
+                className="w-full h-40 object-cover rounded-2xl mb-4"
+              />
+              <h2 className="text-2xl font-black text-slate-800">📦 Order Fulfillment</h2>
+              <p className="text-slate-500 text-sm">ग्राहकाकडून माहिती भरा</p>
+            </div>
+
+            <form onSubmit={handleFulfillmentSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block font-bold text-sm mb-1 text-slate-700">Company Name</label>
+                <input type="text" name="companyName" value={formData.companyName} onChange={handleFormChange} required placeholder="Enter Company Name" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Contact Person</label>
+                <input type="text" name="contactPerson" value={formData.contactPerson} onChange={handleFormChange} required placeholder="Your Name" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Mobile Number</label>
+                <input type="tel" name="mobileNumber" value={formData.mobileNumber} onChange={handleFormChange} required placeholder="9876543210" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-bold text-sm mb-1 text-slate-700">Email</label>
+                <input type="email" name="email" value={formData.email} onChange={handleFormChange} required placeholder="customer@company.com" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-bold text-sm mb-1 text-slate-700">Pickup/Warehouse Address</label>
+                <textarea name="pickupAddress" value={formData.pickupAddress} onChange={handleFormChange} required rows="2" placeholder="Full warehouse address with Pincode" className="w-full p-3 border rounded-xl"></textarea>
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Monthly Orders</label>
+                <select name="monthlyOrders" value={formData.monthlyOrders} onChange={handleFormChange} className="w-full p-3 border rounded-xl">
+                  <option value="100">100+</option>
+                  <option value="500">500+</option>
+                  <option value="1000">1000+</option>
+                  <option value="5000">5000+</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Product Category</label>
+                <input type="text" name="productCategory" value={formData.productCategory} onChange={handleFormChange} placeholder="e.g. Apparel, Electronics" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">SKU (How many unique products)</label>
+                <input type="text" name="skuCount" value={formData.skuCount} onChange={handleFormChange} placeholder="e.g. 50 SKUs" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Average Order Weight</label>
+                <input type="text" name="avgWeight" value={formData.avgWeight} onChange={handleFormChange} placeholder="e.g. 500g" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-bold text-sm mb-1 text-slate-700">Average Parcel Dimensions (L x B x H)</label>
+                <input type="text" name="avgDimensions" value={formData.avgDimensions} onChange={handleFormChange} placeholder="e.g. 10 x 10 x 10 cm" className="w-full p-3 border rounded-xl" />
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Packaging Required?</label>
+                <select name="packagingRequired" value={formData.packagingRequired} onChange={handleFormChange} className="w-full p-3 border rounded-xl">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Label Printing Required?</label>
+                <select name="labelPrinting" value={formData.labelPrinting} onChange={handleFormChange} className="w-full p-3 border rounded-xl">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">Invoice Printing Required?</label>
+                <select name="invoicePrinting" value={formData.invoicePrinting} onChange={handleFormChange} className="w-full p-3 border rounded-xl">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-sm mb-1 text-slate-700">COD Required?</label>
+                <select name="codRequired" value={formData.codRequired} onChange={handleFormChange} className="w-full p-3 border rounded-xl">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-bold text-sm mb-1 text-slate-700">Daily Pickup Required?</label>
+                <select name="dailyPickup" value={formData.dailyPickup} onChange={handleFormChange} className="w-full p-3 border rounded-xl">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-2 text-center mt-4">
+                <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-xl font-black uppercase tracking-widest transition cursor-pointer">
+                  Submit Fulfillment Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );
