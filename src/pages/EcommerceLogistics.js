@@ -6,7 +6,7 @@ import {
   ChevronRight, CheckCircle, MapPin, ArrowRight, Phone
 } from 'lucide-react';
 
-// ✅ फिक्स: फाईल पाथ केस-सेन्सिटिव्हिटीनुसार बदलला आहे
+// ✅ Fix: Updated file path case-sensitivity
 import { sendWhatsAppNotification } from '../utils/whatsapp';
 
 const EcommerceLogistics = () => {
@@ -36,10 +36,16 @@ const EcommerceLogistics = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ बुकिंग हाताळण्यासाठी फंक्शन (n8n URL अपडेट केली आहे)
+  // ✅ Function to handle booking/queries (Updated to route Marketplace Shipping to a separate page)
   const handleEcommerceQuery = (serviceTitle) => {
     if (serviceTitle === "Order Fulfillment") {
       setShowFulfillmentModal(true);
+      return;
+    }
+
+    // If the user clicks Marketplace Shipping, navigate directly to the dedicated page
+    if (serviceTitle === "Marketplace Shipping") {
+      navigate('/marketplace-shipping');
       return;
     }
 
@@ -47,7 +53,7 @@ const EcommerceLogistics = () => {
     const orderId = "EC-" + Math.floor(Math.random() * 100000);
     const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
-    // n8n ला डेटा पाठवा
+    // Send data to n8n
     axios.post(n8nUrl, {
       service: serviceTitle,
       customerName: customerName,
@@ -55,11 +61,11 @@ const EcommerceLogistics = () => {
       timestamp: new Date().toISOString()
     })
     .then(() => {
-      alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवली आहे!`);
+      alert(`Your inquiry for ${serviceTitle} has been successfully sent!`);
     })
     .catch((error) => {
       console.error("Error sending to n8n:", error);
-      alert("चौकशी पाठवताना एरर आला.");
+      alert("Error occurred while sending the inquiry.");
     });
   };
 
@@ -80,7 +86,7 @@ const EcommerceLogistics = () => {
     })
     .catch((error) => {
       console.error("Error sending to n8n:", error);
-      alert("चौकशी पाठवताना एरर आला.");
+      alert("Error occurred while sending the inquiry.");
     });
   };
 
@@ -258,7 +264,7 @@ const EcommerceLogistics = () => {
                 className="w-full h-40 object-cover rounded-2xl mb-4"
               />
               <h2 className="text-2xl font-black text-slate-800">📦 Order Fulfillment</h2>
-              <p className="text-slate-500 text-sm">ग्राहकाकडून माहिती भरा</p>
+              <p className="text-slate-500 text-sm">Please fill in your details below</p>
             </div>
 
             <form onSubmit={handleFulfillmentSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">

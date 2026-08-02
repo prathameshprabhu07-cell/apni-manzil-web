@@ -40,6 +40,9 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import VendorDashboard from './pages/VendorDashboard'; 
 import CustomerDashboard from './components/CustomerDashboard'; 
 
+// ✅ Marketplace Shipping पेज इम्पोर्ट जोडले आहे
+import MarketplaceShipping from './pages/MarketplaceShipping'; 
+
 // ✅ Order Fulfillment Form इम्पोर्ट (Pages फोल्डरमधून)
 import OrderFulfillmentForm from './pages/OrderFulfillmentForm';
 
@@ -173,6 +176,9 @@ function App() {
           <Route path="/book-truck" element={<BookTruck />} />
           <Route path="/book-part-load" element={<BookPartLoad />} />
           <Route path="/find-load" element={<FindLoad />} />
+
+          {/* ✅ Marketplace Shipping राऊत जोडला आहे */}
+          <Route path="/marketplace-shipping" element={<MarketplaceShipping />} />
 
           {/* ✅ Order Fulfillment Form राऊत */}
           <Route path="/order-fulfillment" element={<OrderFulfillmentForm />} />
