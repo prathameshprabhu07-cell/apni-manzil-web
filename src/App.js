@@ -40,8 +40,8 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import VendorDashboard from './pages/VendorDashboard'; 
 import CustomerDashboard from './components/CustomerDashboard'; 
 
-// ✅ Order Fulfillment Form इम्पोर्ट
-import OrderFulfillmentForm from './components/OrderFulfillmentForm';
+// ✅ Order Fulfillment Form इम्पोर्ट (Pages फोल्डरमधून)
+import OrderFulfillmentForm from './pages/OrderFulfillmentForm';
 
 import HomeShifting from './pages/HomeShifting'; 
 import OfficeShiftingForm from './components/OfficeShiftingForm'; 
@@ -174,7 +174,7 @@ function App() {
           <Route path="/book-part-load" element={<BookPartLoad />} />
           <Route path="/find-load" element={<FindLoad />} />
 
-          {/* ✅ Order Fulfillment Form राऊत ॲड केला आहे */}
+          {/* ✅ Order Fulfillment Form राऊत */}
           <Route path="/order-fulfillment" element={<OrderFulfillmentForm />} />
 
           <Route path="/short-term-storage" element={<ShortTermStorageForm />} />
