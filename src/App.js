@@ -46,6 +46,9 @@ import MarketplaceShipping from './pages/MarketplaceShipping';
 // ✅ COD Shipping पेज इम्पोर्ट जोडले आहे
 import CODShipping from './pages/CODShipping'; 
 
+// ✅ Inventory Management / Stock Management पेज इम्पोर्ट जोडला आहे
+import StockManagement from './pages/StockManagement'; 
+
 // ✅ Order Fulfillment Form इम्पोर्ट (Pages फोल्डरमधून)
 import OrderFulfillmentForm from './pages/OrderFulfillmentForm';
 
@@ -185,6 +188,9 @@ function App() {
 
           {/* ✅ COD Shipping राऊत जोडला आहे */}
           <Route path="/cod-shipping" element={<CODShipping />} />
+
+          {/* ✅ Stock Management / Inventory Handling राऊत जोडला आहे */}
+          <Route path="/stock-management" element={<StockManagement />} />
 
           {/* ✅ Order Fulfillment Form राऊत */}
           <Route path="/order-fulfillment" element={<OrderFulfillmentForm />} />

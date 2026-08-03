@@ -55,6 +55,12 @@ const EcommerceLogistics = () => {
       return;
     }
 
+    // ✅ नवीन बदल: Inventory Handling (Stock Management) वर क्लिक केल्यावर तयार केलेल्या नवीन पेजवर जाईल
+    if (serviceTitle === "Inventory Handling") {
+      navigate('/stock-management');
+      return;
+    }
+
     const customerName = "E-com Vendor";
     const orderId = "EC-" + Math.floor(Math.random() * 100000);
     const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
