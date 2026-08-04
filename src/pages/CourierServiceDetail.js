@@ -8,8 +8,8 @@ import {
   Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, User, Search, IndianRupee, Ruler
 } from 'lucide-react';
 
-const N8N_BASE_URL = 'http://localhost:5678';
-const N8N_PRODUCTION_WEBHOOK = 'http://localhost:5678/webhook/apni-manzil-logistics';
+// --- Updated to n8n Production Webhook URL ---
+const BACKEND_BASE_URL = 'http://localhost:5678/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
@@ -57,6 +57,7 @@ const CourierServiceDetail = () => {
     setSelectedCourier(null);
 
     const rateRequestData = {
+      action: 'check_rates',
       mobile: formData.senderPhone || '9999999999',
       pickup_pincode: formData.pickupPincode,
       delivery_pincode: formData.dropPincode,
@@ -72,11 +73,12 @@ const CourierServiceDetail = () => {
       // 1. Save Inquiry to Firebase Firestore
       await addDoc(collection(db, "courier_inquiries"), rateRequestData);
 
-      // 2. Fetch Live Rates from n8n Production Webhook
-      const response = await axios.post(N8N_PRODUCTION_WEBHOOK, rateRequestData);
+      // 2. Fetch Live Rates from n8n Webhook
+      const response = await axios.post(BACKEND_BASE_URL, rateRequestData);
       
       const availableCouriers = response.data?.data?.available_courier_companies || 
                                 response.data?.available_courier_companies || 
+                                response.data?.data ||
                                 response.data;
 
       if (Array.isArray(availableCouriers) && availableCouriers.length > 0) {
@@ -94,7 +96,7 @@ const CourierServiceDetail = () => {
     }
   };
 
-  // --- Final Booking (Sending complete data to n8n Production webhook) ---
+  // --- Final Booking (Sending complete data to n8n Webhook) ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
     
@@ -113,6 +115,7 @@ const CourierServiceDetail = () => {
 
     try {
       const bookingData = {
+        action: 'create_order',
         ...formData,
         courier_id: selectedCourier.courier_company_id,
         courier_name: selectedCourier.courier_name,
@@ -121,17 +124,17 @@ const CourierServiceDetail = () => {
         timestamp: new Date().toISOString()
       };
 
-      const bookingRes = await axios.post(N8N_PRODUCTION_WEBHOOK, bookingData);
+      const bookingRes = await axios.post(BACKEND_BASE_URL, bookingData);
 
       if (bookingRes.status === 200 || bookingRes.data) {
-        alert(`Booking Successful!`);
+        alert(`Booking Successful! Order placed on Nimbus Post.`);
         navigate('/dashboard');
       } else {
         alert("Booking Failed.");
       }
     } catch (error) {
       console.error("Booking Error:", error);
-      alert("Could not connect to the booking server.");
+      alert("Could not connect to the n8n webhook server.");
     } finally {
       setLoading(false);
     }
