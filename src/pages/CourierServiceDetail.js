@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { 
-  ArrowLeft, Truck, Zap, Calendar, FileText, 
+import {
+  ArrowLeft, Truck, Zap, Calendar, FileText,
   Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, User, Search, IndianRupee, Ruler
 } from 'lucide-react';
 
@@ -29,16 +29,18 @@ const CourierServiceDetail = () => {
     receiverAddress: '',
     dropPincode: '',
     weight: '0.5',
-    length: '10',  
-    breadth: '10', 
-    height: '10',  
+    length: '10',
+    breadth: '10',
+    height: '10',
     parcelType: 'Non-Document',
+    productDescription: '',
+    declaredValue: '',
     paymentMode: 'Prepaid'
   });
 
   const subServices = [
-    { id: 1, name: "Domestic Courier", desc: "Shipping across India", icon: <Truck size={24} />, color: "text-blue-600", bg: "bg-blue-50" },
-    { id: 2, name: "Express Courier", desc: "Urgent delivery", icon: <Zap size={24} />, color: "text-orange-500", bg: "bg-orange-50" },
+    { id: 1, name: "Domestic Courier", desc: "Shipping across India", icon: <Truck className="text-blue-600" size={24}/>, color: "text-blue-600", bg: "bg-blue-50" },
+    { id: 2, name: "Express Courier", desc: "Urgent delivery", icon: <Zap className="text-orange-500" size={24}/>, color: "text-orange-500", bg: "bg-orange-50" },
   ];
 
   const handleInputChange = (e) => {
@@ -66,6 +68,9 @@ const CourierServiceDetail = () => {
       breadth: parseFloat(formData.breadth) || 10,
       height: parseFloat(formData.height) || 10,
       cod: formData.paymentMode === 'Prepaid' ? 0 : 1,
+      product_description: formData.productDescription,
+      declared_value: parseFloat(formData.declaredValue) || 0,
+      parcel_type: formData.parcelType,
       timestamp: new Date().toISOString()
     };
 
@@ -99,7 +104,7 @@ const CourierServiceDetail = () => {
   // --- Final Booking (Sending complete data to n8n Webhook) ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
-    
+
     if(!selectedCourier) {
       alert("Please select a courier service from the list!");
       return;
@@ -114,13 +119,21 @@ const CourierServiceDetail = () => {
     setLoading(true);
 
     try {
+      const courierId = selectedCourier.courier_company_id || selectedCourier.courierId;
+      const courierName = selectedCourier.courier_name || selectedCourier.courierName;
+      const courierRate = selectedCourier.rate ?? selectedCourier.price;
+      const courierEtd = selectedCourier.etd ?? selectedCourier.tatDays;
+
       const bookingData = {
         action: 'create_order',
         ...formData,
-        courier_id: selectedCourier.courier_company_id,
-        courier_name: selectedCourier.courier_name,
-        shipping_cost: Math.ceil(parseFloat(selectedCourier.rate) + 20),
-        delivery_date: selectedCourier.etd,
+        courier_id: courierId,
+        courier_name: courierName,
+        shipping_cost: Math.ceil(parseFloat(courierRate) + 20),
+        delivery_date: courierEtd,
+        product_description: formData.productDescription,
+        declared_value: parseFloat(formData.declaredValue) || 0,
+        parcel_type: formData.parcelType,
         timestamp: new Date().toISOString()
       };
 
@@ -146,20 +159,15 @@ const CourierServiceDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans">
-      <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-16 relative overflow-hidden">
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10 cursor-pointer">
-          <ArrowLeft size={20}/> Back to Home
-        </button>
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex-1">
-            <h1 className="text-4xl md:text-7xl font-black mb-2 tracking-tight">Book Your Parcel</h1>
-            <p className="text-orange-400 text-lg md:text-xl font-black uppercase tracking-[0.2em] mb-4">Solutions for all delivery</p>
-            <p className="text-blue-100/80 text-lg font-medium italic">"Fastest. Safest. Reliable."</p>
-          </div>
-          <div className="flex-1 w-full max-w-md h-64 md:h-80 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white/10">
-            <img src="/bg.png" alt="Logistics Network" className="w-full h-full object-cover" />
-          </div>
+    <div className="min-h-screen bg-slate-50 pb-24">
+      {/* Header Banner */}
+      <div className="bg-[#002D5E] text-white pt-12 pb-24 px-6 md:px-12 relative overflow-hidden">
+        <div className="max-w-5xl mx-auto relative z-10">
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-orange-400 mb-8 font-bold hover:text-orange-300 transition relative z-10 cursor-pointer">
+            <ArrowLeft size={20}/> Back to Home
+          </button>
+          <h1 className="text-4xl md:text-5xl font-black mb-4">Book Your Parcel</h1>
+          <p className="text-slate-300 font-medium max-w-xl">Solutions for all delivery "Fastest. Safest. Reliable."</p>
         </div>
       </div>
 
@@ -213,6 +221,39 @@ const CourierServiceDetail = () => {
                 </div>
               </div>
 
+              {/* Product Description & Declared Value Section */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-6">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2">
+                    Product Description
+                  </label>
+                  <input
+                    name="productDescription"
+                    value={formData.productDescription}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Ex. Masala, Clothes, Electronics"
+                    className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 ml-2">
+                    Declared Value (₹)
+                  </label>
+                  <input
+                    name="declaredValue"
+                    value={formData.declaredValue}
+                    onChange={handleInputChange}
+                    required
+                    type="number"
+                    min="1"
+                    placeholder="Ex. 2000"
+                    className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none"
+                  />
+                </div>
+              </div>
+
               <div className="flex justify-end">
                 <button 
                   type="button" 
@@ -229,23 +270,30 @@ const CourierServiceDetail = () => {
                 <div className="mt-8 bg-white p-6 rounded-2xl border border-green-100">
                   <h4 className="font-black text-green-800 uppercase text-sm mb-4">Available Courier Companies:</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {rates.map((courier, idx) => (
-                      <div 
-                        key={idx}
-                        onClick={() => setSelectedCourier(courier)}
-                        className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
-                          selectedCourier?.courier_company_id === courier.courier_company_id 
-                          ? 'bg-[#002D5E] text-white border-orange-400 shadow-lg scale-[1.02]' 
-                          : 'bg-slate-50 border-slate-100'
-                        }`}
-                      >
-                        <div>
-                          <p className="font-black text-sm">{courier.courier_name}</p>
-                          <p className="text-xs mt-1 opacity-80">Est. Delivery: {courier.etd || 'N/A'}</p>
+                    {rates.map((courier, idx) => {
+                      const courierCompanyId = courier.courier_company_id || courier.courierId;
+                      const courierName = courier.courier_name || courier.courierName;
+                      const courierRate = courier.rate ?? courier.price;
+                      const courierEtd = courier.etd ?? courier.tatDays;
+
+                      return (
+                        <div 
+                          key={idx}
+                          onClick={() => setSelectedCourier(courier)}
+                          className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+                            (selectedCourier?.courier_company_id === courierCompanyId || selectedCourier?.courierId === courierCompanyId)
+                            ? 'bg-[#002D5E] text-white border-orange-400 shadow-lg scale-[1.02]' 
+                            : 'bg-slate-50 border-slate-100'
+                          }`}
+                        >
+                          <div>
+                            <p className="font-black text-sm">{courierName}</p>
+                            <p className="text-xs mt-1 opacity-80">Est. Delivery: {courierEtd || 'N/A'}</p>
+                          </div>
+                          <p className="text-2xl font-black mt-3 text-orange-400">₹{Math.ceil(parseFloat(courierRate) + 20)}</p>
                         </div>
-                        <p className="text-2xl font-black mt-3 text-orange-400">₹{Math.ceil(parseFloat(courier.rate) + 20)}</p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
