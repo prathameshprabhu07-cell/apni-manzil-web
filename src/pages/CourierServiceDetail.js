@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { handleGlobalPayment } from '../utils/paymentService'; // <-- इम्पोर्ट केलेले ग्लोबल पेमेंट युटिलिटी
 import {
   ArrowLeft, Truck, Zap, Calendar, FileText,
   Package, Boxes, RefreshCcw, ChevronRight, CheckCircle2, MapPin, User, Search, IndianRupee, Ruler
@@ -101,7 +102,7 @@ const CourierServiceDetail = () => {
     }
   };
 
-  // --- Final Booking (Sending complete data to n8n Webhook) ---
+  // --- Final Booking & Razorpay Payment Integration ---
   const handleFinalBooking = async (e) => {
     e.preventDefault();
 
@@ -116,6 +117,33 @@ const CourierServiceDetail = () => {
       return;
     }
 
+    const courierRate = selectedCourier.rate ?? selectedCourier.price;
+    const totalAmount = Math.ceil(parseFloat(courierRate) + 20);
+
+    // जर पेमेंट मोड Prepaid असेल तर Razorpay पेमेंट गेटवे ओपन करा
+    if (formData.paymentMode === 'Prepaid') {
+      handleGlobalPayment({
+        amount: totalAmount,
+        serviceName: `${selectedCourier.courier_name || selectedCourier.courierName} Courier Service`,
+        customerName: formData.senderName,
+        customerPhone: formData.senderPhone,
+        onSuccess: (paymentId) => {
+          // पेमेंट यशस्वी झाल्यावर थेट ऑर्डर एक्झिक्युट करा
+          executeBookingOrder(paymentId);
+        },
+        onFailure: (error) => {
+          console.error("Payment Error:", error);
+          alert("Payment failed or cancelled.");
+        }
+      });
+    } else {
+      // COD साठी थेट ऑर्डर एक्झिक्युट करा
+      executeBookingOrder('COD');
+    }
+  };
+
+  // --- Send Order Data to n8n Webhook ---
+  const executeBookingOrder = async (paymentId) => {
     setLoading(true);
 
     try {
@@ -134,6 +162,7 @@ const CourierServiceDetail = () => {
         product_description: formData.productDescription,
         declared_value: parseFloat(formData.declaredValue) || 0,
         parcel_type: formData.parcelType,
+        payment_id: paymentId,
         timestamp: new Date().toISOString()
       };
 
