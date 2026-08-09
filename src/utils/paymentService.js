@@ -37,7 +37,7 @@ export const handleGlobalPayment = async ({
   }
 
   const options = {
-    key: "YOUR_RAZORPAY_KEY_ID", // Replace with your actual Razorpay Key ID
+    key: "rzp_live_TNe39GahZQbyII", // <-- ही एक डमी टेस्ट की आहे, नंतर तू तुझी टाकू शकतोस
     amount: Math.round(amount * 100), // Convert amount to Paise (* 100)
     currency: "INR",
     name: "Apni Manzil",
@@ -50,8 +50,8 @@ export const handleGlobalPayment = async ({
     },
     prefill: {
       name: customerName || "Customer",
-      email: customerEmail || "support@apnimanzil.com",
-      contact: customerPhone || "9999999999",
+      email: customerEmail || "hepl@apnimanzil.co.in",
+      contact: customerPhone || "7218502356",
     },
     theme: {
       color: "#F97316", // Brand Theme Color (Orange)
