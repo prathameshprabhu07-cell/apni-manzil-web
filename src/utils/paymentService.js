@@ -37,7 +37,7 @@ export const handleGlobalPayment = async ({
   }
 
   const options = {
-    key: "rzp_test_TO7cXrm6qYdEY", // <-- ही एक डमी टेस्ट की आहे, नंतर तू तुझी टाकू शकतोस
+    key: "rzp_test_TO7xIeXsD0KnB9", // <-- ही एक डमी टेस्ट की आहे, नंतर तू तुझी टाकू शकतोस
     amount: Math.round(amount * 100), // Convert amount to Paise (* 100)
     currency: "INR",
     name: "Apni Manzil",
