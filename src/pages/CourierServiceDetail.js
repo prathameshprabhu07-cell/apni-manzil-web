@@ -132,9 +132,17 @@ const CourierServiceDetail = () => {
           executeBookingOrder(paymentId);
         },
         onFailure: (error) => {
-          console.error("Payment Error:", error);
-          alert("Payment failed or cancelled.");
-        }
+  console.error(
+    "RAZORPAY FULL ERROR:",
+    JSON.stringify(error, null, 2)
+  );
+
+  alert(
+    `Payment Failed\n\nCode: ${error?.code || "N/A"}\nDescription: ${
+      error?.description || "N/A"
+    }\nReason: ${error?.reason || "N/A"}`
+  );
+}
       });
     } else {
       // COD साठी थेट ऑर्डर एक्झिक्युट करा
