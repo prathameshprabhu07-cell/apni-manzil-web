@@ -68,7 +68,7 @@ const CourierServiceDetail = () => {
       length: parseFloat(formData.length) || 10,
       breadth: parseFloat(formData.breadth) || 10,
       height: parseFloat(formData.height) || 10,
-      cod: formData.paymentMode === 'Prepaid' ? 0 : 1,
+      payment_mode: formData.paymentMode === 'COD' ? 'cod' : 'prepaid', // <-- तू सांगितल्यानुसार बदल केला आहे
       product_description: formData.productDescription,
       declared_value: parseFloat(formData.declaredValue) || 0,
       parcel_type: formData.parcelType,
@@ -132,17 +132,17 @@ const CourierServiceDetail = () => {
           executeBookingOrder(paymentId);
         },
         onFailure: (error) => {
-  console.error(
-    "RAZORPAY FULL ERROR:",
-    JSON.stringify(error, null, 2)
-  );
+          console.error(
+            "RAZORPAY FULL ERROR:",
+            JSON.stringify(error, null, 2)
+          );
 
-  alert(
-    `Payment Failed\n\nCode: ${error?.code || "N/A"}\nDescription: ${
-      error?.description || "N/A"
-    }\nReason: ${error?.reason || "N/A"}`
-  );
-}
+          alert(
+            `Payment Failed\n\nCode: ${error?.code || "N/A"}\nDescription: ${
+              error?.description || "N/A"
+            }\nReason: ${error?.reason || "N/A"}`
+          );
+        }
       });
     } else {
       // COD साठी थेट ऑर्डर एक्झिक्युट करा
@@ -170,6 +170,7 @@ const CourierServiceDetail = () => {
         product_description: formData.productDescription,
         declared_value: parseFloat(formData.declaredValue) || 0,
         parcel_type: formData.parcelType,
+        payment_mode: formData.paymentMode === 'COD' ? 'cod' : 'prepaid', // <-- इथेही अपडेट केले
         payment_id: paymentId,
         timestamp: new Date().toISOString()
       };
