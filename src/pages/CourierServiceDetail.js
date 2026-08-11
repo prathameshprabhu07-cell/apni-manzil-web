@@ -25,10 +25,14 @@ const CourierServiceDetail = () => {
     senderPhone: '',
     senderAddress: '',
     pickupPincode: '',
+    pickupCity: '',
+    pickupState: '',
     receiverName: '',
     receiverPhone: '',
     receiverAddress: '',
     dropPincode: '',
+    dropCity: '',
+    dropState: '',
     weight: '0.5',
     length: '10',
     breadth: '10',
@@ -48,6 +52,46 @@ const CourierServiceDetail = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // --- Automatic City & State Fetching based on Pincode ---
+  const handlePincodeChange = async (e, type) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+    
+    if (type === 'pickup') {
+      setFormData(prev => ({ ...prev, pickupPincode: val }));
+    } else {
+      setFormData(prev => ({ ...prev, dropPincode: val }));
+    }
+
+    if (val.length === 6) {
+      try {
+        const response = await axios.get(`https://api.postalpincode.in/pincode/${val}`);
+        const data = response.data[0];
+
+        if (data.Status === "Success") {
+          const postOffice = data.PostOffice[0];
+          const cityName = postOffice.District;
+          const stateName = postOffice.State;
+
+          if (type === 'pickup') {
+            setFormData(prev => ({
+              ...prev,
+              pickupCity: cityName,
+              pickupState: stateName
+            }));
+          } else {
+            setFormData(prev => ({
+              ...prev,
+              dropCity: cityName,
+              dropState: stateName
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching city/state from pincode:", error);
+      }
+    }
+  };
+
   // --- Live Rates & Firestore Inquiry Integration ---
   const handleCheckLiveRates = async () => {
     if(!formData.pickupPincode || !formData.dropPincode || !formData.weight) {
@@ -63,12 +107,16 @@ const CourierServiceDetail = () => {
       action: 'check_rates',
       mobile: formData.senderPhone || '9999999999',
       pickup_pincode: formData.pickupPincode,
+      pickup_city: formData.pickupCity,
+      pickup_state: formData.pickupState,
       delivery_pincode: formData.dropPincode,
+      delivery_city: formData.dropCity,
+      delivery_state: formData.dropState,
       weight: parseFloat(formData.weight),
       length: parseFloat(formData.length) || 10,
       breadth: parseFloat(formData.breadth) || 10,
       height: parseFloat(formData.height) || 10,
-      payment_mode: formData.paymentMode === 'COD' ? 'cod' : 'prepaid', // <-- तू सांगितल्यानुसार बदल केला आहे
+      payment_mode: formData.paymentMode === 'COD' ? 'cod' : 'prepaid',
       product_description: formData.productDescription,
       declared_value: parseFloat(formData.declaredValue) || 0,
       parcel_type: formData.parcelType,
@@ -170,7 +218,7 @@ const CourierServiceDetail = () => {
         product_description: formData.productDescription,
         declared_value: parseFloat(formData.declaredValue) || 0,
         parcel_type: formData.parcelType,
-        payment_mode: formData.paymentMode === 'COD' ? 'cod' : 'prepaid', // <-- इथेही अपडेट केले
+        payment_mode: formData.paymentMode === 'COD' ? 'cod' : 'prepaid',
         payment_id: paymentId,
         timestamp: new Date().toISOString()
       };
@@ -225,11 +273,33 @@ const CourierServiceDetail = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 ml-2">Pickup Pincode</label>
-                  <input name="pickupPincode" value={formData.pickupPincode} onChange={handleInputChange} required placeholder="Ex. 400001" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
+                  <input 
+                    name="pickupPincode" 
+                    value={formData.pickupPincode} 
+                    onChange={(e) => handlePincodeChange(e, 'pickup')} 
+                    required 
+                    maxLength="6"
+                    placeholder="Ex. 400001" 
+                    className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" 
+                  />
+                  {formData.pickupCity && (
+                    <p className="text-xs font-semibold text-blue-600 ml-2 mt-1">📍 {formData.pickupCity}, {formData.pickupState}</p>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 ml-2">Delivery Pincode</label>
-                  <input name="dropPincode" value={formData.dropPincode} onChange={handleInputChange} required placeholder="Ex. 110001" className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" />
+                  <input 
+                    name="dropPincode" 
+                    value={formData.dropPincode} 
+                    onChange={(e) => handlePincodeChange(e, 'drop')} 
+                    required 
+                    maxLength="6"
+                    placeholder="Ex. 110001" 
+                    className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" 
+                  />
+                  {formData.dropCity && (
+                    <p className="text-xs font-semibold text-blue-600 ml-2 mt-1">📍 {formData.dropCity}, {formData.dropState}</p>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 ml-2">Approx. Weight (Kg)</label>
@@ -362,7 +432,18 @@ const CourierServiceDetail = () => {
                       onChange={(e) => handlePhoneInput(e, 'senderPhone')} 
                     />
                   </div>
-                  <input name="pickupPincode" value={formData.pickupPincode} onChange={handleInputChange} required placeholder="Pickup Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" />
+                  <input 
+                    name="pickupPincode" 
+                    value={formData.pickupPincode} 
+                    onChange={(e) => handlePincodeChange(e, 'pickup')} 
+                    required 
+                    maxLength="6"
+                    placeholder="Pickup Pincode" 
+                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" 
+                  />
+                  {formData.pickupCity && (
+                    <p className="text-xs font-semibold text-blue-700 ml-2">City: {formData.pickupCity}, State: {formData.pickupState}</p>
+                  )}
                   <textarea name="senderAddress" value={formData.senderAddress} onChange={handleInputChange} required rows="3" placeholder="Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"></textarea>
                 </div>
 
@@ -384,7 +465,18 @@ const CourierServiceDetail = () => {
                       onChange={(e) => handlePhoneInput(e, 'receiverPhone')} 
                     />
                   </div>
-                  <input name="dropPincode" value={formData.dropPincode} onChange={handleInputChange} required placeholder="Delivery Pincode" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" />
+                  <input 
+                    name="dropPincode" 
+                    value={formData.dropPincode} 
+                    onChange={(e) => handlePincodeChange(e, 'drop')} 
+                    required 
+                    maxLength="6"
+                    placeholder="Delivery Pincode" 
+                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" 
+                  />
+                  {formData.dropCity && (
+                    <p className="text-xs font-semibold text-orange-700 ml-2">City: {formData.dropCity}, State: {formData.dropState}</p>
+                  )}
                   <textarea name="receiverAddress" value={formData.receiverAddress} onChange={handleInputChange} required rows="3" placeholder="Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"></textarea>
                 </div>
               </div>
@@ -417,6 +509,16 @@ const CourierServiceDetail = () => {
               </button>
             </div>
           </form>
+
+          {/* Truck Image Banner at the Bottom */}
+          <div className="mt-12 text-center pt-8 border-t border-slate-100">
+            <img 
+              src="/truck.png" 
+              alt="Delivery Truck" 
+              className="mx-auto max-h-52 object-contain rounded-2xl shadow-md hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
         </div>
       </div>
     </div>
