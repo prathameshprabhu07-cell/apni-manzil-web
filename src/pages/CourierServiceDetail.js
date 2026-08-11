@@ -283,7 +283,22 @@ const CourierServiceDetail = () => {
                     className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" 
                   />
                   {formData.pickupCity && (
-                    <p className="text-xs font-semibold text-blue-600 ml-2 mt-1">📍 {formData.pickupCity}, {formData.pickupState}</p>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <input 
+                        name="pickupCity" 
+                        value={formData.pickupCity} 
+                        onChange={handleInputChange} 
+                        placeholder="City" 
+                        className="w-full p-3 bg-white rounded-xl border border-slate-200 text-xs font-bold outline-none" 
+                      />
+                      <input 
+                        name="pickupState" 
+                        value={formData.pickupState} 
+                        onChange={handleInputChange} 
+                        placeholder="State" 
+                        className="w-full p-3 bg-white rounded-xl border border-slate-200 text-xs font-bold outline-none" 
+                      />
+                    </div>
                   )}
                 </div>
                 <div className="space-y-1">
@@ -298,7 +313,22 @@ const CourierServiceDetail = () => {
                     className="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" 
                   />
                   {formData.dropCity && (
-                    <p className="text-xs font-semibold text-blue-600 ml-2 mt-1">📍 {formData.dropCity}, {formData.dropState}</p>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <input 
+                        name="dropCity" 
+                        value={formData.dropCity} 
+                        onChange={handleInputChange} 
+                        placeholder="City" 
+                        className="w-full p-3 bg-white rounded-xl border border-slate-200 text-xs font-bold outline-none" 
+                      />
+                      <input 
+                        name="dropState" 
+                        value={formData.dropState} 
+                        onChange={handleInputChange} 
+                        placeholder="State" 
+                        className="w-full p-3 bg-white rounded-xl border border-slate-200 text-xs font-bold outline-none" 
+                      />
+                    </div>
                   )}
                 </div>
                 <div className="space-y-1">
@@ -442,7 +472,22 @@ const CourierServiceDetail = () => {
                     className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" 
                   />
                   {formData.pickupCity && (
-                    <p className="text-xs font-semibold text-blue-700 ml-2">City: {formData.pickupCity}, State: {formData.pickupState}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input 
+                        name="pickupCity" 
+                        value={formData.pickupCity} 
+                        onChange={handleInputChange} 
+                        placeholder="City" 
+                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs" 
+                      />
+                      <input 
+                        name="pickupState" 
+                        value={formData.pickupState} 
+                        onChange={handleInputChange} 
+                        placeholder="State" 
+                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs" 
+                      />
+                    </div>
                   )}
                   <textarea name="senderAddress" value={formData.senderAddress} onChange={handleInputChange} required rows="3" placeholder="Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"></textarea>
                 </div>
@@ -475,7 +520,22 @@ const CourierServiceDetail = () => {
                     className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm" 
                   />
                   {formData.dropCity && (
-                    <p className="text-xs font-semibold text-orange-700 ml-2">City: {formData.dropCity}, State: {formData.dropState}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input 
+                        name="dropCity" 
+                        value={formData.dropCity} 
+                        onChange={handleInputChange} 
+                        placeholder="City" 
+                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs" 
+                      />
+                      <input 
+                        name="dropState" 
+                        value={formData.dropState} 
+                        onChange={handleInputChange} 
+                        placeholder="State" 
+                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs" 
+                      />
+                    </div>
                   )}
                   <textarea name="receiverAddress" value={formData.receiverAddress} onChange={handleInputChange} required rows="3" placeholder="Address" className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"></textarea>
                 </div>
@@ -510,12 +570,12 @@ const CourierServiceDetail = () => {
             </div>
           </form>
 
-          {/* Truck Image Banner at the Bottom */}
-          <div className="mt-12 text-center pt-8 border-t border-slate-100">
+          {/* Larger Truck Image Banner at the Bottom */}
+          <div className="mt-14 text-center pt-8 border-t-2 border-slate-100">
             <img 
               src="/truck.png" 
               alt="Delivery Truck" 
-              className="mx-auto max-h-52 object-contain rounded-2xl shadow-md hover:scale-105 transition-transform duration-300"
+              className="mx-auto w-full max-w-2xl max-h-96 object-contain rounded-3xl shadow-xl hover:scale-102 transition-transform duration-300"
             />
           </div>
 
