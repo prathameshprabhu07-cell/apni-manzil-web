@@ -2,23 +2,20 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase'; 
 import { signOut } from "firebase/auth";
-import { useAuth } from '../context/AuthContext'; // <--- १. ग्लोबल युजर हुक इथे इम्पोर्ट केला
 import { 
   Menu, X, Phone, Globe, User, 
   LogIn, UserPlus, LogOut, ChevronDown, Truck, Building2,
   Facebook, Instagram, Linkedin, Mail, MapPin 
 } from 'lucide-react';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, user }) => {
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDashboardModal, setShowDashboardModal] = useState(false);
   
-  // २. लोकल युजर स्टेट ऐवजी ग्लोबल context मधून user घेतला
-  const { user } = useAuth(); 
   const navigate = useNavigate();
 
-  // ३. सेक्युर बुकिंग फंक्शन जे कोणत्याही पेजवर prop द्वारे वापरता येईल
+  // सेक्युर बुकिंग फंक्शन
   const secureBooking = (callback) => {
     if (user) {
       callback(); // लॉगिन असेल तर पुढे जा
@@ -146,16 +143,15 @@ const Layout = ({ children }) => {
         </div>
       )}
 
-      {/* ४. इथे cloneElement द्वारे secureBooking सर्व पेजेसना पाठवले आहे */}
+      {/* सर्व पेजेसना secureBooking आणि user पास केले आहे */}
       <main className="flex-grow flex flex-col relative z-0">
-        {React.cloneElement(children, { secureBooking })}
+        {React.cloneElement(children, { secureBooking, user })}
       </main>
 
       {/* --- PROFESSIONAL FOOTER --- */}
       <footer className="bg-[#001D3D] text-white pt-20 pb-10 px-12 border-t-8 border-[#FF5E00] relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
           
-          {/* Brand Info */}
           <div className="col-span-1">
             <h4 className="text-2xl font-black mb-6 italic uppercase tracking-tighter cursor-pointer"><Link to="/">Apni Manzil</Link></h4>
             <p className="text-slate-400 text-xs font-bold leading-loose uppercase tracking-widest mb-6">
@@ -172,7 +168,6 @@ const Layout = ({ children }) => {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Support & Info</h5>
             <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-slate-300">
@@ -184,7 +179,6 @@ const Layout = ({ children }) => {
             </ul>
           </div>
 
-          {/* Services - FUNCTIONAL LINKS */}
           <div>
             <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Our Services</h5>
             <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-slate-300">
@@ -197,14 +191,13 @@ const Layout = ({ children }) => {
             </ul>
           </div>
 
-          {/* Contact Details */}
           <div>
             <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Contact Us</h5>
             <ul className="space-y-4 text-xs font-bold tracking-widest text-slate-300">
               <li className="flex items-center gap-3"><MapPin size={16} className="text-[#FF5E00]"/> KUDAL, SINDHUDURG, 416520, MAHARASHTRA, INDIA</li>
               <li className="flex items-center gap-3">
                 <Mail size={16} className="text-[#FF5E00]"/> 
-                <a href="mailto:help@APNIMANZIL.COM" className="hover:text-white">help@apnimanzil.co.in</a>
+                <a href="mailto:help@apnimanzil.co.in" className="hover:text-white">help@apnimanzil.co.in</a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={16} className="text-[#FF5E00]"/> 
@@ -214,7 +207,6 @@ const Layout = ({ children }) => {
           </div>
         </div>
 
-        {/* Copyright */}
         <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-slate-800 text-center">
           <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
             © 2026 APNI MANZIL LOGISTICS SOLUTIONS PVT LTD • ALL RIGHTS RESERVED
