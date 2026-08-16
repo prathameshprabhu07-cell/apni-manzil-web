@@ -16,7 +16,7 @@ import {
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [role, setRole] = useState('individual'); 
+  const [role, setRole] = useState('individual'); // default role
   const [eximStep, setEximStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -52,11 +52,10 @@ const Auth = () => {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // फक्त २ ऑप्शन्स ठेवले आहेत (Individual/MSME आणि Vendor)
   const roles = [
-    { id: 'individual', label: 'Individual', icon: <User size={18}/> },
-    { id: 'msme', label: 'Business', icon: <Building2 size={18}/> },
-    { id: 'vendor', label: 'Partner', icon: <Truck size={18}/> },
-    { id: 'exim', label: 'Global', icon: <Globe size={18}/> }
+    { id: 'individual', label: 'Individual / MSME', icon: <User size={18}/> },
+    { id: 'vendor', label: 'Vendor / Partner', icon: <Truck size={18}/> }
   ];
 
   // --- OTP साठी Recaptcha Setup ---
@@ -177,17 +176,18 @@ const Auth = () => {
                 {isLogin ? `Welcome Back` : `Create Account`}
             </h2>
             <p className="text-slate-500 text-sm mt-2 font-medium">
-                {isLogin ? `Log in to your ${role} portal` : `Start your logistics journey as ${role}`}
+                {isLogin ? `Log in to your portal` : `Start your logistics journey`}
             </p>
         </div>
 
         <div className="px-10 pb-12">
           <div className="mb-8">
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
+            {/* फक्त २ ऑप्शन्ससाठी डिझाइन */}
+            <div className="flex bg-slate-100 p-1.5 rounded-2xl gap-2">
               {roles.map((item) => (
-                <button key={item.id} type="button" onClick={() => {setRole(item.id); setEximStep(1);}} className={`flex-1 py-2.5 rounded-xl transition-all duration-300 flex flex-col items-center gap-1 ${role === item.id ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}>
+                <button key={item.id} type="button" onClick={() => {setRole(item.id); setEximStep(1);}} className={`flex-1 py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${role === item.id ? 'bg-white shadow-sm text-indigo-600 font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'}`}>
                   {item.icon}
-                  <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
+                  <span className="text-xs uppercase tracking-wider">{item.label}</span>
                 </button>
               ))}
             </div>
@@ -221,38 +221,14 @@ const Auth = () => {
               </div>
             )}
 
-            {/* --- Registration Steps (No changes here as requested) --- */}
-            {!isLogin && role === 'exim' && (
-              <div className="space-y-4">
-                <div className="flex gap-1.5 mb-6 justify-center">
-                    {[1,2,3,4,5].map(s => <div key={s} className={`h-1 flex-1 rounded-full transition-all duration-500 ${eximStep >= s ? 'bg-indigo-600' : 'bg-slate-200'}`}></div>)}
-                </div>
-                {eximStep === 1 && (
-                  <div className="space-y-3">
-                    <input name="companyName" placeholder="Company Name" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
-                    <input name="fullName" placeholder="Owner Name" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
-                    <input name="phone" placeholder="Mobile Number" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
-                    <input name="email" placeholder="Email ID" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
-                    <input name="password" type="password" placeholder="Set Password" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
-                    <button type="button" onClick={() => setEximStep(2)} className="w-full bg-[#1e293b] text-white py-4 rounded-2xl font-bold flex justify-center items-center gap-2">Next <ChevronRight size={18}/></button>
-                  </div>
-                )}
-                {/* Steps 2-5 kept as per original logic */}
-                {eximStep === 2 && ( <div className="space-y-3"> <input name="iecCode" placeholder="IEC Code" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} /> <button type="button" onClick={() => setEximStep(3)} className="w-full bg-[#1e293b] text-white py-4 rounded-2xl font-bold">Next</button> </div> )}
-                {eximStep === 3 && ( <div className="space-y-3"> <input name="countries" placeholder="Countries" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} /> <button type="button" onClick={() => setEximStep(4)} className="w-full bg-[#1e293b] text-white py-4 rounded-2xl font-bold">Next</button> </div> )}
-                {eximStep === 4 && ( <div className="space-y-3"> <select name="shipmentType" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange}> <option value="Air">Air</option><option value="Sea">Sea</option> </select> <button type="button" onClick={() => setEximStep(5)} className="w-full bg-[#1e293b] text-white py-4 rounded-2xl font-bold">Next</button> </div> )}
-                {eximStep === 5 && ( <div className="space-y-3"> <button onClick={handleAuth} className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold">Complete</button> </div> )}
-              </div>
-            )}
-
-            {!isLogin && role !== 'exim' && (
+            {!isLogin && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input name="fullName" placeholder="Full Name" className="md:col-span-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
                 <input name="email" type="email" placeholder="Email" className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
                 <input name="password" type="password" placeholder="Password" className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
                 <input name="phone" placeholder="Phone" className="md:col-span-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none" onChange={handleChange} />
                 <button onClick={handleAuth} disabled={loading} className="md:col-span-2 bg-[#1e293b] text-white py-4 rounded-2xl font-bold mt-2">
-                   {loading ? <Loader2 className="animate-spin" /> : `Create Account`}
+                   {loading ? <Loader2 className="animate-spin mx-auto" /> : `Create Account`}
                 </button>
               </div>
             )}
