@@ -104,7 +104,18 @@ const Layout = ({ children, user }) => {
             )}
           </div>
           <Link to="/partner-registration" className="hover:text-[#FF5E00] transition-all text-[#FF5E00]">BECOME A PARTNER</Link>
-          <button onClick={() => setShowDashboardModal(true)} className="border-2 border-[#001D3D] px-8 py-2.5 hover:bg-[#001D3D] hover:text-white transition-all uppercase font-black text-[13px] rounded-sm cursor-pointer shadow-sm">
+          
+          {/* इथे बदल केला आहे: युझर लॉगिन असल्यास थेट डॅशबोर्डवर जाईल, नसेल तर मोडल उघडेल */}
+          <button 
+            onClick={() => {
+              if (user) {
+                navigate('/customer-dashboard');
+              } else {
+                setShowDashboardModal(true);
+              }
+            }} 
+            className="border-2 border-[#001D3D] px-8 py-2.5 hover:bg-[#001D3D] hover:text-white transition-all uppercase font-black text-[13px] rounded-sm cursor-pointer shadow-sm flex items-center gap-2"
+          >
             <User size={16}/> {user ? 'MY DASHBOARD' : 'DASHBOARD'}
           </button>
         </div>
