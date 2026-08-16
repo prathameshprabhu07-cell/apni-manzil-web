@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase'; 
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { useAuth } from '../context/AuthContext'; // <--- १. ग्लोबल युजर हुक इथे इम्पोर्ट केला
 import { 
   Menu, X, Phone, Globe, User, 
   LogIn, UserPlus, LogOut, ChevronDown, Truck, Building2,
@@ -12,15 +13,20 @@ const Layout = ({ children }) => {
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDashboardModal, setShowDashboardModal] = useState(false);
-  const [user, setUser] = useState(null);
+  
+  // २. लोकल युजर स्टेट ऐवजी ग्लोबल context मधून user घेतला
+  const { user } = useAuth(); 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
+  // ३. सेक्युर बुकिंग फंक्शन जे कोणत्याही पेजवर prop द्वारे वापरता येईल
+  const secureBooking = (callback) => {
+    if (user) {
+      callback(); // लॉगिन असेल तर पुढे जा
+    } else {
+      alert("सर्व्हिस बुक करण्यासाठी कृपया आधी लॉगिन करा.");
+      navigate('/login');
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -67,7 +73,7 @@ const Layout = ({ children }) => {
           ) : (
             <div className="flex items-center gap-4">
               <span className="text-[#FF5E00] font-black uppercase italic border-r border-slate-700 pr-4">
-                HI, {user.email.split('@')[0]}
+                HI, {user.email ? user.email.split('@')[0] : 'USER'}
               </span>
               <button onClick={handleLogout} className="flex items-center gap-2 hover:text-red-500 transition-all font-black uppercase cursor-pointer">
                 <LogOut size={14} /> Logout
@@ -100,7 +106,6 @@ const Layout = ({ children }) => {
               </div>
             )}
           </div>
-          {/* ✅ इथे पाथ /partner-registration केला आहे */}
           <Link to="/partner-registration" className="hover:text-[#FF5E00] transition-all text-[#FF5E00]">BECOME A PARTNER</Link>
           <button onClick={() => setShowDashboardModal(true)} className="border-2 border-[#001D3D] px-8 py-2.5 hover:bg-[#001D3D] hover:text-white transition-all uppercase font-black text-[13px] rounded-sm cursor-pointer shadow-sm">
             <User size={16}/> {user ? 'MY DASHBOARD' : 'DASHBOARD'}
@@ -111,7 +116,7 @@ const Layout = ({ children }) => {
       {/* --- DASHBOARD MODAL --- */}
       {showDashboardModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-4xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] animate-in zoom-in duration-200">
+          <div className="bg-white rounded-2xl p-8 max-w-3xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] animate-in zoom-in duration-200">
             <button onClick={() => setShowDashboardModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-black cursor-pointer">
               <X size={28} />
             </button>
@@ -119,7 +124,7 @@ const Layout = ({ children }) => {
               <h2 className="text-3xl font-black text-[#001D3D] uppercase italic tracking-tighter">Choose Portal</h2>
               <p className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Access your secure dashboard</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
                 <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm"><User size={32} /></div>
                 <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">MSME / Individual</h3>
@@ -136,21 +141,14 @@ const Layout = ({ children }) => {
                   <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg">Register</Link>
                 </div>
               </div>
-              <div className="flex flex-col p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:border-[#FF5E00] transition-all group">
-                <div className="bg-white p-4 rounded-xl w-fit mb-4 group-hover:bg-[#FF5E00] group-hover:text-white transition-colors shadow-sm"><Globe size={32} /></div>
-                <h3 className="font-black text-[#001D3D] uppercase text-sm mb-1">EXIM Client</h3>
-                <div className="mt-auto space-y-2">
-                  <Link to="/login" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 bg-[#001D3D] text-white text-[11px] font-black uppercase rounded-lg hover:bg-black">Login</Link>
-                  <Link to="/register" onClick={() => setShowDashboardModal(false)} className="block w-full text-center py-2 border-2 border-[#001D3D] text-[#001D3D] text-[11px] font-black uppercase rounded-lg">Register</Link>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       )}
 
+      {/* ४. इथे cloneElement द्वारे secureBooking सर्व पेजेसना पाठवले आहे */}
       <main className="flex-grow flex flex-col relative z-0">
-        {children}
+        {React.cloneElement(children, { secureBooking })}
       </main>
 
       {/* --- PROFESSIONAL FOOTER --- */}
@@ -181,7 +179,6 @@ const Layout = ({ children }) => {
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/about">About Us</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/help">Help Center</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/track">Service Areas</Link></li>
-              {/* ✅ इथेही पाथ /partner-registration केला आहे */}
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/partner-registration">Become a Partner</Link></li>
               <li className="hover:text-white cursor-pointer transition-all"><Link to="/privacy-policy">Privacy Policy</Link></li>
             </ul>
@@ -204,7 +201,7 @@ const Layout = ({ children }) => {
           <div>
             <h5 className="text-[#FF5E00] font-black text-[11px] uppercase tracking-[0.2em] mb-6">Contact Us</h5>
             <ul className="space-y-4 text-xs font-bold tracking-widest text-slate-300">
-              <li className="flex items-center gap-3"><MapPin size={16} className="text-[#FF5E00]"/> KUDAL, SUNDHUDURG, 416520, MAHARASHTRA, INDIA</li>
+              <li className="flex items-center gap-3"><MapPin size={16} className="text-[#FF5E00]"/> KUDAL, SINDHUDURG, 416520, MAHARASHTRA, INDIA</li>
               <li className="flex items-center gap-3">
                 <Mail size={16} className="text-[#FF5E00]"/> 
                 <a href="mailto:help@APNIMANZIL.COM" className="hover:text-white">help@apnimanzil.co.in</a>
