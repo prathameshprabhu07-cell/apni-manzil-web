@@ -37,6 +37,9 @@ import SpecialLogistics from './pages/SpecialLogistics';
 import AISmartLogistics from './pages/AISmartLogistics'; 
 import VendorDashboard from './pages/VendorDashboard'; 
 
+// ✅ Customer Dashboard इम्पोर्ट जोडला आहे
+import CustomerDashboard from './CustomerDashboard'; 
+
 // ✅ Marketplace Shipping पेज इम्पोर्ट जोडले आहे
 import MarketplaceShipping from './pages/MarketplaceShipping'; 
 
@@ -148,6 +151,9 @@ function App() {
           <Route path="/login" element={<Auth />} />
           <Route path="/register" element={<Auth />} />
           <Route path="/exim-login" element={<Auth />} />
+
+          {/* ✅ Customer Dashboard राऊत जोडला आहे */}
+          <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           
           <Route path="/courier-service" element={<CourierServiceDetail />} />
           <Route path="/booking" element={<BookingPage />} />
