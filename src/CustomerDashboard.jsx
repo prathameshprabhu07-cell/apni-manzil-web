@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   LayoutDashboard, Package, Home, Truck, Globe, Shield, 
   Headphones, Bell, Search, User, Plus, Download, FileText, 
-  TrendingUp, CheckCircle, Clock, AlertCircle, ArrowUpRight, Menu, X
+  TrendingUp, CheckCircle, Clock, AlertCircle, ArrowUpRight, Menu, X, Upload
 } from 'lucide-react';
 
 const CustomerDashboard = () => {
