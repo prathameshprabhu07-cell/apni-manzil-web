@@ -25,10 +25,8 @@ import Tracking from './pages/Tracking';
 import AdminDashboard from './components/AdminDashboard'; 
 import HelpCenter from './pages/HelpCenter'; 
 import PartnerRegistration from './pages/PartnerRegistration'; 
-import MSMEDashboard from './components/MSMEDashboard'; 
 import MSMERegistration from './pages/MSMERegistration'; 
 import ChatBot from './components/ChatBot'; 
-import Dashboard from './pages/Dashboard'; 
 
 // --- नवीन पेजेसचे इम्पोर्ट्स ---
 import PackersAndMovers from './pages/PackersAndMovers'; 
@@ -38,7 +36,6 @@ import EcommerceLogistics from './pages/EcommerceLogistics';
 import SpecialLogistics from './pages/SpecialLogistics'; 
 import AISmartLogistics from './pages/AISmartLogistics'; 
 import VendorDashboard from './pages/VendorDashboard'; 
-import CustomerDashboard from './components/CustomerDashboard'; 
 
 // ✅ Marketplace Shipping पेज इम्पोर्ट जोडले आहे
 import MarketplaceShipping from './pages/MarketplaceShipping'; 
@@ -91,7 +88,6 @@ import SeaFreightForm from './pages/SeaFreightForm';
 import CustomsClearanceForm from './pages/CustomsClearanceForm'; 
 
 import Auth from './Auth'; 
-import EXIMDashboard from './components/EXIMDashboard'; 
 
 // ✅ फीडबॅक / रेटिंग कंपोनंट इम्पोर्ट
 import RatingComponent from './components/RatingComponent'; 
@@ -104,8 +100,6 @@ const Customs = () => ( <div style={{ padding: '120px 50px', textAlign: 'center'
 const TradeFinance = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}><h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900' }}>Logistics Trade Finance</h1></div> );
 
 function App() {
-  const [isMSMERegistered, setIsMSMERegistered] = useState(false);
-  const [businessName, setBusinessName] = useState("");
   const [loading, setLoading] = useState(true);
   
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -114,22 +108,6 @@ function App() {
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-    });
-
-    const q = query(collection(db, "msme_profile"), limit(1));
-    const unsubscribeMSME = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const data = snapshot.docs[0].data();
-        if (data.isRegistered) {
-          setIsMSMERegistered(true);
-          setBusinessName(data.businessName || "Your Business");
-        }
-      } else {
-        setIsMSMERegistered(false);
-      }
-      setLoading(false);
-    }, (error) => {
-      console.error("Auth Check Error:", error);
       setLoading(false);
     });
 
@@ -137,7 +115,6 @@ function App() {
 
     return () => {
       unsubscribeAuth();
-      unsubscribeMSME();
     };
   }, []);
 
@@ -168,13 +145,12 @@ function App() {
           <Route path="/help" element={<HelpCenter />} /> 
           <Route path="/track" element={<Tracking />} /> 
           
-          <Route path="/login" element={currentUser ? <Navigate to="/customer-dashboard" /> : <Auth />} />
+          <Route path="/login" element={<Auth />} />
           <Route path="/register" element={<Auth />} />
-          <Route path="/exim-login" element={currentUser ? <Navigate to="/exim-dashboard" /> : <Auth />} />
+          <Route path="/exim-login" element={<Auth />} />
           
           <Route path="/courier-service" element={<CourierServiceDetail />} />
           <Route path="/booking" element={<BookingPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
 
           <Route path="/hyperlocal-service" element={<HyperlocalService />} />
           <Route path="/truck-transport" element={<TruckTransportService />} />
@@ -260,28 +236,11 @@ function App() {
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
           
           <Route 
-            path="/customer-dashboard" 
-            element={currentUser ? <CustomerDashboard /> : <Navigate to="/login" />} 
-          />
-          
-          <Route 
-            path="/exim-dashboard" 
-            element={currentUser ? <EXIMDashboard /> : <Navigate to="/exim-login" />} 
-          />
-
-          <Route 
             path="/super-secret-admin-99" 
             element={isAdminAuthenticated ? <AdminDashboard /> : <div style={{textAlign:'center', padding:'100px'}}><button onClick={handleAdminLogin}>Unlock Admin Panel</button></div>} 
           />
 
-          <Route 
-            path="/msme" 
-            element={isMSMERegistered ? <MSMEDashboard businessName={businessName} /> : <Navigate to="/msme-registration" />} 
-          />
-          <Route 
-            path="/msme-registration" 
-            element={<MSMERegistration setRegistered={setIsMSMERegistered} setBusinessName={setBusinessName} />} 
-          />
+          <Route path="/msme-registration" element={<MSMERegistration />} />
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
