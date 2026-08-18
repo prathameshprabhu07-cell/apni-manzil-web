@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 // --- Updated to n8n Production Webhook URL ---
-const BACKEND_BASE_URL = 'https://lou-contribution-lanka-package.trycloudflare.com/webhook/apni-manzil-logistics';
+const BACKEND_BASE_URL = 'https://real-standard-donation-sega.trycloudflare.com/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
