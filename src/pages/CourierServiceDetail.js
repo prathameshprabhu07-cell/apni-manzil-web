@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 // --- Updated to n8n Production Webhook URL ---
-const BACKEND_BASE_URL = 'https://suitable-parker-louisiana-healing.trycloudflare.com/webhook/apni-manzil-logistics';
+const BACKEND_BASE_URL = 'https://racial-expansys-shortly-plugins.trycloudflare.com/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();
