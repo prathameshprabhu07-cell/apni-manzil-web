@@ -26,12 +26,56 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFetchRatesClick = () => {
+  const handleFetchRatesClick = async () => {
     if (!formData.pickupPincode || !formData.deliveryPincode) {
       alert("Please fill complete pickup and delivery Pincodes.");
       return;
     }
-    alert("Rates will be calculated automatically upon booking confirmation via n8n.");
+
+    setLoading(true);
+
+    try {
+      const ratePayload = {
+        action: "check_rates",
+        serviceType: "Hyperlocal",
+        pickup_pincode: formData.pickupPincode,
+        pickup_address: formData.pickupAddress,
+        delivery_pincode: formData.deliveryPincode,
+        delivery_address: formData.deliveryAddress,
+        sender_name: formData.senderName,
+        sender_mobile: formData.senderMobile,
+        receiver_name: formData.receiverName,
+        receiver_mobile: formData.receiverMobile,
+        package_type: formData.packageType,
+        weight: formData.weight,
+        package_value: formData.packageValue,
+        vehicle_type: formData.vehicleType,
+        delivery_speed: formData.deliverySpeed,
+        timestamp: new Date().toISOString()
+      };
+
+      const response = await fetch(n8nUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(ratePayload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Rate request failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Hyperlocal Rate Response:", result);
+      alert("Rates fetched successfully!");
+
+    } catch (error) {
+      console.error("Rate Check Error:", error);
+      alert("Unable to fetch rates. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFinalBooking = async (e) => {
@@ -187,9 +231,10 @@ const SameDayDelivery = () => {
             <button 
               type="button" 
               onClick={handleFetchRatesClick}
-              className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md"
+              disabled={loading}
+              className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md disabled:opacity-50"
             >
-              Fetch Live Rates
+              {loading ? "Checking..." : "Fetch Live Rates"}
             </button>
           </div>
 
@@ -200,7 +245,7 @@ const SameDayDelivery = () => {
                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'Prepaid'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all ${formData.paymentMethod === 'Prepaid' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Prepaid</button>
                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'COD'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all ${formData.paymentMethod === 'COD' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Pay On Delivery</button>
               </div>
-              <button disabled={loading} className="w-full bg-orange-500 text-white py-5 rounded-2xl font-[950] uppercase tracking-[2px] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 active:scale-95">
+              <button disabled={loading} className="w-full bg-orange-500 text-white py-5 rounded-2xl font-[950] uppercase tracking-[2px] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50">
                 {loading ? "Processing Order..." : "Confirm Final Hyperlocal Booking"} <ChevronRight size={20}/>
               </button>
             </div>
