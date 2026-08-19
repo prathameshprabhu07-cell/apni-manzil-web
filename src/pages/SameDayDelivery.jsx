@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { 
   User, MapPin, Package, Truck, Clock, 
-  CreditCard, ArrowLeft, CheckCircle, ChevronRight
+  CreditCard, ArrowLeft, CheckCircle, ChevronRight, Info
 } from 'lucide-react';
 
 const SameDayDelivery = () => {
@@ -24,6 +24,14 @@ const SameDayDelivery = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFetchRatesClick = () => {
+    if (!formData.pickupPincode || !formData.deliveryPincode) {
+      alert("Please fill complete pickup and delivery Pincodes.");
+      return;
+    }
+    alert("Rates will be calculated automatically upon booking confirmation via n8n.");
   };
 
   const handleFinalBooking = async (e) => {
@@ -170,6 +178,20 @@ const SameDayDelivery = () => {
               />
             </section>
           )}
+
+          {/* Fetch Rates Button UI */}
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-[#002D5E] font-black uppercase text-sm">
+              <Info size={18}/> Calculate Rates
+            </div>
+            <button 
+              type="button" 
+              onClick={handleFetchRatesClick}
+              className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md"
+            >
+              Fetch Live Rates
+            </button>
+          </div>
 
           <div className="bg-[#002D5E] rounded-[2.5rem] p-8 text-white shadow-2xl overflow-hidden relative">
             <div className="relative z-10">
