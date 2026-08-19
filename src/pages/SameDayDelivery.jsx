@@ -4,24 +4,16 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { 
   User, MapPin, Package, Truck, Clock, 
-  CreditCard, ArrowLeft, CheckCircle, ChevronRight, Info
+  CreditCard, ArrowLeft, CheckCircle, ChevronRight
 } from 'lucide-react';
 
 const SameDayDelivery = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [fetchingRates, setFetchingRates] = useState(false);
   const [booked, setBooked] = useState(false);
-  const [selectedPartner, setSelectedPartner] = useState(null);
   
   // n8n प्रोडक्शन URL
   const n8nUrl = "https://racial-expansys-shortly-plugins.trycloudflare.com/webhook/apni-manzil-hyperlocal";
-  
-  const [partners, setPartners] = useState([
-    { id: 'borzo', name: 'Borzo (WeFast)', price: '', status: 'Pending' },
-    { id: 'dunzo', name: 'Dunzo For Business', price: '', status: 'Pending' },
-    { id: 'shadowfax', name: 'Shadowfax Local', price: '', status: 'Pending' }
-  ]);
 
   const [formData, setFormData] = useState({
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '',
@@ -34,73 +26,12 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const fetchLiveRates = async () => {
-    if (!formData.pickupPincode || !formData.deliveryPincode) {
-      alert("Please fill complete pickup and delivery Pincodes to calculate rates.");
-      return;
-    }
-
-    setFetchingRates(true);
-    setPartners(partners.map(p => ({ ...p, price: 'Loading...', status: 'Fetching...' })));
-
-    try {
-      const response = await fetch('/api/hyperlocal/shiprocket-quick-rates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pickupPincode: formData.pickupPincode,
-          deliveryPincode: formData.deliveryPincode,
-          weight: formData.weight,
-          packageType: formData.packageType
-        })
-      });
-      
-      const result = await response.json();
-      
-      const courierList = result.data?.available_courier_companies || [];
-      
-      if (courierList.length > 0) {
-        const updatedPartners = partners.map(partner => {
-          const liveData = courierList.find(c => 
-            c.courier_name.toLowerCase().includes(partner.id.toLowerCase())
-          );
-          
-          if (liveData) {
-            return {
-              ...partner,
-              price: `₹${liveData.rate || 0}`,
-              status: 'Available',
-              raw_courier_id: liveData.courier_company_id
-            };
-          } else {
-            return { ...partner, price: 'Not Serviceable', status: 'Unavailable' };
-          }
-        });
-        setPartners(updatedPartners);
-      } else {
-        alert("No hyperlocal fleets available for this specific route right now.");
-        setPartners(partners.map(p => ({ ...p, price: 'Unavailable', status: 'Unavailable' })));
-      }
-    } catch (error) {
-      console.error("Failed fetching live hyperlocal master rates:", error);
-      alert("Backend cluster connectivity issue.");
-      setPartners(partners.map(p => ({ ...p, price: 'Error', status: 'Unavailable' })));
-    } finally {
-      setFetchingRates(false);
-    }
-  };
-
   const handleFinalBooking = async (e) => {
     e.preventDefault();
-    if (!selectedPartner || selectedPartner.status === 'Unavailable') {
-      return alert("Please click 'Fetch Live Rates' and select an available courier partner.");
-    }
     setLoading(true);
     
     const bookingPayload = {
       ...formData,
-      courierPartner: selectedPartner.name,
-      finalPrice: selectedPartner.price,
       status: "Pending",
       timestamp: new Date().toISOString()
     };
@@ -109,7 +40,7 @@ const SameDayDelivery = () => {
       // १. Firestore मध्ये सेव्ह
       await addDoc(collection(db, "same_day_bookings"), bookingPayload);
 
-      // २. n8n ला डेटा पाठवा
+      // २. n8n प्रोडक्शन वेबहूकला डेटा पाठवा
       await fetch(n8nUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -239,21 +170,6 @@ const SameDayDelivery = () => {
               />
             </section>
           )}
-
-          {/* Fetch Rates Button Only */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#002D5E] font-black uppercase text-sm">
-              <Info size={18}/> Calculate Rates
-            </div>
-            <button 
-              type="button" 
-              onClick={fetchLiveRates}
-              disabled={fetchingRates}
-              className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md"
-            >
-              {fetchingRates ? "Calculating..." : "Fetch Live Rates"}
-            </button>
-          </div>
 
           <div className="bg-[#002D5E] rounded-[2.5rem] p-8 text-white shadow-2xl overflow-hidden relative">
             <div className="relative z-10">
