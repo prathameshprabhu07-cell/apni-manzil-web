@@ -15,7 +15,7 @@ const SameDayDelivery = () => {
   const [selectedPartner, setSelectedPartner] = useState(null);
   
   // n8n प्रोडक्शन URL
-  const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
+  const n8nUrl = "https://racial-expansys-shortly-plugins.trycloudflare.com/webhook/apni-manzil-hyperlocal";
   
   const [partners, setPartners] = useState([
     { id: 'borzo', name: 'Borzo (WeFast)', price: '', status: 'Pending' },
@@ -140,7 +140,6 @@ const SameDayDelivery = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 font-sans">
-      {/* (बाकीचा कोड जसा आहे तसाच राहिला आहे) */}
       <div className="bg-black text-white p-6 flex items-center justify-between sticky top-0 z-50">
         <button type="button" onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full"><ArrowLeft size={20}/></button>
         <h1 className="text-lg font-black italic uppercase tracking-tighter">Same Day <span className="text-blue-400">Booking Form</span></h1>
@@ -149,7 +148,6 @@ const SameDayDelivery = () => {
 
       <div className="max-w-2xl mx-auto p-4 pt-8">
         <form onSubmit={handleFinalBooking} className="space-y-8">
-          {/* ... (Form sections remain unchanged) ... */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-blue-600">
               <User size={18}/> 1. Where is your Pickup? (Sender)
@@ -235,7 +233,7 @@ const SameDayDelivery = () => {
                 type="button" 
                 onClick={fetchLiveRates}
                 disabled={fetchingRates}
-                className="bg-blue-600 text-white text-xs font-black uppercase px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+                className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md"
               >
                 {fetchingRates ? "Calculating..." : "Fetch Live Rates"}
               </button>
@@ -247,8 +245,8 @@ const SameDayDelivery = () => {
                   key={partner.id}
                   onClick={() => partner.status === 'Available' && setSelectedPartner(partner)}
                   className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all 
-                    ${partner.status === 'Unavailable' ? 'opacity-50 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'}
-                    ${selectedPartner?.id === partner.id ? 'border-orange-500 bg-orange-50/50' : 'border-slate-100 bg-slate-50/50 hover:bg-slate-50'}`}
+                    ${partner.status === 'Unavailable' ? 'opacity-50 cursor-not-allowed border-transparent' : 'cursor-pointer'}
+                    ${selectedPartner?.id === partner.id ? 'border-orange-500 bg-orange-50/50' : 'border-slate-100 hover:border-slate-300'}`}
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-black text-xs shadow-sm border border-slate-100 uppercase italic">
@@ -281,7 +279,6 @@ const SameDayDelivery = () => {
         </form>
       </div>
       
-      {/* ... (CSS block) ... */}
       <style jsx>{`
         .form-input {
           width: 100%;
