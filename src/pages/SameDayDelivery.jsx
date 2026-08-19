@@ -27,7 +27,7 @@ const SameDayDelivery = () => {
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '',
     receiverName: '', receiverMobile: '', deliveryAddress: '', deliveryPincode: '',
     packageType: 'Parcel', weight: '0.5', packageValue: '100', channelOrderId: '',
-    vehicleType: 'Bike', deliverySpeed: 'Same Day', paymentMethod: 'Prepaid'
+    vehicleType: 'Bike', deliverySpeed: 'Same Day', scheduledTime: '', paymentMethod: 'Prepaid'
   });
 
   const handleChange = (e) => {
@@ -224,6 +224,22 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
+          {/* Conditional Scheduled Time Picker */}
+          {formData.deliverySpeed === 'Scheduled' && (
+            <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 animate-fadeIn">
+              <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-4 text-purple-600">
+                <Clock size={18}/> Select Scheduled Pickup Date & Time
+              </h2>
+              <input 
+                type="datetime-local" 
+                name="scheduledTime" 
+                required 
+                className="form-input font-bold" 
+                onChange={handleChange} 
+              />
+            </section>
+          )}
+
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <div className="flex justify-between items-center mb-4">
               <h2 className="flex items-center gap-2 font-black uppercase text-sm text-[#002D5E]">
@@ -244,12 +260,12 @@ const SameDayDelivery = () => {
                 <div 
                   key={partner.id}
                   onClick={() => partner.status === 'Available' && setSelectedPartner(partner)}
-                  className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all 
+                  className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all bg-white
                     ${partner.status === 'Unavailable' ? 'opacity-50 cursor-not-allowed border-transparent' : 'cursor-pointer'}
                     ${selectedPartner?.id === partner.id ? 'border-orange-500 bg-orange-50/50' : 'border-slate-100 hover:border-slate-300'}`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-black text-xs shadow-sm border border-slate-100 uppercase italic">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-xs shadow-sm border border-slate-200 uppercase italic text-slate-700">
                       {partner.id.substring(0, 2)}
                     </div>
                     <div>
@@ -257,7 +273,7 @@ const SameDayDelivery = () => {
                       <p className={`text-[9px] font-bold uppercase ${partner.status === 'Available' ? 'text-green-600' : 'text-slate-400'}`}>{partner.status}</p>
                     </div>
                   </div>
-                  <p className="text-base font-black text-orange-500">{partner.price}</p>
+                  <p className="text-base font-black text-orange-500">{partner.price || '₹--'}</p>
                 </div>
               ))}
             </div>
