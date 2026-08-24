@@ -45,7 +45,7 @@ const HyperlocalService = () => {
       
       {/* 1. Hero Section with Blue Shade & Rider Image */}
       <section className="relative bg-gradient-to-r from-blue-700 to-blue-500 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-16 py-16 md:py-24 flex flex-col md:flex-row items-center">
+        <div className="max-w-7xl mx-auto px-6 md:px-16 py-10 md:py-10 flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 z-10">
             <p className="text-sm font-bold opacity-80 mb-2">Home / Hyperlocal / Bike Delivery</p>
             <h1 className="text-4xl md:text-6xl font-black mb-4">Hyperlocal / Bike Delivery</h1>
@@ -53,9 +53,13 @@ const HyperlocalService = () => {
               <p className="text-xl font-bold">Fast Local Delivery within City</p>
             </div>
           </div>
-          <div className="md:w-1/2 flex justify-end relative">
-            <div className="w-full h-64 md:h-80 bg-white/10 rounded-3xl flex items-center justify-center border border-white/20">
-               <p className="text-sm opacity-50 italic">[Bike Rider Illustration Image]</p>
+          <div className="md:w-1/2 flex justify-end relative mt-6 md:mt-0">
+            <div className="w-full h-64 md:h-80 rounded-3xl overflow-hidden flex items-center justify-center">
+               <img 
+                 src="/bike-rider.png" 
+                 alt="Bike Rider" 
+                 className="w-full h-full object-contain drop-shadow-2xl"
+               />
             </div>
           </div>
         </div>
@@ -63,7 +67,7 @@ const HyperlocalService = () => {
       </section>
 
       {/* 2. Services Selection (4 Cards without Explore button) & Big Button Below */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 -mt-12 mb-20 relative z-20">
+      <section className="max-w-7xl mx-auto px-6 md:px-16 -mt-2 mb-20 relative z-20">
         <div className="mb-8 text-center md:text-left">
           <h2 className="text-2xl font-black text-[#002D5E]">Select a Local Delivery Service</h2>
           <p className="text-slate-500 font-medium">Quick & Convenient Delivery Solutions</p>
