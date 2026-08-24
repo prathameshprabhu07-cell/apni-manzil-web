@@ -37,6 +37,9 @@ import SpecialLogistics from './pages/SpecialLogistics';
 import AISmartLogistics from './pages/AISmartLogistics'; 
 import VendorDashboard from './pages/VendorDashboard'; 
 
+// ✅ International Delivery Form इम्पोर्ट (जो आपण नवीन तयार केला आहे)
+import InternationalDelivery from './pages/InternationalDelivery';
+
 // ✅ Customer Dashboard इम्पोर्ट जोडला आहे
 import CustomerDashboard from './CustomerDashboard'; 
 
@@ -205,6 +208,9 @@ function App() {
 
           {/* ✅ Customs Clearance Form राऊत */}
           <Route path="/customs-clearance" element={<CustomsClearanceForm />} />
+
+          {/* ✅ International Delivery (Shiprocket Style) Form राऊत */}
+          <Route path="/international-delivery" element={<InternationalDelivery />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
           <Route path="/packers-movers" element={<PackersAndMovers />} />

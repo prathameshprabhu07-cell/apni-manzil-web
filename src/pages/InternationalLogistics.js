@@ -121,7 +121,15 @@ const InternationalLogistics = () => {
               <h3 className="text-2xl font-black text-slate-800">{service.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
               
-              {service.id === 2 ? (
+              {service.id === 1 ? (
+                /* ✅ International Courier वर क्लिक केल्यावर फॉर्म उघडेल */
+                <button 
+                  onClick={() => navigate('/international-delivery')}
+                  className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
+                >
+                  Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              ) : service.id === 2 ? (
                 <button 
                   onClick={() => navigate('/air-cargo')}
                   className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
@@ -136,7 +144,6 @@ const InternationalLogistics = () => {
                   Ship Now <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               ) : service.id === 5 ? (
-                /* ✅ Customs Clearance साठी नवीन फॉर्म राऊत जोडला आहे */
                 <button 
                   onClick={() => navigate('/customs-clearance')}
                   className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition shadow-lg flex items-center justify-center gap-2 group/btn cursor-pointer"
