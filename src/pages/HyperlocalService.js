@@ -62,30 +62,33 @@ const HyperlocalService = () => {
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/5 rounded-full -mb-32 -mr-32"></div>
       </section>
 
-      {/* 2. Services Selection (4 Boxes) */}
+      {/* 2. Services Selection (4 Cards without Explore button) & Big Button Below */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 -mt-12 mb-20 relative z-20">
         <div className="mb-8 text-center md:text-left">
           <h2 className="text-2xl font-black text-[#002D5E]">Select a Local Delivery Service</h2>
           <p className="text-slate-500 font-medium">Quick & Convenient Delivery Solutions</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {services.map((s) => (
-            <div key={s.id} className="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex flex-col items-center text-center group hover:scale-105 transition-transform">
+            <div key={s.id} className="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 text-4xl">
                 {s.img}
               </div>
               <h3 className="font-black text-[#002D5E] mb-1">{s.name}</h3>
-              <p className="text-xs text-slate-400 font-bold mb-6">{s.desc}</p>
-              
-              <button 
-                onClick={() => handleLocalBooking(s.name)}
-                className="w-full bg-orange-500 text-white py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-200 hover:bg-orange-600 transition cursor-pointer"
-              >
-                Explore
-              </button>
+              <p className="text-xs text-slate-400 font-bold">{s.desc}</p>
             </div>
           ))}
+        </div>
+
+        {/* Big Rectangular Button Below the 4 Cards */}
+        <div className="w-full">
+          <button 
+            onClick={() => handleLocalBooking("Book Your Hyperlocal")}
+            className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black text-base uppercase tracking-widest shadow-xl shadow-orange-200 hover:bg-orange-600 transition cursor-pointer"
+          >
+            Book Your Hyperlocal
+          </button>
         </div>
       </section>
 
