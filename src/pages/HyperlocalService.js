@@ -6,10 +6,13 @@ import {
   CheckCircle, MapPin, BadgePercent, Smartphone
 } from 'lucide-react';
 
+// इथे तुझ्या bike-rider.png चा पाथ तुझ्या फोल्डर स्ट्रक्चरनुसार ऍड केला आहे
+import bikeRiderImg from '../assets/bike-rider.png'; 
+
 const HyperlocalService = () => {
   const navigate = useNavigate();
 
-  // मोबाईल नंबर स्टेट (जर फॉर्ममध्ये वापरायचा असेल तर)
+  // मोबाईल नंबर स्टेट
   const [mobileNumber, setMobileNumber] = useState("");
 
   const n8nUrl = "https://racial-expansys-shortly-plugins.trycloudflare.com/webhook/apni-manzil-hyperlocal";
@@ -56,7 +59,7 @@ const HyperlocalService = () => {
           <div className="md:w-1/2 flex justify-end relative mt-6 md:mt-0">
             <div className="w-full h-64 md:h-80 rounded-3xl overflow-hidden flex items-center justify-center">
                <img 
-                 src="/bike-rider.png" 
+                 src={bikeRiderImg} 
                  alt="Bike Rider" 
                  className="w-full h-full object-contain drop-shadow-2xl"
                />
@@ -66,7 +69,7 @@ const HyperlocalService = () => {
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/5 rounded-full -mb-32 -mr-32"></div>
       </section>
 
-      {/* 2. Services Selection (4 Cards without Explore button) & Big Button Below */}
+      {/* 2. Services Selection (4 Cards) & Big Button Below */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 -mt-2 mb-20 relative z-20">
         <div className="mb-8 text-center md:text-left">
           <h2 className="text-2xl font-black text-[#002D5E]">Select a Local Delivery Service</h2>
@@ -137,7 +140,7 @@ const HyperlocalService = () => {
         </div>
       </section>
 
-      {/* Optional Quick Mobile Number Input with +91 Prefix */}
+      {/* Quick Mobile Number Input */}
       <section className="max-w-xl mx-auto px-6 mb-16">
         <div className="bg-white p-6 rounded-3xl shadow-md border border-slate-200 flex flex-col sm:flex-row items-center gap-4">
           <div className="w-full flex items-center bg-slate-50 rounded-2xl overflow-hidden border border-slate-300 focus-within:ring-2 ring-blue-500">
