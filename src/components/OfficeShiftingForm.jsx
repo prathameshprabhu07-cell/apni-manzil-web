@@ -65,18 +65,34 @@ const LiveTracking = ({ orderId }) => {
 
   return (
     <div className="bg-white rounded-[32px] p-6 shadow-2xl border border-slate-100">
+      
+      {/* Top Header & Order ID */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h3 className="font-black text-[#001D3D] uppercase italic text-sm">
           📍 Real Live Tracking: {orderId || "#AM-TRACK"}
         </h3>
 
-        {/* Select Service Dropdown with all platform services */}
-        <div className="w-full md:w-auto flex items-center gap-3">
-          <span className="text-[10px] font-black uppercase text-slate-400 whitespace-nowrap">Select Service:</span>
+        <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${isTracking ? 'bg-green-500 animate-ping' : 'bg-slate-300'}`}></span>
+            <span className="text-[10px] font-black uppercase text-slate-400">{isTracking ? 'GPS Active' : 'GPS Idle'}</span>
+        </div>
+      </div>
+
+      {/* ✅ Dedicated Service Selection Box (트랙 करायच्या आधी सर्व्हिस निवडण्यासाठी खास बॉक्स) */}
+      <div className="mb-6 bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-inner">
+        <div className="w-full md:w-1/3">
+          <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">
+            Select Logistics Service Type:
+          </label>
+          <p className="text-[11px] font-bold text-slate-600">Choose your shipping category before starting track</p>
+        </div>
+
+        <div className="w-full md:w-2/3">
           <select 
             value={selectedService} 
             onChange={(e) => setSelectedService(e.target.value)}
-            className="bg-slate-50 border border-slate-200 text-[#001D3D] text-xs font-bold rounded-xl px-3 py-2 outline-none cursor-pointer w-full md:w-64 shadow-sm"
+            disabled={isTracking} // ट्रॅकिंग सुरू असताना सर्व्हिस बदलता येणार नाही (सुरक्षिततेसाठी)
+            className="w-full bg-white border border-slate-300 text-[#001D3D] text-xs font-bold rounded-xl px-4 py-3 outline-none cursor-pointer shadow-sm disabled:opacity-60"
           >
             <option value="All Services / General Logistics">All Services / General Logistics</option>
             <option value="Hyperlocal Delivery">Hyperlocal Delivery (Same Day)</option>
@@ -88,11 +104,6 @@ const LiveTracking = ({ orderId }) => {
             <option value="Heavy Machinery & Dangerous Goods">Heavy Machinery / Dangerous Goods</option>
             <option value="Air Cargo & Sea Freight">Air Cargo & Sea Freight</option>
           </select>
-        </div>
-
-        <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isTracking ? 'bg-green-500 animate-ping' : 'bg-slate-300'}`}></span>
-            <span className="text-[10px] font-black uppercase text-slate-400">{isTracking ? 'GPS Active' : 'GPS Idle'}</span>
         </div>
       </div>
 
@@ -115,6 +126,7 @@ const LiveTracking = ({ orderId }) => {
         </MapContainer>
       </div>
 
+      {/* Bottom Controls & Coordinates */}
       <div className="mt-6 flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-2xl gap-4">
          <div>
             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Real Live Co-ordinates & Selected Service</p>
