@@ -1,183 +1,159 @@
-import React, { useState } from 'react';
-import { Plus, Minus, MessageSquare, Truck, PackageCheck, MapPin } from 'lucide-react';
-import { OFFICE_INVENTORY_DATA } from '../constants/OfficeInventoryConstants';
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-const OfficeShiftingForm = () => {
-  const [cart, setCart] = useState({});
-  const [extraNote, setExtraNote] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [details, setDetails] = useState({
-    companyName: "",
-    contactNo: "",
-    pickupAddress: "", pickupPincode: "", pickupFloor: "",
-    dropAddress: "", dropPincode: "", dropFloor: ""
-  });
+// Truck Custom Icon
+const truckIcon = new L.Icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063822.png',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+});
 
-  const [itSupport, setItSupport] = useState(false);
-  const [insurance, setInsurance] = useState(false);
+// Helper component to center map on real coordinates
+function UpdateMapCenter({ center }) {
+  const map = useMap();
+  map.setView(center, map.getZoom());
+  return null;
+}
 
-  const handleChange = (e) => setDetails({ ...details, [e.target.name]: e.target.value });
+const LiveTracking = ({ orderId }) => {
+  // Default fallback location (Pune)
+  const [position, setPosition] = useState([18.5204, 73.8567]);
+  
+  // Select service state with all accurate logistics services
+  const [selectedService, setSelectedService] = useState('All Services / General Logistics');
 
-  const handleQty = (id, change) => {
-    const current = cart[id] || 0;
-    const next = current + change;
-    if (next <= 0) {
-      const { [id]: _, ...rest } = cart;
-      setCart(rest);
-    } else {
-      setCart({ ...cart, [id]: next });
-    }
-  };
+  // Toggle for real GPS tracking state
+  const [isTracking, setIsTracking] = useState(false);
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    const finalData = { 
-      ...details, 
-      cart, 
-      extraNote, 
-      itSupport, 
-      insurance, 
-      serviceType: "Office Shifting", 
-      createdAt: new Date().toISOString() 
-    };
-    
-    try {
-      // n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
-      await fetch("http://localhost:5678/webhook/e9a71614-7bae-49d6-bc42-74fdb4b02d87", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalData)
-      });
-      alert("तुमची माहिती यशस्वीरित्या पाठवली आहे! ✅");
-    } catch (err) {
-      console.error(err);
-      alert("काहीतरी तांत्रिक अडचण आली.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Real Geolocation and n8n webhook sync
+  useEffect(() => {
+    if (!isTracking) return;
 
-  const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const realLat = pos.coords.latitude;
+        const realLng = pos.coords.longitude;
+        
+        setPosition([realLat, realLng]);
+
+        // Send real live tracking data to your n8n webhook
+        fetch("http://localhost:5678/webhook/4b54e0a4-ba4b-484f-8d2d-d804f5b65348", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: orderId || "#AM-TRACK",
+            serviceType: selectedService,
+            lat: realLat,
+            lng: realLng,
+            accuracy: pos.coords.accuracy,
+            timestamp: new Date().toISOString()
+          })
+        }).catch(err => console.error("Webhook Error:", err));
+
+      },
+      (err) => {
+        console.error("GPS Error:", err);
+        alert("Please enable GPS/Location permissions in your browser.");
+      },
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [orderId, selectedService, isTracking]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-40">
-      {/* Header */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-0 z-50 shadow-md">
-        <h1 className="text-xl font-black tracking-tighter italic">APNI MANZIL <span className="text-orange-500 italic">OFFICE</span></h1>
-        <p className="text-[10px] uppercase font-bold tracking-widest opacity-80 mt-1">Professional Corporate Relocation</p>
-      </div>
+    <div className="bg-white rounded-[32px] p-6 shadow-2xl border border-slate-100">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h3 className="font-black text-[#001D3D] uppercase italic text-sm">
+          📍 Real Live Tracking: {orderId || "#AM-TRACK"}
+        </h3>
 
-      <div className="max-w-4xl mx-auto p-4 md:p-8">
-        
-        {/* 1. Company Information */}
-        <div className="mb-8 bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200">
-          <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Company Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input name="companyName" placeholder="Company Name" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-indigo-500 text-sm font-bold" />
-            
-            {/* कॉन्टॅक्ट नंबरसाठी +91 चा बॉक्स जोडला आहे */}
-            <div className="flex items-center bg-slate-50 rounded-2xl overflow-hidden focus-within:ring-2 ring-indigo-500">
-              <span className="pl-4 pr-2 text-slate-500 font-bold select-none bg-slate-50 text-sm">
-                +91
-              </span>
-              <input 
-                type="tel" 
-                maxLength="10" 
-                name="contactNo" 
-                placeholder="Contact Person Number" 
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                  setDetails({ ...details, contactNo: val });
-                }} 
-                className="w-full p-4 bg-slate-50 border-none outline-none text-sm font-bold" 
-              />
-            </div>
-          </div>
+        {/* Select Service Dropdown with all platform services */}
+        <div className="w-full md:w-auto flex items-center gap-3">
+          <span className="text-[10px] font-black uppercase text-slate-400 whitespace-nowrap">Select Service:</span>
+          <select 
+            value={selectedService} 
+            onChange={(e) => setSelectedService(e.target.value)}
+            className="bg-slate-50 border border-slate-200 text-[#001D3D] text-xs font-bold rounded-xl px-3 py-2 outline-none cursor-pointer w-full md:w-64 shadow-sm"
+          >
+            <option value="All Services / General Logistics">All Services / General Logistics</option>
+            <option value="Hyperlocal Delivery">Hyperlocal Delivery (Same Day)</option>
+            <option value="Truck Transport / Part Load">Truck Transport & Part Load (B2B)</option>
+            <option value="Packers & Movers / Home Shifting">Packers & Movers (Home Shifting)</option>
+            <option value="International Courier & Delivery">International Courier & Delivery</option>
+            <option value="E-commerce Marketplace Shipping">E-commerce Marketplace Shipping</option>
+            <option value="Cold Chain & Pharma Storage">Cold Chain & Pharma Logistics</option>
+            <option value="Heavy Machinery & Dangerous Goods">Heavy Machinery / Dangerous Goods</option>
+            <option value="Air Cargo & Sea Freight">Air Cargo & Sea Freight</option>
+          </select>
         </div>
 
-        {/* 2. Address Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200">
-            <h2 className="text-xs font-black text-red-500 uppercase tracking-widest mb-4 flex items-center gap-2"><MapPin size={14}/> Pickup</h2>
-            <textarea name="pickupAddress" placeholder="Full Office Address" rows="2" onChange={handleChange} className="w-full p-4 bg-slate-50 rounded-2xl border-none mb-4 text-sm font-bold" />
-            <div className="grid grid-cols-2 gap-2">
-              <input name="pickupPincode" placeholder="Pincode" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none text-sm font-bold" />
-              <input name="pickupFloor" placeholder="Floor" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none text-sm font-bold" />
-            </div>
-          </div>
-          <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200">
-            <h2 className="text-xs font-black text-green-600 uppercase tracking-widest mb-4 flex items-center gap-2"><Truck size={14}/> Drop-off</h2>
-            <textarea name="dropAddress" placeholder="New Office Address" rows="2" onChange={handleChange} className="w-full p-4 bg-slate-50 rounded-2xl border-none mb-4 text-sm font-bold" />
-            <div className="grid grid-cols-2 gap-2">
-              <input name="dropPincode" placeholder="Pincode" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none text-sm font-bold" />
-              <input name="dropFloor" placeholder="Floor" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none text-sm font-bold" />
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Office Inventory */}
-        {Object.entries(OFFICE_INVENTORY_DATA).map(([category, items]) => (
-          <div key={category} className="mb-10 bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-slate-200">
-            <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <PackageCheck size={16} className="text-indigo-600" /> {category}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {items.map(item => (
-                <div key={item.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl group transition-all">
-                  <span className="text-sm font-bold text-slate-700">{item.name}</span>
-                  <div className="flex items-center gap-4 bg-white px-2 py-1.5 rounded-xl shadow-sm border border-slate-100">
-                    <button onClick={() => handleQty(item.id, -1)} className="text-slate-400 hover:text-red-500 transition-colors"><Minus size={18}/></button>
-                    <span className="font-black text-slate-900 w-5 text-center">{cart[item.id] || 0}</span>
-                    <button onClick={() => handleQty(item.id, 1)} className="text-indigo-600 hover:scale-125 transition-transform"><Plus size={18}/></button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* 4. Special Office Services */}
-        <div className="mb-10 bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200">
-          <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Premium Services</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer">
-              <input type="checkbox" checked={itSupport} onChange={() => setItSupport(!itSupport)} className="w-5 h-5 accent-indigo-600" />
-              <div className="flex flex-col"><span className="text-sm font-bold text-slate-700">IT Setup Support</span><span className="text-[10px] text-slate-500 uppercase tracking-tighter">PC & Networking Re-setup</span></div>
-            </label>
-            <label className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer">
-              <input type="checkbox" checked={insurance} onChange={() => setInsurance(!insurance)} className="w-5 h-5 accent-red-600" />
-              <div className="flex flex-col"><span className="text-sm font-bold text-slate-700">Asset Insurance</span><span className="text-[10px] text-slate-500 uppercase tracking-tighter">Protection for IT equipment</span></div>
-            </label>
-          </div>
-        </div>
-
-        {/* 5. Special Instructions */}
-        <div className="bg-[#EEF2FF] rounded-[2rem] p-8 border-2 border-dashed border-indigo-200 mb-12">
-          <h2 className="text-sm font-black text-indigo-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-            <MessageSquare size={20} /> Special Shifting Instructions
-          </h2>
-          <textarea 
-            className="w-full p-5 bg-white rounded-2xl border-none shadow-sm focus:ring-2 ring-indigo-400 text-sm font-medium text-slate-700"
-            rows="5"
-            placeholder="Type your extra requirements here..."
-            value={extraNote}
-            onChange={(e) => setExtraNote(e.target.value)}
-          ></textarea>
+        <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${isTracking ? 'bg-green-500 animate-ping' : 'bg-slate-300'}`}></span>
+            <span className="text-[10px] font-black uppercase text-slate-400">{isTracking ? 'GPS Active' : 'GPS Idle'}</span>
         </div>
       </div>
 
-      {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-6 flex items-center justify-between px-10 shadow-2xl z-[100]">
-        <div className="flex flex-col">
-          <span className="text-[10px] font-black text-slate-400 uppercase">Total Office Assets</span>
-          <span className="text-2xl font-black text-[#002D5E]">{totalItems}</span>
-        </div>
-        <button onClick={handleSubmit} disabled={loading} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 transition-all active:scale-95">
-          {loading ? "Processing..." : "Get Office Quote"} <Truck size={20} />
-        </button>
+      {/* Leaflet Map Container */}
+      <div className="h-[400px] rounded-2xl overflow-hidden shadow-inner border-4 border-slate-50">
+        <MapContainer center={position} zoom={15} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={position} icon={truckIcon}>
+            <Popup>
+              <div className="font-bold text-[#001D3D]">
+                <div>Live Shipment Location</div>
+                <div className="text-[10px] text-blue-600 mt-1">Service: {selectedService}</div>
+              </div>
+            </Popup>
+          </Marker>
+          <UpdateMapCenter center={position} />
+        </MapContainer>
+      </div>
+
+      <div className="mt-6 flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-2xl gap-4">
+         <div>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Real Live Co-ordinates & Selected Service</p>
+            <p className="text-xs font-bold text-[#001D3D]">
+              {position[0].toFixed(4)}, {position[1].toFixed(4)} <span className="text-blue-600">({selectedService})</span>
+            </p>
+         </div>
+         
+         <div className="flex items-center gap-3 w-full md:w-auto">
+           {/* Real Track Control Button */}
+           <button 
+             onClick={() => setIsTracking(!isTracking)}
+             className={`px-6 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest cursor-pointer transition w-full md:w-auto ${
+               isTracking ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-600 hover:bg-green-700 text-white'
+             }`}
+           >
+             {isTracking ? 'Stop Tracking' : 'Start Tracking'}
+           </button>
+
+           <button 
+             onClick={() => {
+               if (navigator.share) {
+                 navigator.share({
+                   title: 'Apni Manzil Live Tracking',
+                   text: `Track order ${orderId || "#AM-TRACK"} (${selectedService}) at coordinates: ${position[0]}, ${position[1]}`,
+                   url: window.location.href,
+                 }).catch(console.error);
+               } else {
+                 alert(`Location copied: ${position[0]}, ${position[1]}`);
+               }
+             }}
+             className="bg-[#001D3D] text-white px-6 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest cursor-pointer hover:bg-blue-900 transition w-full md:w-auto"
+           >
+             Share Location
+           </button>
+         </div>
       </div>
     </div>
   );
 };
 
-export default OfficeShiftingForm;
+export default LiveTracking;
