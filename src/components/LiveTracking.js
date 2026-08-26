@@ -3,14 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// 1. Truck Custom Icon
+// Truck Custom Icon
 const truckIcon = new L.Icon({
     iconUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063822.png',
     iconSize: [40, 40],
     iconAnchor: [20, 40],
 });
 
-// 2. Helper component to update map center dynamically on real movement
+// Helper component to center map on real coordinates
 function UpdateMapCenter({ center }) {
   const map = useMap();
   map.setView(center, map.getZoom());
@@ -18,16 +18,16 @@ function UpdateMapCenter({ center }) {
 }
 
 const LiveTracking = ({ orderId }) => {
-  // Default fallback location (Pune) until real GPS kicks in
+  // Default fallback location (Pune) until real GPS is triggered
   const [position, setPosition] = useState([18.5204, 73.8567]);
   
-  // State for selecting shipment/logistics service type
-  const [selectedService, setSelectedService] = useState('All Services / General Logistics');
+  // Selected service state
+  const [selectedService, setSelectedService] = useState('Hyperlocal Delivery');
 
-  // State to toggle real GPS tracking on/off
+  // Toggle for real GPS tracking state
   const [isTracking, setIsTracking] = useState(false);
 
-  // 3. Real Geolocation tracking & n8n Webhook integration
+  // Real Geolocation and n8n webhook sync
   useEffect(() => {
     if (!isTracking) return;
 
@@ -36,10 +36,9 @@ const LiveTracking = ({ orderId }) => {
         const realLat = pos.coords.latitude;
         const realLng = pos.coords.longitude;
         
-        // Update state with actual real coordinates from device GPS
         setPosition([realLat, realLng]);
 
-        // Send real live GPS data to n8n webhook
+        // Send real live tracking data to your n8n webhook
         fetch("http://localhost:5678/webhook/4b54e0a4-ba4b-484f-8d2d-d804f5b65348", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -55,14 +54,11 @@ const LiveTracking = ({ orderId }) => {
 
       },
       (err) => {
-        console.error("Real GPS Location Error:", err);
-        alert("Please enable GPS/Location access in your browser to track live movement.");
+        console.error("GPS Error:", err);
+        alert("Please enable GPS/Location permissions in your browser.");
+        setIsTracking(false);
       },
-      { 
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 10000 
-      }
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
@@ -70,38 +66,46 @@ const LiveTracking = ({ orderId }) => {
 
   return (
     <div className="bg-white rounded-[32px] p-6 shadow-2xl border border-slate-100">
+      
+      {/* Top Header & Order ID */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h3 className="font-black text-[#001D3D] uppercase italic text-sm">
           📍 Real Live Tracking: {orderId || "#AM-TRACK"}
         </h3>
 
-        {/* Shipment / Service Selection Dropdown */}
-        <div className="w-full md:w-auto flex items-center gap-3">
-          <span className="text-[10px] font-black uppercase text-slate-400 whitespace-nowrap">Select Service:</span>
-          <select 
-            value={selectedService} 
-            onChange={(e) => setSelectedService(e.target.value)}
-            className="bg-slate-50 border border-slate-200 text-[#001D3D] text-xs font-bold rounded-xl px-3 py-2 outline-none cursor-pointer w-full md:w-64 shadow-sm"
-          >
-            <option value="All Services / General Logistics">All Services / General Logistics</option>
-            <option value="Hyperlocal Delivery">Hyperlocal Delivery (Same Day)</option>
-            <option value="Truck Transport / Part Load">Truck Transport & Part Load (B2B)</option>
-            <option value="Packers & Movers / Home Shifting">Packers & Movers (Home Shifting)</option>
-            <option value="International Courier & Delivery">International Courier & Delivery</option>
-            <option value="E-commerce Marketplace Shipping">E-commerce Marketplace Shipping</option>
-            <option value="Cold Chain & Pharma Storage">Cold Chain & Pharma Logistics</option>
-            <option value="Heavy Machinery & Dangerous Goods">Heavy Machinery / Dangerous Goods</option>
-            <option value="Air Cargo & Sea Freight">Air Cargo & Sea Freight</option>
-          </select>
-        </div>
-
         <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${isTracking ? 'bg-green-500 animate-ping' : 'bg-slate-300'}`}></span>
-            <span className="text-[10px] font-black uppercase text-slate-400">{isTracking ? 'Real GPS Connected' : 'GPS Idle'}</span>
+            <span className="text-[10px] font-black uppercase text-slate-400">{isTracking ? 'GPS Active' : 'GPS Idle'}</span>
         </div>
       </div>
 
-      {/* 4. Leaflet Map Container */}
+      {/* Service Selection Box */}
+      <div className="mb-6 bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-inner">
+        <div className="w-full md:w-1/3">
+          <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">
+            Select Logistics Service Type:
+          </label>
+          <p className="text-[11px] font-bold text-slate-600">Choose category before starting tracking</p>
+        </div>
+
+        <div className="w-full md:w-2/3">
+          <select 
+            value={selectedService} 
+            onChange={(e) => setSelectedService(e.target.value)}
+            disabled={isTracking}
+            className="w-full bg-white border border-slate-300 text-[#001D3D] text-xs font-bold rounded-xl px-4 py-3 outline-none cursor-pointer shadow-sm disabled:opacity-60"
+          >
+            <option value="Hyperlocal Delivery">Hyperlocal Delivery</option>
+            <option value="International Courier">International Courier</option>
+            <option value="Truck Transport & Part Load">Truck Transport & Part Load</option>
+            <option value="Packers & Movers">Packers & Movers</option>
+            <option value="E-commerce Shipping">E-commerce Shipping</option>
+            <option value="Cold Chain Logistics">Cold Chain Logistics</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Leaflet Map Container */}
       <div className="h-[400px] rounded-2xl overflow-hidden shadow-inner border-4 border-slate-50">
         <MapContainer center={position} zoom={15} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
           <TileLayer
@@ -120,23 +124,24 @@ const LiveTracking = ({ orderId }) => {
         </MapContainer>
       </div>
 
+      {/* Bottom Controls & Coordinates */}
       <div className="mt-6 flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-2xl gap-4">
          <div>
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Real Live GPS Co-ordinates & Selected Service</p>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Real Live Coordinates & Selected Service</p>
             <p className="text-xs font-bold text-[#001D3D]">
               {position[0].toFixed(4)}, {position[1].toFixed(4)} <span className="text-blue-600">({selectedService})</span>
             </p>
          </div>
          
          <div className="flex items-center gap-3 w-full md:w-auto">
-           {/* Real GPS Start/Stop Button */}
+           {/* Real Track Control Button */}
            <button 
              onClick={() => setIsTracking(!isTracking)}
              className={`px-6 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest cursor-pointer transition w-full md:w-auto ${
                isTracking ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-600 hover:bg-green-700 text-white'
              }`}
            >
-             {isTracking ? 'Stop Real Tracking' : 'Start Real Tracking'}
+             {isTracking ? 'Stop Tracking' : 'Start Tracking'}
            </button>
 
            <button 
@@ -144,11 +149,11 @@ const LiveTracking = ({ orderId }) => {
                if (navigator.share) {
                  navigator.share({
                    title: 'Apni Manzil Live Tracking',
-                   text: `Track order ${orderId || "#AM-TRACK"} for ${selectedService} at coordinates: ${position[0]}, ${position[1]}`,
+                   text: `Track order ${orderId || "#AM-TRACK"} (${selectedService}) at coordinates: ${position[0]}, ${position[1]}`,
                    url: window.location.href,
                  }).catch(console.error);
                } else {
-                 alert(`Location copied: Lat ${position[0]}, Lng ${position[1]}`);
+                 alert(`Location copied: ${position[0]}, ${position[1]}`);
                }
              }}
              className="bg-[#001D3D] text-white px-6 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest cursor-pointer hover:bg-blue-900 transition w-full md:w-auto"
