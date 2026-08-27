@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import { 
   Search, Truck, 
   Phone, Mail 
@@ -8,13 +8,35 @@ const Tracking = () => {
   const [trackingId, setTrackingId] = useState('');
   const [selectedService, setSelectedService] = useState('Courier & Parcel Delivery');
 
-  const handleTrack = (e) => {
+  // ✅ Webhook Integration for Track Now Button
+  const handleTrack = async (e) => {
     e.preventDefault();
     if (!trackingId.trim()) {
       alert("Please enter a valid tracking ID");
       return;
     }
-    console.log("Tracking ID:", trackingId, "Service:", selectedService);
+
+    try {
+      const response = await fetch("http://localhost:5678/webhook/4b54e0a4-ba4b-484f-8d2d-d804f5b65348", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          trackingId: trackingId,
+          service: selectedService
+        })
+      });
+
+      if (response.ok) {
+        alert("Tracking request sent successfully!");
+      } else {
+        alert("Failed to send tracking request. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error connecting to webhook:", error);
+      alert("Network error or webhook is offline.");
+    }
   };
 
   return (
@@ -73,7 +95,7 @@ const Tracking = () => {
       {/* 2. SUPPORT BANNER */}
       <div className="max-w-4xl mx-auto px-6 mt-20 text-center">
           <p className="text-slate-400 font-bold text-sm uppercase tracking-[0.3em] mb-4">Having trouble?</p>
-          <div className="flex justify-center gap-8">
+          <div className="flex justify-center gap-8 mb-16">
               <div className="flex flex-col items-center">
                   <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center text-[#FF5E00] mb-2"><Phone size={24}/></div>
                   <span className="text-[10px] font-black uppercase">Call Center</span>
@@ -82,6 +104,15 @@ const Tracking = () => {
                   <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center text-[#FF5E00] mb-2"><Mail size={24}/></div>
                   <span className="text-[10px] font-black uppercase">Email Help</span>
               </div>
+          </div>
+
+          {/* ✅ Added a professional logistics image in the empty space below */}
+          <div className="max-w-4xl mx-auto overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white">
+            <img 
+              src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1200" 
+              alt="Apni Manzil Logistics Fleet" 
+              className="w-full h-72 md:h-96 object-cover hover:scale-105 transition-transform duration-700"
+            />
           </div>
       </div>
 
