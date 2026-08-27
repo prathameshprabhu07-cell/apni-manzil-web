@@ -20,6 +20,10 @@ const Home = () => {
   // ✅ निवडलेली सर्व्हिस सेव्ह करण्यासाठी स्टेट
   const [selectedPath, setSelectedPath] = useState('');
 
+  // ✅ ट्रॅकिंगसाठी लागणारे स्टेट्स (Service & Tracking ID)
+  const [trackingService, setTrackingService] = useState('Courier & Parcel Delivery');
+  const [trackingIdInput, setTrackingIdInput] = useState('');
+
   // १. मुख्य सर्व्हिसेस डेटा
   const mainServices = [
     { id: 1, name: "Courier & Parcel Delivery", icon: <Package size={32} />, color: "text-blue-600", bg: "bg-blue-50", isCourier: true, path: '/courier-service' },
@@ -43,9 +47,40 @@ const Home = () => {
     { name: 'AI Robotics', img: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=500', desc: 'Auto Sorting' },
   ];
 
+  // ✅ ट्रॅकिंग सबमिट हँडलर (Webhook connection)
+  const handleLiveTrackSubmit = async (e) => {
+    e.preventDefault();
+    if (!trackingIdInput.trim()) {
+      alert("Please enter a valid tracking ID");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5678/webhook/4b54e0a4-ba4b-484f-8d2d-d804f5b65348", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          trackingId: trackingIdInput,
+          service: trackingService
+        })
+      });
+
+      if (response.ok) {
+        alert("Tracking request sent successfully!");
+      } else {
+        alert("Failed to send tracking request. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error connecting to webhook:", error);
+      alert("Network error or webhook is offline.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      
+
       {/* MOVING TICKER LINE */}
       <div style={{
         background: '#002D5E',
@@ -74,7 +109,6 @@ const Home = () => {
           <span style={{ marginRight: '80px', fontWeight: '900', fontSize: '15px', letterSpacing: '1px' }}>
             👉 “Book Courier, Transport & Packers in 1 Click”
           </span>
-
         </div>
 
         <style>
@@ -103,9 +137,9 @@ const Home = () => {
           India’s <span className="text-orange-500">AI Smart</span> <br/> Logistics Aggregator Platform
         </h1>
         <p className="text-white/80 font-bold mb-10 text-sm md:text-lg uppercase tracking-[0.4em]">One Solution for All Delivery</p>
-        
+
         <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-2 border border-white/20">
-            
+
             <div className="flex-1 flex items-center gap-2 px-4 py-4 bg-white rounded-2xl">
               <MapPin size={20} className="text-orange-500" />
               <input type="text" placeholder="Pickup Pincode" className="bg-transparent flex-1 outline-none font-bold text-sm text-slate-800" />
@@ -210,7 +244,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. ALL-IN-ONE TRACKING HUB */}
+      {/* 3. ALL-IN-ONE TRACKING HUB (Updated with Service Dropdown and Webhook integration) */}
       <section id="track" className="max-w-7xl mx-auto px-6 py-6">
         <div className="bg-white rounded-[3.5rem] p-8 md:p-14 shadow-2xl border border-slate-50 flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
           <div className="lg:w-1/3 w-full flex justify-center">
@@ -237,22 +271,48 @@ const Home = () => {
                 Track Your <span className="text-orange-500">Live Shipment</span>
               </h2>
               <p className="text-slate-500 text-lg font-bold max-w-xl mx-auto lg:mx-0">
-                Enter your Tracking ID below to get real-time GPS location and delivery status instantly.
+                Select your service and enter your Tracking ID below to get real-time updates instantly.
               </p>
             </div>
-            <div className="flex flex-col md:flex-row gap-4 bg-slate-50 p-3 rounded-[2.5rem] border border-slate-100 shadow-inner">
-              <div className="flex-1 flex items-center gap-4 px-6 py-4">
-                <Search className="text-orange-500" size={24} />
+
+            <form onSubmit={handleLiveTrackSubmit} className="flex flex-col md:flex-row gap-3 bg-slate-50 p-3 rounded-[2.5rem] border border-slate-100 shadow-inner items-center">
+              
+              {/* Select Service Dropdown */}
+              <div className="w-full md:w-auto border-b md:border-b-0 md:border-r border-slate-200 pb-2 md:pb-0 md:pr-4">
+                <select 
+                  value={trackingService} 
+                  onChange={(e) => setTrackingService(e.target.value)}
+                  className="bg-transparent text-[#001D3D] text-xs font-black uppercase tracking-wider px-3 py-4 outline-none cursor-pointer w-full md:w-56"
+                >
+                  <option value="Courier & Parcel Delivery">Courier & Parcel Delivery</option>
+                  <option value="Hyperlocal / Bike Delivery">Hyperlocal / Bike Delivery</option>
+                  <option value="Truck & Transport Booking">Truck & Transport Booking</option>
+                  <option value="Packers & Movers">Packers & Movers</option>
+                  <option value="Warehouse & Storage">Warehouse & Storage</option>
+                  <option value="International Logistics">International Logistics</option>
+                  <option value="E-commerce Logistics">E-commerce Logistics</option>
+                  <option value="Special Logistics">Special Logistics</option>
+                  <option value="AI Smart Logistics">AI Smart Logistics</option>
+                </select>
+              </div>
+
+              {/* Tracking ID Input */}
+              <div className="flex-1 flex items-center gap-3 px-4 py-2 w-full">
+                <Search className="text-orange-500 shrink-0" size={24} />
                 <input
                   type="text"
+                  value={trackingIdInput}
+                  onChange={(e) => setTrackingIdInput(e.target.value)}
                   placeholder="Enter Tracking ID (e.g. AMZ12345)"
-                  className="bg-transparent w-full outline-none font-black text-slate-700 placeholder:text-slate-300 text-lg"
+                  className="bg-transparent w-full outline-none font-black text-slate-700 placeholder:text-slate-300 text-base md:text-lg"
                 />
               </div>
-              <button className="bg-[#002D5E] text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-orange-500 hover:shadow-[0_10px_20px_rgba(249,115,22,0.3)] transition-all shadow-xl flex items-center justify-center gap-3 group active:scale-95 duration-300">
-                Track Shipment <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+
+              {/* Track Button */}
+              <button type="submit" className="bg-[#002D5E] text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest text-xs md:text-sm hover:bg-orange-500 hover:shadow-[0_10px_20px_rgba(249,115,22,0.3)] transition-all shadow-xl flex items-center justify-center gap-3 group active:scale-95 duration-300 w-full md:w-auto shrink-0">
+                Track Shipment <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </section>
