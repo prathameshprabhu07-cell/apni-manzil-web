@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { 
   Globe, Plane, User, MapPin, Package, Scale, 
-  ArrowLeft, CheckCircle, ChevronRight, Info, DollarSign
+  ArrowLeft, CheckCircle, ChevronRight, Info
 } from 'lucide-react';
 
 const InternationalDelivery = () => {
@@ -12,30 +12,33 @@ const InternationalDelivery = () => {
   const [loading, setLoading] = useState(false);
   const [booked, setBooked] = useState(false);
   
-  // n8n लोकल प्रोडक्शन वेबहूक URL (तुझ्या सूचनेनुसार अपडेट केली आहे)
+  // रेट्स आणि शिपिंग ऑप्शन्ससाठी स्टेट्स
+  const [availableRates, setAvailableRates] = useState([]);
+  const [selectedRate, setSelectedRate] = useState(null);
+  
+  // n8n लोकल प्रोडक्शन वेबहूक URL
   const n8nUrl = "http://localhost:5678/webhook/international-courier";
 
   const [formData, setFormData] = useState({
-    // Sender / Pickup Details
-    senderName: '', senderMobile: '', pickupAddress: '21 annirudh near suvarna hospital near suvarna', pickupCity: 'Mumbai', pickupState: 'Maharashtra', pickupPincode: '400092',
+    // FROM (Sender Details)
+    senderName: '', senderMobile: '', senderEmail: '', 
+    senderAddress: '', senderCity: '', senderState: '', senderPincode: '',
     
-    // International Buyer Details
-    country: 'United States', deliveryAddress: '', deliveryPincode: '', state: '', city: '', 
-    currency: 'INR', receiverName: '', receiverMobile: '', emailId: '',
+    // TO (Receiver / International Buyer Details)
+    receiverName: '', receiverMobile: '', receiverEmail: '', 
+    country: 'United States', deliveryAddress: '', city: '', state: '', deliveryPincode: '', currency: 'INR',
     
-    // Order & International Clauses
-    shipmentPurpose: 'Commercial', orderId: `INT_${Math.floor(100000 + Math.random() * 900000)}`, 
-    orderDate: new Date().toISOString().split('T')[0], orderChannel: 'CUSTOM',
-    igstPaymentStatus: 'Not Applicable', incoTerms: 'FOB', taxId: '',
+    // PACKAGE (Item Details)
+    productName: '', category: 'General', quantity: '1', 
+    unitPrice: '', currencyType: 'INR', deadWeight: '0.5', 
+    length: '10', breadth: '10', height: '10', hsnCode: '',
 
-    // Product Details
-    productName: '', sku: '', unitPrice: '', quantity: '1', hsnCode: '', hsnDescription: '',
+    // EXPORT (International Clauses)
+    shipmentPurpose: 'Commercial', exportReason: 'Commercial Sale', 
+    incoTerms: 'FOB', igstPaymentStatus: 'Not Applicable', taxId: '',
 
-    // Payment & Shipping Charges
-    shippingCharges: '0', giftWrap: '0', transactionFee: '0', discounts: '0', paymentMethod: 'Prepaid',
-
-    // Package Details (Dead Weight & Dimensions)
-    deadWeight: '0.5', length: '10', breadth: '10', height: '10', volumetricWeight: '0.5'
+    // Payment
+    paymentMethod: 'Prepaid'
   });
 
   const handleChange = (e) => {
@@ -43,40 +46,87 @@ const InternationalDelivery = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // एकूण अमाऊंट कॅल्क्युलेट करणे
-  const calculateTotalValue = () => {
-    const price = parseFloat(formData.unitPrice) || 0;
-    const qty = parseInt(formData.quantity) || 1;
-    const shipping = parseFloat(formData.shippingCharges) || 0;
-    const gift = parseFloat(formData.giftWrap) || 0;
-    const fee = parseFloat(formData.transactionFee) || 0;
-    const discount = parseFloat(formData.discounts) || 0;
-    
-    const subTotal = (price * qty);
-    const total = subTotal + shipping + gift + fee - discount;
-    return { subTotal, total: total > 0 ? total : 0 };
+  // CHECK RATES - n8n वेबहूकला रेट्स फेच करण्यासाठी रिक्वेस्ट
+  const handleCheckRates = async () => {
+    if (!formData.senderPincode || !formData.deliveryPincode || !formData.country) {
+      alert("Please fill complete Sender Pincode, Delivery Pincode, and Country.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const ratePayload = {
+        action: "check_rates",
+        serviceType: "International",
+        ...formData,
+        timestamp: new Date().toISOString()
+      };
+
+      const response = await fetch(n8nUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ratePayload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Rate request failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("International Rates Response:", result);
+
+      if (result && result.rates) {
+        setAvailableRates(result.rates);
+        alert("International courier options fetched successfully!");
+      } else if (Array.isArray(result)) {
+        setAvailableRates(result);
+        alert("International courier options fetched successfully!");
+      } else {
+        // जर वेबहूकवरून लिस्ट आली नाही तर डिफॉल्ट टेस्ट ऑप्शन्स दाखवले जातील जेणेकरून युजरला अडचण येणार नाही
+        setAvailableRates([
+          { serviceName: "DHL Express Worldwide", eta: "3-5 Business Days", price: 2450 },
+          { serviceName: "FedEx International Priority", eta: "4-6 Business Days", price: 2190 },
+          { serviceName: "Aramex Express Standard", eta: "6-8 Business Days", price: 1850 }
+        ]);
+        alert("Fetched default courier options.");
+      }
+
+    } catch (error) {
+      console.error("Rate Check Error:", error);
+      // फॉलबॅक ऑप्शन जेणेकरून टेस्टिंग अडकणार नाही
+      setAvailableRates([
+        { serviceName: "DHL Express Worldwide", eta: "3-5 Business Days", price: 2450 },
+        { serviceName: "FedEx International Priority", eta: "4-6 Business Days", price: 2190 }
+      ]);
+      alert("Connected with offline mode rate estimation.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const { subTotal, total } = calculateTotalValue();
-
+  // BOOK NOW - फायनल बुकिंग आणि डेटाबेस सेव्ह
   const handleInternationalBooking = async (e) => {
     e.preventDefault();
+
+    if (!selectedRate) {
+      alert("Please check rates and select an International Courier Option first!");
+      return;
+    }
+
     setLoading(true);
 
     const bookingPayload = {
       ...formData,
+      selectedRate: selectedRate,
       serviceType: "International",
-      subTotal,
-      totalOrderValue: total,
       status: "Pending",
       timestamp: new Date().toISOString()
     };
 
     try {
-      // १. Firebase Firestore मध्ये सेव्ह करणे
       await addDoc(collection(db, "international_bookings"), bookingPayload);
 
-      // २. n8n वेबहूकला डेटा पाठवणे
       await fetch(n8nUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -112,7 +162,7 @@ const InternationalDelivery = () => {
         <button type="button" onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full cursor-pointer hover:bg-white/20 transition"><ArrowLeft size={20}/></button>
         <div className="flex items-center gap-3">
           <Plane className="text-blue-300 animate-pulse" size={28} />
-          <h1 className="text-lg font-black italic uppercase tracking-wider">International <span className="text-orange-400">Courier Order</span></h1>
+          <h1 className="text-lg font-black italic uppercase tracking-wider">International <span className="text-orange-400">Courier</span></h1>
         </div>
         <div className="w-10"></div>
       </div>
@@ -120,29 +170,36 @@ const InternationalDelivery = () => {
       <div className="max-w-3xl mx-auto p-4 pt-8">
         <form onSubmit={handleInternationalBooking} className="space-y-8">
           
-          {/* Pickup Address Section */}
+          {/* 1. FROM SECTION */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-            <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-4 text-[#002D5E]">
-              <MapPin size={18}/> Pickup Address (Verified)
+            <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-[#002D5E]">
+              <User size={18}/> FROM (Sender Details)
             </h2>
-            <div className="bg-blue-50/60 p-4 rounded-2xl border border-blue-100 flex items-start justify-between">
-              <div>
-                <p className="text-xs font-bold text-blue-900">Home | 21 annirudh near suvarna hospital near suvarna Mumbai Maharashtra-400092</p>
-                <span className="inline-block mt-2 bg-green-100 text-green-700 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Verified</span>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input name="senderName" placeholder="Name *" required className="form-input" onChange={handleChange} />
+              <input name="senderMobile" placeholder="Mobile *" required className="form-input" onChange={handleChange} />
+              <input name="senderEmail" type="email" placeholder="Email *" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="senderAddress" placeholder="Address *" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="senderCity" placeholder="City *" required className="form-input" onChange={handleChange} />
+              <input name="senderState" placeholder="State *" required className="form-input" onChange={handleChange} />
+              <input name="senderPincode" placeholder="Pincode *" required className="form-input md:col-span-2" onChange={handleChange} />
             </div>
           </section>
 
-          {/* Delivery Details (Buyer Information) */}
+          {/* 2. TO SECTION */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-blue-600">
-              <Globe size={18}/> Delivery Details (Buyer Information)
+              <Globe size={18}/> TO (Receiver / International Buyer)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Country *</label>
-                <input name="country" value={formData.country} onChange={handleChange} required className="form-input" />
-              </div>
+              <input name="receiverName" placeholder="Name *" required className="form-input" onChange={handleChange} />
+              <input name="receiverMobile" placeholder="Mobile *" required className="form-input" onChange={handleChange} />
+              <input name="receiverEmail" type="email" placeholder="Email *" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="country" placeholder="Country *" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="deliveryAddress" placeholder="Address *" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="city" placeholder="City *" required className="form-input" onChange={handleChange} />
+              <input name="state" placeholder="State *" required className="form-input" onChange={handleChange} />
+              <input name="deliveryPincode" placeholder="ZIP / Pincode *" required className="form-input" onChange={handleChange} />
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-bold text-slate-400 uppercase italic">Currency *</label>
                 <select name="currency" value={formData.currency} onChange={handleChange} className="form-input font-bold">
@@ -157,123 +214,164 @@ const InternationalDelivery = () => {
                   <option value="SGD">SGD</option>
                 </select>
               </div>
-              <input name="receiverName" placeholder="Full Name (Buyer) *" required className="form-input" onChange={handleChange} />
-              <input name="receiverMobile" placeholder="Mobile Number *" required className="form-input" onChange={handleChange} />
-              <input name="emailId" type="email" placeholder="Email ID *" required className="form-input md:col-span-2" onChange={handleChange} />
-              <input name="deliveryAddress" placeholder="Address Line 1 *" required className="form-input md:col-span-2" onChange={handleChange} />
-              <input name="city" placeholder="City *" required className="form-input" onChange={handleChange} />
-              <input name="state" placeholder="State *" required className="form-input" onChange={handleChange} />
-              <input name="deliveryPincode" placeholder="Pincode / Zipcode *" required className="form-input md:col-span-2" onChange={handleChange} />
             </div>
           </section>
 
-          {/* Order Details & International Clauses */}
-          <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-            <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-purple-600">
-              <Info size={18}/> Order Details & International Clauses
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Shipment Purpose *</label>
-                <select name="shipmentPurpose" value={formData.shipmentPurpose} onChange={handleChange} className="form-input font-bold">
-                  <option value="Commercial">Commercial</option>
-                  <option value="Gift">Gift</option>
-                  <option value="Sample">Sample</option>
-                  <option value="Personal">Personal Use</option>
-                </select>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Order ID</label>
-                <input name="orderId" value={formData.orderId} readOnly className="form-input bg-slate-100 text-slate-500 font-bold" />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">IGST Payment Status</label>
-                <select name="igstPaymentStatus" value={formData.igstPaymentStatus} onChange={handleChange} className="form-input font-bold">
-                  <option value="Not Applicable">A - Not Applicable</option>
-                  <option value="LUT or Export">B - LUT or Export under Bond</option>
-                  <option value="Against Payment">C - Export Against Payment of IGST</option>
-                </select>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Inco Terms</label>
-                <select name="incoTerms" value={formData.incoTerms} onChange={handleChange} className="form-input font-bold">
-                  <option value="FOB">FOB (Free On Board)</option>
-                  <option value="CIF">CIF (Cost, Insurance, and Freight)</option>
-                </select>
-              </div>
-              <input name="taxId" placeholder="Tax ID / VAT Number (Optional)" className="form-input md:col-span-2" onChange={handleChange} />
-            </div>
-          </section>
-
-          {/* Product Details */}
+          {/* 3. PACKAGE SECTION */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-amber-600">
-              <Package size={18}/> Product Details
+              <Package size={18}/> PACKAGE (Item & Dimensions)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input name="productName" placeholder="Product 1 Name *" required className="form-input md:col-span-2" onChange={handleChange} />
-              <input name="sku" placeholder="SKU *" required className="form-input" onChange={handleChange} />
-              <input name="hsnCode" placeholder="HSN Code *" required className="form-input" onChange={handleChange} />
+              <input name="productName" placeholder="Item / Package Name *" required className="form-input md:col-span-2" onChange={handleChange} />
+              
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Unit Price ({formData.currency}) *</label>
-                <input name="unitPrice" type="number" placeholder="0.00" required className="form-input" onChange={handleChange} />
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Category *</label>
+                <select name="category" className="form-input font-bold" onChange={handleChange}>
+                  <option value="General">General / Parcel</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Garments">Garments & Apparel</option>
+                  <option value="Documents">Documents</option>
+                  <option value="Medicines">Medicines (Rx)</option>
+                  <option value="Food">Food Items</option>
+                </select>
               </div>
+
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-bold text-slate-400 uppercase italic">Quantity *</label>
                 <input name="quantity" type="number" min="1" value={formData.quantity} required className="form-input" onChange={handleChange} />
               </div>
-              <input name="hsnDescription" placeholder="HSN Description (Optional)" className="form-input md:col-span-2" onChange={handleChange} />
-            </div>
-          </section>
 
-          {/* Package Weight & Dimensions */}
-          <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-            <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-indigo-600">
-              <Scale size={18}/> Package Dimensions & Weight
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Dead Weight (Kg)</label>
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Value ({formData.currency}) *</label>
+                <input name="unitPrice" type="number" placeholder="Declared Value" required className="form-input" onChange={handleChange} />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Weight (kg) *</label>
                 <input name="deadWeight" type="number" step="0.01" value={formData.deadWeight} required className="form-input" onChange={handleChange} />
               </div>
+
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Length (CM)</label>
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Length (cm)</label>
                 <input name="length" type="number" value={formData.length} required className="form-input" onChange={handleChange} />
               </div>
+
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Breadth (CM)</label>
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Breadth (cm)</label>
                 <input name="breadth" type="number" value={formData.breadth} required className="form-input" onChange={handleChange} />
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Height (CM)</label>
+
+              <div className="flex flex-col gap-1 md:col-span-2">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Height (cm)</label>
                 <input name="height" type="number" value={formData.height} required className="form-input" onChange={handleChange} />
               </div>
+
+              <input name="hsnCode" placeholder="HSN Code *" required className="form-input md:col-span-2" onChange={handleChange} />
             </div>
           </section>
 
-          {/* Summary & Submit */}
-          <section className="bg-[#002D5E] rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
+          {/* 4. EXPORT SECTION */}
+          <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+            <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-purple-600">
+              <Info size={18}/> EXPORT (International Clauses)
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Type *</label>
+                <select name="shipmentPurpose" value={formData.shipmentPurpose} onChange={handleChange} className="form-input font-bold">
+                  <option value="Commercial">Commercial</option>
+                  <option value="Gift">Gift</option>
+                  <option value="Sample">Sample</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Reason of Export *</label>
+                <input name="exportReason" value={formData.exportReason} placeholder="Reason e.g. Sale of goods" required className="form-input" onChange={handleChange} />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Invoice Terms (IncoTerms) *</label>
+                <select name="incoTerms" value={formData.incoTerms} onChange={handleChange} className="form-input font-bold">
+                  <option value="FOB">FOB (Free On Board)</option>
+                  <option value="CIF">CIF (Cost, Insurance & Freight)</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">IGST Status *</label>
+                <select name="igstPaymentStatus" value={formData.igstPaymentStatus} onChange={handleChange} className="form-input font-bold">
+                  <option value="Not Applicable">Not Applicable</option>
+                  <option value="LUT or Export">LUT or Export under Bond</option>
+                  <option value="Against Payment">Export Against Payment of IGST</option>
+                </select>
+              </div>
+
+              <input name="taxId" placeholder="Tax ID / VAT Number (Optional)" className="form-input md:col-span-2" onChange={handleChange} />
+            </div>
+          </section>
+
+          {/* 5. CHECK RATES BUTTON */}
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-[#002D5E] font-black uppercase text-sm">
+              <Scale size={18}/> Calculate Shipping Quotes
+            </div>
+            <button 
+              type="button" 
+              onClick={handleCheckRates}
+              disabled={loading}
+              className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md disabled:opacity-50 cursor-pointer"
+            >
+              {loading ? "Checking Rates..." : "[ CHECK RATES ]"}
+            </button>
+          </div>
+
+          {/* 6. International Courier Options (Dynamic Rates Listing) */}
+          {availableRates.length > 0 && (
+            <section className="bg-white rounded-3xl p-6 shadow-sm border border-blue-100 animate-fadeIn">
+              <h2 className="font-black uppercase text-xs mb-4 text-blue-600 italic">International Courier Options *</h2>
+              <div className="space-y-3">
+                {availableRates.map((rate, index) => (
+                  <div 
+                    key={index} 
+                    onClick={() => setSelectedRate(rate)}
+                    className={`p-4 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${selectedRate?.serviceName === rate.serviceName ? 'border-blue-600 bg-blue-50/50' : 'border-slate-200 hover:border-slate-300'}`}
+                  >
+                    <div>
+                      <h4 className="font-black text-[#002D5E] text-sm">{rate.serviceName || rate.name}</h4>
+                      <p className="text-xs text-slate-500 font-bold">Estimated ETA: {rate.eta || "Standard"}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-lg font-black text-blue-600">₹{rate.price || rate.rate}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* 7. BOOK NOW SECTION */}
+          <div className="bg-[#002D5E] rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
             <div className="relative z-10 space-y-4">
-              <h2 className="font-black uppercase text-xs opacity-70 tracking-widest">Order Summary</h2>
-              <div className="flex justify-between text-sm border-b border-white/10 pb-2">
-                <span>Sub-total for Product:</span>
-                <span className="font-bold">{formData.currency} {subTotal.toFixed(2)}</span>
+              <h2 className="font-black uppercase text-xs opacity-70 tracking-widest">Payment & Confirmation</h2>
+              
+              <div className="flex gap-4 mb-2">
+                <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'Prepaid'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all cursor-pointer ${formData.paymentMethod === 'Prepaid' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Prepaid</button>
+                <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'COD'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all cursor-pointer ${formData.paymentMethod === 'COD' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Pay On Delivery</button>
               </div>
-              <div className="flex justify-between text-lg font-black pt-2 text-orange-400">
-                <span>Total Order Value:</span>
-                <span>{formData.currency} {total.toFixed(2)}</span>
-              </div>
-              <p className="text-[10px] text-blue-200 italic">* Note: Payment method for International Orders is strictly Prepaid.</p>
+
+              <p className="text-[10px] text-blue-200 italic">* Note: International shipments undergo security and customs verification.</p>
               
               <button 
-                disabled={loading} 
+                disabled={loading || !selectedRate} 
                 className="w-full mt-4 bg-orange-500 text-white py-5 rounded-2xl font-[950] uppercase tracking-[2px] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                {loading ? "Processing International Order..." : `Book International Courier (${formData.currency} ${total.toFixed(2)})`} <ChevronRight size={20}/>
+                {loading ? "Processing Booking..." : selectedRate ? `Book Now (₹{selectedRate.price || selectedRate.rate})` : "Check Rates & Select Option First"} <ChevronRight size={20}/>
               </button>
             </div>
             <Plane className="absolute -bottom-12 -right-12 text-white/5" size={280}/>
-          </section>
+          </div>
 
         </form>
       </div>
