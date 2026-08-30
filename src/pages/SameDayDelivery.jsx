@@ -20,9 +20,9 @@ const SameDayDelivery = () => {
   const n8nUrl = "http://localhost:5678/webhook/apni-manzil-hyperlocal";
 
   const [formData, setFormData] = useState({
-    senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '',
-    receiverName: '', receiverMobile: '', deliveryAddress: '', deliveryPincode: '',
-    packageType: 'Parcel', weight: '0.5', packageValue: '100', channelOrderId: '',
+    senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '', pickupCity: '', pickupState: '',
+    receiverName: '', receiverMobile: '', deliveryAddress: '', deliveryPincode: '', deliveryCity: '', deliveryState: '',
+    packageType: 'Parcel', itemName: '', weight: '0.5', length: '', breadth: '', height: '', packageValue: '100', channelOrderId: '',
     vehicleType: 'Bike', deliverySpeed: 'Same Day', scheduledTime: '', paymentMethod: 'Prepaid'
   });
 
@@ -44,14 +44,22 @@ const SameDayDelivery = () => {
         serviceType: "Hyperlocal",
         pickup_pincode: formData.pickupPincode,
         pickup_address: formData.pickupAddress,
+        pickup_city: formData.pickupCity,
+        pickup_state: formData.pickupState,
         delivery_pincode: formData.deliveryPincode,
         delivery_address: formData.deliveryAddress,
+        delivery_city: formData.deliveryCity,
+        delivery_state: formData.deliveryState,
         sender_name: formData.senderName,
         sender_mobile: formData.senderMobile,
         receiver_name: formData.receiverName,
         receiver_mobile: formData.receiverMobile,
         package_type: formData.packageType,
+        item_name: formData.itemName,
         weight: formData.weight,
+        length: formData.length,
+        breadth: formData.breadth,
+        height: formData.height,
         package_value: formData.packageValue,
         vehicle_type: formData.vehicleType,
         delivery_speed: formData.deliverySpeed,
@@ -73,7 +81,6 @@ const SameDayDelivery = () => {
       const result = await response.json();
       console.log("Hyperlocal Rate Response:", result);
 
-      // फक्त n8n वेबहूक डेटावरून रेट्स सेट करणे (कोणताही डमी डेटा नाही)
       if (result && result.rates) {
         setAvailableRates(result.rates);
         alert("Live rates fetched successfully!");
@@ -112,10 +119,8 @@ const SameDayDelivery = () => {
     };
 
     try {
-      // १. Firestore मध्ये सेव्ह
       await addDoc(collection(db, "same_day_bookings"), bookingPayload);
 
-      // २. n8n प्रोडक्शन वेबहूकला डेटा पाठवा
       await fetch(n8nUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -148,39 +153,47 @@ const SameDayDelivery = () => {
     <div className="min-h-screen bg-slate-50 pb-20 font-sans">
       <div className="bg-black text-white p-6 flex items-center justify-between sticky top-0 z-50">
         <button type="button" onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full cursor-pointer"><ArrowLeft size={20}/></button>
-        <h1 className="text-lg font-black italic uppercase tracking-tighter">Same Day <span className="text-blue-400">Booking Form</span></h1>
+        <h1 className="text-lg font-black italic uppercase tracking-tighter">Quick Bike <span className="text-blue-400">Delivery</span></h1>
         <div className="w-10"></div>
       </div>
 
       <div className="max-w-2xl mx-auto p-4 pt-8">
         <form onSubmit={handleFinalBooking} className="space-y-8">
+          
+          {/* PICKUP SECTION */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-blue-600">
-              <User size={18}/> 1. Where is your Pickup? (Sender)
+              <User size={18}/> PICKUP
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input name="senderName" placeholder="Sender Name" required className="form-input" onChange={handleChange} />
-              <input name="senderMobile" placeholder="Mobile Number" required className="form-input" onChange={handleChange} />
-              <input name="pickupAddress" placeholder="Full Pickup Address" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="senderName" placeholder="Pickup Contact Name *" required className="form-input" onChange={handleChange} />
+              <input name="senderMobile" placeholder="Pickup Contact Number *" required className="form-input" onChange={handleChange} />
+              <input name="pickupAddress" placeholder="Pickup Address *" required className="form-input md:col-span-2" onChange={handleChange} />
               <input name="pickupPincode" placeholder="Pickup Pincode *" required className="form-input" onChange={handleChange} />
+              <input name="pickupCity" placeholder="Pickup City *" required className="form-input" onChange={handleChange} />
+              <input name="pickupState" placeholder="Pickup State *" required className="form-input md:col-span-2" onChange={handleChange} />
             </div>
           </section>
 
+          {/* DROP SECTION */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-green-600">
-              <MapPin size={18}/> 2. Where is your Drop? (Receiver)
+              <MapPin size={18}/> DROP
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input name="receiverName" placeholder="Receiver Name" required className="form-input" onChange={handleChange} />
-              <input name="receiverMobile" placeholder="Mobile Number" required className="form-input" onChange={handleChange} />
-              <input name="deliveryAddress" placeholder="Full Delivery Address" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input name="receiverName" placeholder="Receiver Name *" required className="form-input" onChange={handleChange} />
+              <input name="receiverMobile" placeholder="Receiver Mobile Number *" required className="form-input" onChange={handleChange} />
+              <input name="deliveryAddress" placeholder="Drop Address *" required className="form-input md:col-span-2" onChange={handleChange} />
               <input name="deliveryPincode" placeholder="Drop Pincode *" required className="form-input" onChange={handleChange} />
+              <input name="deliveryCity" placeholder="Drop City *" required className="form-input" onChange={handleChange} />
+              <input name="deliveryState" placeholder="Drop State *" required className="form-input md:col-span-2" onChange={handleChange} />
             </div>
           </section>
 
+          {/* PACKAGE SECTION */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
             <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-6 text-amber-600">
-              <Package size={18}/> 3. Package Details
+              <Package size={18}/> PACKAGE
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1 md:col-span-2">
@@ -196,14 +209,33 @@ const SameDayDelivery = () => {
                   <option value="Parcel">Others / General Parcel</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-400 uppercase italic">Package Value (₹) *</label>
-                <input name="packageValue" type="number" placeholder="Value in INR" required className="form-input" defaultValue="100" onChange={handleChange} />
-              </div>
+              <input name="itemName" placeholder="Item / Package Name *" required className="form-input md:col-span-2" onChange={handleChange} />
+              
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-bold text-slate-400 uppercase italic">Weight (kg) *</label>
                 <input name="weight" type="number" step="0.1" placeholder="Weight e.g. 0.5" required className="form-input" defaultValue="0.5" onChange={handleChange} />
               </div>
+              
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Declared Value (₹) *</label>
+                <input name="packageValue" type="number" placeholder="Value in INR" required className="form-input" defaultValue="100" onChange={handleChange} />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Length (cm)</label>
+                <input name="length" type="number" placeholder="Length (cm)" className="form-input" onChange={handleChange} />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Breadth (cm)</label>
+                <input name="breadth" type="number" placeholder="Breadth (cm)" className="form-input" onChange={handleChange} />
+              </div>
+
+              <div className="flex flex-col gap-1 md:col-span-2">
+                <label className="text-xs font-bold text-slate-400 uppercase italic">Height (cm)</label>
+                <input name="height" type="number" placeholder="Height (cm)" className="form-input" onChange={handleChange} />
+              </div>
+
               <div className="flex flex-col gap-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-400 uppercase italic">Channel Order ID (Optional)</label>
                 <input name="channelOrderId" placeholder="e.g. AM_78361" className="form-input" onChange={handleChange} />
@@ -211,11 +243,12 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
+          {/* DELIVERY SECTION */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
                 <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 text-slate-400 italic">Vehicle Category</h2>
                 <select name="vehicleType" className="form-input font-black" onChange={handleChange}>
-                   <option value="Bike">Bike (0-5 kg)</option>
+                   <option value="Bike">2-Wheeler / Bike</option>
                    <option value="Auto">Auto (5-50 kg)</option>
                    <option value="Truck">Truck (50+ kg)</option>
                 </select>
@@ -257,7 +290,7 @@ const SameDayDelivery = () => {
               disabled={loading}
               className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md disabled:opacity-50 cursor-pointer"
             >
-              {loading ? "Checking..." : "Fetch Live Rates"}
+              {loading ? "Checking..." : "[ CHECK LIVE RATE ]"}
             </button>
           </div>
 
