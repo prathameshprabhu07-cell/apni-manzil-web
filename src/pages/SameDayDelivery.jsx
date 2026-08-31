@@ -32,23 +32,26 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // 🌍 पत्ता किंवा पिनकोडवरून ऑटोमॅटिक Lat/Long फेच करणारे फंक्शन
-  const fetchCoordinates = async (addressString, type) => {
-    if (!addressString) return;
+  // 🌍 पत्ता किंवा पिनकोडवरून ऑटोमॅटिक Lat/Long फेच करणारे फंक्शन (मदतनीस फंक्शन)
+  const fetchCoordinatesForString = async (addressString, type, currentData) => {
+    if (!addressString) return currentData;
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressString)}`);
       const data = await response.json();
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
-        setFormData(prev => ({
-          ...prev,
+        const updated = {
+          ...currentData,
           [type === 'pickup' ? 'pickupLat' : 'deliveryLat']: lat,
           [type === 'pickup' ? 'pickupLng' : 'deliveryLng']: lon
-        }));
+        };
+        setFormData(updated);
+        return updated;
       }
     } catch (error) {
       console.error("Geocoding Error:", error);
     }
+    return currentData;
   };
 
   const handleFetchRatesClick = async () => {
@@ -60,10 +63,40 @@ const SameDayDelivery = () => {
     setLoading(true);
 
     try {
+      // अगर युजरने Lat/Long भरले नसतील, तर रेट्स चेक करण्यापूर्वी ऑटोमॅटिक फेच करून घेऊ
+      let currentFormData = { ...formData };
+      if (!currentFormData.pickupLat && currentFormData.pickupAddress) {
+        const pStr = `${currentFormData.pickupAddress}, ${currentFormData.pickupCity}, ${currentFormData.pickupPincode}`;
+        // Nominatim कॉल करून तात्पुरता डेटा अपडेट करू
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pStr)}`);
+          const d = await res.json();
+          if (d && d.length > 0) {
+            currentFormData.pickupLat = d[0].lat;
+            currentFormData.pickupLng = d[0].lon;
+          }
+        } catch(err) { console.error(err); }
+      }
+
+      if (!currentFormData.deliveryLat && currentFormData.deliveryAddress) {
+        const dStr = `${currentFormData.deliveryAddress}, ${currentFormData.deliveryCity}, ${currentFormData.deliveryPincode}`;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dStr)}`);
+          const d = await res.json();
+          if (d && d.length > 0) {
+            currentFormData.deliveryLat = d[0].lat;
+            currentFormData.deliveryLng = d[0].lon;
+          }
+        } catch(err) { console.error(err); }
+      }
+
+      // अपडेटेड फॉर्मडेटा स्टेटमध्ये सिंक करून ठेवू
+      setFormData(currentFormData);
+
       const ratePayload = {
         action: "check_rates",
         serviceType: "Hyperlocal",
-        ...formData, // यात आपले सर्व Lat/Long आणि इतर डेटा ऑटोमॅटिक जाईल
+        ...currentFormData, 
         timestamp: new Date().toISOString()
       };
 
@@ -112,8 +145,34 @@ const SameDayDelivery = () => {
 
     setLoading(true);
     
+    // सबमिट करताना सुद्धा शिफारस राहील की जर Lat/Long नसतील तर एकदा चेक करून घ्यावे
+    let currentFormData = { ...formData };
+    if (!currentFormData.pickupLat && currentFormData.pickupAddress) {
+      try {
+        const pStr = `${currentFormData.pickupAddress}, ${currentFormData.pickupCity}, ${currentFormData.pickupPincode}`;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pStr)}`);
+        const d = await res.json();
+        if (d && d.length > 0) {
+          currentFormData.pickupLat = d[0].lat;
+          currentFormData.pickupLng = d[0].lon;
+        }
+      } catch(err) { console.error(err); }
+    }
+
+    if (!currentFormData.deliveryLat && currentFormData.deliveryAddress) {
+      try {
+        const dStr = `${currentFormData.deliveryAddress}, ${currentFormData.deliveryCity}, ${currentFormData.deliveryPincode}`;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dStr)}`);
+        const d = await res.json();
+        if (d && d.length > 0) {
+          currentFormData.deliveryLat = d[0].lat;
+          currentFormData.deliveryLng = d[0].lon;
+        }
+      } catch(err) { console.error(err); }
+    }
+
     const bookingPayload = {
-      ...formData,
+      ...currentFormData,
       selectedRate: selectedRate,
       status: "Pending",
       timestamp: new Date().toISOString()
@@ -175,13 +234,13 @@ const SameDayDelivery = () => {
                 required 
                 className="form-input md:col-span-2" 
                 onChange={handleChange}
-                onBlur={(e) => fetchCoordinates(`${e.target.value}, ${formData.pickupCity}, ${formData.pickupPincode}`, 'pickup')}
+                onBlur={(e) => fetchCoordinatesForString(`${e.target.value}, ${formData.pickupCity}, ${formData.pickupPincode}`, 'pickup', formData)}
               />
               <input name="pickupPincode" placeholder="Pickup Pincode *" required className="form-input" onChange={handleChange} />
               <input name="pickupCity" placeholder="Pickup City *" required className="form-input" onChange={handleChange} />
               <input name="pickupState" placeholder="Pickup State *" required className="form-input md:col-span-2" onChange={handleChange} />
               
-              {/* पिकअप Lat आणि Long साठी नवीन बॉक्सेस (ऑटो भरले जातील किंवा युजर मॅन्युअली टाकू शकतो) */}
+              {/* पिकअप Lat आणि Long साठी बॉक्सेस */}
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase italic">Pickup Latitude</label>
                 <input name="pickupLat" value={formData.pickupLat} placeholder="Auto Latitude" className="form-input bg-slate-100" onChange={handleChange} />
@@ -207,13 +266,13 @@ const SameDayDelivery = () => {
                 required 
                 className="form-input md:col-span-2" 
                 onChange={handleChange}
-                onBlur={(e) => fetchCoordinates(`${e.target.value}, ${formData.deliveryCity}, ${formData.deliveryPincode}`, 'drop')}
+                onBlur={(e) => fetchCoordinatesForString(`${e.target.value}, ${formData.deliveryCity}, ${formData.deliveryPincode}`, 'drop', formData)}
               />
               <input name="deliveryPincode" placeholder="Drop Pincode *" required className="form-input" onChange={handleChange} />
               <input name="deliveryCity" placeholder="Drop City *" required className="form-input" onChange={handleChange} />
               <input name="deliveryState" placeholder="Drop State *" required className="form-input md:col-span-2" onChange={handleChange} />
 
-              {/* ड्रॉप Lat आणि Long साठी नवीन बॉक्सेस */}
+              {/* ड्रॉप Lat आणि Long साठी बॉक्सेस */}
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase italic">Drop Latitude</label>
                 <input name="deliveryLat" value={formData.deliveryLat} placeholder="Auto Latitude" className="form-input bg-slate-100" onChange={handleChange} />
