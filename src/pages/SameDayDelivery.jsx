@@ -21,13 +21,34 @@ const SameDayDelivery = () => {
 
   const [formData, setFormData] = useState({
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '', pickupCity: '', pickupState: '',
+    pickupLat: '', pickupLng: '', // पिकअप Lat-Long स्टेट्स
     receiverName: '', receiverMobile: '', deliveryAddress: '', deliveryPincode: '', deliveryCity: '', deliveryState: '',
+    deliveryLat: '', deliveryLng: '', // ड्रॉप Lat-Long स्टेट्स
     packageType: 'Parcel', itemName: '', weight: '0.5', length: '', breadth: '', height: '', packageValue: '100', channelOrderId: '',
     vehicleType: 'Bike', deliverySpeed: 'Same Day', scheduledTime: '', paymentMethod: 'Prepaid'
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 🌍 पत्ता किंवा पिनकोडवरून ऑटोमॅटिक Lat/Long फेच करणारे फंक्शन
+  const fetchCoordinates = async (addressString, type) => {
+    if (!addressString) return;
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressString)}`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        setFormData(prev => ({
+          ...prev,
+          [type === 'pickup' ? 'pickupLat' : 'deliveryLat']: lat,
+          [type === 'pickup' ? 'pickupLng' : 'deliveryLng']: lon
+        }));
+      }
+    } catch (error) {
+      console.error("Geocoding Error:", error);
+    }
   };
 
   const handleFetchRatesClick = async () => {
@@ -42,27 +63,7 @@ const SameDayDelivery = () => {
       const ratePayload = {
         action: "check_rates",
         serviceType: "Hyperlocal",
-        pickup_pincode: formData.pickupPincode,
-        pickup_address: formData.pickupAddress,
-        pickup_city: formData.pickupCity,
-        pickup_state: formData.pickupState,
-        delivery_pincode: formData.deliveryPincode,
-        delivery_address: formData.deliveryAddress,
-        delivery_city: formData.deliveryCity,
-        delivery_state: formData.deliveryState,
-        sender_name: formData.senderName,
-        sender_mobile: formData.senderMobile,
-        receiver_name: formData.receiverName,
-        receiver_mobile: formData.receiverMobile,
-        package_type: formData.packageType,
-        item_name: formData.itemName,
-        weight: formData.weight,
-        length: formData.length,
-        breadth: formData.breadth,
-        height: formData.height,
-        package_value: formData.packageValue,
-        vehicle_type: formData.vehicleType,
-        delivery_speed: formData.deliverySpeed,
+        ...formData, // यात आपले सर्व Lat/Long आणि इतर डेटा ऑटोमॅटिक जाईल
         timestamp: new Date().toISOString()
       };
 
@@ -168,10 +169,27 @@ const SameDayDelivery = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input name="senderName" placeholder="Pickup Contact Name *" required className="form-input" onChange={handleChange} />
               <input name="senderMobile" placeholder="Pickup Contact Number *" required className="form-input" onChange={handleChange} />
-              <input name="pickupAddress" placeholder="Pickup Address *" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input 
+                name="pickupAddress" 
+                placeholder="Pickup Address *" 
+                required 
+                className="form-input md:col-span-2" 
+                onChange={handleChange}
+                onBlur={(e) => fetchCoordinates(`${e.target.value}, ${formData.pickupCity}, ${formData.pickupPincode}`, 'pickup')}
+              />
               <input name="pickupPincode" placeholder="Pickup Pincode *" required className="form-input" onChange={handleChange} />
               <input name="pickupCity" placeholder="Pickup City *" required className="form-input" onChange={handleChange} />
               <input name="pickupState" placeholder="Pickup State *" required className="form-input md:col-span-2" onChange={handleChange} />
+              
+              {/* पिकअप Lat आणि Long साठी नवीन बॉक्सेस (ऑटो भरले जातील किंवा युजर मॅन्युअली टाकू शकतो) */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase italic">Pickup Latitude</label>
+                <input name="pickupLat" value={formData.pickupLat} placeholder="Auto Latitude" className="form-input bg-slate-100" onChange={handleChange} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase italic">Pickup Longitude</label>
+                <input name="pickupLng" value={formData.pickupLng} placeholder="Auto Longitude" className="form-input bg-slate-100" onChange={handleChange} />
+              </div>
             </div>
           </section>
 
@@ -183,10 +201,27 @@ const SameDayDelivery = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input name="receiverName" placeholder="Receiver Name *" required className="form-input" onChange={handleChange} />
               <input name="receiverMobile" placeholder="Receiver Mobile Number *" required className="form-input" onChange={handleChange} />
-              <input name="deliveryAddress" placeholder="Drop Address *" required className="form-input md:col-span-2" onChange={handleChange} />
+              <input 
+                name="deliveryAddress" 
+                placeholder="Drop Address *" 
+                required 
+                className="form-input md:col-span-2" 
+                onChange={handleChange}
+                onBlur={(e) => fetchCoordinates(`${e.target.value}, ${formData.deliveryCity}, ${formData.deliveryPincode}`, 'drop')}
+              />
               <input name="deliveryPincode" placeholder="Drop Pincode *" required className="form-input" onChange={handleChange} />
               <input name="deliveryCity" placeholder="Drop City *" required className="form-input" onChange={handleChange} />
               <input name="deliveryState" placeholder="Drop State *" required className="form-input md:col-span-2" onChange={handleChange} />
+
+              {/* ड्रॉप Lat आणि Long साठी नवीन बॉक्सेस */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase italic">Drop Latitude</label>
+                <input name="deliveryLat" value={formData.deliveryLat} placeholder="Auto Latitude" className="form-input bg-slate-100" onChange={handleChange} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase italic">Drop Longitude</label>
+                <input name="deliveryLng" value={formData.deliveryLng} placeholder="Auto Longitude" className="form-input bg-slate-100" onChange={handleChange} />
+              </div>
             </div>
           </section>
 
@@ -294,7 +329,7 @@ const SameDayDelivery = () => {
             </button>
           </div>
 
-          {/* फक्त वेबहूकवरून आलेले रेट्स इथे दिसतील */}
+          {/* वेबहूकवरून आलेले रेट्स */}
           {availableRates.length > 0 && (
             <section className="bg-white rounded-3xl p-6 shadow-sm border border-blue-100 animate-fadeIn">
               <h2 className="font-black uppercase text-xs mb-4 text-blue-600 italic">Select Delivery Service & Rate *</h2>
