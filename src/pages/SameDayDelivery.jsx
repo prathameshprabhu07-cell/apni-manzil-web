@@ -12,18 +12,16 @@ const SameDayDelivery = () => {
   const [loading, setLoading] = useState(false);
   const [booked, setBooked] = useState(false);
   
-  // फक्त वेबहूकवरून येणारे रेट्स स्टोअर करण्यासाठी स्टेट
   const [availableRates, setAvailableRates] = useState([]);
   const [selectedRate, setSelectedRate] = useState(null);
   
-  // n8n प्रोडक्शन URL
   const n8nUrl = "http://localhost:5678/webhook/apni-manzil-hyperlocal";
 
   const [formData, setFormData] = useState({
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '', pickupCity: '', pickupState: '',
-    pickupLat: '', pickupLng: '', // पिकअप Lat-Long स्टेट्स
+    pickupLat: '', pickupLng: '',
     receiverName: '', receiverMobile: '', deliveryAddress: '', deliveryPincode: '', deliveryCity: '', deliveryState: '',
-    deliveryLat: '', deliveryLng: '', // ड्रॉप Lat-Long स्टेट्स
+    deliveryLat: '', deliveryLng: '',
     packageType: 'Parcel', itemName: '', weight: '0.5', length: '', breadth: '', height: '', packageValue: '100', channelOrderId: '',
     vehicleType: 'Bike', deliverySpeed: 'Same Day', scheduledTime: '', paymentMethod: 'Prepaid'
   });
@@ -32,26 +30,29 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // 🌍 पत्ता किंवा पिनकोडवरून ऑटोमॅटिक Lat/Long फेच करणारे फंक्शन (मदतनीस फंक्शन)
-  const fetchCoordinatesForString = async (addressString, type, currentData) => {
-    if (!addressString) return currentData;
+  // 🌍 अत्यंत पॉवरफुल जिओकोडिंग फंक्शन (पिनकोड आणि सिटीच्या आधारे १००% काम करेल)
+  const fetchLatLongHelper = async (address, city, pincode) => {
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressString)}`);
-      const data = await response.json();
+      // प्रथमतः पूर्ण पत्ता + पिनकोड वापरून पाहू
+      let query = `${address || ''}, ${city || ''}, ${pincode || ''}`.trim();
+      if (query.replace(/[, ]+/g, '').length === 0) return { lat: '', lng: '' };
+
+      let response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+      let data = await response.json();
+
+      // जर पूर्ण पत्त्यावर नाही भेटले, तर कमीतकमी पिनकोड आणि सिटीवर ट्राय करू
+      if ((!data || data.length === 0) && pincode) {
+        response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(pincode)}&country=India`);
+        data = await response.json();
+      }
+
       if (data && data.length > 0) {
-        const { lat, lon } = data[0];
-        const updated = {
-          ...currentData,
-          [type === 'pickup' ? 'pickupLat' : 'deliveryLat']: lat,
-          [type === 'pickup' ? 'pickupLng' : 'deliveryLng']: lon
-        };
-        setFormData(updated);
-        return updated;
+        return { lat: data[0].lat, lng: data[0].lon };
       }
     } catch (error) {
-      console.error("Geocoding Error:", error);
+      console.error("Geocoding Fetch Error:", error);
     }
-    return currentData;
+    return { lat: '', lng: '' };
   };
 
   const handleFetchRatesClick = async () => {
@@ -63,34 +64,22 @@ const SameDayDelivery = () => {
     setLoading(true);
 
     try {
-      // अगर युजरने Lat/Long भरले नसतील, तर रेट्स चेक करण्यापूर्वी ऑटोमॅटिक फेच करून घेऊ
       let currentFormData = { ...formData };
-      if (!currentFormData.pickupLat && currentFormData.pickupAddress) {
-        const pStr = `${currentFormData.pickupAddress}, ${currentFormData.pickupCity}, ${currentFormData.pickupPincode}`;
-        // Nominatim कॉल करून तात्पुरता डेटा अपडेट करू
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pStr)}`);
-          const d = await res.json();
-          if (d && d.length > 0) {
-            currentFormData.pickupLat = d[0].lat;
-            currentFormData.pickupLng = d[0].lon;
-          }
-        } catch(err) { console.error(err); }
+
+      // पिकअप Lat/Long नसतील तर ताबडतोब फेच करू
+      if (!currentFormData.pickupLat) {
+        const pCoords = await fetchLatLongHelper(currentFormData.pickupAddress, currentFormData.pickupCity, currentFormData.pickupPincode);
+        currentFormData.pickupLat = pCoords.lat;
+        currentFormData.pickupLng = pCoords.lng;
       }
 
-      if (!currentFormData.deliveryLat && currentFormData.deliveryAddress) {
-        const dStr = `${currentFormData.deliveryAddress}, ${currentFormData.deliveryCity}, ${currentFormData.deliveryPincode}`;
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dStr)}`);
-          const d = await res.json();
-          if (d && d.length > 0) {
-            currentFormData.deliveryLat = d[0].lat;
-            currentFormData.deliveryLng = d[0].lon;
-          }
-        } catch(err) { console.error(err); }
+      // ड्रॉप Lat/Long नसतील तर ताबडतोब फेच करू
+      if (!currentFormData.deliveryLat) {
+        const dCoords = await fetchLatLongHelper(currentFormData.deliveryAddress, currentFormData.deliveryCity, currentFormData.deliveryPincode);
+        currentFormData.deliveryLat = dCoords.lat;
+        currentFormData.deliveryLng = dCoords.lng;
       }
 
-      // अपडेटेड फॉर्मडेटा स्टेटमध्ये सिंक करून ठेवू
       setFormData(currentFormData);
 
       const ratePayload = {
@@ -102,9 +91,7 @@ const SameDayDelivery = () => {
 
       const response = await fetch(n8nUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ratePayload)
       });
 
@@ -145,30 +132,16 @@ const SameDayDelivery = () => {
 
     setLoading(true);
     
-    // सबमिट करताना सुद्धा शिफारस राहील की जर Lat/Long नसतील तर एकदा चेक करून घ्यावे
     let currentFormData = { ...formData };
-    if (!currentFormData.pickupLat && currentFormData.pickupAddress) {
-      try {
-        const pStr = `${currentFormData.pickupAddress}, ${currentFormData.pickupCity}, ${currentFormData.pickupPincode}`;
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pStr)}`);
-        const d = await res.json();
-        if (d && d.length > 0) {
-          currentFormData.pickupLat = d[0].lat;
-          currentFormData.pickupLng = d[0].lon;
-        }
-      } catch(err) { console.error(err); }
+    if (!currentFormData.pickupLat) {
+      const pCoords = await fetchLatLongHelper(currentFormData.pickupAddress, currentFormData.pickupCity, currentFormData.pickupPincode);
+      currentFormData.pickupLat = pCoords.lat;
+      currentFormData.pickupLng = pCoords.lng;
     }
-
-    if (!currentFormData.deliveryLat && currentFormData.deliveryAddress) {
-      try {
-        const dStr = `${currentFormData.deliveryAddress}, ${currentFormData.deliveryCity}, ${currentFormData.deliveryPincode}`;
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dStr)}`);
-        const d = await res.json();
-        if (d && d.length > 0) {
-          currentFormData.deliveryLat = d[0].lat;
-          currentFormData.deliveryLng = d[0].lon;
-        }
-      } catch(err) { console.error(err); }
+    if (!currentFormData.deliveryLat) {
+      const dCoords = await fetchLatLongHelper(currentFormData.deliveryAddress, currentFormData.deliveryCity, currentFormData.deliveryPincode);
+      currentFormData.deliveryLat = dCoords.lat;
+      currentFormData.deliveryLng = dCoords.lng;
     }
 
     const bookingPayload = {
@@ -228,19 +201,11 @@ const SameDayDelivery = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input name="senderName" placeholder="Pickup Contact Name *" required className="form-input" onChange={handleChange} />
               <input name="senderMobile" placeholder="Pickup Contact Number *" required className="form-input" onChange={handleChange} />
-              <input 
-                name="pickupAddress" 
-                placeholder="Pickup Address *" 
-                required 
-                className="form-input md:col-span-2" 
-                onChange={handleChange}
-                onBlur={(e) => fetchCoordinatesForString(`${e.target.value}, ${formData.pickupCity}, ${formData.pickupPincode}`, 'pickup', formData)}
-              />
+              <input name="pickupAddress" placeholder="Pickup Address *" required className="form-input md:col-span-2" onChange={handleChange} />
               <input name="pickupPincode" placeholder="Pickup Pincode *" required className="form-input" onChange={handleChange} />
               <input name="pickupCity" placeholder="Pickup City *" required className="form-input" onChange={handleChange} />
               <input name="pickupState" placeholder="Pickup State *" required className="form-input md:col-span-2" onChange={handleChange} />
               
-              {/* पिकअप Lat आणि Long साठी बॉक्सेस */}
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase italic">Pickup Latitude</label>
                 <input name="pickupLat" value={formData.pickupLat} placeholder="Auto Latitude" className="form-input bg-slate-100" onChange={handleChange} />
@@ -260,19 +225,11 @@ const SameDayDelivery = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input name="receiverName" placeholder="Receiver Name *" required className="form-input" onChange={handleChange} />
               <input name="receiverMobile" placeholder="Receiver Mobile Number *" required className="form-input" onChange={handleChange} />
-              <input 
-                name="deliveryAddress" 
-                placeholder="Drop Address *" 
-                required 
-                className="form-input md:col-span-2" 
-                onChange={handleChange}
-                onBlur={(e) => fetchCoordinatesForString(`${e.target.value}, ${formData.deliveryCity}, ${formData.deliveryPincode}`, 'drop', formData)}
-              />
+              <input name="deliveryAddress" placeholder="Drop Address *" required className="form-input md:col-span-2" onChange={handleChange} />
               <input name="deliveryPincode" placeholder="Drop Pincode *" required className="form-input" onChange={handleChange} />
               <input name="deliveryCity" placeholder="Drop City *" required className="form-input" onChange={handleChange} />
               <input name="deliveryState" placeholder="Drop State *" required className="form-input md:col-span-2" onChange={handleChange} />
 
-              {/* ड्रॉप Lat आणि Long साठी बॉक्सेस */}
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase italic">Drop Latitude</label>
                 <input name="deliveryLat" value={formData.deliveryLat} placeholder="Auto Latitude" className="form-input bg-slate-100" onChange={handleChange} />
@@ -357,19 +314,12 @@ const SameDayDelivery = () => {
             </div>
           </section>
 
-          {/* Conditional Scheduled Time Picker */}
           {formData.deliverySpeed === 'Scheduled' && (
             <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 animate-fadeIn">
               <h2 className="flex items-center gap-2 font-black uppercase text-sm mb-4 text-purple-600">
                 <Clock size={18}/> Select Scheduled Pickup Date & Time
               </h2>
-              <input 
-                type="datetime-local" 
-                name="scheduledTime" 
-                required 
-                className="form-input font-bold" 
-                onChange={handleChange} 
-              />
+              <input type="datetime-local" name="scheduledTime" required className="form-input font-bold" onChange={handleChange} />
             </section>
           )}
 
@@ -384,11 +334,10 @@ const SameDayDelivery = () => {
               disabled={loading}
               className="bg-blue-600 text-white text-sm font-black uppercase px-6 py-3 rounded-2xl hover:bg-blue-700 transition shadow-md disabled:opacity-50 cursor-pointer"
             >
-              {loading ? "Checking..." : "[ CHECK LIVE RATE ]"}
+              {loading ? "Fetching Location & Rates..." : "[ CHECK LIVE RATE ]"}
             </button>
           </div>
 
-          {/* वेबहूकवरून आलेले रेट्स */}
           {availableRates.length > 0 && (
             <section className="bg-white rounded-3xl p-6 shadow-sm border border-blue-100 animate-fadeIn">
               <h2 className="font-black uppercase text-xs mb-4 text-blue-600 italic">Select Delivery Service & Rate *</h2>
