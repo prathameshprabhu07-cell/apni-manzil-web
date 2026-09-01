@@ -6,6 +6,7 @@ import {
   User, MapPin, Package, Truck, Clock, 
   ArrowLeft, CheckCircle, ChevronRight, Info
 } from 'lucide-react';
+import { handleGlobalPayment } from '../utils/paymentService'; // 👈 ग्लोबल पेमेंट फाईल इन्पोर्ट केली आहे
 
 const SameDayDelivery = () => {
   const navigate = useNavigate();
@@ -123,7 +124,7 @@ const SameDayDelivery = () => {
     }
   };
 
-  // 🔥 फायनल बुकिंग आणि रेझरपे (Razorpay) पेमेंट फंक्शन
+  // 🔥 फायनल बुकिंग आणि रेझरपे (Razorpay) ग्लोबल पेमेंट फंक्शन
   const handleFinalBooking = async (e) => {
     e.preventDefault();
 
@@ -134,34 +135,25 @@ const SameDayDelivery = () => {
 
     const servicePrice = Number(selectedRate.fare ?? selectedRate.price ?? selectedRate.rate ?? selectedRate.total_charge ?? 0);
 
-    // जर पेमेंट पद्धत Prepaid असेल तर Razorpay गेटवे ओपन होईल
+    // जर पेमेंट पद्धत Prepaid असेल तर Global Razorpay फंक्शन कॉल होईल
     if (formData.paymentMethod === 'Prepaid') {
-      const options = {
-        key: "YOUR_RAZORPAY_KEY_ID", // येथे तुमची Razorpay Key टाका (उदा. rzp_live_xxxx किंवा rzp_test_xxxx)
-        amount: servicePrice * 100, // पैशांमध्ये आहे म्हणून पैशांचे पैसे (paise) करण्यासाठी * 100
-        currency: "INR",
-        name: "Apni Manzil",
-        description: `Hyperlocal Delivery Charge (${selectedRate.partner || 'Express'})`,
-        image: "https://your-logo-url.com/logo.png", // पर्यायी लोगो युआरएल
-        handler: async function (response) {
-          // पेमेंट यशस्वी झाल्यानंतर हा कोड चालणार
+      handleGlobalPayment({
+        amount: servicePrice,
+        serviceName: `Hyperlocal Delivery (${selectedRate.partner || 'Express'})`,
+        customerName: formData.senderName,
+        customerEmail: "help@apnimanzil.co.in",
+        customerPhone: formData.senderMobile,
+        onSuccess: async (paymentId) => {
+          // पेमेंट यशस्वी झाल्यानंतर बुकिंग आणि वेबहूक ट्रिगर होईल
           await executeBookingAfterPayment({
-            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayPaymentId: paymentId,
             paymentStatus: "Paid"
           });
         },
-        prefill: {
-          name: formData.senderName,
-          email: "customer@apnimanzil.com",
-          contact: formData.senderMobile
-        },
-        theme: {
-          color: "#002D5E"
+        onFailure: (error) => {
+          alert(`Payment Failed: ${error.description || "Transaction cancelled"}`);
         }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      });
     } else {
       // Pay On Delivery (COD) साठी थेट बुकिंग होईल
       await executeBookingAfterPayment({
