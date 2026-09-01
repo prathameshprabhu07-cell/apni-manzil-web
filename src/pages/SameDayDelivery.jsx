@@ -6,7 +6,7 @@ import {
   User, MapPin, Package, Truck, Clock, 
   ArrowLeft, CheckCircle, ChevronRight, Info
 } from 'lucide-react';
-import { handleGlobalPayment } from '../utils/paymentService'; // 👈 ग्लोबल पेमेंट फाईल इन्पोर्ट केली आहे
+import { handleGlobalPayment } from '../utils/paymentService';
 
 const SameDayDelivery = () => {
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ const SameDayDelivery = () => {
     return { lat: '', lng: '' };
   };
 
+  // 🔍 लाईव्ह रेट्स फेच करण्याचे अचूक फंक्शन
   const handleFetchRatesClick = async () => {
     if (!formData.pickupPincode || !formData.deliveryPincode) {
       alert("Please fill complete pickup and delivery Pincodes.");
@@ -124,7 +125,7 @@ const SameDayDelivery = () => {
     }
   };
 
-  // 🔥 फायनल बुकिंग आणि रेझरपे (Razorpay) ग्लोबल पेमेंट फंक्शन
+  // 🔥 फायनल बुकिंग आणि रेझरपे ग्लोबल पेमेंट फंक्शन
   const handleFinalBooking = async (e) => {
     e.preventDefault();
 
@@ -135,7 +136,6 @@ const SameDayDelivery = () => {
 
     const servicePrice = Number(selectedRate.fare ?? selectedRate.price ?? selectedRate.rate ?? selectedRate.total_charge ?? 0);
 
-    // जर पेमेंट पद्धत Prepaid असेल तर Global Razorpay फंक्शन कॉल होईल
     if (formData.paymentMethod === 'Prepaid') {
       handleGlobalPayment({
         amount: servicePrice,
@@ -144,7 +144,6 @@ const SameDayDelivery = () => {
         customerEmail: "help@apnimanzil.co.in",
         customerPhone: formData.senderMobile,
         onSuccess: async (paymentId) => {
-          // पेमेंट यशस्वी झाल्यानंतर बुकिंग आणि वेबहूक ट्रिगर होईल
           await executeBookingAfterPayment({
             razorpayPaymentId: paymentId,
             paymentStatus: "Paid"
@@ -155,7 +154,6 @@ const SameDayDelivery = () => {
         }
       });
     } else {
-      // Pay On Delivery (COD) साठी थेट बुकिंग होईल
       await executeBookingAfterPayment({
         razorpayPaymentId: "COD",
         paymentStatus: "Pending COD"
