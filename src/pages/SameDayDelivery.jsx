@@ -341,7 +341,7 @@ const SameDayDelivery = () => {
             </button>
           </div>
 
-          {/* 👇 इथे Rates अत्यंत स्पष्ट आणि निवडण्यासाठी (Select) सुंदर डिझाईन केले आहेत */}
+          {/* 👇 इथे Rates डायनॅमिक पार्टनरच्या नावाप्रमाणे अपडेट केले आहेत */}
           {availableRates.length > 0 && (
             <section className="bg-white rounded-3xl p-6 shadow-sm border border-blue-100 animate-fadeIn space-y-4">
               <div className="flex items-center justify-between">
@@ -353,12 +353,13 @@ const SameDayDelivery = () => {
 
               <div className="space-y-3">
                 {availableRates.map((rate, index) => {
-                  const serviceTitle = rate.serviceName || rate.name || rate.courier_name || "Apni Manzil Express";
-                  const serviceEta = rate.eta || rate.delivery_time || rate.estimatedTime || "Standard Delivery";
-                  const servicePrice = rate.price || rate.rate || rate.total_charge || "0";
+                  // तुमच्या n8n च्या नवीन रिप्लाय स्ट्रक्चरनुसार 'partner', 'fare' आणि 'tracking_awb' मॅप केले आहे
+                  const serviceTitle = rate.partner || rate.serviceName || rate.name || rate.courier_name || "Express Partner";
+                  const serviceEta = rate.tracking_awb ? `AWB: ${rate.tracking_awb}` : (rate.eta || rate.delivery_time || rate.estimatedTime || "Standard Delivery");
+                  const servicePrice = rate.fare ?? rate.price ?? rate.rate ?? rate.total_charge ?? "0";
                   
                   // निवडलेली सर्व्हिस ओळखण्यासाठी
-                  const isSelected = selectedRate === rate || selectedRate?.serviceName === rate.serviceName;
+                  const isSelected = selectedRate === rate || selectedRate?.partner === rate.partner;
 
                   return (
                     <div 
@@ -377,7 +378,7 @@ const SameDayDelivery = () => {
                         <div>
                           <h4 className="font-black text-[#002D5E] text-sm uppercase tracking-wide">{serviceTitle}</h4>
                           <p className="text-xs text-slate-500 font-bold mt-0.5 flex items-center gap-1">
-                            <Clock size={12} className="text-slate-400"/> ETA: <span className="text-slate-700">{serviceEta}</span>
+                            <Clock size={12} className="text-slate-400"/> <span className="text-slate-700">{serviceEta}</span>
                           </p>
                         </div>
                       </div>
@@ -403,7 +404,7 @@ const SameDayDelivery = () => {
                 disabled={loading || !selectedRate} 
                 className="w-full bg-orange-500 text-white py-5 rounded-2xl font-[950] uppercase tracking-[2px] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                {loading ? "Processing Order..." : selectedRate ? `Confirm Final Booking (₹{selectedRate.price || selectedRate.rate || selectedRate.total_charge})` : "Select Service & Rate First"} <ChevronRight size={20}/>
+                {loading ? "Processing Order..." : selectedRate ? `Confirm Final Booking (₹{selectedRate.fare ?? selectedRate.price ?? selectedRate.rate ?? selectedRate.total_charge})` : "Select Service & Rate First"} <ChevronRight size={20}/>
               </button>
             </div>
             <Truck className="absolute -bottom-10 -right-10 text-white/5" size={250}/>
