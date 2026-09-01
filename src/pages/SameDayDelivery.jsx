@@ -33,14 +33,12 @@ const SameDayDelivery = () => {
   // 🌍 अत्यंत पॉवरफुल जिओकोडिंग फंक्शन (पिनकोड आणि सिटीच्या आधारे १००% काम करेल)
   const fetchLatLongHelper = async (address, city, pincode) => {
     try {
-      // प्रथमतः पूर्ण पत्ता + पिनकोड वापरून पाहू
       let query = `${address || ''}, ${city || ''}, ${pincode || ''}`.trim();
       if (query.replace(/[, ]+/g, '').length === 0) return { lat: '', lng: '' };
 
       let response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
       let data = await response.json();
 
-      // जर पूर्ण पत्त्यावर नाही भेटले, तर कमीतकमी पिनकोड आणि सिटीवर ट्राय करू
       if ((!data || data.length === 0) && pincode) {
         response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(pincode)}&country=India`);
         data = await response.json();
@@ -66,14 +64,12 @@ const SameDayDelivery = () => {
     try {
       let currentFormData = { ...formData };
 
-      // पिकअप Lat/Long नसतील तर ताबडतोब फेच करू
       if (!currentFormData.pickupLat) {
         const pCoords = await fetchLatLongHelper(currentFormData.pickupAddress, currentFormData.pickupCity, currentFormData.pickupPincode);
         currentFormData.pickupLat = pCoords.lat;
         currentFormData.pickupLng = pCoords.lng;
       }
 
-      // ड्रॉप Lat/Long नसतील तर ताबडतोब फेच करू
       if (!currentFormData.deliveryLat) {
         const dCoords = await fetchLatLongHelper(currentFormData.deliveryAddress, currentFormData.deliveryCity, currentFormData.deliveryPincode);
         currentFormData.deliveryLat = dCoords.lat;
@@ -102,11 +98,18 @@ const SameDayDelivery = () => {
       const result = await response.json();
       console.log("Hyperlocal Rate Response:", result);
 
-      if (result && result.rates) {
-        setAvailableRates(result.rates);
-        alert("Live rates fetched successfully!");
+      // n8n रिप्लाय निरनिराळ्या फॉरमॅटमध्ये आला तरी हँडल करण्यासाठी
+      let ratesList = [];
+      if (result && Array.isArray(result.rates)) {
+        ratesList = result.rates;
       } else if (Array.isArray(result)) {
-        setAvailableRates(result);
+        ratesList = result;
+      } else if (result && result.data && Array.isArray(result.data)) {
+        ratesList = result.data;
+      }
+
+      if (ratesList.length > 0) {
+        setAvailableRates(ratesList);
         alert("Live rates fetched successfully!");
       } else {
         setAvailableRates([]);
@@ -338,25 +341,52 @@ const SameDayDelivery = () => {
             </button>
           </div>
 
+          {/* 👇 इथे Rates अत्यंत स्पष्ट आणि निवडण्यासाठी (Select) सुंदर डिझाईन केले आहेत */}
           {availableRates.length > 0 && (
-            <section className="bg-white rounded-3xl p-6 shadow-sm border border-blue-100 animate-fadeIn">
-              <h2 className="font-black uppercase text-xs mb-4 text-blue-600 italic">Select Delivery Service & Rate *</h2>
+            <section className="bg-white rounded-3xl p-6 shadow-sm border border-blue-100 animate-fadeIn space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="font-black uppercase text-xs text-blue-600 italic">Select Delivery Service & Rate *</h2>
+                <span className="text-[10px] bg-blue-50 text-blue-700 font-bold px-3 py-1 rounded-full">
+                  {availableRates.length} Options Available
+                </span>
+              </div>
+
               <div className="space-y-3">
-                {availableRates.map((rate, index) => (
-                  <div 
-                    key={index} 
-                    onClick={() => setSelectedRate(rate)}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${selectedRate?.serviceName === rate.serviceName ? 'border-blue-600 bg-blue-50/50' : 'border-slate-200 hover:border-slate-300'}`}
-                  >
-                    <div>
-                      <h4 className="font-black text-[#002D5E] text-sm">{rate.serviceName || rate.name}</h4>
-                      <p className="text-xs text-slate-500 font-bold">Estimated ETA: {rate.eta || "Standard"}</p>
+                {availableRates.map((rate, index) => {
+                  const serviceTitle = rate.serviceName || rate.name || rate.courier_name || "Apni Manzil Express";
+                  const serviceEta = rate.eta || rate.delivery_time || rate.estimatedTime || "Standard Delivery";
+                  const servicePrice = rate.price || rate.rate || rate.total_charge || "0";
+                  
+                  // निवडलेली सर्व्हिस ओळखण्यासाठी
+                  const isSelected = selectedRate === rate || selectedRate?.serviceName === rate.serviceName;
+
+                  return (
+                    <div 
+                      key={index} 
+                      onClick={() => setSelectedRate(rate)}
+                      className={`p-5 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${
+                        isSelected 
+                          ? 'border-blue-600 bg-blue-50/70 shadow-md ring-2 ring-blue-400/30' 
+                          : 'border-slate-200 hover:border-slate-300 bg-slate-50/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'}`}>
+                          {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                        </div>
+                        <div>
+                          <h4 className="font-black text-[#002D5E] text-sm uppercase tracking-wide">{serviceTitle}</h4>
+                          <p className="text-xs text-slate-500 font-bold mt-0.5 flex items-center gap-1">
+                            <Clock size={12} className="text-slate-400"/> ETA: <span className="text-slate-700">{serviceEta}</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xl font-[950] text-blue-600">₹{servicePrice}</span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-lg font-black text-blue-600">₹{rate.price || rate.rate}</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}
@@ -373,7 +403,7 @@ const SameDayDelivery = () => {
                 disabled={loading || !selectedRate} 
                 className="w-full bg-orange-500 text-white py-5 rounded-2xl font-[950] uppercase tracking-[2px] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                {loading ? "Processing Order..." : selectedRate ? `Confirm Final Booking (₹{selectedRate.price || selectedRate.rate})` : "Select Service & Rate First"} <ChevronRight size={20}/>
+                {loading ? "Processing Order..." : selectedRate ? `Confirm Final Booking (₹{selectedRate.price || selectedRate.rate || selectedRate.total_charge})` : "Select Service & Rate First"} <ChevronRight size={20}/>
               </button>
             </div>
             <Truck className="absolute -bottom-10 -right-10 text-white/5" size={250}/>
