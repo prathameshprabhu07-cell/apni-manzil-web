@@ -179,6 +179,12 @@ const SameDayDelivery = () => {
 
     const bookingPayload = {
       ...currentFormData,
+      action: "book_order",
+      serviceType: "Hyperlocal",
+      partner: selectedRate.partner,
+      fare: selectedRate.fare || selectedRate.price || selectedRate.rate,
+      paymentId: paymentInfo.razorpayPaymentId,
+      paymentStatus: paymentInfo.paymentStatus,
       selectedRate: selectedRate,
       paymentDetails: paymentInfo,
       status: "Confirmed",
