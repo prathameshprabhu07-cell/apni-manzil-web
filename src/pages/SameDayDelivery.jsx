@@ -30,7 +30,6 @@ const SameDayDelivery = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // 🌍 अत्यंत पॉवरफुल जिओकोडिंग फंक्शन (पिनकोड आणि सिटीच्या आधारे १००% काम करेल)
   const fetchLatLongHelper = async (address, city, pincode) => {
     try {
       let query = `${address || ''}, ${city || ''}, ${pincode || ''}`.trim();
@@ -98,7 +97,6 @@ const SameDayDelivery = () => {
       const result = await response.json();
       console.log("Hyperlocal Rate Response:", result);
 
-      // n8n रिप्लाय निरनिराळ्या फॉरमॅटमध्ये आला तरी हँडल करण्यासाठी
       let ratesList = [];
       if (result && Array.isArray(result.rates)) {
         ratesList = result.rates;
@@ -125,6 +123,7 @@ const SameDayDelivery = () => {
     }
   };
 
+  // 🔥 फायनल बुकिंग आणि रेझरपे (Razorpay) पेमेंट फंक्शन
   const handleFinalBooking = async (e) => {
     e.preventDefault();
 
@@ -133,6 +132,47 @@ const SameDayDelivery = () => {
       return;
     }
 
+    const servicePrice = Number(selectedRate.fare ?? selectedRate.price ?? selectedRate.rate ?? selectedRate.total_charge ?? 0);
+
+    // जर पेमेंट पद्धत Prepaid असेल तर Razorpay गेटवे ओपन होईल
+    if (formData.paymentMethod === 'Prepaid') {
+      const options = {
+        key: "YOUR_RAZORPAY_KEY_ID", // येथे तुमची Razorpay Key टाका (उदा. rzp_live_xxxx किंवा rzp_test_xxxx)
+        amount: servicePrice * 100, // पैशांमध्ये आहे म्हणून पैशांचे पैसे (paise) करण्यासाठी * 100
+        currency: "INR",
+        name: "Apni Manzil",
+        description: `Hyperlocal Delivery Charge (${selectedRate.partner || 'Express'})`,
+        image: "https://your-logo-url.com/logo.png", // पर्यायी लोगो युआरएल
+        handler: async function (response) {
+          // पेमेंट यशस्वी झाल्यानंतर हा कोड चालणार
+          await executeBookingAfterPayment({
+            razorpayPaymentId: response.razorpay_payment_id,
+            paymentStatus: "Paid"
+          });
+        },
+        prefill: {
+          name: formData.senderName,
+          email: "customer@apnimanzil.com",
+          contact: formData.senderMobile
+        },
+        theme: {
+          color: "#002D5E"
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } else {
+      // Pay On Delivery (COD) साठी थेट बुकिंग होईल
+      await executeBookingAfterPayment({
+        razorpayPaymentId: "COD",
+        paymentStatus: "Pending COD"
+      });
+    }
+  };
+
+  // डेटाबेसमध्ये आणि n8n वेबहूकवर डेटा सेव्ह करण्याचे मुख्य फंक्शन
+  const executeBookingAfterPayment = async (paymentInfo) => {
     setLoading(true);
     
     let currentFormData = { ...formData };
@@ -150,7 +190,8 @@ const SameDayDelivery = () => {
     const bookingPayload = {
       ...currentFormData,
       selectedRate: selectedRate,
-      status: "Pending",
+      paymentDetails: paymentInfo,
+      status: "Confirmed",
       timestamp: new Date().toISOString()
     };
 
@@ -341,7 +382,7 @@ const SameDayDelivery = () => {
             </button>
           </div>
 
-          {/* 👇 इथे Rates डायनॅमिक पार्टनरच्या नावाप्रमाणे अपडेट केले आहेत */}
+          {/* Rates Selection List */}
           {availableRates.length > 0 && (
             <section className="bg-white rounded-3xl p-6 shadow-sm border border-blue-100 animate-fadeIn space-y-4">
               <div className="flex items-center justify-between">
@@ -353,12 +394,10 @@ const SameDayDelivery = () => {
 
               <div className="space-y-3">
                 {availableRates.map((rate, index) => {
-                  // तुमच्या n8n च्या नवीन रिप्लाय स्ट्रक्चरनुसार 'partner', 'fare' आणि 'tracking_awb' मॅप केले आहे
                   const serviceTitle = rate.partner || rate.serviceName || rate.name || rate.courier_name || "Express Partner";
                   const serviceEta = rate.tracking_awb ? `AWB: ${rate.tracking_awb}` : (rate.eta || rate.delivery_time || rate.estimatedTime || "Standard Delivery");
                   const servicePrice = rate.fare ?? rate.price ?? rate.rate ?? rate.total_charge ?? "0";
                   
-                  // निवडलेली सर्व्हिस ओळखण्यासाठी
                   const isSelected = selectedRate === rate || selectedRate?.partner === rate.partner;
 
                   return (
@@ -396,15 +435,16 @@ const SameDayDelivery = () => {
             <div className="relative z-10">
               <h2 className="flex items-center gap-2 font-black uppercase text-[10px] mb-4 opacity-60 italic">Payment Method *</h2>
               <div className="flex gap-4 mb-6">
-                <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'Prepaid'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all cursor-pointer ${formData.paymentMethod === 'Prepaid' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Prepaid</button>
+                <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'Prepaid'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all cursor-pointer ${formData.paymentMethod === 'Prepaid' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Prepaid (Online)</button>
                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'COD'})} className={`flex-1 py-3 rounded-xl font-bold border-2 transition-all cursor-pointer ${formData.paymentMethod === 'COD' ? 'bg-white text-blue-900 border-white' : 'border-white/20'}`}>Pay On Delivery</button>
               </div>
               
               <button 
+                type="submit"
                 disabled={loading || !selectedRate} 
                 className="w-full bg-orange-500 text-white py-5 rounded-2xl font-[950] uppercase tracking-[2px] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                {loading ? "Processing Order..." : selectedRate ? `Confirm Final Booking (₹{selectedRate.fare ?? selectedRate.price ?? selectedRate.rate ?? selectedRate.total_charge})` : "Select Service & Rate First"} <ChevronRight size={20}/>
+                {loading ? "Processing..." : selectedRate ? `Pay ₹${selectedRate.fare ?? selectedRate.price ?? selectedRate.rate ?? selectedRate.total_charge} & Confirm Booking` : "Select Service & Rate First"} <ChevronRight size={20}/>
               </button>
             </div>
             <Truck className="absolute -bottom-10 -right-10 text-white/5" size={250}/>
