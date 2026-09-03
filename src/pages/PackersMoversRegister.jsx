@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Truck, Building2, MapPin, FileText, ShieldCheck, Users, DollarSign, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 const PackersMoversRegister = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [submitted, setSubmitted] = useState(false);
 
   // फॉर्म डेटा स्टेट
@@ -19,7 +20,7 @@ const PackersMoversRegister = () => {
     gbpLink: '',
     website: '',
     
-    // Services
+    // Services (Landing page वरून आलेली सर्व्हिस इथे ऑटोमॅटिक सिलेक्ट होईल)
     services: [],
     
     // Service Area
@@ -52,7 +53,7 @@ const PackersMoversRegister = () => {
     loadingCharges: '',
     unloadingCharges: '',
     
-    // Documents (Optional / Conditional)
+    // Documents
     panCard: null,
     businessProof: null,
     gstCert: null,
@@ -72,6 +73,17 @@ const PackersMoversRegister = () => {
     leadReceiveMode: 'Both',
     preferredHours: ''
   });
+
+  // जर VendorLandingPage वरून कोणती सर्व्हिस निवडून आले असेल, तर ती `services` मध्ये बाय डीफॉल्ट ऍड होईल
+  useEffect(() => {
+    if (location.state && location.state.selectedCategory) {
+      const selected = location.state.selectedCategory;
+      setFormData(prev => ({
+        ...prev,
+        services: prev.services.includes(selected) ? prev.services : [...prev.services, selected]
+      }));
+    }
+  }, [location.state]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,7 +110,6 @@ const PackersMoversRegister = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // इथे तुझा API कॉल किंवा बॅकएंड लॉजिक लिहू शकतोस
     console.log("Form Submitted:", formData);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -207,9 +218,10 @@ const PackersMoversRegister = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {[
-                "Home Shifting", "Office Shifting", "Commercial Shifting", "Local Shifting",
-                "Intercity Shifting", "Outstation Shifting", "Packing", "Loading",
-                "Unloading", "Unpacking", "Vehicle Transportation", "Storage"
+                "Packers & Movers", "Warehouse", "International Logistics", "Home Shifting", 
+                "Office Shifting", "Commercial Shifting", "Local Shifting", "Intercity Shifting", 
+                "Outstation Shifting", "Packing", "Loading", "Unloading", "Unpacking", 
+                "Vehicle Transportation", "Storage"
               ].map((srv) => (
                 <label key={srv} className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${formData.services.includes(srv) ? 'bg-orange-50 border-orange-500 text-orange-900 font-bold' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
                   <input 
@@ -390,7 +402,7 @@ const PackersMoversRegister = () => {
             </div>
           </div>
 
-          {/* 📂 Documents (Optional / Mandatory non-strict) */}
+          {/* 📂 Documents Upload */}
           <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
             <div className="flex items-center gap-3 border-b pb-4">
               <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><FileText size={24}/></div>

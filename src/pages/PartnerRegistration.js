@@ -203,4 +203,4 @@ const VendorLandingPage = () => {
   );
 };
 
-export default VendorLandingPage;
+export default PartnerRegistrationPage;
