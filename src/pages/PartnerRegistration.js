@@ -1,41 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, ShieldCheck, CheckCircle2, Phone, Mail, 
-  MapPin, Globe, Warehouse as WarehouseIcon, Truck, 
-  FileText, UserCheck, Zap, Award
+  ShieldCheck, Globe, Warehouse as WarehouseIcon, Truck, 
+  Zap, Award
 } from 'lucide-react';
 
 const VendorLandingPage = () => {
   const navigate = useNavigate();
 
-  // ठराविक सर्व्हिस निवडून रजिस्ट्रेशन फॉर्मवर जाण्यासाठी (किंवा फॉर्म उघडण्यासाठी)
+  // ठराविक सर्व्हिस निवडून रजिस्ट्रेशन फॉर्मवर जाण्यासाठी
   const handleServiceSelect = (serviceName) => {
-    // तुम्ही याला थेट फॉर्म पेजवर पाठवून तिथे ती सर्व्हिस प्री-सेलेक्ट करू शकता
     navigate('/vendor-register', { state: { selectedCategory: serviceName } });
   };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
       
-      {/* Top Header */}
-      <div className="bg-[#002D5E] text-white px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition cursor-pointer">
-            <ArrowLeft size={20}/>
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-[950] tracking-tighter italic">APNI <span className="text-orange-500">MANZIL</span></span>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 text-xs font-bold">
-          <span className="hidden sm:inline opacity-80">📞 +91 12345 67890</span>
-          <button onClick={() => navigate('/login')} className="bg-orange-500 text-white px-5 py-2 rounded-xl font-black uppercase tracking-wider hover:bg-orange-600 transition shadow">
-            Login
-          </button>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <div className="relative bg-black text-white overflow-hidden">
         <div className="absolute inset-0 opacity-40">
@@ -218,43 +198,6 @@ const VendorLandingPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-[#001D3D] text-white mt-24 pt-16 pb-8 border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-white/10">
-          <div className="space-y-4">
-            <h2 className="text-xl font-[950] tracking-tighter italic">APNI <span className="text-orange-500">MANZIL</span></h2>
-            <p className="text-xs text-slate-400 font-medium leading-relaxed">
-              India's trusted logistics platform connecting customers with verified logistics partners.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-black text-xs uppercase tracking-widest text-orange-400 mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-xs font-bold text-slate-300">
-              <li className="hover:text-white cursor-pointer" onClick={() => navigate('/')}>Home</li>
-              <li className="hover:text-white cursor-pointer">Services</li>
-              <li className="hover:text-white cursor-pointer">About Us</li>
-              <li className="hover:text-white cursor-pointer">Contact Us</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black text-xs uppercase tracking-widest text-orange-400 mb-4">Partner Services</h4>
-            <ul className="space-y-2 text-xs font-bold text-slate-300">
-              <li>Packers & Movers</li>
-              <li>Warehouse & Storage</li>
-              <li>International Logistics</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black text-xs uppercase tracking-widest text-orange-400 mb-4">Contact Us</h4>
-            <p className="text-xs text-slate-300 font-bold mb-2">📞 +91 12345 67890</p>
-            <p className="text-xs text-slate-300 font-bold">✉️ partner@apnimanzil.co.in</p>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto px-6 pt-8 text-center text-xs text-slate-500 font-bold">
-          © 2026 Apni Manzil. All rights reserved.
-        </div>
-      </footer>
 
     </div>
   );
