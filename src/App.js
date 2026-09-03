@@ -37,10 +37,10 @@ import SpecialLogistics from './pages/SpecialLogistics';
 import AISmartLogistics from './pages/AISmartLogistics'; 
 import VendorDashboard from './pages/VendorDashboard'; 
 
-// ✅ फक्त PackersMoversRegister फॉर्म इम्पोर्ट (VendorLandingPage काढले आहे)
+// ✅ फक्त PackersMoversRegister फॉर्म इम्पोर्ट
 import PackersMoversRegister from './pages/PackersMoversRegister'; 
 
-// ✅ International Delivery Form इम्पोर्ट (जो आपण नवीन तयार केला आहे)
+// ✅ International Delivery Form इम्पोर्ट
 import InternationalDelivery from './pages/InternationalDelivery';
 
 // ✅ Customer Dashboard इम्पोर्ट जोडला आहे
@@ -90,7 +90,7 @@ import DangerousGoodsTransportForm from './pages/DangerousGoodsTransportForm';
 // ✅ Air Cargo फॉर्म इम्पोर्ट
 import AirCargoForm from './pages/AirCargoForm'; 
 
-// ✅ Sea Freight Form इम्पोर्ट (पाथ दुरुस्त केला आहे)
+// ✅ Sea Freight Form इम्पोर्ट
 import SeaFreightForm from './pages/SeaFreightForm'; 
 
 // ✅ Customs Clearance Form इम्पोर्ट
@@ -236,11 +236,12 @@ function App() {
           <Route path="/customs" element={<Customs />} />
           <Route path="/tradefinance" element={<TradeFinance />} />
           
-          {/* ✅ पार्टनर रजिस्ट्रेशन आणि थेट व्हेंडर रजिस्ट्रेशन राऊट्स */}
+          {/* ✅ पार्टनर लँडिंग पेज आणि फॉर्म राऊट्स */}
+          <Route path="/vendor-landing" element={<PartnerRegistration />} />
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           <Route path="/vendor-register" element={<PackersMoversRegister />} /> 
           
-          {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊत ऍड केला आहे */}
+          {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊत */}
           <Route path="/rating" element={
             <div className="max-w-4xl mx-auto px-6 py-16">
               <div className="bg-white rounded-[3rem] p-8 shadow-sm border border-slate-100">

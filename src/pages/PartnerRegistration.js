@@ -10,7 +10,11 @@ const VendorLandingPage = () => {
 
   // ठराविक सर्व्हिस निवडून रजिस्ट्रेशन फॉर्मवर जाण्यासाठी
   const handleServiceSelect = (serviceName) => {
-    navigate('/vendor-register', { state: { selectedCategory: serviceName } });
+    if (serviceName === 'Warehouse') {
+      navigate('/warehouse-register', { state: { selectedCategory: serviceName } });
+    } else {
+      navigate('/vendor-register', { state: { selectedCategory: serviceName } });
+    }
   };
 
   return (
