@@ -7,7 +7,7 @@ const PackersMoversRegister = () => {
   const location = useLocation();
   const [submitted, setSubmitted] = useState(false);
 
-  // फॉर्म डेटा स्टेट
+  // Form Data State
   const [formData, setFormData] = useState({
     companyName: '',
     ownerName: '',
@@ -20,7 +20,7 @@ const PackersMoversRegister = () => {
     gbpLink: '',
     website: '',
     
-    // Services (Landing page वरून आलेली सर्व्हिस इथे ऑटोमॅटिक सिलेक्ट होईल)
+    // Services (Auto-selected if passed from Landing Page)
     services: [],
     
     // Service Area
@@ -74,7 +74,7 @@ const PackersMoversRegister = () => {
     preferredHours: ''
   });
 
-  // जर VendorLandingPage वरून कोणती सर्व्हिस निवडून आले असेल, तर ती `services` मध्ये बाय डीफॉल्ट ऍड होईल
+  // Automatically select service if passed from VendorLandingPage
   useEffect(() => {
     if (location.state && location.state.selectedCategory) {
       const selected = location.state.selectedCategory;
@@ -209,11 +209,11 @@ const PackersMoversRegister = () => {
             </div>
           </div>
 
-          {/* 🛠️ कोणत्या Services देता? */}
+          {/* 🛠️ Services Offered */}
           <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
             <div className="flex items-center gap-3 border-b pb-4">
               <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><Truck size={24}/></div>
-              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">कोणत्या Services देता? (Multiple Selection)</h3>
+              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">Services Offered (Multiple Selection)</h3>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -236,11 +236,11 @@ const PackersMoversRegister = () => {
             </div>
           </div>
 
-          {/* 📍 तुमचा Service Area */}
+          {/* 📍 Service Area */}
           <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
             <div className="flex items-center gap-3 border-b pb-4">
               <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl"><MapPin size={24}/></div>
-              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">तुमचा Service Area (Lead Matching साठी मुख्य)</h3>
+              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">Service Area (Crucial for Lead Matching)</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -358,7 +358,7 @@ const PackersMoversRegister = () => {
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><DollarSign size={24}/></div>
               <div>
                 <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">💵 Pricing Information</h3>
-                <p className="text-[11px] text-slate-500 font-medium">इथे Approximate Starting Price घ्या. Exact quotation नको.</p>
+                <p className="text-[11px] text-slate-500 font-medium">Please provide approximate starting prices. Exact quotations are not required here.</p>
               </div>
             </div>
 
@@ -408,7 +408,7 @@ const PackersMoversRegister = () => {
               <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><FileText size={24}/></div>
               <div>
                 <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">📂 Documents Upload</h3>
-                <p className="text-[11px] text-slate-500 font-medium">सगळे documents mandatory नाहीत (छोटे local movers सुद्धा register करू शकतात).</p>
+                <p className="text-[11px] text-slate-500 font-medium">Not all documents are mandatory (small local movers can also register easily).</p>
               </div>
             </div>
 
