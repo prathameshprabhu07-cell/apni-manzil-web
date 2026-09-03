@@ -37,8 +37,7 @@ import SpecialLogistics from './pages/SpecialLogistics';
 import AISmartLogistics from './pages/AISmartLogistics'; 
 import VendorDashboard from './pages/VendorDashboard'; 
 
-// ✅ Vendor Landing Page & Register Form इम्पोर्ट्स
-import VendorLandingPage from './pages/VendorLandingPage'; 
+// ✅ फक्त PackersMoversRegister फॉर्म इम्पोर्ट (VendorLandingPage काढले आहे)
 import PackersMoversRegister from './pages/PackersMoversRegister'; 
 
 // ✅ International Delivery Form इम्पोर्ट (जो आपण नवीन तयार केला आहे)
@@ -237,9 +236,8 @@ function App() {
           <Route path="/customs" element={<Customs />} />
           <Route path="/tradefinance" element={<TradeFinance />} />
           
-          {/* ✅ पार्टनर रजिस्ट्रेशन आणि व्हेंडर रजिस्ट्रेशन राऊट्स */}
+          {/* ✅ पार्टनर रजिस्ट्रेशन आणि थेट व्हेंडर रजिस्ट्रेशन राऊट्स */}
           <Route path="/partner-registration" element={<PartnerRegistration />} />
-          <Route path="/vendor-landing" element={<VendorLandingPage />} /> 
           <Route path="/vendor-register" element={<PackersMoversRegister />} /> 
           
           {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊत ऍड केला आहे */}
