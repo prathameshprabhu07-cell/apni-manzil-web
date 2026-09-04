@@ -109,7 +109,7 @@ const VendorLandingPage = () => {
             </div>
           </div>
 
-          {/* Card 2: Warehouse */}
+          {/* Card 2: Warehouse (Active & Connected) */}
           <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between transition-all hover:scale-[1.02] hover:shadow-2xl">
             <div>
               <div className="h-52 relative overflow-hidden">
@@ -139,8 +139,8 @@ const VendorLandingPage = () => {
             </div>
           </div>
 
-          {/* Card 3: International Logistics */}
-          <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between transition-all hover:scale-[1.02] hover:shadow-2xl">
+          {/* Card 3: International Logistics (Form Removed / Coming Soon) */}
+          <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between opacity-80">
             <div>
               <div className="h-52 relative overflow-hidden">
                 <img 
@@ -161,10 +161,10 @@ const VendorLandingPage = () => {
             </div>
             <div className="p-6 pt-0">
               <button 
-                onClick={() => handleServiceSelect('International Logistics')}
-                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2"
+                disabled
+                className="w-full bg-slate-200 text-slate-500 py-4 rounded-2xl font-black uppercase text-xs tracking-wider cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Register Now →
+                Coming Soon
               </button>
             </div>
           </div>
