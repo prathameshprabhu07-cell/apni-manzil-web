@@ -40,6 +40,9 @@ import VendorDashboard from './pages/VendorDashboard';
 // ✅ फक्त PackersMoversRegister फॉर्म इम्पोर्ट
 import PackersMoversRegister from './pages/PackersMoversRegister'; 
 
+// ✅ वॅारहाऊस रजिस्टर फॉर्म इम्पोर्ट (नवीन जोडला)
+import WarehouseRegister from './pages/WarehouseRegister'; 
+
 // ✅ International Delivery Form इम्पोर्ट
 import InternationalDelivery from './pages/InternationalDelivery';
 
@@ -241,6 +244,9 @@ function App() {
           <Route path="/partner-registration" element={<PartnerRegistration />} />
           <Route path="/vendor-register" element={<PackersMoversRegister />} /> 
           
+          {/* ✅ वॅारहाऊस रजिस्टर राऊत जोडला */}
+          <Route path="/warehouse-register" element={<WarehouseRegister />} /> 
+
           {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊत */}
           <Route path="/rating" element={
             <div className="max-w-4xl mx-auto px-6 py-16">

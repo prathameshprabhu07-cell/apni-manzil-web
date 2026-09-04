@@ -8,7 +8,7 @@ import {
 const VendorLandingPage = () => {
   const navigate = useNavigate();
 
-  // ठराविक सर्व्हिस निवडून रजिस्ट्रेशन फॉर्मवर जाण्यासाठी
+  // सर्व्हिसनुसार योग्य फॉर्म किंवा पेजवर नेण्यासाठी
   const handleServiceSelect = (serviceName) => {
     if (serviceName === 'Warehouse') {
       navigate('/warehouse-register', { state: { selectedCategory: serviceName } });
@@ -109,7 +109,7 @@ const VendorLandingPage = () => {
             </div>
           </div>
 
-          {/* Card 2: Warehouse (Active & Connected) */}
+          {/* Card 2: Warehouse (Active & Connected to Warehouse Register) */}
           <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between transition-all hover:scale-[1.02] hover:shadow-2xl">
             <div>
               <div className="h-52 relative overflow-hidden">
@@ -123,7 +123,7 @@ const VendorLandingPage = () => {
                 </div>
               </div>
               <div className="p-6 space-y-3">
-                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">2. Warehouse</h3>
+                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">2. Warehouse Partner</h3>
                 <p className="text-slate-600 text-xs font-medium leading-relaxed">
                   List your warehouse or storage space with Apni Manzil and get genuine inquiries from corporate & retail customers.
                 </p>
@@ -139,7 +139,7 @@ const VendorLandingPage = () => {
             </div>
           </div>
 
-          {/* Card 3: International Logistics (Form Removed / Coming Soon) */}
+          {/* Card 3: International Logistics (Coming Soon) */}
           <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between opacity-80">
             <div>
               <div className="h-52 relative overflow-hidden">
