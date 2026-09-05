@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Truck, Building2, MapPin, FileText, ShieldCheck, Users, DollarSign, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Truck, Building2, MapPin, FileText, ShieldCheck, Users, DollarSign, ArrowLeft, CheckCircle2, CreditCard } from 'lucide-react';
 
 const PackersMoversRegister = () => {
   const navigate = useNavigate();
@@ -71,7 +71,16 @@ const PackersMoversRegister = () => {
     // Platform Terms
     acceptLeads: 'Yes',
     leadReceiveMode: 'Both',
-    preferredHours: ''
+    preferredHours: '',
+
+    // Payment / Settlement Details
+    bankAccountHolder: '',
+    bankName: '',
+    accountNumber: '',
+    ifscCode: '',
+    accountType: 'Current',
+    bankProof: null,
+    upiId: ''
   });
 
   // Automatically select service if passed from VendorLandingPage
@@ -108,9 +117,22 @@ const PackersMoversRegister = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form Submitted:", formData);
+
+    try {
+      await fetch('http://localhost:5678/webhook/Packer_Partner', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+    } catch (error) {
+      console.error('Error sending data to webhook:', error);
+    }
+
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -481,6 +503,51 @@ const PackersMoversRegister = () => {
                   <option value="WhatsApp">WhatsApp</option>
                   <option value="Call">Call</option>
                 </select>
+              </div>
+            </div>
+          </div>
+
+          {/* 💳 Payment / Settlement Details */}
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
+            <div className="flex items-center gap-3 border-b pb-4">
+              <div className="p-3 bg-cyan-50 text-cyan-600 rounded-2xl"><CreditCard size={24}/></div>
+              <div>
+                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">💳 Payment / Settlement Details</h3>
+                <p className="text-[11px] text-slate-500 font-medium">Partner Verified + Active झाल्यावर bank details घेऊ</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Holder Name</label>
+                <input type="text" name="bankAccountHolder" value={formData.bankAccountHolder} onChange={handleInputChange} placeholder="e.g. Om Sai Logistics" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Bank Name</label>
+                <input type="text" name="bankName" value={formData.bankName} onChange={handleInputChange} placeholder="e.g. HDFC Bank" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Number</label>
+                <input type="text" name="accountNumber" value={formData.accountNumber} onChange={handleInputChange} placeholder="Enter account number" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">IFSC Code</label>
+                <input type="text" name="ifscCode" value={formData.ifscCode} onChange={handleInputChange} placeholder="e.g. HDFC0001234" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Type</label>
+                <select name="accountType" value={formData.accountType} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
+                  <option value="Current">Current</option>
+                  <option value="Savings">Savings</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">UPI ID (Optional)</label>
+                <input type="text" name="upiId" value={formData.upiId} onChange={handleInputChange} placeholder="e.g. business@upi" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
+              </div>
+              <div className="md:col-span-2 bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2">
+                <label className="block text-xs font-bold uppercase text-slate-700">Cancelled Cheque / Bank Proof</label>
+                <input type="file" name="bankProof" onChange={handleFileChange} className="w-full text-[10px] text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer" />
               </div>
             </div>
           </div>
