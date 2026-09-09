@@ -868,15 +868,19 @@ const Auth = () => {
 
     try {
 
-      await sendPasswordResetEmail(
-        auth,
-        resetEmail.trim()
-      );
+await sendPasswordResetEmail(
+  auth,
+  resetEmail.trim()
+);
 
+console.log(
+  "PASSWORD RESET EMAIL REQUEST SUCCESS:",
+  resetEmail.trim()
+);
 
-      alert(
-        "Password reset link has been sent to your email. Please check Inbox / Spam."
-      );
+alert(
+  "Password reset link has been sent to your email. Please check Inbox / Spam."
+);
 
 
       setResetEmail("");
