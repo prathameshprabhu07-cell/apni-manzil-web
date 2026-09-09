@@ -340,6 +340,9 @@ const Auth = () => {
       const userData =
         await checkUserProfile(userCredential.user);
 
+        console.log("LOGIN FIREBASE USER:", userCredential.user.uid);
+        console.log("LOGIN FIRESTORE PROFILE:", userData);
+
 
       if (!userData) {
 
