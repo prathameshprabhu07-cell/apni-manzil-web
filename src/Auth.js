@@ -5,8 +5,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
@@ -26,7 +24,6 @@ import {
   Loader2,
   User,
   Truck,
-  Phone,
   ArrowRight,
   Chrome,
   Eye,
@@ -64,21 +61,6 @@ const Auth = () => {
   const [resetEmail, setResetEmail] = useState("");
 
   const [resetLoading, setResetLoading] = useState(false);
-
-
-  // =========================================================
-  // PHONE OTP
-  // =========================================================
-
-  const [showOtpLogin, setShowOtpLogin] = useState(false);
-
-  const [phoneNumber, setPhoneNumber] = useState("");
-
-  const [otp, setOtp] = useState("");
-
-  const [confirmationResult, setConfirmationResult] = useState(null);
-
-  const [otpLoading, setOtpLoading] = useState(false);
 
 
   // =========================================================
@@ -224,14 +206,8 @@ const Auth = () => {
       case "auth/too-many-requests":
         return "Too many attempts. Please try again later.";
 
-      case "auth/invalid-phone-number":
-        return "Please enter a valid mobile number.";
-
       case "auth/operation-not-allowed":
         return "This login method is not enabled in Firebase.";
-
-      case "auth/quota-exceeded":
-        return "SMS limit reached. Please try again later.";
 
       default:
         return error.message || "Something went wrong.";
@@ -434,12 +410,6 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
 
-    // TEMPORARY DEBUG LOG
-    console.log(
-      "GOOGLE LOGIN BUTTON CLICKED"
-    );
-
-
     setLoading(true);
 
 
@@ -454,22 +424,11 @@ const Auth = () => {
       });
 
 
-      console.log(
-        "OPENING GOOGLE POPUP..."
-      );
-
-
       const result =
         await signInWithPopup(
           auth,
           provider
         );
-
-
-      console.log(
-        "GOOGLE LOGIN SUCCESS:",
-        result.user.uid
-      );
 
 
       const firebaseUser =
@@ -496,12 +455,6 @@ const Auth = () => {
 
         const userData =
           userSnap.data();
-
-
-        console.log(
-          "GOOGLE EXISTING FIRESTORE PROFILE:",
-          userData
-        );
 
 
         // ----------------------------------------------
@@ -533,11 +486,6 @@ const Auth = () => {
       // --------------------------------------------------
       // NEW GOOGLE USER
       // --------------------------------------------------
-
-      console.log(
-        "NEW GOOGLE USER - CREATING FIRESTORE PROFILE"
-      );
-
 
       const newUserData = {
 
@@ -575,12 +523,6 @@ const Auth = () => {
 
       await setDoc(
         userRef,
-        newUserData
-      );
-
-
-      console.log(
-        "GOOGLE FIRESTORE PROFILE CREATED:",
         newUserData
       );
 
@@ -625,384 +567,6 @@ const Auth = () => {
       setLoading(false);
 
     }
-
-  };
-
-
-  // =========================================================
-  // RECAPTCHA SETUP
-  // =========================================================
-
-  const setupRecaptcha = () => {
-
-    if (window.recaptchaVerifier) {
-
-      return window.recaptchaVerifier;
-
-    }
-
-
-    const verifier =
-      new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-
-          size: "invisible",
-
-          callback: () => {
-
-            console.log(
-              "reCAPTCHA solved"
-            );
-
-          },
-
-          "expired-callback": () => {
-
-            console.log(
-              "reCAPTCHA expired"
-            );
-
-          },
-
-        }
-      );
-
-
-    window.recaptchaVerifier =
-      verifier;
-
-
-    return verifier;
-
-  };
-
-
-  // =========================================================
-  // SEND MOBILE OTP
-  // =========================================================
-
-  const handleSendOTP = async () => {
-
-    if (!phoneNumber) {
-
-      showError(
-        "Please enter your mobile number."
-      );
-
-      return;
-    }
-
-
-    let formattedPhone =
-      phoneNumber.trim();
-
-
-    // -----------------------------------------
-    // INDIA NUMBER
-    // -----------------------------------------
-
-    if (
-      formattedPhone.startsWith("0")
-    ) {
-
-      formattedPhone =
-        "+91" +
-        formattedPhone.substring(1);
-
-    }
-
-    else if (
-      /^[6-9]\d{9}$/.test(
-        formattedPhone
-      )
-    ) {
-
-      formattedPhone =
-        "+91" +
-        formattedPhone;
-
-    }
-
-
-    if (
-      !formattedPhone.startsWith("+")
-    ) {
-
-      showError(
-        "Enter a valid mobile number."
-      );
-
-      return;
-    }
-
-
-    setOtpLoading(true);
-
-
-    try {
-
-      const appVerifier =
-        setupRecaptcha();
-
-
-      const result =
-        await signInWithPhoneNumber(
-          auth,
-          formattedPhone,
-          appVerifier
-        );
-
-
-      setConfirmationResult(
-        result
-      );
-
-
-      showSuccess(
-        "OTP sent successfully."
-      );
-
-    } catch (error) {
-
-      console.error(
-        "OTP Send Error:",
-        error
-      );
-
-
-      if (
-        window.recaptchaVerifier
-      ) {
-
-        try {
-
-          window.recaptchaVerifier.clear();
-
-        } catch (e) {}
-
-        window.recaptchaVerifier =
-          null;
-
-      }
-
-
-      showError(
-        getFirebaseErrorMessage(
-          error
-        )
-      );
-
-    } finally {
-
-      setOtpLoading(false);
-
-    }
-
-  };
-
-
-  // =========================================================
-  // VERIFY MOBILE OTP
-  // =========================================================
-
-  const handleVerifyOTP = async () => {
-
-    if (!confirmationResult) {
-
-      showError(
-        "Please request OTP first."
-      );
-
-      return;
-    }
-
-
-    if (
-      !otp ||
-      otp.length < 6
-    ) {
-
-      showError(
-        "Please enter the 6-digit OTP."
-      );
-
-      return;
-    }
-
-
-    setOtpLoading(true);
-
-
-    try {
-
-      const result =
-        await confirmationResult.confirm(
-          otp
-        );
-
-
-      const firebaseUser =
-        result.user;
-
-
-      const userRef =
-        doc(
-          db,
-          "users",
-          firebaseUser.uid
-        );
-
-
-      const userSnap =
-        await getDoc(userRef);
-
-
-      // --------------------------------------------------
-      // EXISTING PHONE USER
-      // --------------------------------------------------
-
-      if (userSnap.exists()) {
-
-        const userData =
-          userSnap.data();
-
-
-        if (
-          userData.role !== role
-        ) {
-
-          await signOut(auth);
-
-          showError(
-            `This mobile number is registered as ${
-              userData.role === "vendor"
-                ? "Vendor / Partner"
-                : "Individual"
-            }.`
-          );
-
-          return;
-        }
-
-
-        redirectUser(
-          userData
-        );
-
-        return;
-      }
-
-
-      // --------------------------------------------------
-      // NEW PHONE USER
-      // --------------------------------------------------
-
-      const newUserData = {
-
-        uid:
-          firebaseUser.uid,
-
-        role:
-          role,
-
-        status:
-          role === "vendor"
-            ? "pending"
-            : "active",
-
-        fullName:
-          "",
-
-        email:
-          "",
-
-        phone:
-          firebaseUser.phoneNumber || "",
-
-        provider:
-          "phone",
-
-        createdAt:
-          new Date().toISOString(),
-
-      };
-
-
-      await setDoc(
-        userRef,
-        newUserData
-      );
-
-
-      // --------------------------------------------------
-      // VENDOR
-      // --------------------------------------------------
-
-      if (
-        role === "vendor"
-      ) {
-
-        showSuccess(
-          "Mobile verified. Vendor verification is pending."
-        );
-
-        await signOut(auth);
-
-        resetOtpState();
-
-        return;
-      }
-
-
-      // --------------------------------------------------
-      // INDIVIDUAL
-      // --------------------------------------------------
-
-      navigate(
-        "/customer-dashboard"
-      );
-
-    } catch (error) {
-
-      console.error(
-        "OTP Verify Error:",
-        error
-      );
-
-
-      showError(
-        error.code ===
-        "auth/invalid-verification-code"
-          ? "Invalid OTP. Please try again."
-          : getFirebaseErrorMessage(
-              error
-            )
-      );
-
-    } finally {
-
-      setOtpLoading(false);
-
-    }
-
-  };
-
-
-  // =========================================================
-  // RESET OTP
-  // =========================================================
-
-  const resetOtpState = () => {
-
-    setConfirmationResult(
-      null
-    );
-
-    setOtp("");
-
-    setPhoneNumber("");
 
   };
 
@@ -1256,11 +820,6 @@ const Auth = () => {
       "
     >
 
-      {/* Invisible Firebase reCAPTCHA */}
-
-      <div id="recaptcha-container"></div>
-
-
       {/* =====================================================
           MAIN AUTH CARD
       ===================================================== */}
@@ -1438,656 +997,364 @@ const Auth = () => {
 
 
           {/* =================================================
-              MOBILE OTP LOGIN
+              NORMAL LOGIN / REGISTER
           ================================================= */}
 
-          {isLogin && showOtpLogin ? (
+          <form
+            onSubmit={handleAuth}
+            className="space-y-4"
+          >
 
-            <div className="space-y-4">
+            {!isLogin && (
 
-              <div className="text-center mb-5">
+              <>
 
-                <div
-                  className="
-                    w-14
-                    h-14
-                    bg-indigo-50
-                    text-indigo-600
-                    rounded-2xl
-                    flex
-                    items-center
-                    justify-center
-                    mx-auto
-                    mb-3
-                  "
-                >
-                  <Phone size={24} />
-                </div>
+                <div className="relative">
 
-                <h3 className="font-bold text-slate-800">
-                  Mobile OTP Login
-                </h3>
-
-                <p className="text-xs text-slate-500 mt-1">
-                  Login using your mobile number
-                </p>
-
-              </div>
-
-
-              {!confirmationResult ? (
-
-                <>
-
-                  <div className="relative">
-
-                    <Phone
-                      className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-slate-400
-                      "
-                      size={18}
-                    />
-
-                    <input
-                      type="tel"
-                      placeholder="Mobile Number"
-                      value={phoneNumber}
-                      onChange={(e) =>
-                        setPhoneNumber(
-                          e.target.value
-                        )
-                      }
-                      className="
-                        w-full
-                        pl-12
-                        pr-4
-                        py-4
-                        bg-slate-50
-                        border
-                        border-slate-200
-                        rounded-2xl
-                        text-sm
-                        outline-none
-                        focus:border-indigo-600
-                      "
-                    />
-
-                  </div>
-
-
-                  <button
-                    type="button"
-                    onClick={
-                      handleSendOTP
-                    }
-                    disabled={
-                      otpLoading
-                    }
+                  <User
                     className="
-                      w-full
-                      bg-indigo-600
-                      text-white
-                      py-4
-                      rounded-2xl
-                      font-bold
-                      text-sm
-                      flex
-                      justify-center
-                      items-center
-                      gap-2
+                      absolute
+                      left-4
+                      top-1/2
+                      -translate-y-1/2
+                      text-slate-400
                     "
-                  >
-
-                    {otpLoading ? (
-
-                      <Loader2
-                        className="animate-spin"
-                      />
-
-                    ) : (
-
-                      <>
-                        Send OTP
-                        <ArrowRight
-                          size={17}
-                        />
-                      </>
-
-                    )}
-
-                  </button>
-
-                </>
-
-              ) : (
-
-                <>
+                    size={18}
+                  />
 
                   <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="Enter 6-Digit OTP"
-                    value={otp}
-                    onChange={(e) =>
-                      setOtp(
-                        e.target.value.replace(
-                          /\D/g,
-                          ""
-                        )
-                      )
+                    name="fullName"
+                    placeholder="Full Name"
+                    required
+                    value={
+                      formData.fullName
+                    }
+                    onChange={
+                      handleChange
                     }
                     className="
                       w-full
-                      p-4
+                      pl-12
+                      pr-4
+                      py-4
                       bg-slate-50
                       border
                       border-slate-200
                       rounded-2xl
                       text-sm
                       outline-none
-                      text-center
-                      tracking-[0.5em]
-                      font-bold
+                      focus:bg-white
+                      focus:border-indigo-600
                     "
                   />
 
+                </div>
 
-                  <button
-                    type="button"
-                    onClick={
-                      handleVerifyOTP
+
+                <div className="relative">
+
+                  <input
+                    name="phone"
+                    type="tel"
+                    placeholder="Mobile Number"
+                    value={
+                      formData.phone
                     }
-                    disabled={
-                      otpLoading
+                    onChange={
+                      handleChange
                     }
                     className="
                       w-full
-                      bg-emerald-600
-                      text-white
+                      pl-4
+                      pr-4
                       py-4
+                      bg-slate-50
+                      border
+                      border-slate-200
                       rounded-2xl
-                      font-bold
                       text-sm
-                      flex
-                      justify-center
+                      outline-none
+                      focus:bg-white
+                      focus:border-indigo-600
                     "
-                  >
+                  />
 
-                    {otpLoading ? (
+                </div>
 
-                      <Loader2
-                        className="animate-spin"
-                      />
+              </>
 
-                    ) : (
-
-                      "Verify & Login"
-
-                    )}
-
-                  </button>
+            )}
 
 
-                  <button
-                    type="button"
-                    onClick={
-                      resetOtpState
-                    }
-                    className="
-                      w-full
-                      text-xs
-                      font-bold
-                      text-indigo-600
-                    "
-                  >
-                    Use another number
-                  </button>
+            {/* EMAIL */}
 
-                </>
+            <div className="relative">
 
-              )}
+              <Mail
+                className="
+                  absolute
+                  left-4
+                  top-1/2
+                  -translate-y-1/2
+                  text-slate-400
+                "
+                size={18}
+              />
+
+              <input
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                required
+                value={
+                  formData.email
+                }
+                onChange={
+                  handleChange
+                }
+                className="
+                  w-full
+                  pl-12
+                  pr-4
+                  py-4
+                  bg-slate-50
+                  border
+                  border-slate-200
+                  rounded-2xl
+                  text-sm
+                  outline-none
+                  focus:bg-white
+                  focus:border-indigo-600
+                "
+              />
+
+            </div>
+
+
+            {/* PASSWORD */}
+
+            <div className="relative">
+
+              <Lock
+                className="
+                  absolute
+                  left-4
+                  top-1/2
+                  -translate-y-1/2
+                  text-slate-400
+                "
+                size={18}
+              />
+
+
+              <input
+                name="password"
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="Password"
+                required
+                value={
+                  formData.password
+                }
+                onChange={
+                  handleChange
+                }
+                className="
+                  w-full
+                  pl-12
+                  pr-12
+                  py-4
+                  bg-slate-50
+                  border
+                  border-slate-200
+                  rounded-2xl
+                  text-sm
+                  outline-none
+                  focus:bg-white
+                  focus:border-indigo-600
+                "
+              />
 
 
               <button
                 type="button"
-                onClick={() => {
-
-                  resetOtpState();
-
-                  setShowOtpLogin(
-                    false
-                  );
-
-                }}
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
                 className="
-                  w-full
-                  text-xs
-                  font-bold
+                  absolute
+                  right-4
+                  top-1/2
+                  -translate-y-1/2
                   text-slate-400
-                  uppercase
-                  tracking-wider
-                  pt-2
-                "
-              >
-                Back to Email Login
-              </button>
-
-            </div>
-
-          ) : (
-
-            /* =================================================
-               NORMAL LOGIN / REGISTER
-            ================================================= */
-
-            <form
-              onSubmit={handleAuth}
-              className="space-y-4"
-            >
-
-              {!isLogin && (
-
-                <>
-
-                  <div className="relative">
-
-                    <User
-                      className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-slate-400
-                      "
-                      size={18}
-                    />
-
-                    <input
-                      name="fullName"
-                      placeholder="Full Name"
-                      required
-                      value={
-                        formData.fullName
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="
-                        w-full
-                        pl-12
-                        pr-4
-                        py-4
-                        bg-slate-50
-                        border
-                        border-slate-200
-                        rounded-2xl
-                        text-sm
-                        outline-none
-                        focus:bg-white
-                        focus:border-indigo-600
-                      "
-                    />
-
-                  </div>
-
-
-                  <div className="relative">
-
-                    <Phone
-                      className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-slate-400
-                      "
-                      size={18}
-                    />
-
-                    <input
-                      name="phone"
-                      type="tel"
-                      placeholder="Mobile Number"
-                      value={
-                        formData.phone
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="
-                        w-full
-                        pl-12
-                        pr-4
-                        py-4
-                        bg-slate-50
-                        border
-                        border-slate-200
-                        rounded-2xl
-                        text-sm
-                        outline-none
-                        focus:bg-white
-                        focus:border-indigo-600
-                      "
-                    />
-
-                  </div>
-
-                </>
-
-              )}
-
-
-              {/* EMAIL */}
-
-              <div className="relative">
-
-                <Mail
-                  className="
-                    absolute
-                    left-4
-                    top-1/2
-                    -translate-y-1/2
-                    text-slate-400
-                  "
-                  size={18}
-                />
-
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Email Address"
-                  required
-                  value={
-                    formData.email
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  className="
-                    w-full
-                    pl-12
-                    pr-4
-                    py-4
-                    bg-slate-50
-                    border
-                    border-slate-200
-                    rounded-2xl
-                    text-sm
-                    outline-none
-                    focus:bg-white
-                    focus:border-indigo-600
-                  "
-                />
-
-              </div>
-
-
-              {/* PASSWORD */}
-
-              <div className="relative">
-
-                <Lock
-                  className="
-                    absolute
-                    left-4
-                    top-1/2
-                    -translate-y-1/2
-                    text-slate-400
-                  "
-                  size={18}
-                />
-
-
-                <input
-                  name="password"
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  placeholder="Password"
-                  required
-                  value={
-                    formData.password
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  className="
-                    w-full
-                    pl-12
-                    pr-12
-                    py-4
-                    bg-slate-50
-                    border
-                    border-slate-200
-                    rounded-2xl
-                    text-sm
-                    outline-none
-                    focus:bg-white
-                    focus:border-indigo-600
-                  "
-                />
-
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowPassword(
-                      !showPassword
-                    )
-                  }
-                  className="
-                    absolute
-                    right-4
-                    top-1/2
-                    -translate-y-1/2
-                    text-slate-400
-                  "
-                >
-
-                  {showPassword ? (
-
-                    <EyeOff
-                      size={18}
-                    />
-
-                  ) : (
-
-                    <Eye
-                      size={18}
-                    />
-
-                  )}
-
-                </button>
-
-              </div>
-
-
-              {/* FORGOT PASSWORD */}
-
-              {isLogin && (
-
-                <div className="flex justify-end">
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowResetModal(
-                        true
-                      )
-                    }
-                    className="
-                      text-[11px]
-                      font-bold
-                      text-indigo-600
-                      uppercase
-                      tracking-wide
-                    "
-                  >
-                    Forgot Password?
-                  </button>
-
-                </div>
-
-              )}
-
-
-              {/* SIGN IN / REGISTER */}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="
-                  w-full
-                  bg-[#1e293b]
-                  text-white
-                  py-4
-                  rounded-2xl
-                  font-bold
-                  text-sm
-                  shadow-lg
-                  hover:bg-indigo-600
-                  transition-all
-                  flex
-                  justify-center
-                  items-center
-                  gap-2
                 "
               >
 
-                {loading ? (
+                {showPassword ? (
 
-                  <Loader2
-                    className="animate-spin"
+                  <EyeOff
+                    size={18}
                   />
 
                 ) : (
 
-                  <>
-                    {isLogin
-                      ? "Sign In"
-                      : "Create Account"}
-
-                    <ArrowRight
-                      size={17}
-                    />
-                  </>
+                  <Eye
+                    size={18}
+                  />
 
                 )}
 
               </button>
 
+            </div>
 
-              {/* =================================================
-                  GOOGLE
-              ================================================= */}
 
-              {isLogin && (
+            {/* FORGOT PASSWORD */}
+
+            {isLogin && (
+
+              <div className="flex justify-end">
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowResetModal(
+                      true
+                    )
+                  }
+                  className="
+                    text-[11px]
+                    font-bold
+                    text-indigo-600
+                    uppercase
+                    tracking-wide
+                  "
+                >
+                  Forgot Password?
+                </button>
+
+              </div>
+
+            )}
+
+
+            {/* SIGN IN / REGISTER */}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="
+                w-full
+                bg-[#1e293b]
+                text-white
+                py-4
+                rounded-2xl
+                font-bold
+                text-sm
+                shadow-lg
+                hover:bg-indigo-600
+                transition-all
+                flex
+                justify-center
+                items-center
+                gap-2
+              "
+            >
+
+              {loading ? (
+
+                <Loader2
+                  className="animate-spin"
+                />
+
+              ) : (
 
                 <>
+                  {isLogin
+                    ? "Sign In"
+                    : "Create Account"}
 
-                  <div className="flex items-center gap-3 py-2">
-
-                    <div className="h-px bg-slate-200 flex-1" />
-
-                    <span
-                      className="
-                        text-[10px]
-                        text-slate-400
-                        font-bold
-                        uppercase
-                      "
-                    >
-                      OR
-                    </span>
-
-                    <div className="h-px bg-slate-200 flex-1" />
-
-                  </div>
-
-
-                  <button
-                    type="button"
-                    onClick={
-                      handleGoogleLogin
-                    }
-                    disabled={loading}
-                    className="
-                      w-full
-                      bg-white
-                      border
-                      border-slate-200
-                      text-slate-700
-                      py-4
-                      rounded-2xl
-                      font-bold
-                      text-sm
-                      hover:bg-slate-50
-                      transition-all
-                      flex
-                      justify-center
-                      items-center
-                      gap-3
-                    "
-                  >
-
-                    <Chrome
-                      size={19}
-                    />
-
-                    Continue with Google
-
-                  </button>
-
-
-                  {/* MOBILE OTP */}
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowOtpLogin(
-                        true
-                      )
-                    }
-                    className="
-                      w-full
-                      bg-indigo-50
-                      text-indigo-700
-                      py-4
-                      rounded-2xl
-                      font-bold
-                      text-sm
-                      hover:bg-indigo-100
-                      transition-all
-                      flex
-                      justify-center
-                      items-center
-                      gap-2
-                    "
-                  >
-
-                    <Phone
-                      size={18}
-                    />
-
-                    Login with Mobile OTP
-
-                  </button>
-
+                  <ArrowRight
+                    size={17}
+                  />
                 </>
 
               )}
 
-            </form>
+            </button>
 
-          )}
+
+            {/* =================================================
+                GOOGLE
+            ================================================= */}
+
+            {isLogin && (
+
+              <>
+
+                <div className="flex items-center gap-3 py-2">
+
+                  <div className="h-px bg-slate-200 flex-1" />
+
+                  <span
+                    className="
+                      text-[10px]
+                      text-slate-400
+                      font-bold
+                      uppercase
+                    "
+                  >
+                    OR
+                  </span>
+
+                  <div className="h-px bg-slate-200 flex-1" />
+
+                </div>
+
+
+                <button
+                  type="button"
+                  onClick={
+                    handleGoogleLogin
+                  }
+                  disabled={loading}
+                  className="
+                    w-full
+                    bg-white
+                    border
+                    border-slate-200
+                    text-slate-700
+                    py-4
+                    rounded-2xl
+                    font-bold
+                    text-sm
+                    hover:bg-slate-50
+                    transition-all
+                    flex
+                    justify-center
+                    items-center
+                    gap-3
+                  "
+                >
+
+                  <Chrome
+                    size={19}
+                  />
+
+                  Continue with Google
+
+                </button>
+
+              </>
+
+            )}
+
+          </form>
 
 
           {/* =================================================
@@ -2103,12 +1370,6 @@ const Auth = () => {
                 setIsLogin(
                   !isLogin
                 );
-
-                setShowOtpLogin(
-                  false
-                );
-
-                resetOtpState();
 
                 setMessage({
                   type: "",
