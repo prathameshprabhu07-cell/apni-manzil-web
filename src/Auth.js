@@ -247,13 +247,15 @@ const Auth = () => {
   const redirectUser = (userData) => {
 
     if (!userData) {
+
       showError("User profile not found.");
+
       return;
     }
 
 
     // -----------------------------------------
-    // ROLE CHECK
+    // VENDOR
     // -----------------------------------------
 
     if (userData.role === "vendor") {
@@ -296,13 +298,17 @@ const Auth = () => {
 
   const checkUserProfile = async (firebaseUser) => {
 
-    const userRef = doc(db, "users", firebaseUser.uid);
+    const userRef =
+      doc(db, "users", firebaseUser.uid);
 
-    const userSnap = await getDoc(userRef);
+    const userSnap =
+      await getDoc(userRef);
 
 
     if (!userSnap.exists()) {
+
       return null;
+
     }
 
 
@@ -317,15 +323,21 @@ const Auth = () => {
 
   const handleEmailLogin = async () => {
 
-    if (!formData.email || !formData.password) {
+    if (
+      !formData.email ||
+      !formData.password
+    ) {
 
-      showError("Please enter email and password.");
+      showError(
+        "Please enter email and password."
+      );
 
       return;
     }
 
 
     setLoading(true);
+
 
     try {
 
@@ -338,11 +350,25 @@ const Auth = () => {
 
 
       const userData =
-        await checkUserProfile(userCredential.user);
+        await checkUserProfile(
+          userCredential.user
+        );
 
-        console.log("LOGIN FIREBASE USER:", userCredential.user.uid);
-        console.log("LOGIN FIRESTORE PROFILE:", userData);
 
+      console.log(
+        "LOGIN FIREBASE USER:",
+        userCredential.user.uid
+      );
+
+      console.log(
+        "LOGIN FIRESTORE PROFILE:",
+        userData
+      );
+
+
+      // --------------------------------------------------
+      // PROFILE NOT FOUND
+      // --------------------------------------------------
 
       if (!userData) {
 
@@ -376,11 +402,18 @@ const Auth = () => {
       }
 
 
+      // --------------------------------------------------
+      // REDIRECT
+      // --------------------------------------------------
+
       redirectUser(userData);
 
     } catch (error) {
 
-      console.error("Email Login Error:", error);
+      console.error(
+        "Email Login Error:",
+        error
+      );
 
       showError(
         getFirebaseErrorMessage(error)
@@ -401,25 +434,54 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
 
+    // TEMPORARY DEBUG LOG
+    console.log(
+      "GOOGLE LOGIN BUTTON CLICKED"
+    );
+
+
     setLoading(true);
+
 
     try {
 
-      const provider = new GoogleAuthProvider();
+      const provider =
+        new GoogleAuthProvider();
+
 
       provider.setCustomParameters({
         prompt: "select_account",
       });
 
 
+      console.log(
+        "OPENING GOOGLE POPUP..."
+      );
+
+
       const result =
-        await signInWithPopup(auth, provider);
+        await signInWithPopup(
+          auth,
+          provider
+        );
 
 
-      const firebaseUser = result.user;
+      console.log(
+        "GOOGLE LOGIN SUCCESS:",
+        result.user.uid
+      );
+
+
+      const firebaseUser =
+        result.user;
+
 
       const userRef =
-        doc(db, "users", firebaseUser.uid);
+        doc(
+          db,
+          "users",
+          firebaseUser.uid
+        );
 
 
       const userSnap =
@@ -432,8 +494,19 @@ const Auth = () => {
 
       if (userSnap.exists()) {
 
-        const userData = userSnap.data();
+        const userData =
+          userSnap.data();
 
+
+        console.log(
+          "GOOGLE EXISTING FIRESTORE PROFILE:",
+          userData
+        );
+
+
+        // ----------------------------------------------
+        // ROLE CHECK
+        // ----------------------------------------------
 
         if (userData.role !== role) {
 
@@ -461,11 +534,18 @@ const Auth = () => {
       // NEW GOOGLE USER
       // --------------------------------------------------
 
+      console.log(
+        "NEW GOOGLE USER - CREATING FIRESTORE PROFILE"
+      );
+
+
       const newUserData = {
 
-        uid: firebaseUser.uid,
+        uid:
+          firebaseUser.uid,
 
-        role: role,
+        role:
+          role,
 
         status:
           role === "vendor"
@@ -489,6 +569,7 @@ const Auth = () => {
 
         createdAt:
           new Date().toISOString(),
+
       };
 
 
@@ -497,6 +578,16 @@ const Auth = () => {
         newUserData
       );
 
+
+      console.log(
+        "GOOGLE FIRESTORE PROFILE CREATED:",
+        newUserData
+      );
+
+
+      // --------------------------------------------------
+      // VENDOR
+      // --------------------------------------------------
 
       if (role === "vendor") {
 
@@ -510,11 +601,20 @@ const Auth = () => {
       }
 
 
-      navigate("/customer-dashboard");
+      // --------------------------------------------------
+      // INDIVIDUAL
+      // --------------------------------------------------
+
+      navigate(
+        "/customer-dashboard"
+      );
 
     } catch (error) {
 
-      console.error("Google Login Error:", error);
+      console.error(
+        "Google Login Error:",
+        error
+      );
 
       showError(
         getFirebaseErrorMessage(error)
@@ -536,28 +636,43 @@ const Auth = () => {
   const setupRecaptcha = () => {
 
     if (window.recaptchaVerifier) {
+
       return window.recaptchaVerifier;
+
     }
 
 
-    const verifier = new RecaptchaVerifier(
-      auth,
-      "recaptcha-container",
-      {
-        size: "invisible",
+    const verifier =
+      new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
 
-        callback: () => {
-          console.log("reCAPTCHA solved");
-        },
+          size: "invisible",
 
-        "expired-callback": () => {
-          console.log("reCAPTCHA expired");
-        },
-      }
-    );
+          callback: () => {
+
+            console.log(
+              "reCAPTCHA solved"
+            );
+
+          },
+
+          "expired-callback": () => {
+
+            console.log(
+              "reCAPTCHA expired"
+            );
+
+          },
+
+        }
+      );
 
 
-    window.recaptchaVerifier = verifier;
+    window.recaptchaVerifier =
+      verifier;
+
 
     return verifier;
 
@@ -591,17 +706,23 @@ const Auth = () => {
     if (
       formattedPhone.startsWith("0")
     ) {
+
       formattedPhone =
         "+91" +
         formattedPhone.substring(1);
+
     }
 
     else if (
-      /^[6-9]\d{9}$/.test(formattedPhone)
+      /^[6-9]\d{9}$/.test(
+        formattedPhone
+      )
     ) {
+
       formattedPhone =
         "+91" +
         formattedPhone;
+
     }
 
 
@@ -619,6 +740,7 @@ const Auth = () => {
 
     setOtpLoading(true);
 
+
     try {
 
       const appVerifier =
@@ -633,7 +755,10 @@ const Auth = () => {
         );
 
 
-      setConfirmationResult(result);
+      setConfirmationResult(
+        result
+      );
+
 
       showSuccess(
         "OTP sent successfully."
@@ -647,18 +772,26 @@ const Auth = () => {
       );
 
 
-      if (window.recaptchaVerifier) {
+      if (
+        window.recaptchaVerifier
+      ) {
 
         try {
+
           window.recaptchaVerifier.clear();
+
         } catch (e) {}
 
-        window.recaptchaVerifier = null;
+        window.recaptchaVerifier =
+          null;
+
       }
 
 
       showError(
-        getFirebaseErrorMessage(error)
+        getFirebaseErrorMessage(
+          error
+        )
       );
 
     } finally {
@@ -686,7 +819,10 @@ const Auth = () => {
     }
 
 
-    if (!otp || otp.length < 6) {
+    if (
+      !otp ||
+      otp.length < 6
+    ) {
 
       showError(
         "Please enter the 6-digit OTP."
@@ -697,6 +833,7 @@ const Auth = () => {
 
 
     setOtpLoading(true);
+
 
     try {
 
@@ -711,7 +848,11 @@ const Auth = () => {
 
 
       const userRef =
-        doc(db, "users", firebaseUser.uid);
+        doc(
+          db,
+          "users",
+          firebaseUser.uid
+        );
 
 
       const userSnap =
@@ -728,7 +869,9 @@ const Auth = () => {
           userSnap.data();
 
 
-        if (userData.role !== role) {
+        if (
+          userData.role !== role
+        ) {
 
           await signOut(auth);
 
@@ -744,7 +887,9 @@ const Auth = () => {
         }
 
 
-        redirectUser(userData);
+        redirectUser(
+          userData
+        );
 
         return;
       }
@@ -781,6 +926,7 @@ const Auth = () => {
 
         createdAt:
           new Date().toISOString(),
+
       };
 
 
@@ -790,7 +936,13 @@ const Auth = () => {
       );
 
 
-      if (role === "vendor") {
+      // --------------------------------------------------
+      // VENDOR
+      // --------------------------------------------------
+
+      if (
+        role === "vendor"
+      ) {
 
         showSuccess(
           "Mobile verified. Vendor verification is pending."
@@ -804,6 +956,10 @@ const Auth = () => {
       }
 
 
+      // --------------------------------------------------
+      // INDIVIDUAL
+      // --------------------------------------------------
+
       navigate(
         "/customer-dashboard"
       );
@@ -815,10 +971,14 @@ const Auth = () => {
         error
       );
 
+
       showError(
-        error.code === "auth/invalid-verification-code"
+        error.code ===
+        "auth/invalid-verification-code"
           ? "Invalid OTP. Please try again."
-          : getFirebaseErrorMessage(error)
+          : getFirebaseErrorMessage(
+              error
+            )
       );
 
     } finally {
@@ -836,7 +996,9 @@ const Auth = () => {
 
   const resetOtpState = () => {
 
-    setConfirmationResult(null);
+    setConfirmationResult(
+      null
+    );
 
     setOtp("");
 
@@ -866,26 +1028,25 @@ const Auth = () => {
 
     setResetLoading(true);
 
+
     try {
 
-await sendPasswordResetEmail(
-  auth,
-  resetEmail.trim()
-);
+      await sendPasswordResetEmail(
+        auth,
+        resetEmail.trim()
+      );
 
-console.log(
-  "PASSWORD RESET EMAIL REQUEST SUCCESS:",
-  resetEmail.trim()
-);
 
-alert(
-  "Password reset link has been sent to your email. Please check Inbox / Spam."
-);
+      alert(
+        "Password reset link has been sent to your email. Please check Inbox / Spam."
+      );
 
 
       setResetEmail("");
 
-      setShowResetModal(false);
+      setShowResetModal(
+        false
+      );
 
     } catch (error) {
 
@@ -896,7 +1057,9 @@ alert(
 
 
       alert(
-        getFirebaseErrorMessage(error)
+        getFirebaseErrorMessage(
+          error
+        )
       );
 
     } finally {
@@ -928,7 +1091,9 @@ alert(
     }
 
 
-    if (formData.password.length < 6) {
+    if (
+      formData.password.length < 6
+    ) {
 
       showError(
         "Password must be at least 6 characters."
@@ -982,11 +1147,16 @@ alert(
 
         createdAt:
           new Date().toISOString(),
+
       };
 
 
       await setDoc(
-        doc(db, "users", user.uid),
+        doc(
+          db,
+          "users",
+          user.uid
+        ),
         userData
       );
 
@@ -994,7 +1164,9 @@ alert(
       await signOut(auth);
 
 
-      if (role === "vendor") {
+      if (
+        role === "vendor"
+      ) {
 
         showSuccess(
           "Vendor registration successful. Your account is pending verification."
@@ -1011,7 +1183,9 @@ alert(
 
       setTimeout(() => {
 
-        navigate("/login");
+        navigate(
+          "/login"
+        );
 
       }, 1500);
 
@@ -1024,7 +1198,9 @@ alert(
 
 
       showError(
-        getFirebaseErrorMessage(error)
+        getFirebaseErrorMessage(
+          error
+        )
       );
 
     } finally {
@@ -1081,6 +1257,7 @@ alert(
     >
 
       {/* Invisible Firebase reCAPTCHA */}
+
       <div id="recaptcha-container"></div>
 
 
@@ -1320,7 +1497,9 @@ alert(
                       placeholder="Mobile Number"
                       value={phoneNumber}
                       onChange={(e) =>
-                        setPhoneNumber(e.target.value)
+                        setPhoneNumber(
+                          e.target.value
+                        )
                       }
                       className="
                         w-full
@@ -1342,8 +1521,12 @@ alert(
 
                   <button
                     type="button"
-                    onClick={handleSendOTP}
-                    disabled={otpLoading}
+                    onClick={
+                      handleSendOTP
+                    }
+                    disabled={
+                      otpLoading
+                    }
                     className="
                       w-full
                       bg-indigo-600
@@ -1360,12 +1543,20 @@ alert(
                   >
 
                     {otpLoading ? (
-                      <Loader2 className="animate-spin" />
+
+                      <Loader2
+                        className="animate-spin"
+                      />
+
                     ) : (
+
                       <>
                         Send OTP
-                        <ArrowRight size={17} />
+                        <ArrowRight
+                          size={17}
+                        />
                       </>
+
                     )}
 
                   </button>
@@ -1408,8 +1599,12 @@ alert(
 
                   <button
                     type="button"
-                    onClick={handleVerifyOTP}
-                    disabled={otpLoading}
+                    onClick={
+                      handleVerifyOTP
+                    }
+                    disabled={
+                      otpLoading
+                    }
                     className="
                       w-full
                       bg-emerald-600
@@ -1424,9 +1619,15 @@ alert(
                   >
 
                     {otpLoading ? (
-                      <Loader2 className="animate-spin" />
+
+                      <Loader2
+                        className="animate-spin"
+                      />
+
                     ) : (
+
                       "Verify & Login"
+
                     )}
 
                   </button>
@@ -1434,7 +1635,9 @@ alert(
 
                   <button
                     type="button"
-                    onClick={resetOtpState}
+                    onClick={
+                      resetOtpState
+                    }
                     className="
                       w-full
                       text-xs
@@ -1456,7 +1659,9 @@ alert(
 
                   resetOtpState();
 
-                  setShowOtpLogin(false);
+                  setShowOtpLogin(
+                    false
+                  );
 
                 }}
                 className="
@@ -1475,7 +1680,6 @@ alert(
             </div>
 
           ) : (
-
 
             /* =================================================
                NORMAL LOGIN / REGISTER
@@ -1507,8 +1711,12 @@ alert(
                       name="fullName"
                       placeholder="Full Name"
                       required
-                      value={formData.fullName}
-                      onChange={handleChange}
+                      value={
+                        formData.fullName
+                      }
+                      onChange={
+                        handleChange
+                      }
                       className="
                         w-full
                         pl-12
@@ -1545,8 +1753,12 @@ alert(
                       name="phone"
                       type="tel"
                       placeholder="Mobile Number"
-                      value={formData.phone}
-                      onChange={handleChange}
+                      value={
+                        formData.phone
+                      }
+                      onChange={
+                        handleChange
+                      }
                       className="
                         w-full
                         pl-12
@@ -1590,8 +1802,12 @@ alert(
                   type="email"
                   placeholder="Email Address"
                   required
-                  value={formData.email}
-                  onChange={handleChange}
+                  value={
+                    formData.email
+                  }
+                  onChange={
+                    handleChange
+                  }
                   className="
                     w-full
                     pl-12
@@ -1636,8 +1852,12 @@ alert(
                   }
                   placeholder="Password"
                   required
-                  value={formData.password}
-                  onChange={handleChange}
+                  value={
+                    formData.password
+                  }
+                  onChange={
+                    handleChange
+                  }
                   className="
                     w-full
                     pl-12
@@ -1672,9 +1892,17 @@ alert(
                 >
 
                   {showPassword ? (
-                    <EyeOff size={18} />
+
+                    <EyeOff
+                      size={18}
+                    />
+
                   ) : (
-                    <Eye size={18} />
+
+                    <Eye
+                      size={18}
+                    />
+
                   )}
 
                 </button>
@@ -1691,7 +1919,9 @@ alert(
                   <button
                     type="button"
                     onClick={() =>
-                      setShowResetModal(true)
+                      setShowResetModal(
+                        true
+                      )
                     }
                     className="
                       text-[11px]
@@ -1733,15 +1963,23 @@ alert(
               >
 
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+
+                  <Loader2
+                    className="animate-spin"
+                  />
+
                 ) : (
+
                   <>
                     {isLogin
                       ? "Sign In"
                       : "Create Account"}
 
-                    <ArrowRight size={17} />
+                    <ArrowRight
+                      size={17}
+                    />
                   </>
+
                 )}
 
               </button>
@@ -1777,7 +2015,9 @@ alert(
 
                   <button
                     type="button"
-                    onClick={handleGoogleLogin}
+                    onClick={
+                      handleGoogleLogin
+                    }
                     disabled={loading}
                     className="
                       w-full
@@ -1812,7 +2052,9 @@ alert(
                   <button
                     type="button"
                     onClick={() =>
-                      setShowOtpLogin(true)
+                      setShowOtpLogin(
+                        true
+                      )
                     }
                     className="
                       w-full
@@ -1831,7 +2073,9 @@ alert(
                     "
                   >
 
-                    <Phone size={18} />
+                    <Phone
+                      size={18}
+                    />
 
                     Login with Mobile OTP
 
@@ -1856,9 +2100,13 @@ alert(
               type="button"
               onClick={() => {
 
-                setIsLogin(!isLogin);
+                setIsLogin(
+                  !isLogin
+                );
 
-                setShowOtpLogin(false);
+                setShowOtpLogin(
+                  false
+                );
 
                 resetOtpState();
 
@@ -1938,11 +2186,15 @@ alert(
               <button
                 type="button"
                 onClick={() =>
-                  setShowResetModal(false)
+                  setShowResetModal(
+                    false
+                  )
                 }
                 className="text-slate-400"
               >
+
                 <X size={20} />
+
               </button>
 
             </div>
@@ -1961,7 +2213,9 @@ alert(
 
 
             <form
-              onSubmit={handleResetPassword}
+              onSubmit={
+                handleResetPassword
+              }
               className="space-y-4"
             >
 
@@ -1982,7 +2236,9 @@ alert(
                   type="email"
                   required
                   placeholder="Registered Email"
-                  value={resetEmail}
+                  value={
+                    resetEmail
+                  }
                   onChange={(e) =>
                     setResetEmail(
                       e.target.value
@@ -2007,7 +2263,9 @@ alert(
 
               <button
                 type="submit"
-                disabled={resetLoading}
+                disabled={
+                  resetLoading
+                }
                 className="
                   w-full
                   bg-indigo-600
@@ -2022,9 +2280,15 @@ alert(
               >
 
                 {resetLoading ? (
-                  <Loader2 className="animate-spin" />
+
+                  <Loader2
+                    className="animate-spin"
+                  />
+
                 ) : (
+
                   "Send Reset Link"
+
                 )}
 
               </button>
@@ -2033,7 +2297,9 @@ alert(
               <button
                 type="button"
                 onClick={() =>
-                  setShowResetModal(false)
+                  setShowResetModal(
+                    false
+                  )
                 }
                 className="
                   w-full
