@@ -1,4 +1,3 @@
-```jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Truck, Building2, MapPin, FileText, ShieldCheck, Users, DollarSign, ArrowLeft, CheckCircle2, CreditCard, LockKeyhole } from 'lucide-react';
@@ -15,12 +14,6 @@ const PackersMoversRegister = () => {
     mobile: '',
     whatsapp: '',
     email: '',
-    
-    // 🔐 Partner Login Setup
-    loginEmail: '',
-    loginPassword: '',
-    confirmPassword: '',
-
     address: '',
     city: '',
     pincode: '',
@@ -87,7 +80,12 @@ const PackersMoversRegister = () => {
     ifscCode: '',
     accountType: 'Current',
     bankProof: null,
-    upiId: ''
+    upiId: '',
+
+    // Partner Login Setup
+    loginEmail: '',
+    loginPassword: '',
+    confirmPassword: ''
   });
 
   // Automatically select service if passed from VendorLandingPage
@@ -233,330 +231,330 @@ const PackersMoversRegister = () => {
               </div>
               <div>
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Website (Optional)</label>
-                <input type="url" name="website" value={formData.website} onChange={handleInputChange} placeholder="https://yourwebsite.com" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-            </div>
-          </div>
-
-          {/* 🛠️ Services Offered */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><Truck size={24}/></div>
-              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">Services Offered (Multiple Selection)</h3>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {[
-                "Packers & Movers", "Warehouse", "International Logistics", "Home Shifting", 
-                "Office Shifting", "Commercial Shifting", "Local Shifting", "Intercity Shifting", 
-                "Outstation Shifting", "Packing", "Loading", "Unloading", "Unpacking", 
-                "Vehicle Transportation", "Storage"
-              ].map((srv) => (
-                <label key={srv} className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${formData.services.includes(srv) ? 'bg-orange-50 border-orange-500 text-orange-900 font-bold' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
-                  <input 
-                    type="checkbox" 
-                    checked={formData.services.includes(srv)}
-                    onChange={() => handleCheckboxGroupChange('services', srv)}
-                    className="accent-orange-500 w-4 h-4"
-                  />
-                  <span className="text-xs">{srv}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* 📍 Service Area */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl"><MapPin size={24}/></div>
-              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">Service Area (Crucial for Lead Matching)</h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Base City *</label>
-                <input type="text" name="baseCity" required value={formData.baseCity} onChange={handleInputChange} placeholder="e.g. Pune" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Local Areas / PIN Codes Covered</label>
-                <input type="text" name="localAreas" value={formData.localAreas} onChange={handleInputChange} placeholder="e.g. Kothrud, Baner, Wakad" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Cities Covered</label>
-                <input type="text" name="citiesCovered" value={formData.citiesCovered} onChange={handleInputChange} placeholder="e.g. Pune, Mumbai, Nashik" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">States Covered</label>
-                <input type="text" name="statesCovered" value={formData.statesCovered} onChange={handleInputChange} placeholder="e.g. Maharashtra, Karnataka" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Intercity Service?</label>
-                <select name="intercityService" value={formData.intercityService} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Outstation Service?</label>
-                <select name="outstationService" value={formData.outstationService} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* 🚚 Vehicle Information */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl"><Truck size={24}/></div>
-              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">🚚 Vehicle Information</h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Do you have your own vehicles?</label>
-                <select name="hasOwnVehicles" value={formData.hasOwnVehicles} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Number of Own Vehicles</label>
-                <input type="number" name="ownVehicleCount" value={formData.ownVehicleCount} onChange={handleInputChange} placeholder="e.g. 2" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Attached / Hired Vehicles Available?</label>
-                <select name="hiredVehicles" value={formData.hiredVehicles} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-600 mb-2">Vehicle Types (Select all that apply)</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {["Tata Ace", "Pickup", "14 ft", "17 ft", "20 ft", "Container", "Other"].map((vType) => (
-                  <label key={vType} className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition ${formData.vehicleTypes.includes(vType) ? 'bg-orange-50 border-orange-500 text-orange-900 font-bold' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
-                    <input 
-                      type="checkbox" 
-                      checked={formData.vehicleTypes.includes(vType)}
-                      onChange={() => handleCheckboxGroupChange('vehicleTypes', vType)}
-                      className="accent-orange-500 w-4 h-4"
-                    />
-                    <span className="text-xs">{vType}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* 👷 Manpower */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl"><Users size={24}/></div>
-              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">👷 Manpower</h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Number of Packers / Workers</label>
-                <input type="number" name="workerCount" value={formData.workerCount} onChange={handleInputChange} placeholder="e.g. 5" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Loading & Unloading Team Available?</label>
-                <select name="loadingTeam" value={formData.loadingTeam} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Driver Available?</label>
-                <select name="driverAvailable" value={formData.driverAvailable} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* 💵 Pricing Information */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><DollarSign size={24}/></div>
-              <div>
-                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">💵 Pricing Information</h3>
-                <p className="text-[11px] text-slate-500 font-medium">Please provide approximate starting prices. Exact quotations are not required here.</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Local Minimum Charges</label>
-                <input type="text" name="localMinCharges" value={formData.localMinCharges} onChange={handleInputChange} placeholder="e.g. ₹3000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Per KM Rate</label>
-                <input type="text" name="perKmRate" value={formData.perKmRate} onChange={handleInputChange} placeholder="e.g. ₹40/km" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">1 BHK Starting Price</label>
-                <input type="text" name="bhk1Price" value={formData.bhk1Price} onChange={handleInputChange} placeholder="e.g. ₹5000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">2 BHK Starting Price</label>
-                <input type="text" name="bhk2Price" value={formData.bhk2Price} onChange={handleInputChange} placeholder="e.g. ₹8000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">3 BHK Starting Price</label>
-                <input type="text" name="bhk3Price" value={formData.bhk3Price} onChange={handleInputChange} placeholder="e.g. ₹12000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">4 BHK Starting Price</label>
-                <input type="text" name="bhk4Price" value={formData.bhk4Price} onChange={handleInputChange} placeholder="e.g. ₹16000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Packing Charges</label>
-                <input type="text" name="packingCharges" value={formData.packingCharges} onChange={handleInputChange} placeholder="Approx amount" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Loading Charges</label>
-                <input type="text" name="loadingCharges" value={formData.loadingCharges} onChange={handleInputChange} placeholder="Approx amount" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Unloading Charges</label>
-                <input type="text" name="unloadingCharges" value={formData.unloadingCharges} onChange={handleInputChange} placeholder="Approx amount" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-            </div>
-          </div>
-
-          {/* 📂 Documents Upload */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><FileText size={24}/></div>
-              <div>
-                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">📂 Documents Upload</h3>
-                <p className="text-[11px] text-slate-500 font-medium">Not all documents are mandatory (small local movers can also register easily).</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-3 gap-6">
-              {[
-                { label: "PAN Card", name: "panCard" },
-                { label: "Business Proof", name: "businessProof" },
-                { label: "GST Certificate (If available)", name: "gstCert" },
-                { label: "Udyam Certificate (If available)", name: "udyamCert" },
-                { label: "Business Address Proof", name: "addressProof" },
-                { label: "Shop / Establishment Certificate", name: "shopCert" }
-              ].map((doc) => (
-                <div key={doc.name} className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2">
-                  <label className="block text-xs font-bold uppercase text-slate-700">{doc.label}</label>
-                  <input type="file" name={doc.name} onChange={handleFileChange} className="w-full text-[10px] text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer" />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ⭐ Trust / Experience & Apni Manzil Preferences */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><ShieldCheck size={24}/></div>
-              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">⭐ Trust, Experience & Lead Preferences</h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Years in Packers & Movers Business</label>
-                <input type="text" name="yearsInBusiness" value={formData.yearsInBusiness} onChange={handleInputChange} placeholder="e.g. 5 Years" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Previous Customer Reviews / Rating</label>
-                <input type="text" name="customerRating" value={formData.customerRating} onChange={handleInputChange} placeholder="e.g. 4.5 Star on Google" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Insurance Available?</label>
-                <select name="insuranceAvailable" value={formData.insuranceAvailable} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Damage / Claim Policy</label>
-                <input type="text" name="claimPolicy" value={formData.claimPolicy} onChange={handleInputChange} placeholder="Briefly describe policy" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Any major customer complaint currently unresolved?</label>
-                <select name="unresolvedComplaints" value={formData.unresolvedComplaints} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="No">No</option>
-                  <option value="Yes">Yes</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Preferred Working Hours</label>
-                <input type="text" name="preferredHours" value={formData.preferredHours} onChange={handleInputChange} placeholder="e.g. 9 AM - 9 PM" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Are you willing to accept leads from Apni Manzil? *</label>
-                <select name="acceptLeads" required value={formData.acceptLeads} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500 font-bold text-orange-600">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">How would you like to receive leads?</label>
-                <select name="leadReceiveMode" value={formData.leadReceiveMode} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Both">Both (WhatsApp & Call)</option>
-                  <option value="WhatsApp">WhatsApp</option>
-                  <option value="Call">Call</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* 💳 Payment / Settlement Details */}
-          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
-            <div className="flex items-center gap-3 border-b pb-4">
-              <div className="p-3 bg-cyan-50 text-cyan-600 rounded-2xl"><CreditCard size={24}/></div>
-              <div>
-                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">💳 Payment / Settlement Details</h3>
-                <p className="text-[11px] text-slate-500 font-medium">Partner Verified + Active झाल्यावर bank details घेऊ</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Holder Name</label>
-                <input type="text" name="bankAccountHolder" value={formData.bankAccountHolder} onChange={handleInputChange} placeholder="e.g. Om Sai Logistics" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Bank Name</label>
-                <input type="text" name="bankName" value={formData.bankName} onChange={handleInputChange} placeholder="e.g. HDFC Bank" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Number</label>
-                <input type="text" name="accountNumber" value={formData.accountNumber} onChange={handleInputChange} placeholder="Enter account number" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">IFSC Code</label>
-                <input type="text" name="ifscCode" value={formData.ifscCode} onChange={handleInputChange} placeholder="e.g. HDFC0001234" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Type</label>
-                <select name="accountType" value={formData.accountType} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500">
-                  <option value="Current">Current</option>
-                  <option value="Savings">Savings</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">UPI ID (Optional)</label>
-                <input type="text" name="upiId" value={formData.upiId} onChange={handleInputChange} placeholder="e.g. business@upi" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
-              </div>
-              <div className="md:col-span-2 bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2">
-                <label className="block text-xs font-bold uppercase text-slate-700">Cancelled Cheque / Bank Proof</label>
-                <input type="file" name="bankProof" onChange={handleFileChange} className="w-full text-[10px] text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer" />
-              </div>
-            </div>
+                <input type="url" name="website" value={formData.website} onChange={handleInputChange} placeholder="https://yourwebsite.com" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+            </div> 
+          </div> 
+ 
+          {/* 🛠️ Services Offered */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><Truck size={24}/></div> 
+              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">Services Offered (Multiple Selection)</h3> 
+            </div> 
+ 
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"> 
+              {[ 
+                "Packers & Movers", "Warehouse", "International Logistics", "Home Shifting",  
+                "Office Shifting", "Commercial Shifting", "Local Shifting", "Intercity Shifting",  
+                "Outstation Shifting", "Packing", "Loading", "Unloading", "Unpacking",  
+                "Vehicle Transportation", "Storage" 
+              ].map((srv) => ( 
+                <label key={srv} className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${formData.services.includes(srv) ? 'bg-orange-50 border-orange-500 text-orange-900 font-bold' : 'bg-slate-50 border-slate-200 text-slate-700'}`}> 
+                  <input  
+                    type="checkbox"  
+                    checked={formData.services.includes(srv)} 
+                    onChange={() => handleCheckboxGroupChange('services', srv)} 
+                    className="accent-orange-500 w-4 h-4" 
+                  /> 
+                  <span className="text-xs">{srv}</span> 
+                </label> 
+              ))} 
+            </div> 
+          </div> 
+ 
+          {/* 📍 Service Area */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl"><MapPin size={24}/></div> 
+              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">Service Area (Crucial for Lead Matching)</h3> 
+            </div> 
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Base City *</label> 
+                <input type="text" name="baseCity" required value={formData.baseCity} onChange={handleInputChange} placeholder="e.g. Pune" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Local Areas / PIN Codes Covered</label> 
+                <input type="text" name="localAreas" value={formData.localAreas} onChange={handleInputChange} placeholder="e.g. Kothrud, Baner, Wakad" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Cities Covered</label> 
+                <input type="text" name="citiesCovered" value={formData.citiesCovered} onChange={handleInputChange} placeholder="e.g. Pune, Mumbai, Nashik" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">States Covered</label> 
+                <input type="text" name="statesCovered" value={formData.statesCovered} onChange={handleInputChange} placeholder="e.g. Maharashtra, Karnataka" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Intercity Service?</label> 
+                <select name="intercityService" value={formData.intercityService} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Outstation Service?</label> 
+                <select name="outstationService" value={formData.outstationService} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+            </div> 
+          </div> 
+ 
+          {/* 🚚 Vehicle Information */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl"><Truck size={24}/></div> 
+              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">🚚 Vehicle Information</h3> 
+            </div> 
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Do you have your own vehicles?</label> 
+                <select name="hasOwnVehicles" value={formData.hasOwnVehicles} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Number of Own Vehicles</label> 
+                <input type="number" name="ownVehicleCount" value={formData.ownVehicleCount} onChange={handleInputChange} placeholder="e.g. 2" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Attached / Hired Vehicles Available?</label> 
+                <select name="hiredVehicles" value={formData.hiredVehicles} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+            </div> 
+ 
+            <div> 
+              <label className="block text-xs font-bold uppercase text-slate-600 mb-2">Vehicle Types (Select all that apply)</label> 
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3"> 
+                {["Tata Ace", "Pickup", "14 ft", "17 ft", "20 ft", "Container", "Other"].map((vType) => ( 
+                  <label key={vType} className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition ${formData.vehicleTypes.includes(vType) ? 'bg-orange-50 border-orange-500 text-orange-900 font-bold' : 'bg-slate-50 border-slate-200 text-slate-700'}`}> 
+                    <input  
+                      type="checkbox"  
+                      checked={formData.vehicleTypes.includes(vType)} 
+                      onChange={() => handleCheckboxGroupChange('vehicleTypes', vType)} 
+                      className="accent-orange-500 w-4 h-4" 
+                    /> 
+                    <span className="text-xs">{vType}</span> 
+                  </label> 
+                ))} 
+              </div> 
+            </div> 
+          </div> 
+ 
+          {/* 👷 Manpower */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl"><Users size={24}/></div> 
+              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">👷 Manpower</h3> 
+            </div> 
+ 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Number of Packers / Workers</label> 
+                <input type="number" name="workerCount" value={formData.workerCount} onChange={handleInputChange} placeholder="e.g. 5" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Loading & Unloading Team Available?</label> 
+                <select name="loadingTeam" value={formData.loadingTeam} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Driver Available?</label> 
+                <select name="driverAvailable" value={formData.driverAvailable} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+            </div> 
+          </div> 
+ 
+          {/* 💵 Pricing Information */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><DollarSign size={24}/></div> 
+              <div> 
+                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">💵 Pricing Information</h3> 
+                <p className="text-[11px] text-slate-500 font-medium">Please provide approximate starting prices. Exact quotations are not required here.</p> 
+              </div> 
+            </div> 
+ 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Local Minimum Charges</label> 
+                <input type="text" name="localMinCharges" value={formData.localMinCharges} onChange={handleInputChange} placeholder="e.g. ₹3000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Per KM Rate</label> 
+                <input type="text" name="perKmRate" value={formData.perKmRate} onChange={handleInputChange} placeholder="e.g. ₹40/km" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">1 BHK Starting Price</label> 
+                <input type="text" name="bhk1Price" value={formData.bhk1Price} onChange={handleInputChange} placeholder="e.g. ₹5000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">2 BHK Starting Price</label> 
+                <input type="text" name="bhk2Price" value={formData.bhk2Price} onChange={handleInputChange} placeholder="e.g. ₹8000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">3 BHK Starting Price</label> 
+                <input type="text" name="bhk3Price" value={formData.bhk3Price} onChange={handleInputChange} placeholder="e.g. ₹12000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">4 BHK Starting Price</label> 
+                <input type="text" name="bhk4Price" value={formData.bhk4Price} onChange={handleInputChange} placeholder="e.g. ₹16000" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Packing Charges</label> 
+                <input type="text" name="packingCharges" value={formData.packingCharges} onChange={handleInputChange} placeholder="Approx amount" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Loading Charges</label> 
+                <input type="text" name="loadingCharges" value={formData.loadingCharges} onChange={handleInputChange} placeholder="Approx amount" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Unloading Charges</label> 
+                <input type="text" name="unloadingCharges" value={formData.unloadingCharges} onChange={handleInputChange} placeholder="Approx amount" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+            </div> 
+          </div> 
+ 
+          {/* 📂 Documents Upload */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><FileText size={24}/></div> 
+              <div> 
+                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">📂 Documents Upload</h3> 
+                <p className="text-[11px] text-slate-500 font-medium">Not all documents are mandatory (small local movers can also register easily).</p> 
+              </div> 
+            </div> 
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-3 gap-6"> 
+              {[ 
+                { label: "PAN Card", name: "panCard" }, 
+                { label: "Business Proof", name: "businessProof" }, 
+                { label: "GST Certificate (If available)", name: "gstCert" }, 
+                { label: "Udyam Certificate (If available)", name: "udyamCert" }, 
+                { label: "Business Address Proof", name: "addressProof" }, 
+                { label: "Shop / Establishment Certificate", name: "shopCert" } 
+              ].map((doc) => ( 
+                <div key={doc.name} className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2"> 
+                  <label className="block text-xs font-bold uppercase text-slate-700">{doc.label}</label> 
+                  <input type="file" name={doc.name} onChange={handleFileChange} className="w-full text-[10px] text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer" /> 
+                </div> 
+              ))} 
+            </div> 
+          </div> 
+ 
+          {/* ⭐ Trust / Experience & Apni Manzil Preferences */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><ShieldCheck size={24}/></div> 
+              <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">⭐ Trust, Experience & Lead Preferences</h3> 
+            </div> 
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Years in Packers & Movers Business</label> 
+                <input type="text" name="yearsInBusiness" value={formData.yearsInBusiness} onChange={handleInputChange} placeholder="e.g. 5 Years" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Previous Customer Reviews / Rating</label> 
+                <input type="text" name="customerRating" value={formData.customerRating} onChange={handleInputChange} placeholder="e.g. 4.5 Star on Google" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Insurance Available?</label> 
+                <select name="insuranceAvailable" value={formData.insuranceAvailable} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Damage / Claim Policy</label> 
+                <input type="text" name="claimPolicy" value={formData.claimPolicy} onChange={handleInputChange} placeholder="Briefly describe policy" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Any major customer complaint currently unresolved?</label> 
+                <select name="unresolvedComplaints" value={formData.unresolvedComplaints} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="No">No</option> 
+                  <option value="Yes">Yes</option> 
+                </select> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Preferred Working Hours</label> 
+                <input type="text" name="preferredHours" value={formData.preferredHours} onChange={handleInputChange} placeholder="e.g. 9 AM - 9 PM" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Are you willing to accept leads from Apni Manzil? *</label> 
+                <select name="acceptLeads" required value={formData.acceptLeads} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500 font-bold text-orange-600"> 
+                  <option value="Yes">Yes</option> 
+                  <option value="No">No</option> 
+                </select> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">How would you like to receive leads?</label> 
+                <select name="leadReceiveMode" value={formData.leadReceiveMode} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Both">Both (WhatsApp & Call)</option> 
+                  <option value="WhatsApp">WhatsApp</option> 
+                  <option value="Call">Call</option> 
+                </select> 
+              </div> 
+            </div> 
+          </div> 
+ 
+          {/* 💳 Payment / Settlement Details */} 
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6"> 
+            <div className="flex items-center gap-3 border-b pb-4"> 
+              <div className="p-3 bg-cyan-50 text-cyan-600 rounded-2xl"><CreditCard size={24}/></div> 
+              <div> 
+                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">💳 Payment / Settlement Details</h3> 
+                <p className="text-[11px] text-slate-500 font-medium">Partner Verified + Active झाल्यावर bank details घेऊ</p> 
+              </div> 
+            </div> 
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Holder Name</label> 
+                <input type="text" name="bankAccountHolder" value={formData.bankAccountHolder} onChange={handleInputChange} placeholder="e.g. Om Sai Logistics" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Bank Name</label> 
+                <input type="text" name="bankName" value={formData.bankName} onChange={handleInputChange} placeholder="e.g. HDFC Bank" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Number</label> 
+                <input type="text" name="accountNumber" value={formData.accountNumber} onChange={handleInputChange} placeholder="Enter account number" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">IFSC Code</label> 
+                <input type="text" name="ifscCode" value={formData.ifscCode} onChange={handleInputChange} placeholder="e.g. HDFC0001234" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Account Type</label> 
+                <select name="accountType" value={formData.accountType} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"> 
+                  <option value="Current">Current</option> 
+                  <option value="Savings">Savings</option> 
+                </select> 
+              </div> 
+              <div> 
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">UPI ID (Optional)</label> 
+                <input type="text" name="upiId" value={formData.upiId} onChange={handleInputChange} placeholder="e.g. business@upi" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" /> 
+              </div> 
+              <div className="md:col-span-2 bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2"> 
+                <label className="block text-xs font-bold uppercase text-slate-700">Cancelled Cheque / Bank Proof</label> 
+                <input type="file" name="bankProof" onChange={handleFileChange} className="w-full text-[10px] text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer" /> 
+              </div> 
+            </div> 
           </div>
 
           {/* 🔐 Partner Login Setup */}
@@ -576,8 +574,6 @@ const PackersMoversRegister = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              {/* Login Email */}
               <div className="md:col-span-2">
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
                   Login Email Address *
@@ -593,7 +589,6 @@ const PackersMoversRegister = () => {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
                   Password *
@@ -610,7 +605,6 @@ const PackersMoversRegister = () => {
                 />
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
                   Confirm Password *
@@ -626,7 +620,6 @@ const PackersMoversRegister = () => {
                   className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"
                 />
               </div>
-
             </div>
 
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
@@ -636,22 +629,21 @@ const PackersMoversRegister = () => {
               </p>
             </div>
           </div>
-
-          {/* Submit Button */}
-          <div className="pt-4">
-            <button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-5 rounded-2xl font-black uppercase text-sm tracking-wider shadow-2xl hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2"
-            >
-              Submit Partner Registration →
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-  );
+ 
+          {/* Submit Button */} 
+          <div className="pt-4"> 
+            <button  
+              type="submit"  
+              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-5 rounded-2xl font-black uppercase text-sm tracking-wider shadow-2xl hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2" 
+            > 
+              Submit Partner Registration → 
+            </button> 
+          </div> 
+ 
+        </form> 
+      </div> 
+    </div> 
+  ); 
 };
 
 export default PackersMoversRegister;
-```
