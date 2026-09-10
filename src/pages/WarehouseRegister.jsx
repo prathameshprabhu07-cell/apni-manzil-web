@@ -1,6 +1,7 @@
+```jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Warehouse, Building2, MapPin, FileText, ShieldCheck, Users, DollarSign, ArrowLeft, CheckCircle2, Cpu, Camera, Thermometer, Box } from 'lucide-react';
+import { Warehouse, Building2, MapPin, FileText, ShieldCheck, Users, DollarSign, ArrowLeft, CheckCircle2, Cpu, Camera, Thermometer, Box, LockKeyhole } from 'lucide-react';
 
 const WarehousePartnerRegister = () => {
   const navigate = useNavigate();
@@ -105,7 +106,12 @@ const WarehousePartnerRegister = () => {
     acceptLeads: 'Yes',
     leadCommMode: [],
     preferredHours: '',
-    specialInstructions: ''
+    specialInstructions: '',
+
+    // 15. Partner Login Setup
+    loginEmail: '',
+    loginPassword: '',
+    confirmPassword: ''
   });
 
   const handleInputChange = (e) => {
@@ -675,10 +681,12 @@ const WarehousePartnerRegister = () => {
                   <option value="No">No</option>
                 </select>
               </div>
+
               <div>
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Preferred Hours for Partner Support</label>
                 <input type="text" name="preferredHours" value={formData.preferredHours} onChange={handleInputChange} placeholder="e.g. 9:00 AM - 6:00 PM" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500" />
               </div>
+
               <div className="md:col-span-2">
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-2">Preferred Lead Communication Mode</label>
                 <div className="flex gap-4">
@@ -695,10 +703,95 @@ const WarehousePartnerRegister = () => {
                   ))}
                 </div>
               </div>
+
               <div className="md:col-span-2">
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Special Instructions or Notes</label>
                 <textarea name="specialInstructions" rows={3} value={formData.specialInstructions} onChange={handleInputChange} placeholder="Any specific requirements or additional information you'd like to share..." className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500 resize-none" />
               </div>
+            </div>
+          </div>
+
+          {/* 🔐 15. Partner Login Setup */}
+          <div className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 space-y-6">
+            <div className="flex items-center gap-3 border-b pb-4">
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                <LockKeyhole size={24}/>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">
+                  🔐 Partner Login Setup
+                </h3>
+
+                <p className="text-[11px] text-slate-500 font-medium">
+                  Create your Apni Manzil Partner Dashboard login credentials.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              {/* Login Email */}
+              <div className="md:col-span-2">
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                  Login Email Address *
+                </label>
+
+                <input
+                  type="email"
+                  name="loginEmail"
+                  required
+                  value={formData.loginEmail}
+                  onChange={handleInputChange}
+                  placeholder="Enter email for Partner Dashboard login"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                  Password *
+                </label>
+
+                <input
+                  type="password"
+                  name="loginPassword"
+                  required
+                  minLength={6}
+                  value={formData.loginPassword}
+                  onChange={handleInputChange}
+                  placeholder="Minimum 6 characters"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"
+                />
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                  Confirm Password *
+                </label>
+
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  required
+                  minLength={6}
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="Re-enter password"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs focus:outline-none focus:border-orange-500"
+                />
+              </div>
+
+            </div>
+
+            {/* Security Note */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+              <p className="text-[11px] text-amber-800 font-medium leading-relaxed">
+                🔒 Your password is securely handled by Firebase Authentication.
+                It will not be stored in Google Sheets or the Partner database.
+              </p>
             </div>
           </div>
 
@@ -720,3 +813,4 @@ const WarehousePartnerRegister = () => {
 };
 
 export default WarehousePartnerRegister;
+```
