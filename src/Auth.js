@@ -1,3 +1,4 @@
+```javascript
 import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 
@@ -234,30 +235,36 @@ const Auth = () => {
     }
 
 
-    // -----------------------------------------
-    // VENDOR
-    // -----------------------------------------
+    // =====================================================
+    // VENDOR / PARTNER
+    // =====================================================
 
     if (userData.role === "vendor") {
 
-      if (userData.status === "pending") {
+      /*
+       * IMPORTANT:
+       * Pending partner ला dashboard access देत आहोत.
+       *
+       * Partner verification pending असली तरी
+       * dashboard उघडेल.
+       *
+       * Leads / booking permissions आपण dashboard/backend
+       * मध्ये Partner_Status वरून control करू.
+       */
 
-        showError(
-          "Your Vendor / Partner account is pending verification."
-        );
-
-        return;
-      }
-
-      navigate("/vendor-dashboard");
+      navigate("/vendor-dashboard", {
+        state: {
+          partnerData: userData,
+        },
+      });
 
       return;
     }
 
 
-    // -----------------------------------------
+    // =====================================================
     // INDIVIDUAL
-    // -----------------------------------------
+    // =====================================================
 
     if (userData.role === "individual") {
 
@@ -282,15 +289,13 @@ const Auth = () => {
     // 1. NORMAL USER PROFILE
     // =====================================================
 
-    const userRef =
-      doc(
-        db,
-        "users",
-        firebaseUser.uid
-      );
+    const userRef = doc(
+      db,
+      "users",
+      firebaseUser.uid
+    );
 
-    const userSnap =
-      await getDoc(userRef);
+    const userSnap = await getDoc(userRef);
 
 
     if (userSnap.exists()) {
@@ -304,24 +309,22 @@ const Auth = () => {
     // 2. PARTNER PROFILE
     // =====================================================
 
-    const partnerQuery =
-      query(
-        collection(
-          db,
-          "partner_profiles"
-        ),
-        where(
-          "Firebase_UID",
-          "==",
-          firebaseUser.uid
-        )
-      );
+    const partnerQuery = query(
+      collection(
+        db,
+        "partner_profiles"
+      ),
+      where(
+        "Firebase_UID",
+        "==",
+        firebaseUser.uid
+      )
+    );
 
 
-    const partnerSnap =
-      await getDocs(
-        partnerQuery
-      );
+    const partnerSnap = await getDocs(
+      partnerQuery
+    );
 
 
     if (!partnerSnap.empty) {
@@ -336,8 +339,9 @@ const Auth = () => {
       );
 
 
-      // Convert Partner Profile
-      // into Auth format
+      // =================================================
+      // CONVERT PARTNER PROFILE INTO AUTH FORMAT
+      // =================================================
 
       return {
 
@@ -415,9 +419,9 @@ const Auth = () => {
       );
 
 
-      // --------------------------------------------------
+      // =================================================
       // PROFILE NOT FOUND
-      // --------------------------------------------------
+      // =================================================
 
       if (!userData) {
 
@@ -431,9 +435,9 @@ const Auth = () => {
       }
 
 
-      // --------------------------------------------------
+      // =================================================
       // ROLE SECURITY
-      // --------------------------------------------------
+      // =================================================
 
       if (userData.role !== role) {
 
@@ -451,9 +455,9 @@ const Auth = () => {
       }
 
 
-      // --------------------------------------------------
+      // =================================================
       // REDIRECT
-      // --------------------------------------------------
+      // =================================================
 
       redirectUser(userData);
 
@@ -508,6 +512,10 @@ const Auth = () => {
         result.user;
 
 
+      // =====================================================
+      // CHECK NORMAL USER PROFILE
+      // =====================================================
+
       const userRef =
         doc(
           db,
@@ -520,9 +528,9 @@ const Auth = () => {
         await getDoc(userRef);
 
 
-      // --------------------------------------------------
+      // =====================================================
       // EXISTING USER
-      // --------------------------------------------------
+      // =====================================================
 
       if (userSnap.exists()) {
 
@@ -530,9 +538,9 @@ const Auth = () => {
           userSnap.data();
 
 
-        // ----------------------------------------------
+        // -----------------------------------------------
         // ROLE CHECK
-        // ----------------------------------------------
+        // -----------------------------------------------
 
         if (userData.role !== role) {
 
@@ -556,9 +564,62 @@ const Auth = () => {
       }
 
 
-      // --------------------------------------------------
+      // =====================================================
+      // CHECK PARTNER PROFILE
+      // =====================================================
+
+      const partnerQuery = query(
+        collection(
+          db,
+          "partner_profiles"
+        ),
+        where(
+          "Firebase_UID",
+          "==",
+          firebaseUser.uid
+        )
+      );
+
+
+      const partnerSnap =
+        await getDocs(
+          partnerQuery
+        );
+
+
+      if (!partnerSnap.empty) {
+
+        const partnerData =
+          partnerSnap.docs[0].data();
+
+
+        const convertedPartner = {
+
+          ...partnerData,
+
+          role: "vendor",
+
+          status:
+            (
+              partnerData.Partner_Status || ""
+            ).toLowerCase() === "active"
+              ? "active"
+              : "pending",
+
+        };
+
+
+        redirectUser(
+          convertedPartner
+        );
+
+        return;
+      }
+
+
+      // =====================================================
       // NEW GOOGLE USER
-      // --------------------------------------------------
+      // =====================================================
 
       const newUserData = {
 
@@ -600,9 +661,9 @@ const Auth = () => {
       );
 
 
-      // --------------------------------------------------
-      // VENDOR
-      // --------------------------------------------------
+      // =====================================================
+      // NEW GOOGLE VENDOR
+      // =====================================================
 
       if (role === "vendor") {
 
@@ -616,9 +677,9 @@ const Auth = () => {
       }
 
 
-      // --------------------------------------------------
-      // INDIVIDUAL
-      // --------------------------------------------------
+      // =====================================================
+      // NEW GOOGLE INDIVIDUAL
+      // =====================================================
 
       navigate(
         "/customer-dashboard"
@@ -681,9 +742,7 @@ const Auth = () => {
 
       setResetEmail("");
 
-      setShowResetModal(
-        false
-      );
+      setShowResetModal(false);
 
     } catch (error) {
 
@@ -893,10 +952,6 @@ const Auth = () => {
       "
     >
 
-      {/* =====================================================
-          MAIN AUTH CARD
-      ===================================================== */}
-
       <div
         className="
           bg-white
@@ -958,10 +1013,7 @@ const Auth = () => {
 
         <div className="px-8 pb-10">
 
-
-          {/* =================================================
-              ROLE SELECTOR
-          ================================================= */}
+          {/* ROLE SELECTOR */}
 
           <div className="mb-7">
 
@@ -1042,9 +1094,7 @@ const Auth = () => {
           </div>
 
 
-          {/* =================================================
-              MESSAGE
-          ================================================= */}
+          {/* MESSAGE */}
 
           {message.text && (
 
@@ -1069,9 +1119,7 @@ const Auth = () => {
           )}
 
 
-          {/* =================================================
-              NORMAL LOGIN / REGISTER
-          ================================================= */}
+          {/* NORMAL LOGIN / REGISTER */}
 
           <form
             onSubmit={handleAuth}
@@ -1269,17 +1317,9 @@ const Auth = () => {
               >
 
                 {showPassword ? (
-
-                  <EyeOff
-                    size={18}
-                  />
-
+                  <EyeOff size={18} />
                 ) : (
-
-                  <Eye
-                    size={18}
-                  />
-
+                  <Eye size={18} />
                 )}
 
               </button>
@@ -1296,9 +1336,7 @@ const Auth = () => {
                 <button
                   type="button"
                   onClick={() =>
-                    setShowResetModal(
-                      true
-                    )
+                    setShowResetModal(true)
                   }
                   className="
                     text-[11px]
@@ -1362,9 +1400,7 @@ const Auth = () => {
             </button>
 
 
-            {/* =================================================
-                GOOGLE
-            ================================================= */}
+            {/* GOOGLE */}
 
             {isLogin && (
 
@@ -1415,9 +1451,7 @@ const Auth = () => {
                   "
                 >
 
-                  <Chrome
-                    size={19}
-                  />
+                  <Chrome size={19} />
 
                   Continue with Google
 
@@ -1430,9 +1464,7 @@ const Auth = () => {
           </form>
 
 
-          {/* =================================================
-              SWITCH LOGIN / REGISTER
-          ================================================= */}
+          {/* SWITCH LOGIN / REGISTER */}
 
           <div className="mt-8 text-center">
 
@@ -1440,9 +1472,7 @@ const Auth = () => {
               type="button"
               onClick={() => {
 
-                setIsLogin(
-                  !isLogin
-                );
+                setIsLogin(!isLogin);
 
                 setMessage({
                   type: "",
@@ -1520,9 +1550,7 @@ const Auth = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setShowResetModal(
-                    false
-                  )
+                  setShowResetModal(false)
                 }
                 className="text-slate-400"
               >
@@ -1570,9 +1598,7 @@ const Auth = () => {
                   type="email"
                   required
                   placeholder="Registered Email"
-                  value={
-                    resetEmail
-                  }
+                  value={resetEmail}
                   onChange={(e) =>
                     setResetEmail(
                       e.target.value
@@ -1597,9 +1623,7 @@ const Auth = () => {
 
               <button
                 type="submit"
-                disabled={
-                  resetLoading
-                }
+                disabled={resetLoading}
                 className="
                   w-full
                   bg-indigo-600
@@ -1631,9 +1655,7 @@ const Auth = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setShowResetModal(
-                    false
-                  )
+                  setShowResetModal(false)
                 }
                 className="
                   w-full
@@ -1663,3 +1685,4 @@ const Auth = () => {
 
 
 export default Auth;
+```
