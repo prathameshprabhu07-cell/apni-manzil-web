@@ -14,6 +14,10 @@ import {
   doc,
   setDoc,
   getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 
 import { useNavigate, useLocation } from "react-router-dom";
@@ -274,21 +278,90 @@ const Auth = () => {
 
   const checkUserProfile = async (firebaseUser) => {
 
+    // =====================================================
+    // 1. NORMAL USER PROFILE
+    // =====================================================
+
     const userRef =
-      doc(db, "users", firebaseUser.uid);
+      doc(
+        db,
+        "users",
+        firebaseUser.uid
+      );
 
     const userSnap =
       await getDoc(userRef);
 
 
-    if (!userSnap.exists()) {
+    if (userSnap.exists()) {
 
-      return null;
+      return userSnap.data();
 
     }
 
 
-    return userSnap.data();
+    // =====================================================
+    // 2. PARTNER PROFILE
+    // =====================================================
+
+    const partnerQuery =
+      query(
+        collection(
+          db,
+          "partner_profiles"
+        ),
+        where(
+          "Firebase_UID",
+          "==",
+          firebaseUser.uid
+        )
+      );
+
+
+    const partnerSnap =
+      await getDocs(
+        partnerQuery
+      );
+
+
+    if (!partnerSnap.empty) {
+
+      const partnerData =
+        partnerSnap.docs[0].data();
+
+
+      console.log(
+        "PARTNER PROFILE FOUND:",
+        partnerData
+      );
+
+
+      // Convert Partner Profile
+      // into Auth format
+
+      return {
+
+        ...partnerData,
+
+        role: "vendor",
+
+        status:
+          (
+            partnerData.Partner_Status || ""
+          ).toLowerCase() === "active"
+            ? "active"
+            : "pending",
+
+      };
+
+    }
+
+
+    // =====================================================
+    // 3. PROFILE NOT FOUND
+    // =====================================================
+
+    return null;
 
   };
 
