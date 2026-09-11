@@ -1,61 +1,51 @@
-```javascript
 import React from "react";
 import {
   Truck,
-  Wallet,
   ClipboardList,
-  Map,
+  MapPin,
   CheckCircle,
   Bell,
-  TrendingUp,
   ArrowUpRight,
-  Clock,
-  User,
+  Star,
+  ShieldCheck,
   FileText,
   Building2,
   CreditCard,
-  Star,
-  ShieldCheck,
-  Phone,
-  Mail,
-  MapPin,
   Package,
   IndianRupee,
 } from "lucide-react";
 
 const VendorDashboard = ({ partnerData }) => {
-  // =====================================================
-  // REAL PARTNER DATA
-  // =====================================================
-
   const partner = partnerData || {};
 
   const services = partner.Services
-    ? partner.Services.split(",").map((item) => item.trim())
+    ? String(partner.Services)
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
     : [];
 
   const vehicleTypes = partner.Vehicle_Types
-    ? partner.Vehicle_Types.split(",").map((item) => item.trim())
+    ? String(partner.Vehicle_Types)
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
     : [];
 
   const serviceCities = partner.Service_Cities
-    ? partner.Service_Cities.split(",").map((item) => item.trim())
+    ? String(partner.Service_Cities)
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
     : [];
 
   const isVerified =
     String(partner.Partner_Status || "").toLowerCase() === "active";
 
-  // =====================================================
-  // UI
-  // =====================================================
-
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8 font-sans">
 
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
-
+      {/* HEADER */}
       <div className="flex flex-col lg:flex-row justify-between gap-6 mb-8">
 
         <div>
@@ -113,7 +103,10 @@ const VendorDashboard = ({ partnerData }) => {
             </p>
           </div>
 
-          <button className="bg-[#001D3D] text-white px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest">
+          <button
+            type="button"
+            className="bg-[#001D3D] text-white px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest"
+          >
             <Bell size={16} className="inline mr-2" />
             Notifications
           </button>
@@ -121,36 +114,32 @@ const VendorDashboard = ({ partnerData }) => {
         </div>
       </div>
 
-
-      {/* =====================================================
-          STAT CARDS
-      ===================================================== */}
-
+      {/* STAT CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
 
         <StatCard
-          icon={<ClipboardList />}
+          icon={<ClipboardList size={20} />}
           label="Total Leads"
           value={partner.Total_Leads ?? 0}
           sub="Assigned to you"
         />
 
         <StatCard
-          icon={<CheckCircle />}
+          icon={<CheckCircle size={20} />}
           label="Total Bookings"
           value={partner.Total_Bookings ?? 0}
-          sub="Completed / confirmed"
+          sub="Confirmed bookings"
         />
 
         <StatCard
-          icon={<Star />}
+          icon={<Star size={20} />}
           label="Rating"
           value={partner.Partner_Rating || "0"}
           sub="Customer rating"
         />
 
         <StatCard
-          icon={<ShieldCheck />}
+          icon={<ShieldCheck size={20} />}
           label="Lead Eligible"
           value={partner.Lead_Eligible || "No"}
           sub="Partner eligibility"
@@ -158,12 +147,8 @@ const VendorDashboard = ({ partnerData }) => {
 
       </div>
 
-
-      {/* =====================================================
-          BUSINESS INFORMATION
-      ===================================================== */}
-
-      <Section title="Business Information" icon={<Building2 />}>
+      {/* BUSINESS INFORMATION */}
+      <Section title="Business Information" icon={<Building2 size={20} />}>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
@@ -177,7 +162,11 @@ const VendorDashboard = ({ partnerData }) => {
           <Info label="Email" value={partner.Email} />
           <Info label="Website" value={partner.Website} />
 
-          <Info label="Business Address" value={partner.Business_Address} />
+          <Info
+            label="Business Address"
+            value={partner.Business_Address}
+          />
+
           <Info label="City" value={partner.City} />
           <Info label="Pincode" value={partner.Pincode} />
           <Info label="Base City" value={partner.Base_City} />
@@ -186,12 +175,8 @@ const VendorDashboard = ({ partnerData }) => {
 
       </Section>
 
-
-      {/* =====================================================
-          SERVICE AREAS
-      ===================================================== */}
-
-      <Section title="Service Coverage" icon={<MapPin />}>
+      {/* SERVICE COVERAGE */}
+      <Section title="Service Coverage" icon={<MapPin size={20} />}>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -233,19 +218,15 @@ const VendorDashboard = ({ partnerData }) => {
 
       </Section>
 
-
-      {/* =====================================================
-          SERVICES
-      ===================================================== */}
-
-      <Section title="Packers & Movers Services" icon={<Package />}>
+      {/* SERVICES */}
+      <Section title="Packers & Movers Services" icon={<Package size={20} />}>
 
         <div className="flex flex-wrap gap-3">
 
           {services.length > 0 ? (
             services.map((service, index) => (
               <span
-                key={index}
+                key={`${service}-${index}`}
                 className="px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 text-[#001D3D] text-xs font-black"
               >
                 ✓ {service}
@@ -261,12 +242,8 @@ const VendorDashboard = ({ partnerData }) => {
 
       </Section>
 
-
-      {/* =====================================================
-          VEHICLES & TEAM
-      ===================================================== */}
-
-      <Section title="Vehicles & Team" icon={<Truck />}>
+      {/* VEHICLES AND TEAM */}
+      <Section title="Vehicles & Team" icon={<Truck size={20} />}>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
@@ -281,7 +258,7 @@ const VendorDashboard = ({ partnerData }) => {
               {vehicleTypes.length > 0 ? (
                 vehicleTypes.map((vehicle, index) => (
                   <span
-                    key={index}
+                    key={`${vehicle}-${index}`}
                     className="px-4 py-3 rounded-xl bg-blue-50 text-blue-700 text-xs font-black"
                   >
                     🚚 {vehicle}
@@ -335,12 +312,8 @@ const VendorDashboard = ({ partnerData }) => {
 
       </Section>
 
-
-      {/* =====================================================
-          PACKERS & MOVERS PRICING
-      ===================================================== */}
-
-      <Section title="Current Pricing" icon={<IndianRupee />}>
+      {/* PRICING */}
+      <Section title="Current Pricing" icon={<IndianRupee size={20} />}>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
@@ -394,12 +367,11 @@ const VendorDashboard = ({ partnerData }) => {
 
       </Section>
 
-
-      {/* =====================================================
-          BUSINESS POLICIES
-      ===================================================== */}
-
-      <Section title="Business & Customer Policies" icon={<ClipboardList />}>
+      {/* POLICIES */}
+      <Section
+        title="Business & Customer Policies"
+        icon={<ClipboardList size={20} />}
+      >
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
@@ -437,33 +409,52 @@ const VendorDashboard = ({ partnerData }) => {
 
       </Section>
 
-
-      {/* =====================================================
-          VERIFICATION
-      ===================================================== */}
-
-      <Section title="Verification & Documents" icon={<FileText />}>
+      {/* VERIFICATION */}
+      <Section title="Verification & Documents" icon={<FileText size={20} />}>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-          <Verification label="Business Proof" value={partner.Business_Proof_Verified} />
-          <Verification label="GST" value={partner.GST_Verified} />
-          <Verification label="Address" value={partner.Address_Verified} />
-          <Verification label="Mobile" value={partner.Mobile_Verified} />
-          <Verification label="WhatsApp" value={partner.WhatsApp_Verified} />
-          <Verification label="Google Profile" value={partner.Google_Profile_Verified} />
-          <Verification label="Documents" value={partner.Documents_Checked} />
+          <Verification
+            label="Business Proof"
+            value={partner.Business_Proof_Verified}
+          />
+
+          <Verification
+            label="GST"
+            value={partner.GST_Verified}
+          />
+
+          <Verification
+            label="Address"
+            value={partner.Address_Verified}
+          />
+
+          <Verification
+            label="Mobile"
+            value={partner.Mobile_Verified}
+          />
+
+          <Verification
+            label="WhatsApp"
+            value={partner.WhatsApp_Verified}
+          />
+
+          <Verification
+            label="Google Profile"
+            value={partner.Google_Profile_Verified}
+          />
+
+          <Verification
+            label="Documents"
+            value={partner.Documents_Checked}
+          />
 
         </div>
 
       </Section>
 
-
-      {/* =====================================================
-          BANK DETAILS
-      ===================================================== */}
-
-      <Section title="Payment / Bank Details" icon={<CreditCard />}>
+      {/* BANK DETAILS */}
+      <Section title="Payment / Bank Details" icon={<CreditCard size={20} />}>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
@@ -505,11 +496,7 @@ const VendorDashboard = ({ partnerData }) => {
 
       </Section>
 
-
-      {/* =====================================================
-          PROFILE FOOTER
-      ===================================================== */}
-
+      {/* FOOTER */}
       <div className="mt-8 bg-[#001D3D] rounded-[28px] p-6 text-white flex flex-col md:flex-row justify-between gap-4">
 
         <div>
@@ -522,7 +509,7 @@ const VendorDashboard = ({ partnerData }) => {
           </p>
         </div>
 
-        <div className="text-right">
+        <div className="text-left md:text-right">
 
           <p className="text-[10px] text-slate-300 uppercase font-bold">
             Last Updated
@@ -540,110 +527,140 @@ const VendorDashboard = ({ partnerData }) => {
   );
 };
 
+/* =====================================================
+   SECTION
+===================================================== */
 
-// =====================================================
-// COMPONENTS
-// =====================================================
+const Section = ({ title, icon, children }) => {
+  return (
+    <section className="bg-white rounded-[28px] border border-slate-100 shadow-sm p-6 md:p-8 mb-8">
 
-const Section = ({ title, icon, children }) => (
-  <section className="bg-white rounded-[28px] border border-slate-100 shadow-sm p-6 md:p-8 mb-8">
+      <div className="flex items-center gap-3 mb-6">
 
-    <div className="flex items-center gap-3 mb-6">
+        <div className="p-3 bg-slate-50 rounded-xl text-[#001D3D]">
+          {icon}
+        </div>
 
-      <div className="p-3 bg-slate-50 rounded-xl text-[#001D3D]">
-        {icon}
+        <h2 className="text-xl font-black text-[#001D3D] uppercase italic">
+          {title}
+        </h2>
+
       </div>
 
-      <h2 className="text-xl font-black text-[#001D3D] uppercase italic">
+      {children}
+
+    </section>
+  );
+};
+
+/* =====================================================
+   STAT CARD
+===================================================== */
+
+const StatCard = ({ icon, label, value, sub }) => {
+  return (
+    <div className="bg-white p-6 rounded-[26px] border border-slate-100 shadow-sm">
+
+      <div className="flex justify-between items-start">
+
+        <div className="p-3 bg-slate-50 rounded-xl text-[#001D3D]">
+          {icon}
+        </div>
+
+        <ArrowUpRight
+          size={16}
+          className="text-slate-300"
+        />
+
+      </div>
+
+      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-5">
+        {label}
+      </p>
+
+      <h3 className="text-3xl font-black text-[#001D3D] mt-1">
+        {value}
+      </h3>
+
+      <p className="text-[10px] font-bold uppercase text-slate-400 mt-1">
+        {sub}
+      </p>
+
+    </div>
+  );
+};
+
+/* =====================================================
+   INFO
+===================================================== */
+
+const Info = ({ label, value }) => {
+  return (
+    <div className="bg-slate-50 rounded-2xl p-4">
+
+      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+        {label}
+      </p>
+
+      <p className="text-sm font-black text-[#001D3D] mt-2 break-words">
+        {value || "Not provided"}
+      </p>
+
+    </div>
+  );
+};
+
+/* =====================================================
+   MINI INFO
+===================================================== */
+
+const MiniInfo = ({ label, value }) => {
+  return (
+    <div className="bg-slate-50 rounded-2xl p-4">
+
+      <p className="text-[9px] font-black uppercase text-slate-400">
+        {label}
+      </p>
+
+      <p className="text-lg font-black text-[#001D3D] mt-1">
+        {value || "0"}
+      </p>
+
+    </div>
+  );
+};
+
+/* =====================================================
+   PRICE CARD
+===================================================== */
+
+const PriceCard = ({ title, value, suffix = "" }) => {
+  return (
+    <div className="bg-slate-50 rounded-2xl p-5">
+
+      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
         {title}
-      </h2>
+      </p>
+
+      <p className="text-2xl font-black text-[#001D3D] mt-2">
+
+        {value ? `₹${value}` : "—"}
+
+        {suffix && (
+          <span className="text-xs text-slate-400 ml-1">
+            {suffix}
+          </span>
+        )}
+
+      </p>
 
     </div>
+  );
+};
 
-    {children}
-
-  </section>
-);
-
-
-const StatCard = ({ icon, label, value, sub }) => (
-  <div className="bg-white p-6 rounded-[26px] border border-slate-100 shadow-sm">
-
-    <div className="flex justify-between items-start">
-
-      <div className="p-3 bg-slate-50 rounded-xl text-[#001D3D]">
-        {icon}
-      </div>
-
-      <ArrowUpRight size={16} className="text-slate-300" />
-
-    </div>
-
-    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-5">
-      {label}
-    </p>
-
-    <h3 className="text-3xl font-black text-[#001D3D] mt-1">
-      {value}
-    </h3>
-
-    <p className="text-[10px] font-bold uppercase text-slate-400 mt-1">
-      {sub}
-    </p>
-
-  </div>
-);
-
-
-const Info = ({ label, value }) => (
-  <div className="bg-slate-50 rounded-2xl p-4">
-
-    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-      {label}
-    </p>
-
-    <p className="text-sm font-black text-[#001D3D] mt-2 break-words">
-      {value || "Not provided"}
-    </p>
-
-  </div>
-);
-
-
-const MiniInfo = ({ label, value }) => (
-  <div className="bg-slate-50 rounded-2xl p-4">
-
-    <p className="text-[9px] font-black uppercase text-slate-400">
-      {label}
-    </p>
-
-    <p className="text-lg font-black text-[#001D3D] mt-1">
-      {value || "0"}
-    </p>
-
-  </div>
-);
-
-
-const PriceCard = ({ title, value, suffix = "" }) => (
-  <div className="bg-slate-50 rounded-2xl p-5">
-
-    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-      {title}
-    </p>
-
-    <p className="text-2xl font-black text-[#001D3D] mt-2">
-      {value ? `₹${value}` : "—"}
-      {suffix && (
-        <span className="text-xs text-slate-400 ml-1">
-          {suffix}
-        </span>
-      )}
-    </p>
-
-  </div>
-);
-
+/* =====================================================
+   TAG BOX
+===================================================== */
 
 const TagBox = ({ title, items }) => {
 
@@ -666,7 +683,7 @@ const TagBox = ({ title, items }) => {
         {list.length > 0 ? (
           list.map((item, index) => (
             <span
-              key={index}
+              key={`${item}-${index}`}
               className="px-3 py-2 rounded-lg bg-white border border-slate-100 text-xs font-bold text-[#001D3D]"
             >
               {item}
@@ -684,6 +701,9 @@ const TagBox = ({ title, items }) => {
   );
 };
 
+/* =====================================================
+   STATUS BOX
+===================================================== */
 
 const StatusBox = ({ label, value }) => {
 
@@ -711,6 +731,9 @@ const StatusBox = ({ label, value }) => {
   );
 };
 
+/* =====================================================
+   VERIFICATION
+===================================================== */
 
 const Verification = ({ label, value }) => {
 
@@ -738,6 +761,4 @@ const Verification = ({ label, value }) => {
   );
 };
 
-
 export default VendorDashboard;
-```
