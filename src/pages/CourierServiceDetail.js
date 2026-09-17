@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { handleGlobalPayment } from '../utils/paymentService'; // <-- इम्पोर्ट केलेले ग्लोबल पेमेंट युटिलिटी
 import {
