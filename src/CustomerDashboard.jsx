@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+```jsx
+import React, { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -18,6 +19,7 @@ import {
   LogOut,
   Loader2,
   AlertCircle,
+  ChevronDown,
 } from "lucide-react";
 
 import { auth, db } from "./firebaseConfig";
@@ -31,6 +33,10 @@ const CustomerDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Profile dropdown state
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -68,6 +74,24 @@ const CustomerDashboard = () => {
     return () => unsubscribe();
   }, []);
 
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target)
+      ) {
+        setProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -97,6 +121,34 @@ const CustomerDashboard = () => {
     if (!userData?.fullName) return "U";
 
     return userData.fullName.charAt(0).toUpperCase();
+  };
+
+  const getAccountType = () => {
+    if (!userData?.role) return "Individual";
+
+    if (userData.role === "individual") {
+      return "Individual";
+    }
+
+    if (userData.role === "vendor") {
+      return "Vendor / Partner";
+    }
+
+    return userData.role;
+  };
+
+  const getProviderName = () => {
+    if (!userData?.provider) return "Not available";
+
+    if (userData.provider === "password") {
+      return "Email & Password";
+    }
+
+    if (userData.provider === "google") {
+      return "Google";
+    }
+
+    return userData.provider;
   };
 
   if (loading) {
@@ -304,29 +356,194 @@ const CustomerDashboard = () => {
             </div>
           </div>
 
+          {/* RIGHT HEADER */}
           <div className="flex items-center gap-4">
 
             <button className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl relative">
               <Bell size={20} />
             </button>
 
-            <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+            {/* USER PROFILE */}
+            <div
+              ref={profileRef}
+              className="relative pl-4 border-l border-slate-200"
+            >
 
-              <div className="w-10 h-10 rounded-full bg-[#001D3D] text-white flex items-center justify-center font-black">
-                {getInitial()}
-              </div>
+              <button
+                type="button"
+                onClick={() => setProfileOpen((prev) => !prev)}
+                className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 transition"
+              >
 
-              <div className="hidden sm:block">
+                <div className="w-10 h-10 rounded-full bg-[#001D3D] text-white flex items-center justify-center font-black">
+                  {getInitial()}
+                </div>
 
-                <h4 className="font-bold text-xs text-[#001D3D]">
-                  {userData?.fullName || "User"}
-                </h4>
+                <div className="hidden sm:block text-left">
+                  <h4 className="font-bold text-xs text-[#001D3D]">
+                    {userData?.fullName || "User"}
+                  </h4>
 
-                <span className="text-[10px] font-bold text-emerald-600 uppercase">
-                  {userData?.status || "active"}
-                </span>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    My Profile
+                  </span>
+                </div>
 
-              </div>
+                <ChevronDown
+                  size={16}
+                  className={`hidden sm:block text-slate-400 transition-transform ${
+                    profileOpen ? "rotate-180" : ""
+                  }`}
+                />
+
+              </button>
+
+              {/* PROFILE DROPDOWN */}
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-3 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50">
+
+                  {/* PROFILE HEADER */}
+                  <div className="p-5 bg-[#001D3D] text-white">
+
+                    <div className="flex items-center gap-3">
+
+                      <div className="w-12 h-12 rounded-full bg-white text-[#001D3D] flex items-center justify-center font-black text-lg">
+                        {getInitial()}
+                      </div>
+
+                      <div className="min-w-0">
+
+                        <h3 className="font-black truncate">
+                          {userData?.fullName || "User"}
+                        </h3>
+
+                        <p className="text-xs text-slate-300 truncate">
+                          {userData?.email || "Email not available"}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* PROFILE DETAILS */}
+                  <div className="p-4 space-y-2">
+
+                    <div className="p-3 bg-slate-50 rounded-xl">
+                      <div className="flex items-center gap-2 text-slate-400 mb-1">
+                        <User size={15} />
+                        <span className="text-[10px] font-black uppercase">
+                          Full Name
+                        </span>
+                      </div>
+
+                      <p className="text-sm font-bold text-[#001D3D]">
+                        {userData?.fullName || "Not available"}
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 rounded-xl">
+                      <div className="flex items-center gap-2 text-slate-400 mb-1">
+                        <Mail size={15} />
+                        <span className="text-[10px] font-black uppercase">
+                          Email
+                        </span>
+                      </div>
+
+                      <p className="text-sm font-bold text-[#001D3D] break-all">
+                        {userData?.email || "Not available"}
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 rounded-xl">
+                      <div className="flex items-center gap-2 text-slate-400 mb-1">
+                        <Phone size={15} />
+                        <span className="text-[10px] font-black uppercase">
+                          Mobile
+                        </span>
+                      </div>
+
+                      <p className="text-sm font-bold text-[#001D3D]">
+                        {userData?.phone || "Not available"}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+
+                      <div className="p-3 bg-slate-50 rounded-xl">
+                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                          <Shield size={15} />
+                          <span className="text-[10px] font-black uppercase">
+                            Account
+                          </span>
+                        </div>
+
+                        <p className="text-xs font-bold text-[#001D3D]">
+                          {getAccountType()}
+                        </p>
+                      </div>
+
+                      <div className="p-3 bg-slate-50 rounded-xl">
+                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                          <User size={15} />
+                          <span className="text-[10px] font-black uppercase">
+                            Login
+                          </span>
+                        </div>
+
+                        <p className="text-xs font-bold text-[#001D3D]">
+                          {getProviderName()}
+                        </p>
+                      </div>
+
+                    </div>
+
+                    <div className="p-3 bg-slate-50 rounded-xl">
+                      <div className="flex items-center gap-2 text-slate-400 mb-1">
+                        <Calendar size={15} />
+                        <span className="text-[10px] font-black uppercase">
+                          Account Created
+                        </span>
+                      </div>
+
+                      <p className="text-sm font-bold text-[#001D3D]">
+                        {formatDate(userData?.createdAt)}
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+                      <div className="flex items-center justify-between">
+
+                        <span className="text-[10px] font-black text-emerald-700 uppercase">
+                          Account Status
+                        </span>
+
+                        <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">
+                          {userData?.status || "active"}
+                        </span>
+
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* PROFILE FOOTER */}
+                  <div className="border-t border-slate-100 p-3">
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm text-red-500 hover:bg-red-50"
+                    >
+                      <LogOut size={17} />
+                      Logout
+                    </button>
+
+                  </div>
+
+                </div>
+              )}
+
             </div>
 
           </div>
@@ -372,7 +589,7 @@ const CustomerDashboard = () => {
 
           </div>
 
-          {/* PROFILE */}
+          {/* PROFILE SECTION */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200">
 
             <div className="p-6 border-b border-slate-100">
@@ -448,7 +665,7 @@ const CustomerDashboard = () => {
                 </div>
 
                 <p className="font-bold text-[#001D3D] capitalize">
-                  {userData?.role || "individual"}
+                  {getAccountType()}
                 </p>
 
               </div>
@@ -463,8 +680,8 @@ const CustomerDashboard = () => {
                   </span>
                 </div>
 
-                <p className="font-bold text-[#001D3D] capitalize">
-                  {userData?.provider || "Not available"}
+                <p className="font-bold text-[#001D3D]">
+                  {getProviderName()}
                 </p>
 
               </div>
