@@ -16,7 +16,7 @@ const SameDayDelivery = () => {
   const [availableRates, setAvailableRates] = useState([]);
   const [selectedRate, setSelectedRate] = useState(null);
   
-  const n8nUrl = "http://localhost:5678/webhook/apni-manzil-hyperlocal";
+  const n8nUrl = "https://idle-latex-plate-muscles.trycloudflare.com/webhook/apni-manzil-hyperlocal";
 
   const [formData, setFormData] = useState({
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '', pickupCity: '', pickupState: '',
