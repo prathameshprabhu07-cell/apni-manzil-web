@@ -1,4 +1,3 @@
-```jsx
 import React, { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard,
@@ -20,6 +19,9 @@ import {
   Loader2,
   AlertCircle,
   ChevronDown,
+  Settings,
+  FileText,
+  CreditCard,
 } from "lucide-react";
 
 import { auth, db } from "./firebaseConfig";
@@ -34,7 +36,7 @@ const CustomerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Profile dropdown state
+  // Profile dropdown
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
@@ -151,6 +153,12 @@ const CustomerDashboard = () => {
     return userData.provider;
   };
 
+  // Sidebar item helper
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSidebarOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
@@ -205,9 +213,12 @@ const CustomerDashboard = () => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col`}
       >
+
+        {/* SIDEBAR HEADER */}
         <div className="p-6 flex items-center justify-between border-b border-slate-100">
 
           <div className="flex items-center gap-3">
+
             <div className="bg-[#FF5E00] p-2 rounded-xl text-white font-black text-xl">
               AM
             </div>
@@ -221,6 +232,7 @@ const CustomerDashboard = () => {
                 Logistics Hub
               </span>
             </div>
+
           </div>
 
           <button
@@ -229,12 +241,15 @@ const CustomerDashboard = () => {
           >
             <X size={24} />
           </button>
+
         </div>
 
+        {/* SIDEBAR NAVIGATION */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
 
+          {/* DASHBOARD */}
           <button
-            onClick={() => setActiveTab("dashboard")}
+            onClick={() => handleTabChange("dashboard")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
               activeTab === "dashboard"
                 ? "bg-[#001D3D] text-white shadow-lg"
@@ -245,8 +260,9 @@ const CustomerDashboard = () => {
             Dashboard
           </button>
 
+          {/* SERVICES */}
           <button
-            onClick={() => setActiveTab("courier")}
+            onClick={() => handleTabChange("courier")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
               activeTab === "courier"
                 ? "bg-[#001D3D] text-white shadow-lg"
@@ -258,7 +274,7 @@ const CustomerDashboard = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab("home")}
+            onClick={() => handleTabChange("home")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
               activeTab === "home"
                 ? "bg-[#001D3D] text-white shadow-lg"
@@ -270,7 +286,7 @@ const CustomerDashboard = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab("industrial")}
+            onClick={() => handleTabChange("industrial")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
               activeTab === "industrial"
                 ? "bg-[#001D3D] text-white shadow-lg"
@@ -282,7 +298,7 @@ const CustomerDashboard = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab("global")}
+            onClick={() => handleTabChange("global")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
               activeTab === "global"
                 ? "bg-[#001D3D] text-white shadow-lg"
@@ -294,7 +310,7 @@ const CustomerDashboard = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab("specialized")}
+            onClick={() => handleTabChange("specialized")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
               activeTab === "specialized"
                 ? "bg-[#001D3D] text-white shadow-lg"
@@ -305,15 +321,67 @@ const CustomerDashboard = () => {
             Specialized Transport
           </button>
 
-        </nav>
+          {/* DIVIDER */}
+          <div className="pt-3 pb-1">
+            <div className="border-t border-slate-100"></div>
+          </div>
 
-        <div className="p-4 border-t border-slate-100">
-
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-50">
-            <Headphones size={20} />
-            Support
+          {/* ACCOUNT / TOOLS */}
+          <button
+            onClick={() => handleTabChange("settings")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
+              activeTab === "settings"
+                ? "bg-[#001D3D] text-white shadow-lg"
+                : "text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <Settings size={20} />
+            Settings
           </button>
 
+          <button
+            onClick={() => handleTabChange("reports")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
+              activeTab === "reports"
+                ? "bg-[#001D3D] text-white shadow-lg"
+                : "text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <FileText size={20} />
+            Reports
+          </button>
+
+          <button
+            onClick={() => handleTabChange("payments")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
+              activeTab === "payments"
+                ? "bg-[#001D3D] text-white shadow-lg"
+                : "text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <CreditCard size={20} />
+            Payment History
+          </button>
+
+        </nav>
+
+        {/* SIDEBAR BOTTOM */}
+        <div className="p-4 border-t border-slate-100">
+
+          {/* SUPPORT */}
+          <button
+            onClick={() => handleTabChange("support")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
+              activeTab === "support"
+                ? "bg-[#001D3D] text-white shadow-lg"
+                : "text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <Headphones size={20} />
+            Support & Help
+          </button>
+
+          {/* LOGOUT */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 mt-2 rounded-xl font-bold text-sm text-red-500 hover:bg-red-50"
@@ -323,6 +391,7 @@ const CustomerDashboard = () => {
           </button>
 
         </div>
+
       </aside>
 
       {/* MAIN */}
@@ -354,6 +423,7 @@ const CustomerDashboard = () => {
               />
 
             </div>
+
           </div>
 
           {/* RIGHT HEADER */}
@@ -363,7 +433,7 @@ const CustomerDashboard = () => {
               <Bell size={20} />
             </button>
 
-            {/* USER PROFILE */}
+            {/* PROFILE */}
             <div
               ref={profileRef}
               className="relative pl-4 border-l border-slate-200"
@@ -380,6 +450,7 @@ const CustomerDashboard = () => {
                 </div>
 
                 <div className="hidden sm:block text-left">
+
                   <h4 className="font-bold text-xs text-[#001D3D]">
                     {userData?.fullName || "User"}
                   </h4>
@@ -387,6 +458,7 @@ const CustomerDashboard = () => {
                   <span className="text-[10px] font-bold text-slate-400">
                     My Profile
                   </span>
+
                 </div>
 
                 <ChevronDown
@@ -402,7 +474,6 @@ const CustomerDashboard = () => {
               {profileOpen && (
                 <div className="absolute right-0 top-full mt-3 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50">
 
-                  {/* PROFILE HEADER */}
                   <div className="p-5 bg-[#001D3D] text-white">
 
                     <div className="flex items-center gap-3">
@@ -427,10 +498,11 @@ const CustomerDashboard = () => {
 
                   </div>
 
-                  {/* PROFILE DETAILS */}
                   <div className="p-4 space-y-2">
 
+                    {/* FULL NAME */}
                     <div className="p-3 bg-slate-50 rounded-xl">
+
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <User size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -441,9 +513,12 @@ const CustomerDashboard = () => {
                       <p className="text-sm font-bold text-[#001D3D]">
                         {userData?.fullName || "Not available"}
                       </p>
+
                     </div>
 
+                    {/* EMAIL */}
                     <div className="p-3 bg-slate-50 rounded-xl">
+
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <Mail size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -454,9 +529,12 @@ const CustomerDashboard = () => {
                       <p className="text-sm font-bold text-[#001D3D] break-all">
                         {userData?.email || "Not available"}
                       </p>
+
                     </div>
 
+                    {/* MOBILE */}
                     <div className="p-3 bg-slate-50 rounded-xl">
+
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <Phone size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -467,11 +545,14 @@ const CustomerDashboard = () => {
                       <p className="text-sm font-bold text-[#001D3D]">
                         {userData?.phone || "Not available"}
                       </p>
+
                     </div>
 
+                    {/* ACCOUNT + LOGIN */}
                     <div className="grid grid-cols-2 gap-2">
 
                       <div className="p-3 bg-slate-50 rounded-xl">
+
                         <div className="flex items-center gap-2 text-slate-400 mb-1">
                           <Shield size={15} />
                           <span className="text-[10px] font-black uppercase">
@@ -482,9 +563,11 @@ const CustomerDashboard = () => {
                         <p className="text-xs font-bold text-[#001D3D]">
                           {getAccountType()}
                         </p>
+
                       </div>
 
                       <div className="p-3 bg-slate-50 rounded-xl">
+
                         <div className="flex items-center gap-2 text-slate-400 mb-1">
                           <User size={15} />
                           <span className="text-[10px] font-black uppercase">
@@ -495,11 +578,14 @@ const CustomerDashboard = () => {
                         <p className="text-xs font-bold text-[#001D3D]">
                           {getProviderName()}
                         </p>
+
                       </div>
 
                     </div>
 
+                    {/* ACCOUNT CREATED */}
                     <div className="p-3 bg-slate-50 rounded-xl">
+
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <Calendar size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -510,9 +596,12 @@ const CustomerDashboard = () => {
                       <p className="text-sm font-bold text-[#001D3D]">
                         {formatDate(userData?.createdAt)}
                       </p>
+
                     </div>
 
+                    {/* STATUS */}
                     <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+
                       <div className="flex items-center justify-between">
 
                         <span className="text-[10px] font-black text-emerald-700 uppercase">
@@ -524,11 +613,12 @@ const CustomerDashboard = () => {
                         </span>
 
                       </div>
+
                     </div>
 
                   </div>
 
-                  {/* PROFILE FOOTER */}
+                  {/* DROPDOWN LOGOUT */}
                   <div className="border-t border-slate-100 p-3">
 
                     <button
@@ -547,6 +637,7 @@ const CustomerDashboard = () => {
             </div>
 
           </div>
+
         </header>
 
         {/* BODY */}
@@ -576,11 +667,13 @@ const CustomerDashboard = () => {
               <div className="px-4 py-3 bg-emerald-50 rounded-xl border border-emerald-100">
 
                 <div className="flex items-center gap-2">
+
                   <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></div>
 
                   <span className="text-xs font-black text-emerald-700 uppercase">
                     {userData?.status || "active"}
                   </span>
+
                 </div>
 
               </div>
@@ -589,7 +682,7 @@ const CustomerDashboard = () => {
 
           </div>
 
-          {/* PROFILE SECTION */}
+          {/* PROFILE */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200">
 
             <div className="p-6 border-b border-slate-100">
@@ -611,6 +704,7 @@ const CustomerDashboard = () => {
 
                 <div className="flex items-center gap-2 text-slate-400 mb-2">
                   <User size={16} />
+
                   <span className="text-[10px] font-black uppercase">
                     Full Name
                   </span>
@@ -627,6 +721,7 @@ const CustomerDashboard = () => {
 
                 <div className="flex items-center gap-2 text-slate-400 mb-2">
                   <Mail size={16} />
+
                   <span className="text-[10px] font-black uppercase">
                     Email
                   </span>
@@ -643,6 +738,7 @@ const CustomerDashboard = () => {
 
                 <div className="flex items-center gap-2 text-slate-400 mb-2">
                   <Phone size={16} />
+
                   <span className="text-[10px] font-black uppercase">
                     Mobile
                   </span>
@@ -659,13 +755,14 @@ const CustomerDashboard = () => {
 
                 <div className="flex items-center gap-2 text-slate-400 mb-2">
                   <Shield size={16} />
+
                   <span className="text-[10px] font-black uppercase">
                     Account Type
                   </span>
                 </div>
 
                 <p className="font-bold text-[#001D3D] capitalize">
-                  {getAccountType()}
+                  {userData?.role || "individual"}
                 </p>
 
               </div>
@@ -675,13 +772,14 @@ const CustomerDashboard = () => {
 
                 <div className="flex items-center gap-2 text-slate-400 mb-2">
                   <User size={16} />
+
                   <span className="text-[10px] font-black uppercase">
                     Login Provider
                   </span>
                 </div>
 
-                <p className="font-bold text-[#001D3D]">
-                  {getProviderName()}
+                <p className="font-bold text-[#001D3D] capitalize">
+                  {userData?.provider || "Not available"}
                 </p>
 
               </div>
@@ -691,6 +789,7 @@ const CustomerDashboard = () => {
 
                 <div className="flex items-center gap-2 text-slate-400 mb-2">
                   <Calendar size={16} />
+
                   <span className="text-[10px] font-black uppercase">
                     Account Created
                   </span>
@@ -709,6 +808,7 @@ const CustomerDashboard = () => {
           {/* LOGISTICS SECTION */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
+            {/* SHIPMENTS */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
               <div className="w-11 h-11 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
@@ -729,6 +829,7 @@ const CustomerDashboard = () => {
 
             </div>
 
+            {/* IN TRANSIT */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
               <div className="w-11 h-11 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-4">
@@ -749,6 +850,7 @@ const CustomerDashboard = () => {
 
             </div>
 
+            {/* DELIVERED */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
               <div className="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
@@ -769,6 +871,7 @@ const CustomerDashboard = () => {
 
             </div>
 
+            {/* RTO */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
               <div className="w-11 h-11 bg-red-50 text-red-500 rounded-xl flex items-center justify-center mb-4">
