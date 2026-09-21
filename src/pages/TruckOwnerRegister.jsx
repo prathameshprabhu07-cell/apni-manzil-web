@@ -21,7 +21,10 @@ import {
 } from "lucide-react";
 
 import { auth } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+} from "firebase/auth";
 
 const TruckOwnerRegister = () => {
   // =========================================================
@@ -30,22 +33,30 @@ const TruckOwnerRegister = () => {
   const N8N_WEBHOOK_URL =
     "http://localhost:5678/webhook/Truck-Owner";
 
+  // =========================================================
+  // VEHICLES
+  // =========================================================
+  const createEmptyVehicle = () => ({
+    vehicleNumber: "",
+    vehicleType: "",
+    capacity: "",
+    length: "",
+    bodyType: "",
+    ownership: "Own",
+    rcNumber: "",
+    insuranceValidTill: "",
+    permitValidTill: "",
+    fitnessValidTill: "",
+    pucValidTill: "",
+  });
+
   const [vehicles, setVehicles] = useState([
-    {
-      vehicleNumber: "",
-      vehicleType: "",
-      capacity: "",
-      length: "",
-      bodyType: "",
-      ownership: "Own",
-      rcNumber: "",
-      insuranceValidTill: "",
-      permitValidTill: "",
-      fitnessValidTill: "",
-      pucValidTill: "",
-    },
+    createEmptyVehicle(),
   ]);
 
+  // =========================================================
+  // FORM DATA
+  // =========================================================
   const [formData, setFormData] = useState({
     partnerType: "Truck Owner / Fleet Owner",
 
@@ -146,6 +157,9 @@ const TruckOwnerRegister = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // =========================================================
+  // OPTIONS
+  // =========================================================
   const vehicleTypes = [
     "Mini Truck",
     "Tata 407",
@@ -220,34 +234,60 @@ const TruckOwnerRegister = () => {
     "Sunday",
   ];
 
+  // =========================================================
+  // COMMON HANDLERS
+  // =========================================================
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const {
+      name,
+      value,
+      type,
+      checked,
+    } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : value,
     }));
   };
 
-  const handleMultiSelect = (field, value) => {
+  const handleMultiSelect = (
+    field,
+    value
+  ) => {
     setFormData((prev) => {
       const current = prev[field] || [];
 
       if (current.includes(value)) {
         return {
           ...prev,
-          [field]: current.filter((item) => item !== value),
+          [field]: current.filter(
+            (item) => item !== value
+          ),
         };
       }
 
       return {
         ...prev,
-        [field]: [...current, value],
+        [field]: [
+          ...current,
+          value,
+        ],
       };
     });
   };
 
-  const updateVehicle = (index, field, value) => {
+  // =========================================================
+  // VEHICLE HANDLERS
+  // =========================================================
+  const updateVehicle = (
+    index,
+    field,
+    value
+  ) => {
     setVehicles((prev) =>
       prev.map((vehicle, i) =>
         i === index
@@ -263,30 +303,32 @@ const TruckOwnerRegister = () => {
   const addVehicle = () => {
     setVehicles((prev) => [
       ...prev,
-      {
-        vehicleNumber: "",
-        vehicleType: "",
-        capacity: "",
-        length: "",
-        bodyType: "",
-        ownership: "Own",
-        rcNumber: "",
-        insuranceValidTill: "",
-        permitValidTill: "",
-        fitnessValidTill: "",
-        pucValidTill: "",
-      },
+      createEmptyVehicle(),
     ]);
   };
 
   const removeVehicle = (index) => {
-    if (vehicles.length === 1) return;
+    if (vehicles.length === 1) {
+      return;
+    }
 
-    setVehicles((prev) => prev.filter((_, i) => i !== index));
+    setVehicles((prev) =>
+      prev.filter(
+        (_, i) => i !== index
+      )
+    );
   };
 
-  const handleFileChange = (e, documentType) => {
-    const files = Array.from(e.target.files || []);
+  // =========================================================
+  // FILE HANDLER
+  // =========================================================
+  const handleFileChange = (
+    e,
+    documentType
+  ) => {
+    const files = Array.from(
+      e.target.files || []
+    );
 
     setFormData((prev) => ({
       ...prev,
@@ -294,6 +336,9 @@ const TruckOwnerRegister = () => {
     }));
   };
 
+  // =========================================================
+  // STYLES
+  // =========================================================
   const inputClass =
     "w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
@@ -304,19 +349,44 @@ const TruckOwnerRegister = () => {
     "bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 lg:p-8";
 
   // =========================================================
+  // DOCUMENT METADATA
+  // =========================================================
+  const getFileMetadata = (files = []) => {
+    return files.map((file) => ({
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    }));
+  };
+
+  // =========================================================
   // SUBMIT
-  // Firebase Account → n8n
+  // Firebase Auth → n8n
   // =========================================================
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // =======================================================
+    // BASIC VALIDATION
+    // =======================================================
 
     if (!formData.fullName.trim()) {
       alert("Please enter Full Name.");
       return;
     }
 
+    if (!formData.businessName.trim()) {
+      alert("Please enter Business / Fleet Name.");
+      return;
+    }
+
     if (!formData.mobileNumber.trim()) {
       alert("Please enter Mobile Number.");
+      return;
+    }
+
+    if (!formData.whatsappNumber.trim()) {
+      alert("Please enter WhatsApp Number.");
       return;
     }
 
@@ -331,7 +401,9 @@ const TruckOwnerRegister = () => {
     }
 
     if (formData.password.length < 6) {
-      alert("Password must be at least 6 characters.");
+      alert(
+        "Password must be at least 6 characters."
+      );
       return;
     }
 
@@ -340,22 +412,46 @@ const TruckOwnerRegister = () => {
       return;
     }
 
-    if (
-      !formData.address.trim() ||
-      !formData.city.trim() ||
-      !formData.pincode.trim()
+    if (!formData.address.trim()) {
+      alert(
+        "Please enter complete business address."
+      );
+      return;
+    }
+
+    if (!formData.city.trim()) {
+      alert("Please enter City.");
+      return;
+    }
+
+    if (!formData.pincode.trim()) {
+      alert("Please enter Pincode.");
+      return;
+    }
+
+    if (!formData.declaration) {
+      alert(
+        "Please confirm the declaration."
+      );
+      return;
+    }
+
+    if (!formData.termsAccepted) {
+      alert(
+        "Please accept the Partner Terms & Conditions."
+      );
+      return;
+    }
+
+    // =======================================================
+    // VEHICLE VALIDATION
+    // =======================================================
+
+    for (
+      let i = 0;
+      i < vehicles.length;
+      i++
     ) {
-      alert("Please complete your business address.");
-      return;
-    }
-
-    if (!formData.declaration || !formData.termsAccepted) {
-      alert("Please accept the declaration and Terms & Conditions.");
-      return;
-    }
-
-    // Vehicle validation
-    for (let i = 0; i < vehicles.length; i++) {
       const vehicle = vehicles[i];
 
       if (
@@ -364,7 +460,9 @@ const TruckOwnerRegister = () => {
         !vehicle.capacity
       ) {
         alert(
-          `Please complete Vehicle ${i + 1}: Vehicle Number, Vehicle Type and Capacity are required.`
+          `Please complete Vehicle ${
+            i + 1
+          }: Vehicle Number, Vehicle Type and Capacity are required.`
         );
         return;
       }
@@ -372,12 +470,16 @@ const TruckOwnerRegister = () => {
 
     setIsSubmitting(true);
 
+    let firebaseUser = null;
+
     try {
       // =====================================================
       // 1. CREATE FIREBASE AUTH ACCOUNT
       // =====================================================
 
-      const email = formData.email.trim().toLowerCase();
+      const email = formData.email
+        .trim()
+        .toLowerCase();
 
       const firebaseResult =
         await createUserWithEmailAndPassword(
@@ -386,7 +488,8 @@ const TruckOwnerRegister = () => {
           formData.password
         );
 
-      const firebaseUser = firebaseResult.user;
+      firebaseUser =
+        firebaseResult.user;
 
       console.log(
         "FIREBASE ACCOUNT CREATED:",
@@ -395,239 +498,344 @@ const TruckOwnerRegister = () => {
 
       // =====================================================
       // 2. DOCUMENT METADATA
-      // Actual files are NOT sent to n8n yet.
+      // Actual files are NOT sent to n8n.
       // =====================================================
 
-      const documentMetadata = {
-        panDocument: (formData.panDocument || []).map((file) => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })),
+      const documents = {
+        panDocument: getFileMetadata(
+          formData.panDocument
+        ),
 
-        gstDocument: (formData.gstDocument || []).map((file) => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })),
+        gstDocument: getFileMetadata(
+          formData.gstDocument
+        ),
 
-        businessProof: (formData.businessProof || []).map((file) => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })),
+        businessProof: getFileMetadata(
+          formData.businessProof
+        ),
 
-        cancelledCheque: (formData.cancelledCheque || []).map((file) => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })),
+        cancelledCheque: getFileMetadata(
+          formData.cancelledCheque
+        ),
 
-        fleetPhotos: (formData.fleetPhotos || []).map((file) => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })),
+        fleetPhotos: getFileMetadata(
+          formData.fleetPhotos
+        ),
 
-        officePhoto: (formData.officePhoto || []).map((file) => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })),
+        officePhoto: getFileMetadata(
+          formData.officePhoto
+        ),
       };
 
       // =====================================================
       // 3. FINAL PAYLOAD
-      // Password is intentionally NOT included.
+      //
+      // IMPORTANT:
+      // These field names are intentionally matched with
+      // the n8n Code node.
+      //
+      // Password is NEVER included.
       // =====================================================
 
       const payload = {
-        // Firebase Account
-        Firebase_UID: firebaseUser.uid,
+        // ---------------------------------------------------
+        // Firebase
+        // ---------------------------------------------------
+        firebaseUid: firebaseUser.uid,
+        firebaseEmail: email,
         accountEmail: email,
         accountProvider: "password",
 
-        // Basic
-        serviceCategory: "Truck Transport",
-        partnerType: "Truck Owner / Fleet Owner",
-        requestSource: "Apni Manzil",
+        // ---------------------------------------------------
+        // Platform
+        // ---------------------------------------------------
+        serviceCategory:
+          "Truck Transport",
 
-        // Owner
-        ownerDetails: {
-          fullName: formData.fullName,
-          businessName: formData.businessName,
-          mobileNumber: formData.mobileNumber,
-          whatsappNumber: formData.whatsappNumber,
-          email: email,
-          alternateNumber: formData.alternateNumber,
-        },
+        partnerType:
+          "Truck Owner / Fleet Owner",
 
-        // Business
-        businessDetails: {
-          businessType: formData.businessType,
-          gstRegistered: formData.gstRegistered,
-          gstNumber: formData.gstNumber,
-          panNumber: formData.panNumber,
-          yearsInBusiness: formData.yearsInBusiness,
-        },
+        requestSource:
+          "Apni Manzil",
 
+        // ---------------------------------------------------
+        // Owner Details
+        // ---------------------------------------------------
+        fullName:
+          formData.fullName.trim(),
+
+        businessName:
+          formData.businessName.trim(),
+
+        mobileNumber:
+          formData.mobileNumber.trim(),
+
+        whatsappNumber:
+          formData.whatsappNumber.trim(),
+
+        email: email,
+
+        alternateContactNumber:
+          formData.alternateNumber.trim(),
+
+        // ---------------------------------------------------
+        // Business Details
+        // ---------------------------------------------------
+        businessType:
+          formData.businessType,
+
+        gstRegistered:
+          formData.gstRegistered,
+
+        gstNumber:
+          formData.gstNumber.trim(),
+
+        panNumber:
+          formData.panNumber
+            .trim()
+            .toUpperCase(),
+
+        yearsInTransportationBusiness:
+          formData.yearsInBusiness,
+
+        // ---------------------------------------------------
         // Address
-        businessAddress: {
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          pincode: formData.pincode,
-        },
+        // ---------------------------------------------------
+        fullAddress:
+          formData.address.trim(),
 
+        city:
+          formData.city.trim(),
+
+        state:
+          formData.state.trim(),
+
+        pincode:
+          formData.pincode.trim(),
+
+        // ---------------------------------------------------
         // Fleet
-        fleetDetails: {
-          totalTrucksOwned: Number(
-            formData.totalTrucksOwned || 0
-          ),
+        // ---------------------------------------------------
+        totalTrucksOwned: Number(
+          formData.totalTrucksOwned || 0
+        ),
 
-          totalAttachedTrucks: Number(
+        totalAttachedTrucks: Number(
+          formData.totalAttachedTrucks || 0
+        ),
+
+        totalFleetSize:
+          Number(
+            formData.totalTrucksOwned || 0
+          ) +
+          Number(
             formData.totalAttachedTrucks || 0
           ),
 
-          totalFleetSize:
-            Number(formData.totalTrucksOwned || 0) +
-            Number(formData.totalAttachedTrucks || 0),
-        },
+        // ---------------------------------------------------
+        // VEHICLES
+        // ---------------------------------------------------
+        vehicles: vehicles.map(
+          (vehicle) => ({
+            vehicleNumber:
+              vehicle.vehicleNumber
+                .trim()
+                .toUpperCase(),
 
-        // Vehicles
-        vehicles: vehicles.map((vehicle) => ({
-          vehicleNumber:
-            vehicle.vehicleNumber.toUpperCase(),
+            vehicleType:
+              vehicle.vehicleType,
 
-          vehicleType: vehicle.vehicleType,
-          capacity: vehicle.capacity,
-          length: vehicle.length,
-          bodyType: vehicle.bodyType,
-          ownership: vehicle.ownership,
+            capacityTon:
+              vehicle.capacity,
 
-          rcNumber: vehicle.rcNumber
-            ? vehicle.rcNumber.toUpperCase()
-            : "",
+            vehicleLength:
+              vehicle.length,
 
-          insuranceValidTill:
-            vehicle.insuranceValidTill,
+            bodyType:
+              vehicle.bodyType,
 
-          permitValidTill:
-            vehicle.permitValidTill,
+            ownership:
+              vehicle.ownership,
 
-          fitnessValidTill:
-            vehicle.fitnessValidTill,
+            rcNumber:
+              vehicle.rcNumber
+                ? vehicle.rcNumber
+                    .trim()
+                    .toUpperCase()
+                : "",
 
-          pucValidTill:
-            vehicle.pucValidTill,
-        })),
+            insuranceValidTill:
+              vehicle.insuranceValidTill,
 
-        // Services
-        transportationServices: {
-          services: formData.services,
-          goodsTypes: formData.goodsTypes,
-        },
+            permitValidTill:
+              vehicle.permitValidTill,
 
-        // Routes
-        operatingArea: {
-          areas: formData.operatingArea,
-          pickupCities: formData.pickupCities,
-          deliveryCities: formData.deliveryCities,
-          preferredRoutes: formData.preferredRoutes,
-        },
+            fitnessValidTill:
+              vehicle.fitnessValidTill,
 
-        // Availability
-        availability: {
-          immediateLoad: formData.immediateLoad,
-          workingDays: formData.workingDays,
-          pickupTime: formData.pickupTime,
-          advanceBooking: formData.advanceBooking,
-          noticePeriod: formData.noticePeriod,
-          returnLoad: formData.returnLoad,
-        },
+            pucValidTill:
+              vehicle.pucValidTill,
+          })
+        ),
 
-        // Driver
-        driverDetails: {
-          driverAvailable:
-            formData.driverAvailable,
+        // ---------------------------------------------------
+        // SERVICES
+        // ---------------------------------------------------
+        transportationServices:
+          formData.services,
 
-          numberOfDrivers: Number(
-            formData.numberOfDrivers || 0
-          ),
+        goodsTypes:
+          formData.goodsTypes,
 
-          driverName: formData.driverName,
-          driverMobile: formData.driverMobile,
-          driverLicense: formData.driverLicense,
-          driverExperience:
-            formData.driverExperience,
-        },
+        // ---------------------------------------------------
+        // ROUTES
+        // ---------------------------------------------------
+        operatingAreas:
+          formData.operatingArea,
 
-        // Additional Services
+        preferredPickupCities:
+          formData.pickupCities,
+
+        preferredDeliveryCities:
+          formData.deliveryCities,
+
+        preferredRoutes:
+          formData.preferredRoutes,
+
+        // ---------------------------------------------------
+        // AVAILABILITY
+        // ---------------------------------------------------
+        immediateLoad:
+          formData.immediateLoad,
+
+        workingDays:
+          formData.workingDays,
+
+        preferredPickupTime:
+          formData.pickupTime,
+
+        advanceBooking:
+          formData.advanceBooking,
+
+        minimumNoticePeriod:
+          formData.noticePeriod,
+
+        returnLoadAvailable:
+          formData.returnLoad,
+
+        // ---------------------------------------------------
+        // DRIVER
+        // ---------------------------------------------------
+        driverAvailable:
+          formData.driverAvailable,
+
+        numberOfDrivers: Number(
+          formData.numberOfDrivers || 0
+        ),
+
+        driverName:
+          formData.driverName,
+
+        driverMobile:
+          formData.driverMobile,
+
+        driverLicense:
+          formData.driverLicense,
+
+        driverExperience:
+          formData.driverExperience,
+
+        // ---------------------------------------------------
+        // ADDITIONAL SERVICES
+        // ---------------------------------------------------
         additionalServices:
           formData.additionalServices,
 
-        // Pricing
-        pricing: {
-          rateType: formData.rateType,
-          minimumTripCharge:
-            formData.minimumTripCharge,
+        // ---------------------------------------------------
+        // PRICING
+        // ---------------------------------------------------
+        rateType:
+          formData.rateType,
 
-          minimumKm: formData.minimumKm,
-          tollIncluded: formData.tollIncluded,
+        minimumTripCharge:
+          formData.minimumTripCharge,
 
-          driverAllowanceIncluded:
-            formData.driverAllowanceIncluded,
+        minimumKm:
+          formData.minimumKm,
 
-          loadingIncluded:
-            formData.loadingIncluded,
+        tollIncluded:
+          formData.tollIncluded,
 
-          unloadingIncluded:
-            formData.unloadingIncluded,
-        },
+        driverAllowanceIncluded:
+          formData.driverAllowanceIncluded,
 
-        // Documents
-        documents: documentMetadata,
+        loadingIncluded:
+          formData.loadingIncluded,
 
-        // Business Profile
-        businessProfile: {
-          googleBusinessLink:
-            formData.googleBusinessLink,
+        unloadingIncluded:
+          formData.unloadingIncluded,
 
-          website: formData.website,
+        // ---------------------------------------------------
+        // DOCUMENTS
+        // ---------------------------------------------------
+        documents,
 
-          additionalInformation:
-            formData.additionalInformation,
-        },
+        // ---------------------------------------------------
+        // BUSINESS PROFILE
+        // ---------------------------------------------------
+        googleBusinessLink:
+          formData.googleBusinessLink,
 
-        // Bank
-        bankDetails: {
-          accountHolderName:
-            formData.accountHolderName,
+        website:
+          formData.website,
 
-          bankName: formData.bankName,
+        additionalInformation:
+          formData.additionalInformation,
 
-          accountNumber:
-            formData.accountNumber,
+        // ---------------------------------------------------
+        // BANK
+        // ---------------------------------------------------
+        accountHolderName:
+          formData.accountHolderName,
 
-          ifsc: formData.ifsc,
+        bankName:
+          formData.bankName,
 
-          upiId: formData.upiId,
-        },
+        accountNumber:
+          formData.accountNumber,
 
-        // Emergency
-        emergencyContact: {
-          name: formData.emergencyName,
-          relationship:
-            formData.emergencyRelationship,
-          mobile: formData.emergencyMobile,
-        },
+        ifsc:
+          formData.ifsc,
 
-        // Status
-        partnerStatus: "Pending Verification",
-        verificationStatus: "Pending",
+        upiId:
+          formData.upiId,
 
-        // Timestamp
-        submittedAt: new Date().toISOString(),
+        // ---------------------------------------------------
+        // EMERGENCY
+        // ---------------------------------------------------
+        emergencyContactName:
+          formData.emergencyName,
+
+        emergencyRelationship:
+          formData.emergencyRelationship,
+
+        emergencyContactMobile:
+          formData.emergencyMobile,
+
+        // ---------------------------------------------------
+        // STATUS
+        // ---------------------------------------------------
+        partnerStatus:
+          "Pending Verification",
+
+        verificationStatus:
+          "Pending",
+
+        // ---------------------------------------------------
+        // TIMESTAMP
+        // ---------------------------------------------------
+        submittedAt:
+          new Date().toISOString(),
       };
 
       console.log(
@@ -645,7 +853,8 @@ const TruckOwnerRegister = () => {
           method: "POST",
 
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
 
           body: JSON.stringify(payload),
@@ -675,21 +884,68 @@ const TruckOwnerRegister = () => {
         responseData
       );
 
+      // =====================================================
+      // 5. n8n FAILURE
+      // =====================================================
+
       if (!response.ok) {
         throw new Error(
           `n8n webhook failed with status ${response.status}`
         );
       }
 
+      // =====================================================
+      // 6. SUCCESS
+      // =====================================================
+
       alert(
-        "Registration submitted successfully! Your account has been created and your partner application is now pending verification."
+        "Registration submitted successfully! Your Firebase account has been created and your partner application is now pending verification."
       );
+
+      // Optional reset after successful registration
+      setFormData((prev) => ({
+        ...prev,
+        password: "",
+      }));
 
     } catch (error) {
       console.error(
         "TRUCK OWNER SUBMISSION ERROR:",
         error
       );
+
+      // =====================================================
+      // If Firebase account was created but n8n failed,
+      // try to remove the newly created Firebase account.
+      // =====================================================
+
+      if (
+        firebaseUser &&
+        error?.message?.includes(
+          "n8n webhook failed"
+        )
+      ) {
+        try {
+          await deleteUser(
+            firebaseUser
+          );
+
+          console.log(
+            "Firebase account rolled back because n8n submission failed."
+          );
+        } catch (
+          rollbackError
+        ) {
+          console.error(
+            "Firebase rollback failed:",
+            rollbackError
+          );
+        }
+      }
+
+      // =====================================================
+      // FIREBASE ERRORS
+      // =====================================================
 
       if (
         error?.code ===
@@ -699,16 +955,26 @@ const TruckOwnerRegister = () => {
           "This email is already registered. Please use another email or login with your existing account."
         );
       } else if (
-        error?.code === "auth/invalid-email"
+        error?.code ===
+        "auth/invalid-email"
       ) {
         alert(
           "Please enter a valid email address."
         );
       } else if (
-        error?.code === "auth/weak-password"
+        error?.code ===
+        "auth/weak-password"
       ) {
         alert(
           "Password must be at least 6 characters."
+        );
+      } else if (
+        error?.message?.includes(
+          "Failed to fetch"
+        )
+      ) {
+        alert(
+          "Unable to connect to n8n. Please make sure n8n is running and the Truck-Owner webhook is active."
         );
       } else {
         alert(
@@ -724,16 +990,24 @@ const TruckOwnerRegister = () => {
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
 
-        {/* Header */}
+        {/* =================================================
+            HEADER
+        ================================================= */}
+
         <div className="bg-[#002D5E] rounded-[2rem] p-7 lg:p-10 text-white shadow-xl mb-8 relative overflow-hidden">
+
           <div className="absolute right-0 top-0 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl" />
 
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
             <div>
+
               <div className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider mb-4">
+
                 <Truck size={15} />
+
                 Truck Transport Partner
+
               </div>
 
               <h1 className="text-3xl lg:text-5xl font-[950] italic uppercase tracking-tight">
@@ -741,9 +1015,12 @@ const TruckOwnerRegister = () => {
               </h1>
 
               <p className="text-slate-300 text-sm font-medium mt-3 max-w-2xl leading-relaxed">
-                Register your trucks with Apni Manzil and receive genuine
-                transportation requirements from customers across India.
+                Register your trucks with Apni
+                Manzil and receive genuine
+                transportation requirements
+                from customers across India.
               </p>
+
             </div>
 
             <div className="bg-white/10 border border-white/10 backdrop-blur-md rounded-2xl p-5 min-w-[210px]">
@@ -764,9 +1041,11 @@ const TruckOwnerRegister = () => {
                 </span>
 
               </div>
+
             </div>
 
           </div>
+
         </div>
 
         <form
@@ -774,7 +1053,10 @@ const TruckOwnerRegister = () => {
           className="space-y-7"
         >
 
-          {/* 1 Owner Details */}
+          {/* =================================================
+              01 OWNER
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
@@ -801,6 +1083,7 @@ const TruckOwnerRegister = () => {
                 value={formData.businessName}
                 onChange={handleChange}
                 placeholder="Enter business or fleet name"
+                required
               />
 
               <Field
@@ -810,6 +1093,7 @@ const TruckOwnerRegister = () => {
                 onChange={handleChange}
                 placeholder="10 digit mobile number"
                 type="tel"
+                required
               />
 
               <Field
@@ -819,6 +1103,7 @@ const TruckOwnerRegister = () => {
                 onChange={handleChange}
                 placeholder="WhatsApp number"
                 type="tel"
+                required
               />
 
               <Field
@@ -841,9 +1126,13 @@ const TruckOwnerRegister = () => {
               />
 
             </div>
+
           </section>
 
-          {/* 2 Business Details */}
+          {/* =================================================
+              02 BUSINESS
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
@@ -875,10 +1164,14 @@ const TruckOwnerRegister = () => {
                 name="gstRegistered"
                 value={formData.gstRegistered}
                 onChange={handleChange}
-                options={["Yes", "No"]}
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
-              {formData.gstRegistered === "Yes" && (
+              {formData.gstRegistered ===
+                "Yes" && (
                 <Field
                   label="GST Number"
                   name="gstNumber"
@@ -894,6 +1187,7 @@ const TruckOwnerRegister = () => {
                 value={formData.panNumber}
                 onChange={handleChange}
                 placeholder="Enter PAN number"
+                required
               />
 
               <Field
@@ -906,9 +1200,13 @@ const TruckOwnerRegister = () => {
               />
 
             </div>
+
           </section>
 
-          {/* 3 Address */}
+          {/* =================================================
+              03 ADDRESS
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
@@ -921,6 +1219,7 @@ const TruckOwnerRegister = () => {
             <div className="space-y-5">
 
               <div>
+
                 <label className={labelClass}>
                   Full Address *
                 </label>
@@ -932,7 +1231,9 @@ const TruckOwnerRegister = () => {
                   rows="3"
                   placeholder="Enter complete business address"
                   className={inputClass}
+                  required
                 />
+
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -943,6 +1244,7 @@ const TruckOwnerRegister = () => {
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="City"
+                  required
                 />
 
                 <Field
@@ -959,13 +1261,19 @@ const TruckOwnerRegister = () => {
                   value={formData.pincode}
                   onChange={handleChange}
                   placeholder="Pincode"
+                  required
                 />
 
               </div>
+
             </div>
+
           </section>
 
-          {/* 4 Fleet */}
+          {/* =================================================
+              04 FLEET
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
@@ -984,6 +1292,7 @@ const TruckOwnerRegister = () => {
                 onChange={handleChange}
                 placeholder="Example: 5"
                 type="number"
+                required
               />
 
               <Field
@@ -1000,6 +1309,7 @@ const TruckOwnerRegister = () => {
             <div className="flex items-center justify-between mb-5">
 
               <div>
+
                 <h3 className="font-black text-[#002D5E] uppercase text-sm">
                   Your Vehicles
                 </h3>
@@ -1007,6 +1317,7 @@ const TruckOwnerRegister = () => {
                 <p className="text-xs text-slate-500 mt-1">
                   Add every truck that you want to register.
                 </p>
+
               </div>
 
               <button
@@ -1022,188 +1333,230 @@ const TruckOwnerRegister = () => {
 
             <div className="space-y-6">
 
-              {vehicles.map((vehicle, index) => (
+              {vehicles.map(
+                (
+                  vehicle,
+                  index
+                ) => (
 
-                <div
-                  key={index}
-                  className="border border-slate-200 rounded-3xl p-5 bg-slate-50"
-                >
+                  <div
+                    key={index}
+                    className="border border-slate-200 rounded-3xl p-5 bg-slate-50"
+                  >
 
-                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center justify-between mb-5">
 
-                    <h4 className="font-black text-[#002D5E]">
-                      Vehicle {index + 1}
-                    </h4>
+                      <h4 className="font-black text-[#002D5E]">
+                        Vehicle {index + 1}
+                      </h4>
 
-                    {vehicles.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          removeVehicle(index)
+                      {vehicles.length >
+                        1 && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removeVehicle(
+                              index
+                            )
+                          }
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                      <VehicleField
+                        label="Vehicle Number *"
+                        value={
+                          vehicle.vehicleNumber
                         }
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    )}
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "vehicleNumber",
+                            e.target.value.toUpperCase()
+                          )
+                        }
+                        placeholder="MH 12 AB 1234"
+                      />
+
+                      <VehicleSelect
+                        label="Vehicle Type *"
+                        value={
+                          vehicle.vehicleType
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "vehicleType",
+                            e.target.value
+                          )
+                        }
+                        options={
+                          vehicleTypes
+                        }
+                      />
+
+                      <VehicleField
+                        label="Capacity (Ton) *"
+                        value={
+                          vehicle.capacity
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "capacity",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Example: 10"
+                        type="number"
+                      />
+
+                      <VehicleField
+                        label="Vehicle Length / Size"
+                        value={
+                          vehicle.length
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "length",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Example: 17 Ft"
+                      />
+
+                      <VehicleSelect
+                        label="Body Type"
+                        value={
+                          vehicle.bodyType
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "bodyType",
+                            e.target.value
+                          )
+                        }
+                        options={
+                          bodyTypes
+                        }
+                      />
+
+                      <VehicleSelect
+                        label="Ownership"
+                        value={
+                          vehicle.ownership
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "ownership",
+                            e.target.value
+                          )
+                        }
+                        options={[
+                          "Own",
+                          "Attached",
+                        ]}
+                      />
+
+                      <VehicleField
+                        label="RC Number"
+                        value={
+                          vehicle.rcNumber
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "rcNumber",
+                            e.target.value.toUpperCase()
+                          )
+                        }
+                        placeholder="RC number"
+                      />
+
+                      <VehicleField
+                        label="Insurance Valid Till"
+                        value={
+                          vehicle.insuranceValidTill
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "insuranceValidTill",
+                            e.target.value
+                          )
+                        }
+                        type="date"
+                      />
+
+                      <VehicleField
+                        label="Permit Valid Till"
+                        value={
+                          vehicle.permitValidTill
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "permitValidTill",
+                            e.target.value
+                          )
+                        }
+                        type="date"
+                      />
+
+                      <VehicleField
+                        label="Fitness Valid Till"
+                        value={
+                          vehicle.fitnessValidTill
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "fitnessValidTill",
+                            e.target.value
+                          )
+                        }
+                        type="date"
+                      />
+
+                      <VehicleField
+                        label="PUC Valid Till"
+                        value={
+                          vehicle.pucValidTill
+                        }
+                        onChange={(e) =>
+                          updateVehicle(
+                            index,
+                            "pucValidTill",
+                            e.target.value
+                          )
+                        }
+                        type="date"
+                      />
+
+                    </div>
 
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-
-                    <VehicleField
-                      label="Vehicle Number *"
-                      value={vehicle.vehicleNumber}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "vehicleNumber",
-                          e.target.value.toUpperCase()
-                        )
-                      }
-                      placeholder="MH 12 AB 1234"
-                    />
-
-                    <VehicleSelect
-                      label="Vehicle Type *"
-                      value={vehicle.vehicleType}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "vehicleType",
-                          e.target.value
-                        )
-                      }
-                      options={vehicleTypes}
-                    />
-
-                    <VehicleField
-                      label="Capacity (Ton) *"
-                      value={vehicle.capacity}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "capacity",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Example: 10"
-                      type="number"
-                    />
-
-                    <VehicleField
-                      label="Vehicle Length / Size"
-                      value={vehicle.length}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "length",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Example: 17 Ft"
-                    />
-
-                    <VehicleSelect
-                      label="Body Type"
-                      value={vehicle.bodyType}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "bodyType",
-                          e.target.value
-                        )
-                      }
-                      options={bodyTypes}
-                    />
-
-                    <VehicleSelect
-                      label="Ownership"
-                      value={vehicle.ownership}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "ownership",
-                          e.target.value
-                        )
-                      }
-                      options={["Own", "Attached"]}
-                    />
-
-                    <VehicleField
-                      label="RC Number"
-                      value={vehicle.rcNumber}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "rcNumber",
-                          e.target.value.toUpperCase()
-                        )
-                      }
-                      placeholder="RC number"
-                    />
-
-                    <VehicleField
-                      label="Insurance Valid Till"
-                      value={vehicle.insuranceValidTill}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "insuranceValidTill",
-                          e.target.value
-                        )
-                      }
-                      type="date"
-                    />
-
-                    <VehicleField
-                      label="Permit Valid Till"
-                      value={vehicle.permitValidTill}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "permitValidTill",
-                          e.target.value
-                        )
-                      }
-                      type="date"
-                    />
-
-                    <VehicleField
-                      label="Fitness Valid Till"
-                      value={vehicle.fitnessValidTill}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "fitnessValidTill",
-                          e.target.value
-                        )
-                      }
-                      type="date"
-                    />
-
-                    <VehicleField
-                      label="PUC Valid Till"
-                      value={vehicle.pucValidTill}
-                      onChange={(e) =>
-                        updateVehicle(
-                          index,
-                          "pucValidTill",
-                          e.target.value
-                        )
-                      }
-                      type="date"
-                    />
-
-                  </div>
-                </div>
-
-              ))}
+                )
+              )}
 
             </div>
+
           </section>
 
-          {/* 5 Services */}
+          {/* =================================================
+              05 SERVICES
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
@@ -1216,7 +1569,9 @@ const TruckOwnerRegister = () => {
             <CheckboxGrid
               title="Transportation Services"
               items={services}
-              selected={formData.services}
+              selected={
+                formData.services
+              }
               onChange={(value) =>
                 handleMultiSelect(
                   "services",
@@ -1229,8 +1584,12 @@ const TruckOwnerRegister = () => {
 
               <CheckboxGrid
                 title="Goods / Load Types"
-                items={goodsTypes}
-                selected={formData.goodsTypes}
+                items={
+                  goodsTypes
+                }
+                selected={
+                  formData.goodsTypes
+                }
                 onChange={(value) =>
                   handleMultiSelect(
                     "goodsTypes",
@@ -1240,9 +1599,13 @@ const TruckOwnerRegister = () => {
               />
 
             </div>
+
           </section>
 
-          {/* 6 Operating Area */}
+          {/* =================================================
+              06 OPERATING AREA
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
@@ -1255,7 +1618,9 @@ const TruckOwnerRegister = () => {
             <CheckboxGrid
               title="Operating Area"
               items={areas}
-              selected={formData.operatingArea}
+              selected={
+                formData.operatingArea
+              }
               onChange={(value) =>
                 handleMultiSelect(
                   "operatingArea",
@@ -1269,36 +1634,56 @@ const TruckOwnerRegister = () => {
               <Field
                 label="Preferred Pickup Cities"
                 name="pickupCities"
-                value={formData.pickupCities}
-                onChange={handleChange}
+                value={
+                  formData.pickupCities
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Mumbai, Pune, Nashik..."
               />
 
               <Field
                 label="Preferred Delivery Cities"
                 name="deliveryCities"
-                value={formData.deliveryCities}
-                onChange={handleChange}
+                value={
+                  formData.deliveryCities
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Delhi, Bangalore..."
               />
 
               <Field
                 label="Preferred Routes"
                 name="preferredRoutes"
-                value={formData.preferredRoutes}
-                onChange={handleChange}
+                value={
+                  formData.preferredRoutes
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Mumbai → Delhi"
               />
 
             </div>
+
           </section>
 
-          {/* 7 Availability */}
+          {/* =================================================
+              07 AVAILABILITY
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
               number="07"
-              icon={<CheckCircle2 size={20} />}
+              icon={
+                <CheckCircle2
+                  size={20}
+                />
+              }
               title="Availability"
               subtitle="Tell customers when your trucks are available."
             />
@@ -1308,40 +1693,69 @@ const TruckOwnerRegister = () => {
               <SelectField
                 label="Available for Immediate Load?"
                 name="immediateLoad"
-                value={formData.immediateLoad}
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                value={
+                  formData.immediateLoad
+                }
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
               <SelectField
                 label="Advance Booking Required?"
                 name="advanceBooking"
-                value={formData.advanceBooking}
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                value={
+                  formData.advanceBooking
+                }
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
               <Field
                 label="Minimum Notice Period"
                 name="noticePeriod"
-                value={formData.noticePeriod}
-                onChange={handleChange}
+                value={
+                  formData.noticePeriod
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Example: 1 Day"
               />
 
               <SelectField
                 label="Return Load Available?"
                 name="returnLoad"
-                value={formData.returnLoad}
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                value={
+                  formData.returnLoad
+                }
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
               <SelectField
                 label="Preferred Pickup Time"
                 name="pickupTime"
-                value={formData.pickupTime}
-                onChange={handleChange}
+                value={
+                  formData.pickupTime
+                }
+                onChange={
+                  handleChange
+                }
                 options={[
                   "Any Time",
                   "Morning",
@@ -1358,7 +1772,9 @@ const TruckOwnerRegister = () => {
               <CheckboxGrid
                 title="Working Days"
                 items={days}
-                selected={formData.workingDays}
+                selected={
+                  formData.workingDays
+                }
                 onChange={(value) =>
                   handleMultiSelect(
                     "workingDays",
@@ -1368,9 +1784,13 @@ const TruckOwnerRegister = () => {
               />
 
             </div>
+
           </section>
 
-          {/* 8 Driver */}
+          {/* =================================================
+              08 DRIVER
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
@@ -1385,18 +1805,30 @@ const TruckOwnerRegister = () => {
               <SelectField
                 label="Driver Available?"
                 name="driverAvailable"
-                value={formData.driverAvailable}
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                value={
+                  formData.driverAvailable
+                }
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
-              {formData.driverAvailable === "Yes" && (
+              {formData.driverAvailable ===
+                "Yes" && (
                 <>
                   <Field
                     label="Number of Drivers"
                     name="numberOfDrivers"
-                    value={formData.numberOfDrivers}
-                    onChange={handleChange}
+                    value={
+                      formData.numberOfDrivers
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="Example: 5"
                     type="number"
                   />
@@ -1404,16 +1836,24 @@ const TruckOwnerRegister = () => {
                   <Field
                     label="Primary Driver Name"
                     name="driverName"
-                    value={formData.driverName}
-                    onChange={handleChange}
+                    value={
+                      formData.driverName
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="Driver name"
                   />
 
                   <Field
                     label="Driver Mobile"
                     name="driverMobile"
-                    value={formData.driverMobile}
-                    onChange={handleChange}
+                    value={
+                      formData.driverMobile
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="Driver mobile"
                     type="tel"
                   />
@@ -1421,38 +1861,58 @@ const TruckOwnerRegister = () => {
                   <Field
                     label="Driving License Number"
                     name="driverLicense"
-                    value={formData.driverLicense}
-                    onChange={handleChange}
+                    value={
+                      formData.driverLicense
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="License number"
                   />
 
                   <Field
                     label="Driver Experience"
                     name="driverExperience"
-                    value={formData.driverExperience}
-                    onChange={handleChange}
+                    value={
+                      formData.driverExperience
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="Example: 8 years"
                   />
                 </>
               )}
 
             </div>
+
           </section>
 
-          {/* 9 Additional Services */}
+          {/* =================================================
+              09 ADDITIONAL
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
               number="09"
-              icon={<ShieldCheck size={20} />}
+              icon={
+                <ShieldCheck
+                  size={20}
+                />
+              }
               title="Additional Services"
               subtitle="Select additional facilities available with your trucks."
             />
 
             <CheckboxGrid
               title="Additional Services"
-              items={additionalServices}
-              selected={formData.additionalServices}
+              items={
+                additionalServices
+              }
+              selected={
+                formData.additionalServices
+              }
               onChange={(value) =>
                 handleMultiSelect(
                   "additionalServices",
@@ -1463,12 +1923,19 @@ const TruckOwnerRegister = () => {
 
           </section>
 
-          {/* 10 Pricing */}
+          {/* =================================================
+              10 PRICING
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
               number="10"
-              icon={<CreditCard size={20} />}
+              icon={
+                <CreditCard
+                  size={20}
+                />
+              }
               title="Pricing Information"
               subtitle="Give us your basic pricing structure. Final quotes can be negotiated per requirement."
             />
@@ -1478,8 +1945,12 @@ const TruckOwnerRegister = () => {
               <SelectField
                 label="Rate Type"
                 name="rateType"
-                value={formData.rateType}
-                onChange={handleChange}
+                value={
+                  formData.rateType
+                }
+                onChange={
+                  handleChange
+                }
                 options={[
                   "Per KM",
                   "Per Trip",
@@ -1491,8 +1962,12 @@ const TruckOwnerRegister = () => {
               <Field
                 label="Minimum Trip Charge"
                 name="minimumTripCharge"
-                value={formData.minimumTripCharge}
-                onChange={handleChange}
+                value={
+                  formData.minimumTripCharge
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="₹ Amount"
                 type="number"
               />
@@ -1500,8 +1975,12 @@ const TruckOwnerRegister = () => {
               <Field
                 label="Minimum KM"
                 name="minimumKm"
-                value={formData.minimumKm}
-                onChange={handleChange}
+                value={
+                  formData.minimumKm
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Example: 100"
                 type="number"
               />
@@ -1509,9 +1988,16 @@ const TruckOwnerRegister = () => {
               <SelectField
                 label="Toll Included?"
                 name="tollIncluded"
-                value={formData.tollIncluded}
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                value={
+                  formData.tollIncluded
+                }
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
               <SelectField
@@ -1520,35 +2006,62 @@ const TruckOwnerRegister = () => {
                 value={
                   formData.driverAllowanceIncluded
                 }
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
               <SelectField
                 label="Loading Included?"
                 name="loadingIncluded"
-                value={formData.loadingIncluded}
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                value={
+                  formData.loadingIncluded
+                }
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
               <SelectField
                 label="Unloading Included?"
                 name="unloadingIncluded"
-                value={formData.unloadingIncluded}
-                onChange={handleChange}
-                options={["Yes", "No"]}
+                value={
+                  formData.unloadingIncluded
+                }
+                onChange={
+                  handleChange
+                }
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
             </div>
+
           </section>
 
-          {/* 11 Documents */}
+          {/* =================================================
+              11 DOCUMENTS
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
               number="11"
-              icon={<FileText size={20} />}
+              icon={
+                <FileText
+                  size={20}
+                />
+              }
               title="Documents"
               subtitle="Upload your business and vehicle documents for verification."
             />
@@ -1558,38 +2071,50 @@ const TruckOwnerRegister = () => {
               <DocumentUpload
                 label="PAN Card *"
                 name="panDocument"
-                onChange={handleFileChange}
+                onChange={
+                  handleFileChange
+                }
               />
 
               <DocumentUpload
                 label="GST Certificate"
                 name="gstDocument"
-                onChange={handleFileChange}
+                onChange={
+                  handleFileChange
+                }
               />
 
               <DocumentUpload
                 label="Business Proof"
                 name="businessProof"
-                onChange={handleFileChange}
+                onChange={
+                  handleFileChange
+                }
               />
 
               <DocumentUpload
                 label="Cancelled Cheque"
                 name="cancelledCheque"
-                onChange={handleFileChange}
+                onChange={
+                  handleFileChange
+                }
               />
 
               <DocumentUpload
                 label="Fleet / Truck Photos"
                 name="fleetPhotos"
-                onChange={handleFileChange}
+                onChange={
+                  handleFileChange
+                }
                 multiple
               />
 
               <DocumentUpload
                 label="Office / Business Photo"
                 name="officePhoto"
-                onChange={handleFileChange}
+                onChange={
+                  handleFileChange
+                }
               />
 
             </div>
@@ -1602,19 +2127,31 @@ const TruckOwnerRegister = () => {
               />
 
               <p className="text-xs text-blue-800 font-medium leading-relaxed">
-                Vehicle-specific RC, Insurance, Permit, Fitness and PUC
-                documents can be uploaded during vehicle verification.
+                Vehicle-specific RC,
+                Insurance, Permit,
+                Fitness and PUC
+                documents can be
+                uploaded during
+                vehicle verification.
               </p>
 
             </div>
+
           </section>
 
-          {/* 12 Bank */}
+          {/* =================================================
+              12 BANK
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
               number="12"
-              icon={<CreditCard size={20} />}
+              icon={
+                <CreditCard
+                  size={20}
+                />
+              }
               title="Bank / Payment Details"
               subtitle="Used for partner payments and settlements."
             />
@@ -1624,24 +2161,36 @@ const TruckOwnerRegister = () => {
               <Field
                 label="Account Holder Name *"
                 name="accountHolderName"
-                value={formData.accountHolderName}
-                onChange={handleChange}
+                value={
+                  formData.accountHolderName
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Account holder name"
               />
 
               <Field
                 label="Bank Name *"
                 name="bankName"
-                value={formData.bankName}
-                onChange={handleChange}
+                value={
+                  formData.bankName
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Bank name"
               />
 
               <Field
                 label="Account Number *"
                 name="accountNumber"
-                value={formData.accountNumber}
-                onChange={handleChange}
+                value={
+                  formData.accountNumber
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Account number"
                 type="password"
               />
@@ -1649,28 +2198,44 @@ const TruckOwnerRegister = () => {
               <Field
                 label="IFSC Code *"
                 name="ifsc"
-                value={formData.ifsc}
-                onChange={handleChange}
+                value={
+                  formData.ifsc
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="IFSC code"
               />
 
               <Field
                 label="UPI ID"
                 name="upiId"
-                value={formData.upiId}
-                onChange={handleChange}
+                value={
+                  formData.upiId
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="example@upi"
               />
 
             </div>
+
           </section>
 
-          {/* 13 Profile */}
+          {/* =================================================
+              13 BUSINESS PROFILE
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
               number="13"
-              icon={<Building2 size={20} />}
+              icon={
+                <Building2
+                  size={20}
+                />
+              }
               title="Business Profile"
               subtitle="Optional information to help us understand your business."
             />
@@ -1680,16 +2245,24 @@ const TruckOwnerRegister = () => {
               <Field
                 label="Google Business Profile Link"
                 name="googleBusinessLink"
-                value={formData.googleBusinessLink}
-                onChange={handleChange}
+                value={
+                  formData.googleBusinessLink
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="https://..."
               />
 
               <Field
                 label="Website"
                 name="website"
-                value={formData.website}
-                onChange={handleChange}
+                value={
+                  formData.website
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="https://..."
               />
 
@@ -1697,28 +2270,44 @@ const TruckOwnerRegister = () => {
 
             <div className="mt-5">
 
-              <label className={labelClass}>
+              <label
+                className={
+                  labelClass
+                }
+              >
                 Additional Information
               </label>
 
               <textarea
                 name="additionalInformation"
-                value={formData.additionalInformation}
-                onChange={handleChange}
+                value={
+                  formData.additionalInformation
+                }
+                onChange={
+                  handleChange
+                }
                 rows="4"
                 placeholder="Tell us anything else about your fleet or transportation service..."
-                className={inputClass}
+                className={
+                  inputClass
+                }
               />
 
             </div>
+
           </section>
 
-          {/* 14 Emergency */}
+          {/* =================================================
+              14 EMERGENCY
+          ================================================= */}
+
           <section className={sectionClass}>
 
             <SectionTitle
               number="14"
-              icon={<Phone size={20} />}
+              icon={
+                <Phone size={20} />
+              }
               title="Emergency Contact"
               subtitle="Provide an emergency contact for operational communication."
             />
@@ -1728,8 +2317,12 @@ const TruckOwnerRegister = () => {
               <Field
                 label="Contact Name"
                 name="emergencyName"
-                value={formData.emergencyName}
-                onChange={handleChange}
+                value={
+                  formData.emergencyName
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Name"
               />
 
@@ -1739,28 +2332,40 @@ const TruckOwnerRegister = () => {
                 value={
                   formData.emergencyRelationship
                 }
-                onChange={handleChange}
+                onChange={
+                  handleChange
+                }
                 placeholder="Relationship"
               />
 
               <Field
                 label="Mobile Number"
                 name="emergencyMobile"
-                value={formData.emergencyMobile}
-                onChange={handleChange}
+                value={
+                  formData.emergencyMobile
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Mobile number"
                 type="tel"
               />
 
             </div>
+
           </section>
 
-          {/* 15 Login Details */}
+          {/* =================================================
+              15 LOGIN
+          ================================================= */}
+
           <section className="bg-white rounded-[2rem] border-2 border-orange-200 shadow-sm p-6 lg:p-8">
 
             <SectionTitle
               number="15"
-              icon={<Lock size={20} />}
+              icon={
+                <Lock size={20} />
+              }
               title="Partner Login Details"
               subtitle="Create your Apni Manzil Vendor Dashboard login account."
             />
@@ -1773,8 +2378,12 @@ const TruckOwnerRegister = () => {
               />
 
               <p className="text-xs text-orange-800 font-medium leading-relaxed">
-                Your password is securely handled by Firebase Authentication.
-                It will never be sent to n8n, Google Sheets, or our partner
+                Your password is
+                securely handled by
+                Firebase Authentication.
+                It will never be sent
+                to n8n, Google Sheets,
+                or our partner
                 database.
               </p>
 
@@ -1784,7 +2393,11 @@ const TruckOwnerRegister = () => {
 
               <div>
 
-                <label className={labelClass}>
+                <label
+                  className={
+                    labelClass
+                  }
+                >
                   Login Email *
                 </label>
 
@@ -1798,8 +2411,12 @@ const TruckOwnerRegister = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={
+                      formData.email
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="example@email.com"
                     required
                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
@@ -1811,7 +2428,11 @@ const TruckOwnerRegister = () => {
 
               <div>
 
-                <label className={labelClass}>
+                <label
+                  className={
+                    labelClass
+                  }
+                >
                   Create Password *
                 </label>
 
@@ -1829,8 +2450,12 @@ const TruckOwnerRegister = () => {
                         : "password"
                     }
                     name="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    value={
+                      formData.password
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="Minimum 6 characters"
                     required
                     minLength={6}
@@ -1847,9 +2472,13 @@ const TruckOwnerRegister = () => {
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-500"
                   >
                     {showPassword ? (
-                      <EyeOff size={18} />
+                      <EyeOff
+                        size={18}
+                      />
                     ) : (
-                      <Eye size={18} />
+                      <Eye
+                        size={18}
+                      />
                     )}
                   </button>
 
@@ -1858,9 +2487,13 @@ const TruckOwnerRegister = () => {
               </div>
 
             </div>
+
           </section>
 
-          {/* 16 Declaration */}
+          {/* =================================================
+              16 DECLARATION
+          ================================================= */}
+
           <section className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 lg:p-8">
 
             <div className="flex items-start gap-3">
@@ -1868,14 +2501,20 @@ const TruckOwnerRegister = () => {
               <input
                 type="checkbox"
                 name="declaration"
-                checked={formData.declaration}
-                onChange={handleChange}
+                checked={
+                  formData.declaration
+                }
+                onChange={
+                  handleChange
+                }
                 className="mt-1 w-5 h-5 accent-orange-500"
               />
 
               <label className="text-sm text-slate-600 font-medium leading-relaxed">
-                I confirm that the information provided by me is correct and
-                belongs to my business / fleet.
+                I confirm that the
+                information provided by
+                me is correct and belongs
+                to my business / fleet.
               </label>
 
             </div>
@@ -1885,14 +2524,21 @@ const TruckOwnerRegister = () => {
               <input
                 type="checkbox"
                 name="termsAccepted"
-                checked={formData.termsAccepted}
-                onChange={handleChange}
+                checked={
+                  formData.termsAccepted
+                }
+                onChange={
+                  handleChange
+                }
                 className="mt-1 w-5 h-5 accent-orange-500"
               />
 
               <label className="text-sm text-slate-600 font-medium leading-relaxed">
-                I agree to the Apni Manzil Partner Terms & Conditions and
-                understand that my application will be verified before
+                I agree to the Apni
+                Manzil Partner Terms &
+                Conditions and understand
+                that my application will
+                be verified before
                 activation.
               </label>
 
@@ -1900,7 +2546,10 @@ const TruckOwnerRegister = () => {
 
           </section>
 
-          {/* Submit */}
+          {/* =================================================
+              SUBMIT
+          ================================================= */}
+
           <div className="bg-[#002D5E] rounded-[2rem] p-6 lg:p-8 shadow-xl">
 
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -1919,8 +2568,11 @@ const TruckOwnerRegister = () => {
                   </h3>
 
                   <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                    Your Firebase account will be created and your partner
-                    application will be submitted for verification.
+                    Your Firebase account
+                    will be created and
+                    your partner application
+                    will be submitted for
+                    verification.
                   </p>
 
                 </div>
@@ -1929,7 +2581,9 @@ const TruckOwnerRegister = () => {
 
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={
+                  isSubmitting
+                }
                 className="w-full lg:w-auto min-w-[240px] bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg transition flex items-center justify-center gap-2"
               >
 
@@ -1938,11 +2592,15 @@ const TruckOwnerRegister = () => {
                     <span className="animate-spin">
                       ⟳
                     </span>
+
                     Creating Account...
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 size={18} />
+                    <CheckCircle2
+                      size={18}
+                    />
+
                     Register as Truck Owner
                   </>
                 )}
@@ -1950,6 +2608,7 @@ const TruckOwnerRegister = () => {
               </button>
 
             </div>
+
           </div>
 
         </form>
@@ -1958,9 +2617,9 @@ const TruckOwnerRegister = () => {
   );
 };
 
-/* =========================
-   REUSABLE COMPONENTS
-========================= */
+/* =========================================================
+   SECTION TITLE
+========================================================= */
 
 const SectionTitle = ({
   number,
@@ -1999,6 +2658,10 @@ const SectionTitle = ({
   );
 };
 
+/* =========================================================
+   FIELD
+========================================================= */
+
 const Field = ({
   label,
   name,
@@ -2029,6 +2692,10 @@ const Field = ({
   );
 };
 
+/* =========================================================
+   SELECT FIELD
+========================================================= */
+
 const SelectField = ({
   label,
   name,
@@ -2056,14 +2723,16 @@ const SelectField = ({
             Select
           </option>
 
-          {options.map((option) => (
-            <option
-              key={option}
-              value={option}
-            >
-              {option}
-            </option>
-          ))}
+          {options.map(
+            (option) => (
+              <option
+                key={option}
+                value={option}
+              >
+                {option}
+              </option>
+            )
+          )}
 
         </select>
 
@@ -2073,9 +2742,14 @@ const SelectField = ({
         />
 
       </div>
+
     </div>
   );
 };
+
+/* =========================================================
+   CHECKBOX GRID
+========================================================= */
 
 const CheckboxGrid = ({
   title,
@@ -2095,13 +2769,17 @@ const CheckboxGrid = ({
         {items.map((item) => {
 
           const active =
-            selected.includes(item);
+            selected.includes(
+              item
+            );
 
           return (
             <button
               type="button"
               key={item}
-              onClick={() => onChange(item)}
+              onClick={() =>
+                onChange(item)
+              }
               className={`text-left px-4 py-3 rounded-xl border text-xs font-bold transition ${
                 active
                   ? "bg-orange-50 border-orange-400 text-orange-700"
@@ -2118,7 +2796,8 @@ const CheckboxGrid = ({
                       : "border-slate-300 bg-white"
                   }`}
                 >
-                  {active && "✓"}
+                  {active &&
+                    "✓"}
                 </span>
 
                 {item}
@@ -2130,9 +2809,14 @@ const CheckboxGrid = ({
         })}
 
       </div>
+
     </div>
   );
 };
+
+/* =========================================================
+   VEHICLE FIELD
+========================================================= */
 
 const VehicleField = ({
   label,
@@ -2160,6 +2844,10 @@ const VehicleField = ({
   );
 };
 
+/* =========================================================
+   VEHICLE SELECT
+========================================================= */
+
 const VehicleSelect = ({
   label,
   value,
@@ -2183,20 +2871,26 @@ const VehicleSelect = ({
           Select
         </option>
 
-        {options.map((option) => (
-          <option
-            key={option}
-            value={option}
-          >
-            {option}
-          </option>
-        ))}
+        {options.map(
+          (option) => (
+            <option
+              key={option}
+              value={option}
+            >
+              {option}
+            </option>
+          )
+        )}
 
       </select>
 
     </div>
   );
 };
+
+/* =========================================================
+   DOCUMENT UPLOAD
+========================================================= */
 
 const DocumentUpload = ({
   label,
@@ -2233,7 +2927,10 @@ const DocumentUpload = ({
         multiple={multiple}
         accept=".pdf,.jpg,.jpeg,.png"
         onChange={(e) =>
-          onChange(e, name)
+          onChange(
+            e,
+            name
+          )
         }
         className="hidden"
       />
