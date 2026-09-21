@@ -5,7 +5,6 @@ import {
   Building2,
   MapPin,
   Phone,
-  Mail,
   FileText,
   CreditCard,
   ShieldCheck,
@@ -18,6 +17,12 @@ import {
 } from "lucide-react";
 
 const TruckOwnerRegister = () => {
+  // =========================================================
+  // n8n WEBHOOK
+  // =========================================================
+  const N8N_WEBHOOK_URL =
+    "http://localhost:5678/webhook/Truck-Owner";
+
   const [vehicles, setVehicles] = useState([
     {
       vehicleNumber: "",
@@ -100,6 +105,14 @@ const TruckOwnerRegister = () => {
     loadingIncluded: "No",
     unloadingIncluded: "No",
 
+    // Documents
+    panDocument: [],
+    gstDocument: [],
+    businessProof: [],
+    cancelledCheque: [],
+    fleetPhotos: [],
+    officePhoto: [],
+
     // Business Profile
     googleBusinessLink: "",
     website: "",
@@ -121,6 +134,8 @@ const TruckOwnerRegister = () => {
     declaration: false,
     termsAccepted: false,
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const vehicleTypes = [
     "Mini Truck",
@@ -279,25 +294,32 @@ const TruckOwnerRegister = () => {
   const sectionClass =
     "bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 lg:p-8";
 
-  const handleSubmit = (e) => {
+  // =========================================================
+  // SUBMIT → n8n
+  // =========================================================
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.fullName) {
+    if (!formData.fullName.trim()) {
       alert("Please enter Full Name.");
       return;
     }
 
-    if (!formData.mobileNumber) {
+    if (!formData.mobileNumber.trim()) {
       alert("Please enter Mobile Number.");
       return;
     }
 
-    if (!formData.panNumber) {
+    if (!formData.panNumber.trim()) {
       alert("Please enter PAN Number.");
       return;
     }
 
-    if (!formData.address || !formData.city || !formData.pincode) {
+    if (
+      !formData.address.trim() ||
+      !formData.city.trim() ||
+      !formData.pincode.trim()
+    ) {
       alert("Please complete your business address.");
       return;
     }
@@ -307,35 +329,265 @@ const TruckOwnerRegister = () => {
       return;
     }
 
-    const payload = {
-      ...formData,
+    // Vehicle validation
+    for (let i = 0; i < vehicles.length; i++) {
+      const vehicle = vehicles[i];
 
-      serviceCategory: "Truck Transport",
+      if (
+        !vehicle.vehicleNumber.trim() ||
+        !vehicle.vehicleType ||
+        !vehicle.capacity
+      ) {
+        alert(
+          `Please complete Vehicle ${i + 1}: Vehicle Number, Vehicle Type and Capacity are required.`
+        );
+        return;
+      }
+    }
 
-      partnerType: "Truck Owner / Fleet Owner",
+    setIsSubmitting(true);
 
-      vehicles,
+    try {
+      // -------------------------------------------------------
+      // DOCUMENT METADATA
+      // Actual files are NOT sent to n8n yet.
+      // Only file information is sent.
+      // -------------------------------------------------------
+      const documentMetadata = {
+        panDocument: (formData.panDocument || []).map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
 
-      fleetSummary: {
-        totalTrucksOwned: formData.totalTrucksOwned,
-        totalAttachedTrucks: formData.totalAttachedTrucks,
-        totalFleetSize:
-          Number(formData.totalTrucksOwned || 0) +
-          Number(formData.totalAttachedTrucks || 0),
-      },
+        gstDocument: (formData.gstDocument || []).map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
 
-      submittedAt: new Date().toISOString(),
+        businessProof: (formData.businessProof || []).map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
 
-      partnerStatus: "Pending Verification",
+        cancelledCheque: (formData.cancelledCheque || []).map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
 
-      requestSource: "Apni Manzil",
-    };
+        fleetPhotos: (formData.fleetPhotos || []).map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
 
-    console.log("TRUCK OWNER PARTNER PAYLOAD:", payload);
+        officePhoto: (formData.officePhoto || []).map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
+      };
 
-    alert(
-      "Registration submitted successfully! Your application is now pending verification."
-    );
+      // -------------------------------------------------------
+      // FINAL PAYLOAD
+      // -------------------------------------------------------
+      const payload = {
+        // Basic
+        serviceCategory: "Truck Transport",
+        partnerType: "Truck Owner / Fleet Owner",
+        requestSource: "Apni Manzil",
+
+        // Owner
+        ownerDetails: {
+          fullName: formData.fullName,
+          businessName: formData.businessName,
+          mobileNumber: formData.mobileNumber,
+          whatsappNumber: formData.whatsappNumber,
+          email: formData.email,
+          alternateNumber: formData.alternateNumber,
+        },
+
+        // Business
+        businessDetails: {
+          businessType: formData.businessType,
+          gstRegistered: formData.gstRegistered,
+          gstNumber: formData.gstNumber,
+          panNumber: formData.panNumber,
+          yearsInBusiness: formData.yearsInBusiness,
+        },
+
+        // Address
+        businessAddress: {
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+        },
+
+        // Fleet
+        fleetDetails: {
+          totalTrucksOwned: Number(formData.totalTrucksOwned || 0),
+          totalAttachedTrucks: Number(formData.totalAttachedTrucks || 0),
+
+          totalFleetSize:
+            Number(formData.totalTrucksOwned || 0) +
+            Number(formData.totalAttachedTrucks || 0),
+        },
+
+        // Vehicles
+        vehicles: vehicles.map((vehicle) => ({
+          vehicleNumber: vehicle.vehicleNumber.toUpperCase(),
+          vehicleType: vehicle.vehicleType,
+          capacity: vehicle.capacity,
+          length: vehicle.length,
+          bodyType: vehicle.bodyType,
+          ownership: vehicle.ownership,
+          rcNumber: vehicle.rcNumber
+            ? vehicle.rcNumber.toUpperCase()
+            : "",
+          insuranceValidTill: vehicle.insuranceValidTill,
+          permitValidTill: vehicle.permitValidTill,
+          fitnessValidTill: vehicle.fitnessValidTill,
+          pucValidTill: vehicle.pucValidTill,
+        })),
+
+        // Services
+        transportationServices: {
+          services: formData.services,
+          goodsTypes: formData.goodsTypes,
+        },
+
+        // Routes
+        operatingArea: {
+          areas: formData.operatingArea,
+          pickupCities: formData.pickupCities,
+          deliveryCities: formData.deliveryCities,
+          preferredRoutes: formData.preferredRoutes,
+        },
+
+        // Availability
+        availability: {
+          immediateLoad: formData.immediateLoad,
+          workingDays: formData.workingDays,
+          pickupTime: formData.pickupTime,
+          advanceBooking: formData.advanceBooking,
+          noticePeriod: formData.noticePeriod,
+          returnLoad: formData.returnLoad,
+        },
+
+        // Driver
+        driverDetails: {
+          driverAvailable: formData.driverAvailable,
+          numberOfDrivers: Number(formData.numberOfDrivers || 0),
+          driverName: formData.driverName,
+          driverMobile: formData.driverMobile,
+          driverLicense: formData.driverLicense,
+          driverExperience: formData.driverExperience,
+        },
+
+        // Additional Services
+        additionalServices: formData.additionalServices,
+
+        // Pricing
+        pricing: {
+          rateType: formData.rateType,
+          minimumTripCharge: formData.minimumTripCharge,
+          minimumKm: formData.minimumKm,
+          tollIncluded: formData.tollIncluded,
+          driverAllowanceIncluded: formData.driverAllowanceIncluded,
+          loadingIncluded: formData.loadingIncluded,
+          unloadingIncluded: formData.unloadingIncluded,
+        },
+
+        // Documents
+        documents: documentMetadata,
+
+        // Business Profile
+        businessProfile: {
+          googleBusinessLink: formData.googleBusinessLink,
+          website: formData.website,
+          additionalInformation: formData.additionalInformation,
+        },
+
+        // Bank
+        bankDetails: {
+          accountHolderName: formData.accountHolderName,
+          bankName: formData.bankName,
+          accountNumber: formData.accountNumber,
+          ifsc: formData.ifsc,
+          upiId: formData.upiId,
+        },
+
+        // Emergency
+        emergencyContact: {
+          name: formData.emergencyName,
+          relationship: formData.emergencyRelationship,
+          mobile: formData.emergencyMobile,
+        },
+
+        // Status
+        partnerStatus: "Pending Verification",
+        verificationStatus: "Pending",
+
+        // Timestamp
+        submittedAt: new Date().toISOString(),
+      };
+
+      console.log("TRUCK OWNER → n8n PAYLOAD:", payload);
+
+      // -------------------------------------------------------
+      // SEND TO n8n
+      // -------------------------------------------------------
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(payload),
+      });
+
+      const responseText = await response.text();
+
+      let responseData = null;
+
+      try {
+        responseData = responseText
+          ? JSON.parse(responseText)
+          : null;
+      } catch {
+        responseData = responseText;
+      }
+
+      console.log("n8n HTTP STATUS:", response.status);
+      console.log("n8n RESPONSE:", responseData);
+
+      if (!response.ok) {
+        throw new Error(
+          `n8n webhook failed with status ${response.status}`
+        );
+      }
+
+      alert(
+        "Registration submitted successfully! Your application is now pending verification."
+      );
+
+      // Optional: reset form after successful submission
+      // window.scrollTo({ top: 0, behavior: "smooth" });
+
+    } catch (error) {
+      console.error("TRUCK OWNER SUBMISSION ERROR:", error);
+
+      alert(
+        "Unable to submit registration. Please make sure n8n is running and the Truck-Owner webhook is active."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -1357,10 +1609,20 @@ const TruckOwnerRegister = () => {
 
               <button
                 type="submit"
-                className="w-full lg:w-auto min-w-[240px] bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-110 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg transition flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full lg:w-auto min-w-[240px] bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg transition flex items-center justify-center gap-2"
               >
-                <CheckCircle2 size={18} />
-                Register as Truck Owner
+                {isSubmitting ? (
+                  <>
+                    <span className="animate-spin">⟳</span>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={18} />
+                    Register as Truck Owner
+                  </>
+                )}
               </button>
 
             </div>
