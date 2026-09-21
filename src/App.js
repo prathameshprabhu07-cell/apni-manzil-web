@@ -46,6 +46,9 @@ import WarehouseRegister from './pages/WarehouseRegister';
 // ✅ Truck Owner / Fleet Owner Register फॉर्म
 import TruckOwnerRegister from './pages/TruckOwnerRegister';
 
+// ✅ Transporter / Logistics Company Register फॉर्म
+import TransporterRegister from './pages/TransporterRegister';
+
 // ✅ International Delivery Form
 import InternationalDelivery from './pages/InternationalDelivery';
 
@@ -264,7 +267,7 @@ function App() {
           <Route path="/vehicle-transport" element={<VehicleTransportForm />} />
           <Route path="/commercial-moving" element={<CommercialMovingForm />} />
 
-          <Route path="/same-day-delivery" element={<SameDayDelivery />} />
+          <Route path="/same-day-delivery" element={<SameDayDelivery />} /> 
 
           <Route path="/warehouse-storage" element={<WarehouseStorage />} />
           <Route path="/international-logistics" element={<InternationalLogistics />} />
@@ -296,10 +299,16 @@ function App() {
             element={<PackersMoversRegister />}
           />
 
-          {/* ✅ NEW: Truck Owner / Fleet Owner Partner Form */}
+          {/* ✅ Truck Owner / Fleet Owner Partner Form */}
           <Route
             path="/truck-owner-register"
             element={<TruckOwnerRegister />}
+          />
+
+          {/* ✅ Transporter / Logistics Company Partner Form */}
+          <Route
+            path="/transporter-register"
+            element={<TransporterRegister />}
           />
 
           {/* Warehouse Partner Form */}

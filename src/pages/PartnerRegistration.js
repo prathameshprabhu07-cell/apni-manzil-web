@@ -33,20 +33,21 @@ const VendorLandingPage = () => {
 
   // Truck Partner Type select केल्यावर
   const handleTruckPartnerSelect = (partnerType) => {
-    // Truck Owner / Fleet Owner साठी थेट Truck Owner Registration Form
+
+    // Truck Owner / Fleet Owner → Truck Owner Form
     if (partnerType === 'Truck Owner / Fleet Owner') {
       setShowTruckOptions(false);
       navigate('/truck-owner-register');
       return;
     }
 
-    // Transporter / Logistics Company साठी existing Vendor Registration
-    navigate('/vendor-register', {
-      state: {
-        selectedCategory: 'Truck Transport',
-        truckPartnerType: partnerType
-      }
-    });
+    // Transporter / Logistics Company → Transporter Form
+    if (partnerType === 'Transporter / Logistics Company') {
+      setShowTruckOptions(false);
+      navigate('/transporter-register');
+      return;
+    }
+
   };
 
   return (
@@ -335,7 +336,7 @@ const VendorLandingPage = () => {
 
 
       {/* ========================================================= */}
-      {/* TRUCK PARTNER TYPE POPUP - ONLY NEW ADDITION */}
+      {/* TRUCK PARTNER TYPE POPUP */}
       {/* ========================================================= */}
 
       {showTruckOptions && (
