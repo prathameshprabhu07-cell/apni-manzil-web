@@ -2,9 +2,7 @@ import React, { useMemo, useState } from "react";
 import {
   ArrowLeft,
   Building2,
-  User,
   Phone,
-  Mail,
   MapPin,
   Truck,
   Package,
@@ -22,6 +20,12 @@ import {
   Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+// ==========================================================
+// n8n WEBHOOK
+// ==========================================================
+const N8N_WEBHOOK_URL =
+  "http://localhost:5678/webhook/Transporter";
 
 const initialFormData = {
   companyName: "",
@@ -217,6 +221,7 @@ export default function TransporterRegister() {
 
       serviceCategory: "Truck Transport",
       partnerType: "Transporter / Logistics Company",
+      requestSource: "Apni Manzil",
 
       fleetSummary: {
         ownTrucks: Number(formData.ownTrucks || 0),
@@ -224,7 +229,12 @@ export default function TransporterRegister() {
         totalFleetSize: totalFleet,
       },
 
-      vehicleCategories: vehicles,
+      vehicleCategories: vehicles.map((vehicle) => ({
+        vehicleType: vehicle.vehicleType || "",
+        count: Number(vehicle.count || 0),
+        capacity: vehicle.capacity || "",
+        bodyType: vehicle.bodyType || "",
+      })),
 
       documents: {
         panCard: documents.panCard?.name || "",
@@ -237,39 +247,50 @@ export default function TransporterRegister() {
 
       partnerStatus: "Pending Verification",
       verificationStatus: "Pending",
-      requestSource: "Apni Manzil",
+
       submittedAt: new Date().toISOString(),
     };
 
     try {
       setIsSubmitting(true);
 
-      /*
-       * ==========================================================
-       * n8n WEBHOOK
-       * ==========================================================
-       *
-       * n8n workflow ready झाल्यावर खालील URL replace कर:
-       *
-       * const N8N_WEBHOOK_URL =
-       *   "https://YOUR-N8N-DOMAIN/webhook/Transporter_Partner";
-       *
-       * मग:
-       *
-       * const response = await fetch(N8N_WEBHOOK_URL, {
-       *   method: "POST",
-       *   headers: {
-       *     "Content-Type": "application/json",
-       *   },
-       *   body: JSON.stringify(payload),
-       * });
-       *
-       * const result = await response.json();
-       */
+      console.log(
+        "TRANSPORTER PARTNER PAYLOAD:",
+        payload
+      );
 
-      console.log("TRANSPORTER PARTNER PAYLOAD:", payload);
+      // ======================================================
+      // SEND DATA TO n8n
+      // ======================================================
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const responseText = await response.text();
+
+      let result = null;
+
+      try {
+        result = responseText
+          ? JSON.parse(responseText)
+          : null;
+      } catch {
+        result = responseText;
+      }
+
+      console.log("n8n Status:", response.status);
+      console.log("n8n Response:", result);
+
+      if (!response.ok) {
+        throw new Error(
+          `n8n webhook failed with status ${response.status}`
+        );
+      }
 
       alert(
         "Transporter registration submitted successfully! Your application is pending verification."
@@ -277,8 +298,11 @@ export default function TransporterRegister() {
 
       navigate("/vendor-landing");
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
+      console.error("TRANSPORTER REGISTRATION ERROR:", error);
+
+      alert(
+        "Registration failed. Please make sure n8n is running and the Transporter webhook is active."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -291,9 +315,14 @@ export default function TransporterRegister() {
       </div>
 
       <div>
-        <h2 className="text-xl font-bold text-[#002D5E]">{title}</h2>
+        <h2 className="text-xl font-bold text-[#002D5E]">
+          {title}
+        </h2>
+
         {subtitle && (
-          <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {subtitle}
+          </p>
         )}
       </div>
     </div>
@@ -309,7 +338,9 @@ export default function TransporterRegister() {
     <div>
       <label className="mb-2 block text-sm font-semibold text-gray-700">
         {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
+        {required && (
+          <span className="ml-1 text-red-500">*</span>
+        )}
       </label>
 
       <input
@@ -324,11 +355,18 @@ export default function TransporterRegister() {
     </div>
   );
 
-  const Select = ({ label, name, options, required = false }) => (
+  const Select = ({
+    label,
+    name,
+    options,
+    required = false,
+  }) => (
     <div>
       <label className="mb-2 block text-sm font-semibold text-gray-700">
         {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
+        {required && (
+          <span className="ml-1 text-red-500">*</span>
+        )}
       </label>
 
       <select
@@ -339,6 +377,7 @@ export default function TransporterRegister() {
         className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
       >
         <option value="">Select</option>
+
         {options.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -348,7 +387,11 @@ export default function TransporterRegister() {
     </div>
   );
 
-  const Textarea = ({ label, name, placeholder = "" }) => (
+  const Textarea = ({
+    label,
+    name,
+    placeholder = "",
+  }) => (
     <div>
       <label className="mb-2 block text-sm font-semibold text-gray-700">
         {label}
@@ -374,15 +417,25 @@ export default function TransporterRegister() {
         onChange={handleChange}
         className="h-4 w-4 accent-orange-500"
       />
-      <span className="text-sm font-medium text-gray-700">{label}</span>
+
+      <span className="text-sm font-medium text-gray-700">
+        {label}
+      </span>
     </label>
   );
 
-  const DocumentUpload = ({ name, label, required = false }) => (
+  const DocumentUpload = ({
+    name,
+    label,
+    required = false,
+  }) => (
     <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
       <label className="mb-2 block text-sm font-semibold text-gray-700">
         {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
+
+        {required && (
+          <span className="ml-1 text-red-500">*</span>
+        )}
       </label>
 
       <input
@@ -419,6 +472,7 @@ export default function TransporterRegister() {
             <h1 className="text-lg font-extrabold text-[#002D5E] sm:text-xl">
               APNI MANZIL
             </h1>
+
             <p className="text-[10px] font-semibold tracking-widest text-orange-500 sm:text-xs">
               GLOBAL LOGISTICS NETWORK
             </p>
@@ -579,7 +633,12 @@ export default function TransporterRegister() {
                 />
               </div>
 
-              <Input label="City" name="city" placeholder="Mumbai" required />
+              <Input
+                label="City"
+                name="city"
+                placeholder="Mumbai"
+                required
+              />
 
               <Input
                 label="State"
@@ -623,6 +682,7 @@ export default function TransporterRegister() {
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Total Fleet
                 </label>
+
                 <div className="flex h-[48px] items-center rounded-xl border border-orange-200 bg-orange-50 px-4 font-bold text-orange-600">
                   {totalFleet} Vehicles
                 </div>
@@ -634,6 +694,7 @@ export default function TransporterRegister() {
                 <h3 className="font-bold text-[#002D5E]">
                   Vehicle Categories
                 </h3>
+
                 <p className="text-xs text-gray-500">
                   Add the major vehicle types available in your network.
                 </p>
@@ -704,7 +765,11 @@ export default function TransporterRegister() {
                       placeholder="No. of Vehicles"
                       value={vehicle.count}
                       onChange={(e) =>
-                        updateVehicle(index, "count", e.target.value)
+                        updateVehicle(
+                          index,
+                          "count",
+                          e.target.value
+                        )
                       }
                       className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-orange-500"
                     />
@@ -714,7 +779,11 @@ export default function TransporterRegister() {
                       placeholder="Capacity e.g. 10 Ton"
                       value={vehicle.capacity}
                       onChange={(e) =>
-                        updateVehicle(index, "capacity", e.target.value)
+                        updateVehicle(
+                          index,
+                          "capacity",
+                          e.target.value
+                        )
                       }
                       className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-orange-500"
                     />
@@ -724,7 +793,11 @@ export default function TransporterRegister() {
                       placeholder="Body Type"
                       value={vehicle.bodyType}
                       onChange={(e) =>
-                        updateVehicle(index, "bodyType", e.target.value)
+                        updateVehicle(
+                          index,
+                          "bodyType",
+                          e.target.value
+                        )
                       }
                       className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-orange-500"
                     />
@@ -745,23 +818,32 @@ export default function TransporterRegister() {
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <Checkbox name="ftl" label="Full Truck Load (FTL)" />
               <Checkbox name="ptl" label="Part Truck Load (PTL)" />
+
               <Checkbox
                 name="dedicatedTransportation"
                 label="Dedicated Transportation"
               />
+
               <Checkbox
                 name="generalTransportation"
                 label="General Transportation"
               />
+
               <Checkbox
                 name="expressTransportation"
                 label="Express Transportation"
               />
+
               <Checkbox
                 name="contractLogistics"
                 label="Contract Logistics"
               />
-              <Checkbox name="returnLoad" label="Return Load" />
+
+              <Checkbox
+                name="returnLoad"
+                label="Return Load"
+              />
+
               <Checkbox
                 name="multimodalTransportation"
                 label="Multimodal Transportation"
@@ -783,14 +865,17 @@ export default function TransporterRegister() {
               <Checkbox name="fmcg" label="FMCG" />
               <Checkbox name="machinery" label="Machinery" />
               <Checkbox name="furniture" label="Furniture" />
+
               <Checkbox
                 name="constructionMaterial"
                 label="Construction Material"
               />
+
               <Checkbox
                 name="agriculturalGoods"
                 label="Agricultural Goods"
               />
+
               <Checkbox name="ecommerce" label="E-commerce" />
             </div>
 
@@ -812,11 +897,30 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <Checkbox name="localDelivery" label="Local Delivery" />
-              <Checkbox name="withinCity" label="Within City" />
-              <Checkbox name="maharashtra" label="Maharashtra" />
-              <Checkbox name="interstate" label="Inter-State" />
-              <Checkbox name="panIndia" label="Pan India" />
+              <Checkbox
+                name="localDelivery"
+                label="Local Delivery"
+              />
+
+              <Checkbox
+                name="withinCity"
+                label="Within City"
+              />
+
+              <Checkbox
+                name="maharashtra"
+                label="Maharashtra"
+              />
+
+              <Checkbox
+                name="interstate"
+                label="Inter-State"
+              />
+
+              <Checkbox
+                name="panIndia"
+                label="Pan India"
+              />
             </div>
 
             <div className="mt-6 grid gap-5 md:grid-cols-2">
@@ -851,13 +955,25 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <Checkbox name="immediateLoad" label="Immediate Load" />
-              <Checkbox name="advanceBooking" label="Advance Booking" />
+              <Checkbox
+                name="immediateLoad"
+                label="Immediate Load"
+              />
+
+              <Checkbox
+                name="advanceBooking"
+                label="Advance Booking"
+              />
+
               <Checkbox
                 name="returnLoadAvailable"
                 label="Return Load Available"
               />
-              <Checkbox name="support247" label="24/7 Operations" />
+
+              <Checkbox
+                name="support247"
+                label="24/7 Operations"
+              />
             </div>
 
             <div className="mt-6 grid gap-5 md:grid-cols-3">
@@ -896,11 +1012,17 @@ export default function TransporterRegister() {
               <Checkbox name="doorToDoor" label="Door-to-Door" />
               <Checkbox name="gpsTracking" label="GPS Tracking" />
               <Checkbox name="epod" label="E-POD / POD" />
+
               <Checkbox
                 name="insuranceAssistance"
                 label="Insurance Assistance"
               />
-              <Checkbox name="warehousing" label="Warehousing" />
+
+              <Checkbox
+                name="warehousing"
+                label="Warehousing"
+              />
+
               <Checkbox
                 name="equipment"
                 label="Loading / Unloading Equipment"
@@ -978,22 +1100,43 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-4 md:grid-cols-2">
-              <DocumentUpload name="panCard" label="PAN Card" />
+              <DocumentUpload
+                name="panCard"
+                label="PAN Card"
+              />
+
               <DocumentUpload
                 name="gstCertificate"
                 label="GST Certificate"
               />
-              <DocumentUpload name="businessProof" label="Business Proof" />
+
+              <DocumentUpload
+                name="businessProof"
+                label="Business Proof"
+              />
+
               <DocumentUpload
                 name="cancelledCheque"
                 label="Cancelled Cheque"
               />
-              <DocumentUpload name="officePhoto" label="Office / Business Photo" />
-              <DocumentUpload name="fleetPhotos" label="Fleet Photos" />
+
+              <DocumentUpload
+                name="officePhoto"
+                label="Office / Business Photo"
+              />
+
+              <DocumentUpload
+                name="fleetPhotos"
+                label="Fleet Photos"
+              />
             </div>
 
             <div className="mt-4 flex gap-3 rounded-xl bg-blue-50 p-4 text-sm text-blue-700">
-              <AlertCircle className="mt-0.5 shrink-0" size={18} />
+              <AlertCircle
+                className="mt-0.5 shrink-0"
+                size={18}
+              />
+
               <p>
                 Documents will be used for Apni Manzil partner verification.
               </p>
@@ -1163,7 +1306,10 @@ export default function TransporterRegister() {
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 size={19} className="animate-spin" />
+                    <Loader2
+                      size={19}
+                      className="animate-spin"
+                    />
                     Submitting...
                   </>
                 ) : (
