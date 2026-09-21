@@ -20,7 +20,7 @@ import {
   EyeOff,
 } from "lucide-react";
 
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const TruckOwnerRegister = () => {
