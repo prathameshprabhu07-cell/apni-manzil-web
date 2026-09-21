@@ -1,363 +1,557 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  ArrowRight,
-  Truck,
-  Building2,
-  Package,
-  Warehouse,
+  ShieldCheck,
   Globe,
+  Warehouse as WarehouseIcon,
+  Truck,
+  Zap,
+  Award,
   X,
+  Building2
 } from 'lucide-react';
 
 const VendorLandingPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [showTruckOptions, setShowTruckOptions] = React.useState(false);
 
+  // सर्व्हिसनुसार योग्य फॉर्म किंवा पेजवर नेण्यासाठी
   const handleServiceSelect = (serviceName) => {
     if (serviceName === 'Warehouse') {
       navigate('/warehouse-register', {
-        state: { selectedCategory: serviceName },
+        state: { selectedCategory: serviceName }
       });
     } else if (serviceName === 'Truck Transport') {
       setShowTruckOptions(true);
     } else {
       navigate('/vendor-register', {
-        state: { selectedCategory: serviceName },
+        state: { selectedCategory: serviceName }
       });
     }
   };
 
+  // Truck Partner Type select केल्यावर
   const handleTruckPartnerSelect = (partnerType) => {
     navigate('/vendor-register', {
       state: {
         selectedCategory: 'Truck Transport',
-        truckPartnerType: partnerType,
-      },
+        truckPartnerType: partnerType
+      }
     });
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-600 to-orange-500">
-        <div className="absolute inset-0 bg-black/10"></div>
+      <div className="relative bg-black text-white overflow-hidden">
 
-        <div className="relative max-w-7xl mx-auto px-6 py-20 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium mb-6">
-            <Truck className="w-4 h-4" />
-            APNI MANZIL PARTNER NETWORK
-          </div>
+        <div className="absolute inset-0 opacity-40">
+          <img
+            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1600"
+            className="w-full h-full object-cover"
+            alt="Logistics Fleet"
+          />
+        </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Grow Your Logistics Business
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+
+        <div className="relative max-w-6xl mx-auto px-6 py-20 lg:py-28 space-y-6">
+
+          <span className="bg-orange-500 text-white text-[10px] font-black uppercase px-4 py-1.5 rounded-full tracking-[0.2em] shadow-lg">
+            Partner Program
+          </span>
+
+          <h1 className="text-4xl lg:text-6xl font-[950] italic uppercase tracking-tight leading-none">
+            Become a <span className="text-orange-500">Partner</span>
           </h1>
 
-          <p className="max-w-3xl mx-auto text-lg md:text-xl text-blue-50 leading-relaxed">
-            Join Apni Manzil and connect your logistics business with customers
-            looking for reliable transportation and logistics services.
+          <p className="text-slate-300 max-w-xl text-sm lg:text-base font-medium leading-relaxed">
+            Join Apni Manzil Partner Network and grow your business with verified leads and endless opportunities across India.
           </p>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <div className="px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white">
-              ✓ Get Customer Leads
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-3xl">
+
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex items-center gap-3">
+              <ShieldCheck className="text-orange-400 shrink-0" size={24} />
+              <div>
+                <h4 className="font-extrabold text-xs uppercase">
+                  Verified Leads
+                </h4>
+                <p className="text-[11px] text-slate-300">
+                  Get genuine & quality leads
+                </p>
+              </div>
             </div>
 
-            <div className="px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white">
-              ✓ Grow Your Business
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex items-center gap-3">
+              <Zap className="text-orange-400 shrink-0" size={24} />
+              <div>
+                <h4 className="font-extrabold text-xs uppercase">
+                  Grow Business
+                </h4>
+                <p className="text-[11px] text-slate-300">
+                  Increase bookings & reach
+                </p>
+              </div>
             </div>
 
-            <div className="px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white">
-              ✓ Expand Your Network
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex items-center gap-3">
+              <Award className="text-orange-400 shrink-0" size={24} />
+              <div>
+                <h4 className="font-extrabold text-xs uppercase">
+                  Trusted Network
+                </h4>
+                <p className="text-[11px] text-slate-300">
+                  India's trusted platform
+                </p>
+              </div>
             </div>
+
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Services Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
 
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              Become Our Logistics Partner
-            </h2>
+      {/* Choose Your Service Section */}
+      <div className="max-w-7xl mx-auto px-6 mt-16">
 
-            <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
-              Select your service category and start receiving relevant
-              business opportunities through Apni Manzil.
-            </p>
+        <div className="text-center space-y-2 mb-12">
+
+          <h2 className="text-3xl font-[950] italic uppercase tracking-tight text-[#002D5E]">
+            Choose Your Service to Register
+          </h2>
+
+          <div className="w-16 h-1.5 bg-orange-500 mx-auto rounded-full"></div>
+
+          <p className="text-slate-500 text-sm font-bold">
+            Select the service category that you provide and register with us.
+          </p>
+
+        </div>
+
+
+        {/* 4 Main Service Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          {/* Card 1: Packers & Movers */}
+          <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between transition-all hover:scale-[1.02] hover:shadow-2xl">
+
+            <div>
+
+              <div className="h-52 relative overflow-hidden">
+
+                <img
+                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800"
+                  className="w-full h-full object-cover"
+                  alt="Packers and Movers"
+                />
+
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur p-3 rounded-2xl text-orange-600 shadow-md">
+                  <Truck size={24} />
+                </div>
+
+              </div>
+
+              <div className="p-6 space-y-3">
+
+                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">
+                  1. Packers & Movers
+                </h3>
+
+                <p className="text-slate-600 text-xs font-medium leading-relaxed">
+                  Register as a Packers & Movers partner and get leads for home shifting, office shifting, vehicle transport and more.
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="p-6 pt-0">
+
+              <button
+                onClick={() => handleServiceSelect('Packers & Movers')}
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2"
+              >
+                Register Now →
+              </button>
+
+            </div>
+
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            {/* Packers & Movers */}
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300">
-              <div className="h-48 overflow-hidden">
+          {/* Card 2: Warehouse */}
+          <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between transition-all hover:scale-[1.02] hover:shadow-2xl">
+
+            <div>
+
+              <div className="h-52 relative overflow-hidden">
+
                 <img
-                  src="https://images.unsplash.com/photo-1600518464441-9154a6bafc5e?auto=format&fit=crop&q=80&w=800"
-                  alt="Packers and Movers"
+                  src="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&q=80&w=800"
                   className="w-full h-full object-cover"
+                  alt="Warehouse Storage"
                 />
-              </div>
 
-              <div className="p-6">
-                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4">
-                  <Package className="w-6 h-6 text-orange-600" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur p-3 rounded-2xl text-blue-600 shadow-md">
+                  <WarehouseIcon size={24} />
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Packers & Movers
+              </div>
+
+              <div className="p-6 space-y-3">
+
+                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">
+                  2. Warehouse Partner
                 </h3>
 
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  Register your Packers & Movers business and get customer
-                  enquiries for residential and commercial shifting.
+                <p className="text-slate-600 text-xs font-medium leading-relaxed">
+                  List your warehouse or storage space with Apni Manzil and get genuine inquiries from corporate & retail customers.
                 </p>
 
-                <button
-                  onClick={() => handleServiceSelect('Packers & Movers')}
-                  className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors"
-                >
-                  Register Now
-                  <ArrowRight className="w-4 h-4" />
-                </button>
               </div>
+
             </div>
 
-            {/* Warehouse */}
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300">
-              <div className="h-48 overflow-hidden">
+            <div className="p-6 pt-0">
+
+              <button
+                onClick={() => handleServiceSelect('Warehouse')}
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2"
+              >
+                Register Now →
+              </button>
+
+            </div>
+
+          </div>
+
+
+          {/* Card 3: International Logistics */}
+          <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between opacity-80">
+
+            <div>
+
+              <div className="h-52 relative overflow-hidden">
+
                 <img
-                  src="https://images.unsplash.com/photo-1586528116493-da8b8f2a1b8c?auto=format&fit=crop&q=80&w=800"
-                  alt="Warehouse"
+                  src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=800"
                   className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="p-6">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
-                  <Warehouse className="w-6 h-6 text-blue-600" />
-                </div>
-
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Warehouse
-                </h3>
-
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  List your warehouse and connect with businesses looking for
-                  storage and fulfillment solutions.
-                </p>
-
-                <button
-                  onClick={() => handleServiceSelect('Warehouse')}
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors"
-                >
-                  Register Now
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* International Logistics */}
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300">
-              <div className="h-48 overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?auto=format&fit=crop&q=80&w=800"
                   alt="International Logistics"
-                  className="w-full h-full object-cover"
                 />
-              </div>
 
-              <div className="p-6">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center mb-4">
-                  <Globe className="w-6 h-6 text-purple-600" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur p-3 rounded-2xl text-teal-600 shadow-md">
+                  <Globe size={24} />
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  International Logistics
+              </div>
+
+              <div className="p-6 space-y-3">
+
+                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">
+                  3. International Logistics
                 </h3>
 
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  Connect with customers looking for international shipping,
-                  freight forwarding and export-import logistics.
+                <p className="text-slate-600 text-xs font-medium leading-relaxed">
+                  Join as an international logistics partner and offer global shipping, air freight, custom clearance and export solutions.
                 </p>
 
-                <button
-                  disabled
-                  className="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-500 font-semibold py-3 rounded-xl cursor-not-allowed"
-                >
-                  Coming Soon
-                </button>
               </div>
+
             </div>
 
-            {/* Truck Transport */}
-            <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300">
-              <div className="h-48 overflow-hidden">
+            <div className="p-6 pt-0">
+
+              <button
+                disabled
+                className="w-full bg-slate-200 text-slate-500 py-4 rounded-2xl font-black uppercase text-xs tracking-wider cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                Coming Soon
+              </button>
+
+            </div>
+
+          </div>
+
+
+          {/* Card 4: Truck Transport - ACTIVE */}
+          <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col justify-between transition-all hover:scale-[1.02] hover:shadow-2xl">
+
+            <div>
+
+              <div className="h-52 relative overflow-hidden">
+
                 <img
                   src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=800"
-                  alt="Truck Transport"
                   className="w-full h-full object-cover"
+                  alt="Truck Transport"
                 />
-              </div>
 
-              <div className="p-6">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
-                  <Truck className="w-6 h-6 text-blue-600" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur p-3 rounded-2xl text-blue-600 shadow-md">
+                  <Truck size={24} />
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Truck Transport
+              </div>
+
+              <div className="p-6 space-y-3">
+
+                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">
+                  4. Truck Transport
                 </h3>
 
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  Register as a Truck Transport partner and get leads for full
-                  truck load, part load, goods transportation and commercial
-                  freight requirements.
+                <p className="text-slate-600 text-xs font-medium leading-relaxed">
+                  Register as a Truck Transport partner and get leads for full truck load, part load, goods transportation and commercial freight requirements.
                 </p>
 
-                <button
-                  onClick={() => handleServiceSelect('Truck Transport')}
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors"
-                >
-                  Register Now
-                  <ArrowRight className="w-4 h-4" />
-                </button>
               </div>
+
+            </div>
+
+            <div className="p-6 pt-0">
+
+              <button
+                onClick={() => handleServiceSelect('Truck Transport')}
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2"
+              >
+                Register Now →
+              </button>
+
             </div>
 
           </div>
+
         </div>
-      </section>
+      </div>
 
-      {/* Truck Partner Type Modal */}
+
+      {/* ========================================================= */}
+      {/* TRUCK PARTNER TYPE POPUP - ONLY NEW ADDITION */}
+      {/* ========================================================= */}
+
       {showTruckOptions && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4">
 
-          <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+          <div className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden">
 
-            {/* Close */}
+            {/* Close Button */}
             <button
+              type="button"
               onClick={() => setShowTruckOptions(false)}
-              className="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors"
+              className="absolute top-5 right-5 z-20 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-slate-700 shadow-md transition"
               aria-label="Close"
             >
-              <X className="w-5 h-5" />
+              <X size={20} />
             </button>
 
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-700 to-blue-600 px-6 md:px-10 py-8 text-white">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center">
-                  <Truck className="w-6 h-6" />
-                </div>
 
-                <div>
-                  <p className="text-blue-100 text-sm">
-                    Truck Transport Partner
-                  </p>
+            {/* Popup Header */}
+            <div className="bg-[#002D5E] text-white px-7 md:px-10 py-8">
 
-                  <h2 className="text-2xl md:text-3xl font-bold">
-                    Select Your Partner Type
-                  </h2>
-                </div>
+              <div className="flex items-center gap-3 mb-2">
+
+                <Truck
+                  size={25}
+                  className="text-orange-400"
+                />
+
+                <span className="text-orange-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                  Truck Transport Partner
+                </span>
+
               </div>
 
-              <p className="text-blue-100 text-sm md:text-base">
-                Choose the option that best describes your transportation
-                business.
+              <h2 className="text-2xl md:text-3xl font-[950] italic uppercase">
+                Select Your Partner Type
+              </h2>
+
+              <p className="text-slate-300 text-xs md:text-sm font-medium mt-2">
+                Choose the option that best describes your transportation business.
               </p>
+
             </div>
 
-            {/* Cards */}
-            <div className="p-6 md:p-10 grid md:grid-cols-2 gap-6">
+
+            {/* Two Partner Cards */}
+            <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+
 
               {/* Truck Owner / Fleet Owner */}
-              <div className="group border-2 border-gray-200 hover:border-blue-500 rounded-2xl p-6 md:p-8 transition-all duration-300 hover:shadow-lg">
+              <div className="bg-white border-2 border-slate-100 hover:border-blue-500 rounded-[2rem] p-7 transition-all duration-300 hover:shadow-xl">
 
-                <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-5 group-hover:bg-blue-600 transition-colors">
-                  <Truck className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" />
+                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-5">
+                  <Truck size={30} />
                 </div>
 
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">
                   Truck Owner / Fleet Owner
                 </h3>
 
-                <p className="text-gray-600 leading-relaxed mb-6">
-                  I own one or more trucks / vehicles and want to provide
-                  transportation services through Apni Manzil.
+                <p className="text-slate-500 text-xs md:text-sm font-medium leading-relaxed mt-3">
+                  Own one or more trucks or a complete fleet?
+                  Register your vehicles and receive relevant
+                  transportation requirements from Apni Manzil.
                 </p>
 
-                <div className="space-y-2 mb-7 text-sm text-gray-600">
-                  <div>✓ Own Truck / Fleet</div>
-                  <div>✓ Vehicle Details</div>
-                  <div>✓ Driver Details</div>
-                  <div>✓ Routes & Capacity</div>
+                <div className="mt-5 space-y-2 text-[11px] font-bold text-slate-600">
+                  <p>✓ Own Truck / Fleet</p>
+                  <p>✓ Vehicle Details</p>
+                  <p>✓ Driver Details</p>
+                  <p>✓ Routes & Capacity</p>
                 </div>
 
                 <button
+                  type="button"
                   onClick={() =>
                     handleTruckPartnerSelect('Truck Owner / Fleet Owner')
                   }
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl transition-colors"
+                  className="w-full mt-7 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-wider shadow-lg hover:brightness-110 transition flex items-center justify-center gap-2"
                 >
-                  Continue as Truck Owner
-                  <ArrowRight className="w-4 h-4" />
+                  Continue as Truck Owner →
                 </button>
+
               </div>
 
-              {/* Transporter / Logistics Company */}
-              <div className="group border-2 border-gray-200 hover:border-orange-500 rounded-2xl p-6 md:p-8 transition-all duration-300 hover:shadow-lg">
 
-                <div className="w-16 h-16 rounded-2xl bg-orange-100 flex items-center justify-center mb-5 group-hover:bg-orange-500 transition-colors">
-                  <Building2 className="w-8 h-8 text-orange-600 group-hover:text-white transition-colors" />
+              {/* Transporter / Logistics Company */}
+              <div className="bg-white border-2 border-slate-100 hover:border-orange-500 rounded-[2rem] p-7 transition-all duration-300 hover:shadow-xl">
+
+                <div className="w-16 h-16 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-5">
+                  <Building2 size={30} />
                 </div>
 
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-[950] text-[#002D5E] uppercase italic">
                   Transporter / Logistics Company
                 </h3>
 
-                <p className="text-gray-600 leading-relaxed mb-6">
-                  I operate a transportation business or manage attached
-                  vehicles and provide logistics services to customers.
+                <p className="text-slate-500 text-xs md:text-sm font-medium leading-relaxed mt-3">
+                  Run a transportation or logistics company?
+                  Manage attached vehicles, routes and customer
+                  transportation requirements through Apni Manzil.
                 </p>
 
-                <div className="space-y-2 mb-7 text-sm text-gray-600">
-                  <div>✓ Attached / Managed Vehicles</div>
-                  <div>✓ Multiple Routes</div>
-                  <div>✓ FTL / PTL Services</div>
-                  <div>✓ Business Transportation</div>
+                <div className="mt-5 space-y-2 text-[11px] font-bold text-slate-600">
+                  <p>✓ Attached Vehicles</p>
+                  <p>✓ Multiple Routes</p>
+                  <p>✓ FTL / PTL Services</p>
+                  <p>✓ Business Transportation</p>
                 </div>
 
                 <button
+                  type="button"
                   onClick={() =>
                     handleTruckPartnerSelect(
                       'Transporter / Logistics Company'
                     )
                   }
-                  className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3.5 rounded-xl transition-colors"
+                  className="w-full mt-7 bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-wider shadow-lg hover:brightness-110 transition flex items-center justify-center gap-2"
                 >
-                  Continue as Transporter
-                  <ArrowRight className="w-4 h-4" />
+                  Continue as Transporter →
                 </button>
+
               </div>
 
             </div>
 
-            <div className="px-6 md:px-10 pb-7 text-center">
-              <p className="text-xs text-gray-500">
-                You can provide your business and vehicle details after
-                selecting your partner type.
+
+            {/* Popup Footer */}
+            <div className="px-8 pb-7 text-center">
+              <p className="text-[10px] text-slate-400 font-medium">
+                Select your partner type to continue with registration.
               </p>
             </div>
 
           </div>
         </div>
       )}
+
+
+      {/* How It Works Section */}
+      <div className="max-w-6xl mx-auto px-6 mt-24">
+
+        <div className="text-center space-y-2 mb-12">
+
+          <h2 className="text-2xl lg:text-3xl font-[950] italic uppercase tracking-tight text-[#002D5E]">
+            How It Works?
+          </h2>
+
+          <div className="w-16 h-1.5 bg-orange-500 mx-auto rounded-full"></div>
+
+        </div>
+
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center space-y-3">
+
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto font-black">
+              1
+            </div>
+
+            <h4 className="font-extrabold text-sm uppercase">
+              1. Register
+            </h4>
+
+            <p className="text-xs text-slate-500 font-medium">
+              Fill the registration form and submit your details.
+            </p>
+
+          </div>
+
+
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center space-y-3">
+
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto font-black">
+              2
+            </div>
+
+            <h4 className="font-extrabold text-sm uppercase">
+              2. Verification
+            </h4>
+
+            <p className="text-xs text-slate-500 font-medium">
+              Our team will verify your documents and business details.
+            </p>
+
+          </div>
+
+
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center space-y-3">
+
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto font-black">
+              3
+            </div>
+
+            <h4 className="font-extrabold text-sm uppercase">
+              3. Approval
+            </h4>
+
+            <p className="text-xs text-slate-500 font-medium">
+              Once verified, your partner account will be activated.
+            </p>
+
+          </div>
+
+
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center space-y-3">
+
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto font-black">
+              4
+            </div>
+
+            <h4 className="font-extrabold text-sm uppercase">
+              4. Get Leads
+            </h4>
+
+            <p className="text-xs text-slate-500 font-medium">
+              Start receiving verified leads and grow your business.
+            </p>
+
+          </div>
+
+        </div>
+      </div>
 
     </div>
   );
