@@ -33,6 +33,14 @@ const VendorLandingPage = () => {
 
   // Truck Partner Type select केल्यावर
   const handleTruckPartnerSelect = (partnerType) => {
+    // Truck Owner / Fleet Owner साठी थेट Truck Owner Registration Form
+    if (partnerType === 'Truck Owner / Fleet Owner') {
+      setShowTruckOptions(false);
+      navigate('/truck-owner-register');
+      return;
+    }
+
+    // Transporter / Logistics Company साठी existing Vendor Registration
     navigate('/vendor-register', {
       state: {
         selectedCategory: 'Truck Transport',

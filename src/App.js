@@ -37,28 +37,31 @@ import SpecialLogistics from './pages/SpecialLogistics';
 import AISmartLogistics from './pages/AISmartLogistics'; 
 import VendorDashboard from './pages/VendorDashboard'; 
 
-// ✅ फक्त PackersMoversRegister फॉर्म इम्पोर्ट
+// ✅ PackersMoversRegister फॉर्म
 import PackersMoversRegister from './pages/PackersMoversRegister'; 
 
-// ✅ वॅारहाऊस रजिस्टर फॉर्म इम्पोर्ट (नवीन जोडला)
+// ✅ Warehouse Register फॉर्म
 import WarehouseRegister from './pages/WarehouseRegister'; 
 
-// ✅ International Delivery Form इम्पोर्ट
+// ✅ Truck Owner / Fleet Owner Register फॉर्म
+import TruckOwnerRegister from './pages/TruckOwnerRegister';
+
+// ✅ International Delivery Form
 import InternationalDelivery from './pages/InternationalDelivery';
 
-// ✅ Customer Dashboard इम्पोर्ट जोडला आहे
+// ✅ Customer Dashboard
 import CustomerDashboard from './CustomerDashboard'; 
 
-// ✅ Marketplace Shipping पेज इम्पोर्ट जोडले आहे
+// ✅ Marketplace Shipping
 import MarketplaceShipping from './pages/MarketplaceShipping'; 
 
-// ✅ COD Shipping पेज इम्पोर्ट जोडले आहे
+// ✅ COD Shipping
 import CODShipping from './pages/CODShipping'; 
 
-// ✅ Inventory Management / Stock Management पेज इम्पोर्ट जोडला आहे
+// ✅ Inventory Management / Stock Management
 import StockManagement from './pages/StockManagement'; 
 
-// ✅ Order Fulfillment Form इम्पोर्ट (Pages फोल्डरमधून)
+// ✅ Order Fulfillment Form
 import OrderFulfillmentForm from './pages/OrderFulfillmentForm';
 
 import HomeShifting from './pages/HomeShifting'; 
@@ -81,35 +84,55 @@ import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 import ColdChainForm from './pages/ColdChainForm';
 import PharmaColdChainForm from './pages/PharmaColdChainForm'; 
 
-// ✅ Fragile Item Shipping फॉर्म इम्पोर्ट
+// ✅ Fragile Item Shipping फॉर्म
 import FragileItemShippingForm from './pages/FragileItemShippingForm'; 
 
-// ✅ Heavy Machinery Transport फॉर्म इम्पोर्ट
+// ✅ Heavy Machinery Transport फॉर्म
 import HeavyMachineryTransportForm from './pages/HeavyMachineryTransportForm'; 
 
-// ✅ Dangerous Goods Transport फॉर्म इम्पोर्ट
+// ✅ Dangerous Goods Transport फॉर्म
 import DangerousGoodsTransportForm from './pages/DangerousGoodsTransportForm'; 
 
-// ✅ Air Cargo फॉर्म इम्पोर्ट
+// ✅ Air Cargo फॉर्म
 import AirCargoForm from './pages/AirCargoForm'; 
 
-// ✅ Sea Freight Form इम्पोर्ट
+// ✅ Sea Freight Form
 import SeaFreightForm from './pages/SeaFreightForm'; 
 
-// ✅ Customs Clearance Form इम्पोर्ट
+// ✅ Customs Clearance Form
 import CustomsClearanceForm from './pages/CustomsClearanceForm'; 
 
 import Auth from './Auth'; 
 
-// ✅ फीडबॅक / रेटिंग कंपोनंट इम्पोर्ट
+// ✅ फीडबॅक / रेटिंग कंपोनंट
 import RatingComponent from './components/RatingComponent'; 
 
 // ==========================================
 // 3. SERVICE PLACEHOLDER COMPONENTS
 // ==========================================
-const AirFreight = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0f9ff' }}><h1 style={{ color: '#0369a1', fontSize: '3rem', fontWeight: '900' }}>International Air Freight</h1></div> );
-const Customs = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}><h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900' }}>Customs & Compliance</h1></div> );
-const TradeFinance = () => ( <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}><h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900' }}>Logistics Trade Finance</h1></div> );
+const AirFreight = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f0f9ff' }}>
+    <h1 style={{ color: '#0369a1', fontSize: '3rem', fontWeight: '900' }}>
+      International Air Freight
+    </h1>
+  </div>
+);
+
+const Customs = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#f5f3ff' }}>
+    <h1 style={{ color: '#6d28d9', fontSize: '3rem', fontWeight: '900' }}>
+      Customs & Compliance
+    </h1>
+  </div>
+);
+
+const TradeFinance = () => (
+  <div style={{ padding: '120px 50px', textAlign: 'center', minHeight: '70vh', background: '#fff1f2' }}>
+    <h1 style={{ color: '#be123c', fontSize: '3rem', fontWeight: '900' }}>
+      Logistics Trade Finance
+    </h1>
+  </div>
+);
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -123,7 +146,9 @@ function App() {
       setLoading(false);
     });
 
-    if (localStorage.getItem('isSuperAdmin') === 'true') setIsAdminAuthenticated(true);
+    if (localStorage.getItem('isSuperAdmin') === 'true') {
+      setIsAdminAuthenticated(true);
+    }
 
     return () => {
       unsubscribeAuth();
@@ -132,6 +157,7 @@ function App() {
 
   const handleAdminLogin = () => {
     const password = prompt("अ‍ॅडमिन गुप्त पासवर्ड टाका:");
+
     if (password === "AM@9922") { 
       localStorage.setItem('isSuperAdmin', 'true');
       setIsAdminAuthenticated(true);
@@ -142,8 +168,18 @@ function App() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#002D5E' }}>
-        <h2 style={{ color: 'white', fontWeight: 'bold' }}>APNI MANZIL LOADING...</h2>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          background: '#002D5E'
+        }}
+      >
+        <h2 style={{ color: 'white', fontWeight: 'bold' }}>
+          APNI MANZIL LOADING...
+        </h2>
       </div>
     );
   }
@@ -152,6 +188,7 @@ function App() {
     <Router>
       <Layout user={currentUser}>
         <Routes>
+
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<About />} />
           <Route path="/help" element={<HelpCenter />} /> 
@@ -161,7 +198,7 @@ function App() {
           <Route path="/register" element={<Auth />} />
           <Route path="/exim-login" element={<Auth />} />
 
-          {/* ✅ Customer Dashboard राऊत जोडला आहे */}
+          {/* ✅ Customer Dashboard */}
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           
           <Route path="/courier-service" element={<CourierServiceDetail />} />
@@ -174,16 +211,16 @@ function App() {
           <Route path="/book-part-load" element={<BookPartLoad />} />
           <Route path="/find-load" element={<FindLoad />} />
 
-          {/* ✅ Marketplace Shipping राऊत */}
+          {/* ✅ Marketplace Shipping */}
           <Route path="/marketplace-shipping" element={<MarketplaceShipping />} />
 
-          {/* ✅ COD Shipping राऊत जोडला आहे */}
+          {/* ✅ COD Shipping */}
           <Route path="/cod-shipping" element={<CODShipping />} />
 
-          {/* ✅ Stock Management / Inventory Handling राऊत जोडला आहे */}
+          {/* ✅ Stock Management / Inventory Handling */}
           <Route path="/stock-management" element={<StockManagement />} />
 
-          {/* ✅ Order Fulfillment Form राऊत */}
+          {/* ✅ Order Fulfillment Form */}
           <Route path="/order-fulfillment" element={<OrderFulfillmentForm />} />
 
           <Route path="/short-term-storage" element={<ShortTermStorageForm />} />
@@ -193,29 +230,29 @@ function App() {
           <Route path="/inventory-management" element={<InventoryManagementForm />} />
           <Route path="/bulk-pallet-storage" element={<BulkPalletStorageForm />} />
 
-          {/* ✅ कोल्ड चेन आणि फार्मा कोल्ड चेन लॉजिस्टिक्स राऊट्स */}
+          {/* ✅ Cold Chain */}
           <Route path="/cold-chain" element={<ColdChainForm />} />
           <Route path="/pharma-cold-chain" element={<PharmaColdChainForm />} />
 
-          {/* ✅ Fragile Item Shipping राऊत */}
+          {/* ✅ Fragile Item Shipping */}
           <Route path="/fragile-item-shipping" element={<FragileItemShippingForm />} />
 
-          {/* ✅ Heavy Machinery Transport राऊत */}
+          {/* ✅ Heavy Machinery Transport */}
           <Route path="/heavy-machinery-transport" element={<HeavyMachineryTransportForm />} />
 
-          {/* ✅ Dangerous Goods Transport राऊत */}
+          {/* ✅ Dangerous Goods Transport */}
           <Route path="/dangerous-goods-transport" element={<DangerousGoodsTransportForm />} />
 
-          {/* ✅ Air Cargo Form राऊत */}
+          {/* ✅ Air Cargo */}
           <Route path="/air-cargo" element={<AirCargoForm />} />
 
-          {/* ✅ Sea Freight Form राऊत */}
+          {/* ✅ Sea Freight */}
           <Route path="/sea-freight" element={<SeaFreightForm />} />
 
-          {/* ✅ Customs Clearance Form राऊत */}
+          {/* ✅ Customs Clearance */}
           <Route path="/customs-clearance" element={<CustomsClearanceForm />} />
 
-          {/* ✅ International Delivery (Shiprocket Style) Form राऊत */}
+          {/* ✅ International Delivery */}
           <Route path="/international-delivery" element={<InternationalDelivery />} />
 
           <Route path="/importexport" element={<ImportExportDetail />} />
@@ -239,36 +276,93 @@ function App() {
           <Route path="/customs" element={<Customs />} />
           <Route path="/tradefinance" element={<TradeFinance />} />
           
-          {/* ✅ पार्टनर लँडिंग पेज आणि फॉर्म राऊट्स */}
-          <Route path="/vendor-landing" element={<PartnerRegistration />} />
-          <Route path="/partner-registration" element={<PartnerRegistration />} />
-          <Route path="/vendor-register" element={<PackersMoversRegister />} /> 
-          
-          {/* ✅ वॅारहाऊस रजिस्टर राऊत जोडला */}
-          <Route path="/warehouse-register" element={<WarehouseRegister />} /> 
+          {/* ==========================================
+              PARTNER LANDING & REGISTRATION ROUTES
+          ========================================== */}
 
-          {/* ✅ नवीन रेटिंग आणि फीडबॅक राऊत */}
-          <Route path="/rating" element={
-            <div className="max-w-4xl mx-auto px-6 py-16">
-              <div className="bg-white rounded-[3rem] p-8 shadow-sm border border-slate-100">
-                <RatingComponent />
+          <Route
+            path="/vendor-landing"
+            element={<PartnerRegistration />}
+          />
+
+          <Route
+            path="/partner-registration"
+            element={<PartnerRegistration />}
+          />
+
+          {/* Existing Packers & Movers Partner Form */}
+          <Route
+            path="/vendor-register"
+            element={<PackersMoversRegister />}
+          />
+
+          {/* ✅ NEW: Truck Owner / Fleet Owner Partner Form */}
+          <Route
+            path="/truck-owner-register"
+            element={<TruckOwnerRegister />}
+          />
+
+          {/* Warehouse Partner Form */}
+          <Route
+            path="/warehouse-register"
+            element={<WarehouseRegister />}
+          />
+
+          {/* ==========================================
+              RATING & FEEDBACK
+          ========================================== */}
+
+          <Route
+            path="/rating"
+            element={
+              <div className="max-w-4xl mx-auto px-6 py-16">
+                <div className="bg-white rounded-[3rem] p-8 shadow-sm border border-slate-100">
+                  <RatingComponent />
+                </div>
               </div>
-            </div>
-          } />
+            }
+          />
           
-          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+          <Route
+            path="/vendor-dashboard"
+            element={<VendorDashboard />}
+          />
           
           <Route 
             path="/super-secret-admin-99" 
-            element={isAdminAuthenticated ? <AdminDashboard /> : <div style={{textAlign:'center', padding:'100px'}}><button onClick={handleAdminLogin}>Unlock Admin Panel</button></div>} 
+            element={
+              isAdminAuthenticated
+                ? <AdminDashboard />
+                : (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      padding: '100px'
+                    }}
+                  >
+                    <button onClick={handleAdminLogin}>
+                      Unlock Admin Panel
+                    </button>
+                  </div>
+                )
+            } 
           />
 
-          <Route path="/msme-registration" element={<MSMERegistration />} />
+          <Route
+            path="/msme-registration"
+            element={<MSMERegistration />}
+          />
           
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route
+            path="*"
+            element={<Navigate to="/" />}
+          />
+
         </Routes>
       </Layout>
+
       <ChatBot />
+
     </Router>
   );
 }
