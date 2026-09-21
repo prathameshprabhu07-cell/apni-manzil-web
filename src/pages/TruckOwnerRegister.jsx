@@ -14,7 +14,14 @@ import {
   CheckCircle2,
   ChevronDown,
   AlertCircle,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
+
+import { auth } from "./firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const TruckOwnerRegister = () => {
   // =========================================================
@@ -48,6 +55,7 @@ const TruckOwnerRegister = () => {
     mobileNumber: "",
     whatsappNumber: "",
     email: "",
+    password: "",
     alternateNumber: "",
 
     // Business
@@ -136,6 +144,7 @@ const TruckOwnerRegister = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const vehicleTypes = [
     "Mini Truck",
@@ -295,7 +304,8 @@ const TruckOwnerRegister = () => {
     "bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 lg:p-8";
 
   // =========================================================
-  // SUBMIT → n8n
+  // SUBMIT
+  // Firebase Account → n8n
   // =========================================================
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -307,6 +317,21 @@ const TruckOwnerRegister = () => {
 
     if (!formData.mobileNumber.trim()) {
       alert("Please enter Mobile Number.");
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      alert("Please enter Email Address.");
+      return;
+    }
+
+    if (!formData.password) {
+      alert("Please create a password.");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters.");
       return;
     }
 
@@ -348,11 +373,31 @@ const TruckOwnerRegister = () => {
     setIsSubmitting(true);
 
     try {
-      // -------------------------------------------------------
-      // DOCUMENT METADATA
+      // =====================================================
+      // 1. CREATE FIREBASE AUTH ACCOUNT
+      // =====================================================
+
+      const email = formData.email.trim().toLowerCase();
+
+      const firebaseResult =
+        await createUserWithEmailAndPassword(
+          auth,
+          email,
+          formData.password
+        );
+
+      const firebaseUser = firebaseResult.user;
+
+      console.log(
+        "FIREBASE ACCOUNT CREATED:",
+        firebaseUser.uid
+      );
+
+      // =====================================================
+      // 2. DOCUMENT METADATA
       // Actual files are NOT sent to n8n yet.
-      // Only file information is sent.
-      // -------------------------------------------------------
+      // =====================================================
+
       const documentMetadata = {
         panDocument: (formData.panDocument || []).map((file) => ({
           name: file.name,
@@ -391,10 +436,17 @@ const TruckOwnerRegister = () => {
         })),
       };
 
-      // -------------------------------------------------------
-      // FINAL PAYLOAD
-      // -------------------------------------------------------
+      // =====================================================
+      // 3. FINAL PAYLOAD
+      // Password is intentionally NOT included.
+      // =====================================================
+
       const payload = {
+        // Firebase Account
+        Firebase_UID: firebaseUser.uid,
+        accountEmail: email,
+        accountProvider: "password",
+
         // Basic
         serviceCategory: "Truck Transport",
         partnerType: "Truck Owner / Fleet Owner",
@@ -406,7 +458,7 @@ const TruckOwnerRegister = () => {
           businessName: formData.businessName,
           mobileNumber: formData.mobileNumber,
           whatsappNumber: formData.whatsappNumber,
-          email: formData.email,
+          email: email,
           alternateNumber: formData.alternateNumber,
         },
 
@@ -429,8 +481,13 @@ const TruckOwnerRegister = () => {
 
         // Fleet
         fleetDetails: {
-          totalTrucksOwned: Number(formData.totalTrucksOwned || 0),
-          totalAttachedTrucks: Number(formData.totalAttachedTrucks || 0),
+          totalTrucksOwned: Number(
+            formData.totalTrucksOwned || 0
+          ),
+
+          totalAttachedTrucks: Number(
+            formData.totalAttachedTrucks || 0
+          ),
 
           totalFleetSize:
             Number(formData.totalTrucksOwned || 0) +
@@ -439,19 +496,30 @@ const TruckOwnerRegister = () => {
 
         // Vehicles
         vehicles: vehicles.map((vehicle) => ({
-          vehicleNumber: vehicle.vehicleNumber.toUpperCase(),
+          vehicleNumber:
+            vehicle.vehicleNumber.toUpperCase(),
+
           vehicleType: vehicle.vehicleType,
           capacity: vehicle.capacity,
           length: vehicle.length,
           bodyType: vehicle.bodyType,
           ownership: vehicle.ownership,
+
           rcNumber: vehicle.rcNumber
             ? vehicle.rcNumber.toUpperCase()
             : "",
-          insuranceValidTill: vehicle.insuranceValidTill,
-          permitValidTill: vehicle.permitValidTill,
-          fitnessValidTill: vehicle.fitnessValidTill,
-          pucValidTill: vehicle.pucValidTill,
+
+          insuranceValidTill:
+            vehicle.insuranceValidTill,
+
+          permitValidTill:
+            vehicle.permitValidTill,
+
+          fitnessValidTill:
+            vehicle.fitnessValidTill,
+
+          pucValidTill:
+            vehicle.pucValidTill,
         })),
 
         // Services
@@ -480,26 +548,41 @@ const TruckOwnerRegister = () => {
 
         // Driver
         driverDetails: {
-          driverAvailable: formData.driverAvailable,
-          numberOfDrivers: Number(formData.numberOfDrivers || 0),
+          driverAvailable:
+            formData.driverAvailable,
+
+          numberOfDrivers: Number(
+            formData.numberOfDrivers || 0
+          ),
+
           driverName: formData.driverName,
           driverMobile: formData.driverMobile,
           driverLicense: formData.driverLicense,
-          driverExperience: formData.driverExperience,
+          driverExperience:
+            formData.driverExperience,
         },
 
         // Additional Services
-        additionalServices: formData.additionalServices,
+        additionalServices:
+          formData.additionalServices,
 
         // Pricing
         pricing: {
           rateType: formData.rateType,
-          minimumTripCharge: formData.minimumTripCharge,
+          minimumTripCharge:
+            formData.minimumTripCharge,
+
           minimumKm: formData.minimumKm,
           tollIncluded: formData.tollIncluded,
-          driverAllowanceIncluded: formData.driverAllowanceIncluded,
-          loadingIncluded: formData.loadingIncluded,
-          unloadingIncluded: formData.unloadingIncluded,
+
+          driverAllowanceIncluded:
+            formData.driverAllowanceIncluded,
+
+          loadingIncluded:
+            formData.loadingIncluded,
+
+          unloadingIncluded:
+            formData.unloadingIncluded,
         },
 
         // Documents
@@ -507,24 +590,35 @@ const TruckOwnerRegister = () => {
 
         // Business Profile
         businessProfile: {
-          googleBusinessLink: formData.googleBusinessLink,
+          googleBusinessLink:
+            formData.googleBusinessLink,
+
           website: formData.website,
-          additionalInformation: formData.additionalInformation,
+
+          additionalInformation:
+            formData.additionalInformation,
         },
 
         // Bank
         bankDetails: {
-          accountHolderName: formData.accountHolderName,
+          accountHolderName:
+            formData.accountHolderName,
+
           bankName: formData.bankName,
-          accountNumber: formData.accountNumber,
+
+          accountNumber:
+            formData.accountNumber,
+
           ifsc: formData.ifsc,
+
           upiId: formData.upiId,
         },
 
         // Emergency
         emergencyContact: {
           name: formData.emergencyName,
-          relationship: formData.emergencyRelationship,
+          relationship:
+            formData.emergencyRelationship,
           mobile: formData.emergencyMobile,
         },
 
@@ -536,22 +630,30 @@ const TruckOwnerRegister = () => {
         submittedAt: new Date().toISOString(),
       };
 
-      console.log("TRUCK OWNER → n8n PAYLOAD:", payload);
+      console.log(
+        "TRUCK OWNER → n8n PAYLOAD:",
+        payload
+      );
 
-      // -------------------------------------------------------
-      // SEND TO n8n
-      // -------------------------------------------------------
-      const response = await fetch(N8N_WEBHOOK_URL, {
-        method: "POST",
+      // =====================================================
+      // 4. SEND TO n8n
+      // =====================================================
 
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(
+        N8N_WEBHOOK_URL,
+        {
+          method: "POST",
 
-        body: JSON.stringify(payload),
-      });
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-      const responseText = await response.text();
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const responseText =
+        await response.text();
 
       let responseData = null;
 
@@ -563,8 +665,15 @@ const TruckOwnerRegister = () => {
         responseData = responseText;
       }
 
-      console.log("n8n HTTP STATUS:", response.status);
-      console.log("n8n RESPONSE:", responseData);
+      console.log(
+        "n8n HTTP STATUS:",
+        response.status
+      );
+
+      console.log(
+        "n8n RESPONSE:",
+        responseData
+      );
 
       if (!response.ok) {
         throw new Error(
@@ -573,18 +682,39 @@ const TruckOwnerRegister = () => {
       }
 
       alert(
-        "Registration submitted successfully! Your application is now pending verification."
+        "Registration submitted successfully! Your account has been created and your partner application is now pending verification."
       );
-
-      // Optional: reset form after successful submission
-      // window.scrollTo({ top: 0, behavior: "smooth" });
 
     } catch (error) {
-      console.error("TRUCK OWNER SUBMISSION ERROR:", error);
-
-      alert(
-        "Unable to submit registration. Please make sure n8n is running and the Truck-Owner webhook is active."
+      console.error(
+        "TRUCK OWNER SUBMISSION ERROR:",
+        error
       );
+
+      if (
+        error?.code ===
+        "auth/email-already-in-use"
+      ) {
+        alert(
+          "This email is already registered. Please use another email or login with your existing account."
+        );
+      } else if (
+        error?.code === "auth/invalid-email"
+      ) {
+        alert(
+          "Please enter a valid email address."
+        );
+      } else if (
+        error?.code === "auth/weak-password"
+      ) {
+        alert(
+          "Password must be at least 6 characters."
+        );
+      } else {
+        alert(
+          "Unable to submit registration. Please make sure Firebase and n8n are configured correctly."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -599,6 +729,7 @@ const TruckOwnerRegister = () => {
           <div className="absolute right-0 top-0 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl" />
 
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
             <div>
               <div className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider mb-4">
                 <Truck size={15} />
@@ -616,24 +747,36 @@ const TruckOwnerRegister = () => {
             </div>
 
             <div className="bg-white/10 border border-white/10 backdrop-blur-md rounded-2xl p-5 min-w-[210px]">
+
               <p className="text-[10px] uppercase font-black text-slate-300">
                 Partner Type
               </p>
 
               <div className="flex items-center gap-2 mt-2">
-                <Truck className="text-orange-400" size={20} />
+
+                <Truck
+                  className="text-orange-400"
+                  size={20}
+                />
+
                 <span className="font-extrabold text-sm">
                   Truck Owner / Fleet Owner
                 </span>
+
               </div>
             </div>
+
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-7">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-7"
+        >
 
           {/* 1 Owner Details */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="01"
               icon={<User size={20} />}
@@ -679,12 +822,13 @@ const TruckOwnerRegister = () => {
               />
 
               <Field
-                label="Email Address"
+                label="Email Address *"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="example@email.com"
                 type="email"
+                required
               />
 
               <Field
@@ -701,6 +845,7 @@ const TruckOwnerRegister = () => {
 
           {/* 2 Business Details */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="02"
               icon={<Building2 size={20} />}
@@ -765,6 +910,7 @@ const TruckOwnerRegister = () => {
 
           {/* 3 Address */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="03"
               icon={<MapPin size={20} />}
@@ -821,6 +967,7 @@ const TruckOwnerRegister = () => {
 
           {/* 4 Fleet */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="04"
               icon={<Truck size={20} />}
@@ -851,10 +998,12 @@ const TruckOwnerRegister = () => {
             </div>
 
             <div className="flex items-center justify-between mb-5">
+
               <div>
                 <h3 className="font-black text-[#002D5E] uppercase text-sm">
                   Your Vehicles
                 </h3>
+
                 <p className="text-xs text-slate-500 mt-1">
                   Add every truck that you want to register.
                 </p>
@@ -868,16 +1017,20 @@ const TruckOwnerRegister = () => {
                 <Plus size={16} />
                 Add Vehicle
               </button>
+
             </div>
 
             <div className="space-y-6">
 
               {vehicles.map((vehicle, index) => (
+
                 <div
                   key={index}
                   className="border border-slate-200 rounded-3xl p-5 bg-slate-50"
                 >
+
                   <div className="flex items-center justify-between mb-5">
+
                     <h4 className="font-black text-[#002D5E]">
                       Vehicle {index + 1}
                     </h4>
@@ -885,12 +1038,15 @@ const TruckOwnerRegister = () => {
                     {vehicles.length > 1 && (
                       <button
                         type="button"
-                        onClick={() => removeVehicle(index)}
+                        onClick={() =>
+                          removeVehicle(index)
+                        }
                         className="text-red-500 hover:text-red-700"
                       >
                         <Trash2 size={18} />
                       </button>
                     )}
+
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -925,7 +1081,11 @@ const TruckOwnerRegister = () => {
                       label="Capacity (Ton) *"
                       value={vehicle.capacity}
                       onChange={(e) =>
-                        updateVehicle(index, "capacity", e.target.value)
+                        updateVehicle(
+                          index,
+                          "capacity",
+                          e.target.value
+                        )
                       }
                       placeholder="Example: 10"
                       type="number"
@@ -935,7 +1095,11 @@ const TruckOwnerRegister = () => {
                       label="Vehicle Length / Size"
                       value={vehicle.length}
                       onChange={(e) =>
-                        updateVehicle(index, "length", e.target.value)
+                        updateVehicle(
+                          index,
+                          "length",
+                          e.target.value
+                        )
                       }
                       placeholder="Example: 17 Ft"
                     />
@@ -1033,6 +1197,7 @@ const TruckOwnerRegister = () => {
 
                   </div>
                 </div>
+
               ))}
 
             </div>
@@ -1040,6 +1205,7 @@ const TruckOwnerRegister = () => {
 
           {/* 5 Services */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="05"
               icon={<Truck size={20} />}
@@ -1052,24 +1218,33 @@ const TruckOwnerRegister = () => {
               items={services}
               selected={formData.services}
               onChange={(value) =>
-                handleMultiSelect("services", value)
+                handleMultiSelect(
+                  "services",
+                  value
+                )
               }
             />
 
             <div className="mt-8">
+
               <CheckboxGrid
                 title="Goods / Load Types"
                 items={goodsTypes}
                 selected={formData.goodsTypes}
                 onChange={(value) =>
-                  handleMultiSelect("goodsTypes", value)
+                  handleMultiSelect(
+                    "goodsTypes",
+                    value
+                  )
                 }
               />
+
             </div>
           </section>
 
           {/* 6 Operating Area */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="06"
               icon={<MapPin size={20} />}
@@ -1082,7 +1257,10 @@ const TruckOwnerRegister = () => {
               items={areas}
               selected={formData.operatingArea}
               onChange={(value) =>
-                handleMultiSelect("operatingArea", value)
+                handleMultiSelect(
+                  "operatingArea",
+                  value
+                )
               }
             />
 
@@ -1117,6 +1295,7 @@ const TruckOwnerRegister = () => {
 
           {/* 7 Availability */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="07"
               icon={<CheckCircle2 size={20} />}
@@ -1175,19 +1354,25 @@ const TruckOwnerRegister = () => {
             </div>
 
             <div className="mt-7">
+
               <CheckboxGrid
                 title="Working Days"
                 items={days}
                 selected={formData.workingDays}
                 onChange={(value) =>
-                  handleMultiSelect("workingDays", value)
+                  handleMultiSelect(
+                    "workingDays",
+                    value
+                  )
                 }
               />
+
             </div>
           </section>
 
           {/* 8 Driver */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="08"
               icon={<User size={20} />}
@@ -1256,6 +1441,7 @@ const TruckOwnerRegister = () => {
 
           {/* 9 Additional Services */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="09"
               icon={<ShieldCheck size={20} />}
@@ -1268,13 +1454,18 @@ const TruckOwnerRegister = () => {
               items={additionalServices}
               selected={formData.additionalServices}
               onChange={(value) =>
-                handleMultiSelect("additionalServices", value)
+                handleMultiSelect(
+                  "additionalServices",
+                  value
+                )
               }
             />
+
           </section>
 
           {/* 10 Pricing */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="10"
               icon={<CreditCard size={20} />}
@@ -1326,7 +1517,9 @@ const TruckOwnerRegister = () => {
               <SelectField
                 label="Driver Allowance Included?"
                 name="driverAllowanceIncluded"
-                value={formData.driverAllowanceIncluded}
+                value={
+                  formData.driverAllowanceIncluded
+                }
                 onChange={handleChange}
                 options={["Yes", "No"]}
               />
@@ -1352,6 +1545,7 @@ const TruckOwnerRegister = () => {
 
           {/* 11 Documents */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="11"
               icon={<FileText size={20} />}
@@ -1401,16 +1595,23 @@ const TruckOwnerRegister = () => {
             </div>
 
             <div className="mt-5 bg-blue-50 border border-blue-100 rounded-2xl p-4 flex gap-3">
-              <AlertCircle className="text-blue-600 shrink-0" size={19} />
+
+              <AlertCircle
+                className="text-blue-600 shrink-0"
+                size={19}
+              />
+
               <p className="text-xs text-blue-800 font-medium leading-relaxed">
                 Vehicle-specific RC, Insurance, Permit, Fitness and PUC
                 documents can be uploaded during vehicle verification.
               </p>
+
             </div>
           </section>
 
           {/* 12 Bank */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="12"
               icon={<CreditCard size={20} />}
@@ -1466,6 +1667,7 @@ const TruckOwnerRegister = () => {
 
           {/* 13 Profile */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="13"
               icon={<Building2 size={20} />}
@@ -1494,6 +1696,7 @@ const TruckOwnerRegister = () => {
             </div>
 
             <div className="mt-5">
+
               <label className={labelClass}>
                 Additional Information
               </label>
@@ -1506,11 +1709,13 @@ const TruckOwnerRegister = () => {
                 placeholder="Tell us anything else about your fleet or transportation service..."
                 className={inputClass}
               />
+
             </div>
           </section>
 
           {/* 14 Emergency */}
           <section className={sectionClass}>
+
             <SectionTitle
               number="14"
               icon={<Phone size={20} />}
@@ -1531,7 +1736,9 @@ const TruckOwnerRegister = () => {
               <Field
                 label="Relationship"
                 name="emergencyRelationship"
-                value={formData.emergencyRelationship}
+                value={
+                  formData.emergencyRelationship
+                }
                 onChange={handleChange}
                 placeholder="Relationship"
               />
@@ -1548,10 +1755,116 @@ const TruckOwnerRegister = () => {
             </div>
           </section>
 
-          {/* 15 Declaration */}
+          {/* 15 Login Details */}
+          <section className="bg-white rounded-[2rem] border-2 border-orange-200 shadow-sm p-6 lg:p-8">
+
+            <SectionTitle
+              number="15"
+              icon={<Lock size={20} />}
+              title="Partner Login Details"
+              subtitle="Create your Apni Manzil Vendor Dashboard login account."
+            />
+
+            <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 mb-6 flex gap-3">
+
+              <ShieldCheck
+                className="text-orange-500 shrink-0"
+                size={20}
+              />
+
+              <p className="text-xs text-orange-800 font-medium leading-relaxed">
+                Your password is securely handled by Firebase Authentication.
+                It will never be sent to n8n, Google Sheets, or our partner
+                database.
+              </p>
+
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+              <div>
+
+                <label className={labelClass}>
+                  Login Email *
+                </label>
+
+                <div className="relative">
+
+                  <Mail
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
+
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="example@email.com"
+                    required
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                  />
+
+                </div>
+
+              </div>
+
+              <div>
+
+                <label className={labelClass}>
+                  Create Password *
+                </label>
+
+                <div className="relative">
+
+                  <Lock
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
+
+                  <input
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Minimum 6 characters"
+                    required
+                    minLength={6}
+                    className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPassword(
+                        !showPassword
+                      )
+                    }
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-500"
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
+          {/* 16 Declaration */}
           <section className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 lg:p-8">
 
             <div className="flex items-start gap-3">
+
               <input
                 type="checkbox"
                 name="declaration"
@@ -1564,9 +1877,11 @@ const TruckOwnerRegister = () => {
                 I confirm that the information provided by me is correct and
                 belongs to my business / fleet.
               </label>
+
             </div>
 
             <div className="flex items-start gap-3 mt-5">
+
               <input
                 type="checkbox"
                 name="termsAccepted"
@@ -1580,6 +1895,7 @@ const TruckOwnerRegister = () => {
                 understand that my application will be verified before
                 activation.
               </label>
+
             </div>
 
           </section>
@@ -1590,21 +1906,25 @@ const TruckOwnerRegister = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
               <div className="flex items-start gap-3 text-white">
+
                 <ShieldCheck
                   className="text-orange-400 shrink-0 mt-1"
                   size={25}
                 />
 
                 <div>
+
                   <h3 className="font-black uppercase text-sm">
                     Partner Verification
                   </h3>
 
                   <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                    After submission, our team will verify your details and
-                    documents before activating your partner account.
+                    Your Firebase account will be created and your partner
+                    application will be submitted for verification.
                   </p>
+
                 </div>
+
               </div>
 
               <button
@@ -1612,10 +1932,13 @@ const TruckOwnerRegister = () => {
                 disabled={isSubmitting}
                 className="w-full lg:w-auto min-w-[240px] bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-lg transition flex items-center justify-center gap-2"
               >
+
                 {isSubmitting ? (
                   <>
-                    <span className="animate-spin">⟳</span>
-                    Submitting...
+                    <span className="animate-spin">
+                      ⟳
+                    </span>
+                    Creating Account...
                   </>
                 ) : (
                   <>
@@ -1623,6 +1946,7 @@ const TruckOwnerRegister = () => {
                     Register as Truck Owner
                   </>
                 )}
+
               </button>
 
             </div>
@@ -1638,7 +1962,12 @@ const TruckOwnerRegister = () => {
    REUSABLE COMPONENTS
 ========================= */
 
-const SectionTitle = ({ number, icon, title, subtitle }) => {
+const SectionTitle = ({
+  number,
+  icon,
+  title,
+  subtitle,
+}) => {
   return (
     <div className="flex items-start gap-4 mb-7">
 
@@ -1647,7 +1976,9 @@ const SectionTitle = ({ number, icon, title, subtitle }) => {
       </div>
 
       <div>
+
         <div className="flex items-center gap-2">
+
           <span className="text-[10px] font-black text-orange-500">
             {number}
           </span>
@@ -1655,11 +1986,13 @@ const SectionTitle = ({ number, icon, title, subtitle }) => {
           <h2 className="text-xl lg:text-2xl font-[950] uppercase italic text-[#002D5E]">
             {title}
           </h2>
+
         </div>
 
         <p className="text-xs text-slate-500 font-medium mt-1">
           {subtitle}
         </p>
+
       </div>
 
     </div>
@@ -1677,6 +2010,7 @@ const Field = ({
 }) => {
   return (
     <div>
+
       <label className="block text-xs font-extrabold uppercase tracking-wide text-slate-600 mb-2">
         {label}
       </label>
@@ -1690,6 +2024,7 @@ const Field = ({
         required={required}
         className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
       />
+
     </div>
   );
 };
@@ -1703,30 +2038,40 @@ const SelectField = ({
 }) => {
   return (
     <div>
+
       <label className="block text-xs font-extrabold uppercase tracking-wide text-slate-600 mb-2">
         {label}
       </label>
 
       <div className="relative">
+
         <select
           name={name}
           value={value}
           onChange={onChange}
           className="w-full appearance-none px-4 py-3.5 pr-10 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
         >
-          <option value="">Select</option>
+
+          <option value="">
+            Select
+          </option>
 
           {options.map((option) => (
-            <option key={option} value={option}>
+            <option
+              key={option}
+              value={option}
+            >
               {option}
             </option>
           ))}
+
         </select>
 
         <ChevronDown
           size={17}
           className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"
         />
+
       </div>
     </div>
   );
@@ -1740,6 +2085,7 @@ const CheckboxGrid = ({
 }) => {
   return (
     <div>
+
       <h3 className="text-xs font-black uppercase tracking-wide text-slate-600 mb-3">
         {title}
       </h3>
@@ -1747,7 +2093,9 @@ const CheckboxGrid = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
         {items.map((item) => {
-          const active = selected.includes(item);
+
+          const active =
+            selected.includes(item);
 
           return (
             <button
@@ -1760,7 +2108,9 @@ const CheckboxGrid = ({
                   : "bg-slate-50 border-slate-200 text-slate-600 hover:border-orange-300"
               }`}
             >
+
               <span className="flex items-center gap-2">
+
                 <span
                   className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                     active
@@ -1772,7 +2122,9 @@ const CheckboxGrid = ({
                 </span>
 
                 {item}
+
               </span>
+
             </button>
           );
         })}
@@ -1791,6 +2143,7 @@ const VehicleField = ({
 }) => {
   return (
     <div>
+
       <label className="block text-xs font-extrabold uppercase tracking-wide text-slate-600 mb-2">
         {label}
       </label>
@@ -1802,6 +2155,7 @@ const VehicleField = ({
         placeholder={placeholder}
         className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
       />
+
     </div>
   );
 };
@@ -1814,6 +2168,7 @@ const VehicleSelect = ({
 }) => {
   return (
     <div>
+
       <label className="block text-xs font-extrabold uppercase tracking-wide text-slate-600 mb-2">
         {label}
       </label>
@@ -1823,14 +2178,22 @@ const VehicleSelect = ({
         onChange={onChange}
         className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
       >
-        <option value="">Select</option>
+
+        <option value="">
+          Select
+        </option>
 
         {options.map((option) => (
-          <option key={option} value={option}>
+          <option
+            key={option}
+            value={option}
+          >
             {option}
           </option>
         ))}
+
       </select>
+
     </div>
   );
 };
@@ -1851,6 +2214,7 @@ const DocumentUpload = ({
         </div>
 
         <div>
+
           <p className="text-xs font-black uppercase text-[#002D5E]">
             {label}
           </p>
@@ -1858,6 +2222,7 @@ const DocumentUpload = ({
           <p className="text-[10px] text-slate-500 mt-1">
             PDF, JPG or PNG
           </p>
+
         </div>
 
       </div>
@@ -1867,9 +2232,12 @@ const DocumentUpload = ({
         name={name}
         multiple={multiple}
         accept=".pdf,.jpg,.jpeg,.png"
-        onChange={(e) => onChange(e, name)}
+        onChange={(e) =>
+          onChange(e, name)
+        }
         className="hidden"
       />
+
     </label>
   );
 };

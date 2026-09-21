@@ -18,8 +18,16 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  Lock,
+  Mail,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+// ==========================================================
+// FIREBASE AUTH
+// ==========================================================
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 // ==========================================================
 // n8n WEBHOOK
@@ -33,6 +41,8 @@ const initialFormData = {
   mobile: "",
   whatsapp: "",
   email: "",
+  password: "",
+  confirmPassword: "",
   alternateContact: "",
   yearStarted: "",
 
@@ -185,9 +195,14 @@ export default function TransporterRegister() {
   };
 
   const removeVehicle = (index) => {
-    setVehicles((prev) => prev.filter((_, i) => i !== index));
+    setVehicles((prev) =>
+      prev.filter((_, i) => i !== index)
+    );
   };
 
+  // ==========================================================
+  // SUBMIT
+  // ==========================================================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -206,6 +221,26 @@ export default function TransporterRegister() {
       return;
     }
 
+    if (!formData.email.trim()) {
+      alert("Please enter Email Address.");
+      return;
+    }
+
+    if (!formData.password) {
+      alert("Please create a Password.");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Password and Confirm Password do not match.");
+      return;
+    }
+
     if (!formData.city.trim() || !formData.state.trim()) {
       alert("Please enter City and State.");
       return;
@@ -216,62 +251,109 @@ export default function TransporterRegister() {
       return;
     }
 
-    const payload = {
-      ...formData,
-
-      serviceCategory: "Truck Transport",
-      partnerType: "Transporter / Logistics Company",
-      requestSource: "Apni Manzil",
-
-      fleetSummary: {
-        ownTrucks: Number(formData.ownTrucks || 0),
-        attachedTrucks: Number(formData.attachedTrucks || 0),
-        totalFleetSize: totalFleet,
-      },
-
-      vehicleCategories: vehicles.map((vehicle) => ({
-        vehicleType: vehicle.vehicleType || "",
-        count: Number(vehicle.count || 0),
-        capacity: vehicle.capacity || "",
-        bodyType: vehicle.bodyType || "",
-      })),
-
-      documents: {
-        panCard: documents.panCard?.name || "",
-        gstCertificate: documents.gstCertificate?.name || "",
-        businessProof: documents.businessProof?.name || "",
-        cancelledCheque: documents.cancelledCheque?.name || "",
-        officePhoto: documents.officePhoto?.name || "",
-        fleetPhotos: documents.fleetPhotos?.name || "",
-      },
-
-      partnerStatus: "Pending Verification",
-      verificationStatus: "Pending",
-
-      submittedAt: new Date().toISOString(),
-    };
-
     try {
       setIsSubmitting(true);
 
+      // ======================================================
+      // 1. CREATE FIREBASE AUTH ACCOUNT
+      // ======================================================
+      const userCredential =
+        await createUserWithEmailAndPassword(
+          auth,
+          formData.email.trim(),
+          formData.password
+        );
+
+      const firebaseUser = userCredential.user;
+
       console.log(
-        "TRANSPORTER PARTNER PAYLOAD:",
-        payload
+        "Firebase Transporter User Created:",
+        firebaseUser.uid
       );
 
       // ======================================================
-      // SEND DATA TO n8n
+      // 2. PAYLOAD FOR n8n
+      // IMPORTANT:
+      // PASSWORD IS NOT SENT TO n8n
       // ======================================================
+      const payload = {
+        ...formData,
 
-      const response = await fetch(N8N_WEBHOOK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+        // Remove password fields from payload
+        password: undefined,
+        confirmPassword: undefined,
+
+        // Firebase account information
+        firebaseUid: firebaseUser.uid,
+        firebaseEmail: firebaseUser.email,
+
+        serviceCategory: "Truck Transport",
+        partnerType: "Transporter / Logistics Company",
+        requestSource: "Apni Manzil",
+
+        fleetSummary: {
+          ownTrucks: Number(formData.ownTrucks || 0),
+          attachedTrucks: Number(
+            formData.attachedTrucks || 0
+          ),
+          totalFleetSize: totalFleet,
         },
-        body: JSON.stringify(payload),
-      });
 
-      const responseText = await response.text();
+        vehicleCategories: vehicles.map((vehicle) => ({
+          vehicleType: vehicle.vehicleType || "",
+          count: Number(vehicle.count || 0),
+          capacity: vehicle.capacity || "",
+          bodyType: vehicle.bodyType || "",
+        })),
+
+        documents: {
+          panCard: documents.panCard?.name || "",
+          gstCertificate:
+            documents.gstCertificate?.name || "",
+          businessProof:
+            documents.businessProof?.name || "",
+          cancelledCheque:
+            documents.cancelledCheque?.name || "",
+          officePhoto:
+            documents.officePhoto?.name || "",
+          fleetPhotos:
+            documents.fleetPhotos?.name || "",
+        },
+
+        partnerStatus: "Pending Verification",
+        verificationStatus: "Pending",
+
+        submittedAt: new Date().toISOString(),
+      };
+
+      // ======================================================
+      // 3. REMOVE UNDEFINED VALUES
+      // ======================================================
+      const cleanPayload = JSON.parse(
+        JSON.stringify(payload)
+      );
+
+      console.log(
+        "TRANSPORTER PARTNER PAYLOAD:",
+        cleanPayload
+      );
+
+      // ======================================================
+      // 4. SEND TO n8n
+      // ======================================================
+      const response = await fetch(
+        N8N_WEBHOOK_URL,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(cleanPayload),
+        }
+      );
+
+      const responseText =
+        await response.text();
 
       let result = null;
 
@@ -283,8 +365,15 @@ export default function TransporterRegister() {
         result = responseText;
       }
 
-      console.log("n8n Status:", response.status);
-      console.log("n8n Response:", result);
+      console.log(
+        "n8n Status:",
+        response.status
+      );
+
+      console.log(
+        "n8n Response:",
+        result
+      );
 
       if (!response.ok) {
         throw new Error(
@@ -292,23 +381,67 @@ export default function TransporterRegister() {
         );
       }
 
+      // ======================================================
+      // SUCCESS
+      // ======================================================
       alert(
-        "Transporter registration submitted successfully! Your application is pending verification."
+        "Transporter registration submitted successfully!\n\nYour login account has been created.\n\nYour partner application is pending verification."
       );
 
       navigate("/vendor-landing");
-    } catch (error) {
-      console.error("TRANSPORTER REGISTRATION ERROR:", error);
 
-      alert(
-        "Registration failed. Please make sure n8n is running and the Transporter webhook is active."
+    } catch (error) {
+      console.error(
+        "TRANSPORTER REGISTRATION ERROR:",
+        error
       );
+
+      // Firebase errors
+      if (
+        error.code ===
+        "auth/email-already-in-use"
+      ) {
+        alert(
+          "This email is already registered. Please use another email or login with your existing account."
+        );
+      } else if (
+        error.code ===
+        "auth/invalid-email"
+      ) {
+        alert(
+          "Please enter a valid email address."
+        );
+      } else if (
+        error.code ===
+        "auth/weak-password"
+      ) {
+        alert(
+          "Password is too weak. Please use at least 6 characters."
+        );
+      } else if (
+        error.message?.includes(
+          "n8n webhook failed"
+        )
+      ) {
+        alert(
+          "Firebase account was created, but n8n submission failed. Please check that n8n is running and the Transporter webhook is active."
+        );
+      } else {
+        alert(
+          error.message ||
+            "Registration failed. Please try again."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const SectionTitle = ({ icon: Icon, title, subtitle }) => (
+  const SectionTitle = ({
+    icon: Icon,
+    title,
+    subtitle,
+  }) => (
     <div className="mb-6 flex items-start gap-3">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
         <Icon size={22} />
@@ -338,8 +471,11 @@ export default function TransporterRegister() {
     <div>
       <label className="mb-2 block text-sm font-semibold text-gray-700">
         {label}
+
         {required && (
-          <span className="ml-1 text-red-500">*</span>
+          <span className="ml-1 text-red-500">
+            *
+          </span>
         )}
       </label>
 
@@ -364,8 +500,11 @@ export default function TransporterRegister() {
     <div>
       <label className="mb-2 block text-sm font-semibold text-gray-700">
         {label}
+
         {required && (
-          <span className="ml-1 text-red-500">*</span>
+          <span className="ml-1 text-red-500">
+            *
+          </span>
         )}
       </label>
 
@@ -376,10 +515,15 @@ export default function TransporterRegister() {
         required={required}
         className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
       >
-        <option value="">Select</option>
+        <option value="">
+          Select
+        </option>
 
         {options.map((option) => (
-          <option key={option} value={option}>
+          <option
+            key={option}
+            value={option}
+          >
             {option}
           </option>
         ))}
@@ -408,7 +552,10 @@ export default function TransporterRegister() {
     </div>
   );
 
-  const Checkbox = ({ name, label }) => (
+  const Checkbox = ({
+    name,
+    label,
+  }) => (
     <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 transition hover:border-orange-300">
       <input
         type="checkbox"
@@ -434,7 +581,9 @@ export default function TransporterRegister() {
         {label}
 
         {required && (
-          <span className="ml-1 text-red-500">*</span>
+          <span className="ml-1 text-red-500">
+            *
+          </span>
         )}
       </label>
 
@@ -456,9 +605,11 @@ export default function TransporterRegister() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-gray-100 bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+
           <button
             type="button"
             onClick={() => navigate(-1)}
@@ -482,12 +633,14 @@ export default function TransporterRegister() {
             <Truck size={15} />
             Transport Partner
           </div>
+
         </div>
       </header>
 
       {/* Hero */}
       <section className="bg-[#002D5E] px-4 py-10 text-white sm:py-14">
         <div className="mx-auto max-w-5xl text-center">
+
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 shadow-lg">
             <Building2 size={32} />
           </div>
@@ -500,14 +653,21 @@ export default function TransporterRegister() {
             Join Apni Manzil as a Transport Partner and receive transportation
             opportunities from businesses and customers across India.
           </p>
+
         </div>
       </section>
 
       {/* Form */}
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-8"
+        >
+
           {/* Company */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Building2}
               title="Company & Contact Details"
@@ -515,6 +675,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <Input
                 label="Company / Transport Name"
                 name="companyName"
@@ -549,7 +710,64 @@ export default function TransporterRegister() {
                 name="email"
                 type="email"
                 placeholder="company@example.com"
+                required
               />
+
+              {/* PASSWORD */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  Password
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+
+                <div className="relative">
+                  <Lock
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Create password"
+                    minLength={6}
+                    required
+                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                  />
+                </div>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Minimum 6 characters
+                </p>
+              </div>
+
+              {/* CONFIRM PASSWORD */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  Confirm Password
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+
+                <div className="relative">
+                  <Lock
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm password"
+                    minLength={6}
+                    required
+                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                  />
+                </div>
+              </div>
 
               <Input
                 label="Alternate Contact"
@@ -564,11 +782,30 @@ export default function TransporterRegister() {
                 type="number"
                 placeholder="2018"
               />
+
             </div>
+
+            {/* ACCOUNT INFO */}
+            <div className="mt-6 flex gap-3 rounded-xl bg-blue-50 p-4 text-sm text-blue-700">
+
+              <Mail
+                size={18}
+                className="mt-0.5 shrink-0"
+              />
+
+              <p>
+                Your email and password will be used to create your
+                Apni Manzil login account. Your password is securely
+                handled by Firebase Authentication and is not sent to n8n.
+              </p>
+
+            </div>
+
           </section>
 
           {/* Business */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={FileText}
               title="Business Details"
@@ -576,6 +813,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <Select
                 label="Business Type"
                 name="businessType"
@@ -593,7 +831,10 @@ export default function TransporterRegister() {
               <Select
                 label="GST Registered?"
                 name="gstRegistered"
-                options={["Yes", "No"]}
+                options={[
+                  "Yes",
+                  "No",
+                ]}
               />
 
               <Input
@@ -613,11 +854,13 @@ export default function TransporterRegister() {
                 name="companyRegistration"
                 placeholder="Registration number"
               />
+
             </div>
           </section>
 
           {/* Address */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={MapPin}
               title="Office Address"
@@ -625,6 +868,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <div className="md:col-span-2">
                 <Textarea
                   label="Full Office Address"
@@ -652,11 +896,13 @@ export default function TransporterRegister() {
                 name="pincode"
                 placeholder="400001"
               />
+
             </div>
           </section>
 
           {/* Fleet */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Truck}
               title="Fleet & Vehicle Network"
@@ -664,6 +910,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-3">
+
               <Input
                 label="Own Trucks"
                 name="ownTrucks"
@@ -687,9 +934,11 @@ export default function TransporterRegister() {
                   {totalFleet} Vehicles
                 </div>
               </div>
+
             </div>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
               <div>
                 <h3 className="font-bold text-[#002D5E]">
                   Vehicle Categories
@@ -708,29 +957,38 @@ export default function TransporterRegister() {
                 <Plus size={18} />
                 Add Vehicle Type
               </button>
+
             </div>
 
             <div className="mt-5 space-y-4">
+
               {vehicles.map((vehicle, index) => (
+
                 <div
                   key={index}
                   className="rounded-2xl border border-gray-200 bg-gray-50 p-4"
                 >
+
                   <div className="mb-4 flex items-center justify-between">
+
                     <h4 className="font-bold text-[#002D5E]">
                       Vehicle Category #{index + 1}
                     </h4>
 
                     <button
                       type="button"
-                      onClick={() => removeVehicle(index)}
+                      onClick={() =>
+                        removeVehicle(index)
+                      }
                       className="rounded-lg p-2 text-red-500 transition hover:bg-red-50"
                     >
                       <Trash2 size={18} />
                     </button>
+
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-4">
+
                     <select
                       value={vehicle.vehicleType}
                       onChange={(e) =>
@@ -742,7 +1000,9 @@ export default function TransporterRegister() {
                       }
                       className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-orange-500"
                     >
-                      <option value="">Vehicle Type</option>
+                      <option value="">
+                        Vehicle Type
+                      </option>
                       <option>Mini Truck</option>
                       <option>Pickup</option>
                       <option>LCV</option>
@@ -801,14 +1061,18 @@ export default function TransporterRegister() {
                       }
                       className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-orange-500"
                     />
+
                   </div>
                 </div>
+
               ))}
+
             </div>
           </section>
 
           {/* Transportation Services */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Route}
               title="Transportation Services"
@@ -816,8 +1080,16 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Checkbox name="ftl" label="Full Truck Load (FTL)" />
-              <Checkbox name="ptl" label="Part Truck Load (PTL)" />
+
+              <Checkbox
+                name="ftl"
+                label="Full Truck Load (FTL)"
+              />
+
+              <Checkbox
+                name="ptl"
+                label="Part Truck Load (PTL)"
+              />
 
               <Checkbox
                 name="dedicatedTransportation"
@@ -848,11 +1120,13 @@ export default function TransporterRegister() {
                 name="multimodalTransportation"
                 label="Multimodal Transportation"
               />
+
             </div>
           </section>
 
           {/* Goods */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Package}
               title="Goods Handled"
@@ -860,11 +1134,31 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Checkbox name="generalGoods" label="General Goods" />
-              <Checkbox name="industrialGoods" label="Industrial Goods" />
-              <Checkbox name="fmcg" label="FMCG" />
-              <Checkbox name="machinery" label="Machinery" />
-              <Checkbox name="furniture" label="Furniture" />
+
+              <Checkbox
+                name="generalGoods"
+                label="General Goods"
+              />
+
+              <Checkbox
+                name="industrialGoods"
+                label="Industrial Goods"
+              />
+
+              <Checkbox
+                name="fmcg"
+                label="FMCG"
+              />
+
+              <Checkbox
+                name="machinery"
+                label="Machinery"
+              />
+
+              <Checkbox
+                name="furniture"
+                label="Furniture"
+              />
 
               <Checkbox
                 name="constructionMaterial"
@@ -876,20 +1170,27 @@ export default function TransporterRegister() {
                 label="Agricultural Goods"
               />
 
-              <Checkbox name="ecommerce" label="E-commerce" />
+              <Checkbox
+                name="ecommerce"
+                label="E-commerce"
+              />
+
             </div>
 
             <div className="mt-4">
+
               <Input
                 label="Other Goods"
                 name="otherGoods"
                 placeholder="Mention any other goods"
               />
+
             </div>
           </section>
 
           {/* Operating Area */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Globe}
               title="Operating Area & Routes"
@@ -897,6 +1198,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
               <Checkbox
                 name="localDelivery"
                 label="Local Delivery"
@@ -921,9 +1223,11 @@ export default function TransporterRegister() {
                 name="panIndia"
                 label="Pan India"
               />
+
             </div>
 
             <div className="mt-6 grid gap-5 md:grid-cols-2">
+
               <Textarea
                 label="Preferred Pickup Cities"
                 name="pickupCities"
@@ -937,17 +1241,21 @@ export default function TransporterRegister() {
               />
 
               <div className="md:col-span-2">
+
                 <Textarea
                   label="Preferred Routes"
                   name="preferredRoutes"
                   placeholder="Mumbai → Pune, Mumbai → Delhi, Pune → Bengaluru..."
                 />
+
               </div>
+
             </div>
           </section>
 
           {/* Operations */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Clock3}
               title="Operations & Availability"
@@ -955,6 +1263,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
               <Checkbox
                 name="immediateLoad"
                 label="Immediate Load"
@@ -974,9 +1283,11 @@ export default function TransporterRegister() {
                 name="support247"
                 label="24/7 Operations"
               />
+
             </div>
 
             <div className="mt-6 grid gap-5 md:grid-cols-3">
+
               <Input
                 label="Minimum Notice Period"
                 name="minimumNoticePeriod"
@@ -994,11 +1305,13 @@ export default function TransporterRegister() {
                 name="workingDays"
                 placeholder="Mon-Sat / All Days"
               />
+
             </div>
           </section>
 
           {/* Additional Services */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={ShieldCheck}
               title="Additional Services"
@@ -1006,12 +1319,36 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <Checkbox name="loading" label="Loading" />
-              <Checkbox name="unloading" label="Unloading" />
-              <Checkbox name="labour" label="Labour" />
-              <Checkbox name="doorToDoor" label="Door-to-Door" />
-              <Checkbox name="gpsTracking" label="GPS Tracking" />
-              <Checkbox name="epod" label="E-POD / POD" />
+
+              <Checkbox
+                name="loading"
+                label="Loading"
+              />
+
+              <Checkbox
+                name="unloading"
+                label="Unloading"
+              />
+
+              <Checkbox
+                name="labour"
+                label="Labour"
+              />
+
+              <Checkbox
+                name="doorToDoor"
+                label="Door-to-Door"
+              />
+
+              <Checkbox
+                name="gpsTracking"
+                label="GPS Tracking"
+              />
+
+              <Checkbox
+                name="epod"
+                label="E-POD / POD"
+              />
 
               <Checkbox
                 name="insuranceAssistance"
@@ -1027,11 +1364,13 @@ export default function TransporterRegister() {
                 name="equipment"
                 label="Loading / Unloading Equipment"
               />
+
             </div>
           </section>
 
           {/* Pricing */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={IndianRupee}
               title="Pricing Information"
@@ -1039,6 +1378,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <Select
                 label="Rate Type"
                 name="rateType"
@@ -1068,31 +1408,49 @@ export default function TransporterRegister() {
               <Select
                 label="Toll Included?"
                 name="tollIncluded"
-                options={["Yes", "No", "Negotiable"]}
+                options={[
+                  "Yes",
+                  "No",
+                  "Negotiable",
+                ]}
               />
 
               <Select
                 label="Driver Allowance Included?"
                 name="driverAllowanceIncluded"
-                options={["Yes", "No", "Negotiable"]}
+                options={[
+                  "Yes",
+                  "No",
+                  "Negotiable",
+                ]}
               />
 
               <Select
                 label="Loading Included?"
                 name="loadingIncluded"
-                options={["Yes", "No", "Negotiable"]}
+                options={[
+                  "Yes",
+                  "No",
+                  "Negotiable",
+                ]}
               />
 
               <Select
                 label="Unloading Included?"
                 name="unloadingIncluded"
-                options={["Yes", "No", "Negotiable"]}
+                options={[
+                  "Yes",
+                  "No",
+                  "Negotiable",
+                ]}
               />
+
             </div>
           </section>
 
           {/* Documents */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={FileText}
               title="Business Documents"
@@ -1100,6 +1458,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-4 md:grid-cols-2">
+
               <DocumentUpload
                 name="panCard"
                 label="PAN Card"
@@ -1129,9 +1488,11 @@ export default function TransporterRegister() {
                 name="fleetPhotos"
                 label="Fleet Photos"
               />
+
             </div>
 
             <div className="mt-4 flex gap-3 rounded-xl bg-blue-50 p-4 text-sm text-blue-700">
+
               <AlertCircle
                 className="mt-0.5 shrink-0"
                 size={18}
@@ -1140,11 +1501,13 @@ export default function TransporterRegister() {
               <p>
                 Documents will be used for Apni Manzil partner verification.
               </p>
+
             </div>
           </section>
 
           {/* Bank */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={CreditCard}
               title="Bank & Payment Details"
@@ -1152,6 +1515,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <Input
                 label="Account Holder Name"
                 name="accountHolder"
@@ -1181,11 +1545,13 @@ export default function TransporterRegister() {
                 name="upi"
                 placeholder="company@upi"
               />
+
             </div>
           </section>
 
           {/* Profile */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Globe}
               title="Business Profile"
@@ -1193,6 +1559,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <Input
                 label="Google Business Profile Link"
                 name="googleBusinessProfile"
@@ -1206,17 +1573,21 @@ export default function TransporterRegister() {
               />
 
               <div className="md:col-span-2">
+
                 <Textarea
                   label="Additional Information"
                   name="additionalInformation"
                   placeholder="Tell us anything else about your company, routes, fleet or services."
                 />
+
               </div>
+
             </div>
           </section>
 
           {/* Emergency */}
           <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={Phone}
               title="Emergency / Operations Contact"
@@ -1224,6 +1595,7 @@ export default function TransporterRegister() {
             />
 
             <div className="grid gap-5 md:grid-cols-3">
+
               <Input
                 label="Name"
                 name="emergencyName"
@@ -1242,11 +1614,13 @@ export default function TransporterRegister() {
                 type="tel"
                 placeholder="+91 XXXXX XXXXX"
               />
+
             </div>
           </section>
 
           {/* Declaration */}
           <section className="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm sm:p-8">
+
             <SectionTitle
               icon={CheckCircle2}
               title="Declaration & Terms"
@@ -1254,7 +1628,9 @@ export default function TransporterRegister() {
             />
 
             <div className="space-y-3">
+
               <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-gray-50 p-4">
+
                 <input
                   type="checkbox"
                   name="declaration"
@@ -1267,9 +1643,11 @@ export default function TransporterRegister() {
                   I confirm that the information provided by me is correct and
                   belongs to my company/business.
                 </span>
+
               </label>
 
               <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-gray-50 p-4">
+
                 <input
                   type="checkbox"
                   name="termsAccepted"
@@ -1282,20 +1660,24 @@ export default function TransporterRegister() {
                   I agree to Apni Manzil partner terms, verification process,
                   lead allocation process and applicable policies.
                 </span>
+
               </label>
+
             </div>
           </section>
 
           {/* Submit */}
           <div className="rounded-2xl bg-[#002D5E] p-5 text-white shadow-lg sm:p-8">
+
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
               <div>
                 <h3 className="text-xl font-bold">
                   Ready to Join Apni Manzil?
                 </h3>
 
                 <p className="mt-1 text-sm text-blue-100">
-                  Submit your company details for verification.
+                  Create your login account and submit your company details for verification.
                 </p>
               </div>
 
@@ -1304,23 +1686,27 @@ export default function TransporterRegister() {
                 disabled={isSubmitting}
                 className="flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-7 py-4 text-sm font-extrabold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-70"
               >
+
                 {isSubmitting ? (
                   <>
                     <Loader2
                       size={19}
                       className="animate-spin"
                     />
-                    Submitting...
+                    Creating Account...
                   </>
                 ) : (
                   <>
                     <CheckCircle2 size={19} />
-                    Submit Partner Registration
+                    Create Account & Submit
                   </>
                 )}
+
               </button>
+
             </div>
           </div>
+
         </form>
       </main>
     </div>
