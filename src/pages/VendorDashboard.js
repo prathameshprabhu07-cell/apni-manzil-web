@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Truck,
   ClipboardList,
@@ -19,11 +19,69 @@ import {
   Phone,
 } from "lucide-react";
 
+import { onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+
+import { auth, db } from "../firebaseConfig";
+
 const VendorDashboard = ({ partnerData }) => {
-  const partner = partnerData || {};
+  const [firebasePartner, setFirebasePartner] = useState(null);
+  const [loadingPartner, setLoadingPartner] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setLoadingPartner(false);
+        return;
+      }
+
+      try {
+        console.log("🔐 Logged-in Firebase UID:", user.uid);
+
+        const q = query(
+          collection(db, "partner_profiles"),
+          where("Firebase_UID", "==", user.uid)
+        );
+
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          const data = snapshot.docs[0].data();
+
+          console.log("✅ Partner profile loaded:", data);
+
+          setFirebasePartner(data);
+        } else {
+          console.log(
+            "❌ Partner profile not found for UID:",
+            user.uid
+          );
+        }
+      } catch (error) {
+        console.error(
+          "❌ Partner profile fetch error:",
+          error
+        );
+      } finally {
+        setLoadingPartner(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const partner = firebasePartner || partnerData || {};
 
   const partnerType = String(
-    partner.Partner_Type || partner.partnerType || ""
+    partner.Partner_Type ||
+      partner.partnerType ||
+      partner.Service_Type ||
+      ""
   );
 
   const isTruckOwner = partnerType
@@ -57,6 +115,19 @@ const VendorDashboard = ({ partnerData }) => {
     partner.Preferred_Routes ||
       partner.Routes
   );
+
+  if (loadingPartner) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-slate-200 border-t-[#001D3D] rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm font-black text-[#001D3D] uppercase tracking-widest">
+            Loading Partner Dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8 font-sans">
@@ -213,7 +284,8 @@ const VendorDashboard = ({ partnerData }) => {
             label="Contact Person"
             value={
               partner.Contact_Person ||
-              partner.Full_Name
+              partner.Full_Name ||
+              partner.Owner_Name
             }
           />
 
@@ -237,7 +309,10 @@ const VendorDashboard = ({ partnerData }) => {
 
           <Info
             label="Email"
-            value={partner.Email}
+            value={
+              partner.Email ||
+              partner.Login_Email
+            }
           />
 
           <Info
