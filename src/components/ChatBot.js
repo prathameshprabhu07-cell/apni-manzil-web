@@ -13,8 +13,14 @@ const ChatBot = () => {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
 
-  // Gemini API key .env मधून घेतली जाते
+  // Gemini API key from .env
   const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+
+  // Temporary check - API key itself is NEVER printed
+  console.log(
+    "Gemini key loaded:",
+    GEMINI_API_KEY ? "YES" : "NO"
+  );
 
   // Auto scroll
   useEffect(() => {
