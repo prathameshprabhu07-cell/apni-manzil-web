@@ -16,7 +16,7 @@ const ChatBot = () => {
   // Gemini API key from .env
   const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 
-  // Temporary check - API key itself is NEVER printed
+  // API key loaded check - actual key is never printed
   console.log(
     "Gemini key loaded:",
     GEMINI_API_KEY ? "YES" : "NO"
@@ -54,8 +54,9 @@ const ChatBot = () => {
         );
       }
 
+      // Gemini 3.6 Flash
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: {
@@ -88,6 +89,10 @@ Be professional, helpful, concise and accurate.
 Do not invent prices, partner names, tracking numbers, booking details or service availability.
 
 If the user asks for a specific booking, shipment or tracking status and you do not have access to that information, clearly say that the user needs to provide the relevant tracking/booking information.
+
+When users ask about Apni Manzil services, explain that Apni Manzil is a logistics aggregator/marketplace that connects customers with logistics service providers.
+
+Do not claim that a booking, shipment, payment, tracking status, partner assignment, price or service availability exists unless the application provides that information.
                   `,
                 },
               ],
