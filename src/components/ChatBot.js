@@ -3,20 +3,24 @@ import { MessageSquare, Send, X, Bot } from "lucide-react";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   const [messages, setMessages] = useState([
     {
       text: "Hello! I am your Apni Manzil Assistant. How can I help you today?",
       isBot: true,
     },
   ]);
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
   const scrollRef = useRef(null);
 
   // Gemini API key from .env
-  const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+  const GEMINI_API_KEY =
+    process.env.REACT_APP_GEMINI_API_KEY?.trim();
 
-  // API key loaded check - actual key is never printed
+  // Never print the actual API key
   console.log(
     "Gemini key loaded:",
     GEMINI_API_KEY ? "YES" : "NO"
@@ -25,7 +29,8 @@ const ChatBot = () => {
   // Auto scroll
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTop =
+        scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -47,25 +52,26 @@ const ChatBot = () => {
     setLoading(true);
 
     try {
-      // API key check
+      // Check API key
       if (!GEMINI_API_KEY) {
         throw new Error(
           "Gemini API key not found. Please check REACT_APP_GEMINI_API_KEY in .env"
         );
       }
 
-      // Gemini 3.6 Flash
-      // API key is sent securely in the request header
+      // Gemini REST API
       const response = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
             "x-goog-api-key": GEMINI_API_KEY,
           },
+
           body: JSON.stringify({
-            systemInstruction: {
+            system_instruction: {
               parts: [
                 {
                   text: `
@@ -90,7 +96,7 @@ Be professional, helpful, concise and accurate.
 
 Do not invent prices, partner names, tracking numbers, booking details or service availability.
 
-If the user asks for a specific booking, shipment or tracking status and you do not have access to that information, clearly say that the user needs to provide the relevant tracking/booking information.
+If the user asks for a specific booking, shipment or tracking status and you do not have access to that information, clearly say that the user needs to provide the relevant tracking or booking information.
 
 When users ask about Apni Manzil services, explain that Apni Manzil is a logistics aggregator/marketplace that connects customers with logistics service providers.
 
@@ -116,22 +122,38 @@ Do not claim that a booking, shipment, payment, tracking status, partner assignm
 
       const data = await response.json();
 
-      // Gemini API error details
+      // IMPORTANT:
+      // Show the real Google error in console.
       if (!response.ok) {
-        console.error("Gemini API Error Response:", data);
-
-        throw new Error(
-          data?.error?.message ||
-            `Gemini API Error: ${response.status} ${response.statusText}`
+        console.error(
+          "Gemini HTTP Status:",
+          response.status
         );
+
+        console.error(
+          "Gemini API Error Response:",
+          JSON.stringify(data, null, 2)
+        );
+
+        const googleMessage =
+          data?.error?.message ||
+          `Gemini API Error: ${response.status} ${response.statusText}`;
+
+        throw new Error(googleMessage);
       }
 
       const aiResponse =
         data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!aiResponse) {
-        console.error("Unexpected Gemini response:", data);
-        throw new Error("Gemini returned an empty response.");
+        console.error(
+          "Unexpected Gemini response:",
+          JSON.stringify(data, null, 2)
+        );
+
+        throw new Error(
+          "Gemini returned an empty response."
+        );
       }
 
       setMessages([
@@ -142,7 +164,10 @@ Do not claim that a booking, shipment, payment, tracking status, partner assignm
         },
       ]);
     } catch (error) {
-      console.error("AI Error:", error);
+      console.error(
+        "AI Error:",
+        error?.message || error
+      );
 
       setMessages([
         ...newMessages,
@@ -222,6 +247,7 @@ Do not claim that a booking, shipment, payment, tracking status, partner assignm
               }}
             >
               <Bot size={20} />
+
               <span style={{ fontWeight: "bold" }}>
                 AM AI Assistant
               </span>
@@ -264,7 +290,9 @@ Do not claim that a booking, shipment, payment, tracking status, partner assignm
                     backgroundColor: m.isBot
                       ? "#eee"
                       : "#004080",
-                    color: m.isBot ? "#333" : "white",
+                    color: m.isBot
+                      ? "#333"
+                      : "white",
                     fontSize: "0.9rem",
                     lineHeight: "1.4",
                   }}
@@ -300,7 +328,9 @@ Do not claim that a booking, shipment, payment, tracking status, partner assignm
             <input
               type="text"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) =>
+                setInput(e.target.value)
+              }
               onKeyDown={(e) =>
                 e.key === "Enter" && handleSend()
               }
@@ -320,8 +350,12 @@ Do not claim that a booking, shipment, payment, tracking status, partner assignm
               style={{
                 background: "none",
                 border: "none",
-                color: loading ? "#ccc" : "#004080",
-                cursor: loading ? "default" : "pointer",
+                color: loading
+                  ? "#ccc"
+                  : "#004080",
+                cursor: loading
+                  ? "default"
+                  : "pointer",
               }}
             >
               <Send size={20} />
