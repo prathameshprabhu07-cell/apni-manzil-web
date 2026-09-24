@@ -55,12 +55,14 @@ const ChatBot = () => {
       }
 
       // Gemini 3.6 Flash
+      // API key is sent securely in the request header
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY,
           },
           body: JSON.stringify({
             systemInstruction: {
