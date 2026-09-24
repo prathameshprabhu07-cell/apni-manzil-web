@@ -16,15 +16,9 @@ const ChatBot = () => {
 
   const scrollRef = useRef(null);
 
-  // Gemini API key from .env
-  const GEMINI_API_KEY =
-    process.env.REACT_APP_GEMINI_API_KEY?.trim();
-
-  // Never print the actual API key
-  console.log(
-    "Gemini key loaded:",
-    GEMINI_API_KEY ? "YES" : "NO"
-  );
+  // Apni Manzil AI n8n Webhook
+  const AI_WEBHOOK_URL =
+    "https://coffee-euro-explorer-publish.trycloudeflare.com/webhook/apni-manzil-ai";
 
   // Auto scroll
   useEffect(() => {
@@ -52,107 +46,39 @@ const ChatBot = () => {
     setLoading(true);
 
     try {
-      // Check API key
-      if (!GEMINI_API_KEY) {
-        throw new Error(
-          "Gemini API key not found. Please check REACT_APP_GEMINI_API_KEY in .env"
-        );
-      }
-
-      // Gemini REST API
-      const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": GEMINI_API_KEY,
-          },
-
-          body: JSON.stringify({
-            system_instruction: {
-              parts: [
-                {
-                  text: `
-You are the official AI Assistant of Apni Manzil.
-
-Apni Manzil is an India-focused logistics aggregator and marketplace.
-
-Help users with:
-- Courier and parcel delivery
-- Hyperlocal / bike delivery
-- Truck and transport booking
-- Packers and movers
-- Warehouse and storage
-- International logistics
-- E-commerce logistics
-- Shipment tracking
-- General logistics questions
-
-Answer in simple Marathi, Hinglish, or English depending on the user's language.
-
-Be professional, helpful, concise and accurate.
-
-Do not invent prices, partner names, tracking numbers, booking details or service availability.
-
-If the user asks for a specific booking, shipment or tracking status and you do not have access to that information, clearly say that the user needs to provide the relevant tracking or booking information.
-
-When users ask about Apni Manzil services, explain that Apni Manzil is a logistics aggregator/marketplace that connects customers with logistics service providers.
-
-Do not claim that a booking, shipment, payment, tracking status, partner assignment, price or service availability exists unless the application provides that information.
-                  `,
-                },
-              ],
-            },
-
-            contents: [
-              {
-                role: "user",
-                parts: [
-                  {
-                    text: userText,
-                  },
-                ],
-              },
-            ],
-          }),
-        }
-      );
+      // Send user message to n8n
+      const response = await fetch(AI_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: userText,
+        }),
+      });
 
       const data = await response.json();
 
-      // IMPORTANT:
-      // Show the real Google error in console.
+      console.log("Apni Manzil AI Response:", data);
+
       if (!response.ok) {
-        console.error(
-          "Gemini HTTP Status:",
-          response.status
+        throw new Error(
+          data?.message ||
+            data?.error ||
+            `AI server error: ${response.status}`
         );
-
-        console.error(
-          "Gemini API Error Response:",
-          JSON.stringify(data, null, 2)
-        );
-
-        const googleMessage =
-          data?.error?.message ||
-          `Gemini API Error: ${response.status} ${response.statusText}`;
-
-        throw new Error(googleMessage);
       }
 
-      const aiResponse =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const aiResponse = data?.reply;
 
       if (!aiResponse) {
         console.error(
-          "Unexpected Gemini response:",
+          "Unexpected AI response:",
           JSON.stringify(data, null, 2)
         );
 
         throw new Error(
-          "Gemini returned an empty response."
+          "AI returned an empty response."
         );
       }
 
@@ -173,7 +99,7 @@ Do not claim that a booking, shipment, payment, tracking status, partner assignm
         ...newMessages,
         {
           text:
-            "Kshamasva 🙏 AI service la sadhya connect karta yet nahi. Thodya velane punha try kara.",
+            "Sorry 🙏 The AI service is currently unavailable. Please try again in a moment.",
           isBot: true,
         },
       ]);
