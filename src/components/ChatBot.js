@@ -18,7 +18,7 @@ const ChatBot = () => {
 
   // Apni Manzil AI n8n Webhook
   const AI_WEBHOOK_URL =
-    "https://coffee-euro-explorer-publish.trycloudeflare.com/webhook/apni-manzil-ai";
+    "https://coffee-euro-explorer-publish.trycloudflare.com/webhook/apni-manzil-ai";
 
   // Auto scroll
   useEffect(() => {
