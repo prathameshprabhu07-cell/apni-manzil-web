@@ -142,7 +142,7 @@ const WarehousePartnerRegister = () => {
 
     try {
       // Sending all form data to your webhook endpoint
-      const response = await fetch('http://localhost:5678/webhook/Warehouse_Partner', {
+      const response = await fetch('https://satisfy-behaviour-hardwood-stationery.trycloudflare.com/webhook/Warehouse_Partner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

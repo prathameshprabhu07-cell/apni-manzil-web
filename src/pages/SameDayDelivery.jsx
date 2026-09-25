@@ -16,7 +16,7 @@ const SameDayDelivery = () => {
   const [availableRates, setAvailableRates] = useState([]);
   const [selectedRate, setSelectedRate] = useState(null);
   
-  const n8nUrl = "https://coffee-euro-explorer-publish.trycloudflare.com/webhook/apni-manzil-hyperlocal";
+  const n8nUrl = "https://satisfy-behaviour-hardwood-stationery.trycloudflare.com/webhook/apni-manzil-hyperlocal";
 
   const [formData, setFormData] = useState({
     senderName: '', senderMobile: '', pickupAddress: '', pickupPincode: '', pickupCity: '', pickupState: '',

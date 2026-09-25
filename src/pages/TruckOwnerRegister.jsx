@@ -31,7 +31,7 @@ const TruckOwnerRegister = () => {
   // n8n WEBHOOK
   // =========================================================
   const N8N_WEBHOOK_URL =
-    "http://localhost:5678/webhook/Truck-Owner";
+    "https://satisfy-behaviour-hardwood-stationery.trycloudflare.com/webhook/Truck-Owner";
 
   // =========================================================
   // VEHICLES
