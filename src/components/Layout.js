@@ -50,7 +50,7 @@ const Layout = ({ children, user }) => {
       <div className="bg-[#001D3D] text-white py-3 px-12 hidden md:flex justify-between items-center text-[12px] font-bold tracking-[0.15em] relative z-[51]">
         <div className="flex gap-8">
           <span className="flex items-center gap-2 border-r border-slate-700 pr-8">
-            <Phone size={14} className="text-[#FF5E00]"/> 24/7 SUPPORT: +91 73785 02356
+            <Phone size={14} className="text-[#FF5E00]"/> 24/7 Whats app SUPPORT: +91 7218852356
           </span>
           <span className="flex items-center gap-2">
             <Globe size={14} className="text-[#FF5E00]"/> GLOBAL LOGISTICS NETWORK
@@ -212,7 +212,7 @@ const Layout = ({ children, user }) => {
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={16} className="text-[#FF5E00]"/> 
-                <a href="tel:+917378502356" className="hover:text-white">+91 73785 02356</a>
+                <a href="Whats App:+7218852356" className="hover:text-white">+91 7218852356</a>
               </li>
             </ul>
           </div>
