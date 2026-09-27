@@ -180,6 +180,13 @@ const Auth = () => {
       return;
     }
 
+    // ADMIN ACCOUNT
+    if (userData.role === "admin") {
+      navigate("/super-secret-admin-99");
+      return;
+    }
+
+    // VENDOR / PARTNER ACCOUNT
     if (userData.role === "vendor") {
       navigate("/vendor-dashboard", {
         state: {
@@ -190,6 +197,7 @@ const Auth = () => {
       return;
     }
 
+    // INDIVIDUAL ACCOUNT
     if (userData.role === "individual") {
       navigate("/customer-dashboard");
       return;
@@ -218,6 +226,12 @@ const Auth = () => {
       if (!userData) {
         await signOut(auth);
         showError("User profile not found. Please contact support.");
+        return;
+      }
+
+      // ADMIN can login regardless of selected account type
+      if (userData.role === "admin") {
+        redirectUser(userData);
         return;
       }
 
@@ -261,6 +275,12 @@ const Auth = () => {
       const existingProfile = await checkUserProfile(firebaseUser);
 
       if (existingProfile) {
+        // ADMIN can login regardless of selected account type
+        if (existingProfile.role === "admin") {
+          redirectUser(existingProfile);
+          return;
+        }
+
         if (existingProfile.role !== role) {
           await signOut(auth);
 
