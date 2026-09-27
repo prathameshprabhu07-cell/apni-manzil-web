@@ -1,4 +1,3 @@
-```jsx
 import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 
@@ -140,193 +139,159 @@ const Auth = () => {
     }
   };
 
-  // =========================================================
-  // GET PARTNER PROFILE
-  // =========================================================
+  /*
+   * ============================================================
+   * GET PARTNER PROFILE
+   * ============================================================
+   */
+
   const getPartnerProfile = async (firebaseUser) => {
-    try {
-      const partnerQuery = query(
-        collection(db, "partner_profiles"),
-        where("Firebase_UID", "==", firebaseUser.uid)
-      );
+    const partnerQuery = query(
+      collection(db, "partner_profiles"),
+      where("Firebase_UID", "==", firebaseUser.uid)
+    );
 
-      const partnerSnapshot = await getDocs(partnerQuery);
+    const partnerSnapshot = await getDocs(partnerQuery);
 
-      if (partnerSnapshot.empty) {
-        return null;
-      }
-
-      const partnerDoc = partnerSnapshot.docs[0];
-      const partnerData = partnerDoc.data();
-
-      /*
-        Partner approval can be stored in any of these fields.
-        We check all of them so existing data is not broken.
-      */
-      const rawStatus =
-        partnerData.status ||
-        partnerData.verificationStatus ||
-        partnerData.Partner_Status ||
-        "Pending";
-
-      const normalizedStatus = String(rawStatus)
-        .trim()
-        .toLowerCase();
-
-      let partnerStatus = "pending";
-
-      if (normalizedStatus === "approved") {
-        partnerStatus = "approved";
-      } else if (normalizedStatus === "rejected") {
-        partnerStatus = "rejected";
-      } else {
-        partnerStatus = "pending";
-      }
-
-      return {
-        ...partnerData,
-
-        // Firebase / Firestore information
-        Firebase_UID: firebaseUser.uid,
-        partnerProfileId: partnerDoc.id,
-
-        // Application role
-        role: "vendor",
-
-        // Normalized partner approval status
-        partnerStatus: partnerStatus,
-
-        // Original status preserved
-        status: rawStatus,
-      };
-    } catch (error) {
-      console.error("Partner Profile Error:", error);
+    if (partnerSnapshot.empty) {
       return null;
     }
+
+    const partnerDoc = partnerSnapshot.docs[0];
+    const partnerData = partnerDoc.data();
+
+    const rawStatus =
+      partnerData.status ||
+      partnerData.verificationStatus ||
+      partnerData.Partner_Status ||
+      "Pending";
+
+    const normalizedStatus = String(rawStatus)
+      .trim()
+      .toLowerCase();
+
+    let partnerStatus = "pending";
+
+    if (
+      normalizedStatus === "approved" ||
+      normalizedStatus === "active"
+    ) {
+      partnerStatus = "approved";
+    } else if (normalizedStatus === "rejected") {
+      partnerStatus = "rejected";
+    }
+
+    return {
+      ...partnerData,
+      role: "vendor",
+      Firebase_UID: firebaseUser.uid,
+      partnerProfileId: partnerDoc.id,
+      partnerStatus: partnerStatus,
+      status: rawStatus,
+    };
   };
 
-  // =========================================================
-  // CHECK USER PROFILE
-  // =========================================================
-  const checkUserProfile = async (firebaseUser) => {
-    try {
-      const userReference = doc(
-        db,
-        "users",
-        firebaseUser.uid
-      );
+  /*
+   * ============================================================
+   * CHECK USER PROFILE
+   * ============================================================
+   */
 
-      const userSnapshot = await getDoc(userReference);
+  const checkUserProfile = async (firebaseUser) => {
+    const userReference = doc(db, "users", firebaseUser.uid);
+    const userSnapshot = await getDoc(userReference);
+
+    if (userSnapshot.exists()) {
+      const userData = userSnapshot.data();
 
       /*
-        If users/{uid} exists, use it.
-      */
-      if (userSnapshot.exists()) {
-        const userData = userSnapshot.data();
+       * ADMIN
+       */
+      if (userData.role === "admin") {
+        return userData;
+      }
 
-        // ADMIN
-        if (userData.role === "admin") {
+      /*
+       * VENDOR / PARTNER
+       *
+       * Always check partner_profiles because
+       * Admin approval is stored there.
+       */
+      if (userData.role === "vendor") {
+        const partnerProfile =
+          await getPartnerProfile(firebaseUser);
+
+        if (partnerProfile) {
           return {
             ...userData,
-            uid: firebaseUser.uid,
-            role: "admin",
-          };
-        }
-
-        /*
-          VENDOR:
-          Always check partner_profiles as well because
-          Admin approval happens there.
-        */
-        if (userData.role === "vendor") {
-          const partnerProfile =
-            await getPartnerProfile(firebaseUser);
-
-          if (partnerProfile) {
-            return {
-              ...userData,
-              ...partnerProfile,
-              uid: firebaseUser.uid,
-              role: "vendor",
-            };
-          }
-
-          /*
-            If partner profile does not exist yet,
-            keep vendor account pending.
-          */
-          return {
-            ...userData,
-            uid: firebaseUser.uid,
+            ...partnerProfile,
             role: "vendor",
-            partnerStatus: "pending",
           };
         }
 
-        // INDIVIDUAL
         return {
           ...userData,
-          uid: firebaseUser.uid,
+          role: "vendor",
+          partnerStatus: "pending",
         };
       }
 
       /*
-        If users/{uid} does not exist,
-        check partner_profiles directly.
-      */
-      const partnerProfile =
-        await getPartnerProfile(firebaseUser);
-
-      if (partnerProfile) {
-        return {
-          ...partnerProfile,
-          uid: firebaseUser.uid,
-          role: "vendor",
-        };
-      }
-
-      return null;
-    } catch (error) {
-      console.error("Check User Profile Error:", error);
-      return null;
+       * INDIVIDUAL
+       */
+      return userData;
     }
+
+    /*
+     * If users/{uid} doesn't exist,
+     * check partner_profiles directly.
+     */
+    const partnerProfile =
+      await getPartnerProfile(firebaseUser);
+
+    return partnerProfile;
   };
 
-  // =========================================================
-  // REDIRECT USER
-  // =========================================================
+  /*
+   * ============================================================
+   * REDIRECT USER
+   * ============================================================
+   */
+
   const redirectUser = async (userData) => {
     if (!userData) {
       showError("User profile not found.");
       return;
     }
 
-    // =======================================================
-    // ADMIN ACCOUNT
-    // =======================================================
+    /*
+     * ADMIN ACCOUNT
+     */
     if (userData.role === "admin") {
       navigate("/super-secret-admin-99");
       return;
     }
 
-    // =======================================================
-    // VENDOR / PARTNER ACCOUNT
-    // =======================================================
+    /*
+     * VENDOR / PARTNER ACCOUNT
+     */
     if (userData.role === "vendor") {
       const partnerStatus = String(
         userData.partnerStatus ||
-          userData.status ||
           userData.verificationStatus ||
-          userData.Partner_Status ||
+          userData.status ||
           "pending"
       )
         .trim()
         .toLowerCase();
 
-      // -----------------------------------------------------
-      // APPROVED
-      // -----------------------------------------------------
-      if (partnerStatus === "approved") {
+      /*
+       * APPROVED
+       */
+      if (
+        partnerStatus === "approved" ||
+        partnerStatus === "active"
+      ) {
         navigate("/vendor-dashboard", {
           state: {
             partnerData: userData,
@@ -336,9 +301,9 @@ const Auth = () => {
         return;
       }
 
-      // -----------------------------------------------------
-      // REJECTED
-      // -----------------------------------------------------
+      /*
+       * REJECTED
+       */
       if (partnerStatus === "rejected") {
         await signOut(auth);
 
@@ -349,21 +314,21 @@ const Auth = () => {
         return;
       }
 
-      // -----------------------------------------------------
-      // PENDING
-      // -----------------------------------------------------
+      /*
+       * PENDING
+       */
       await signOut(auth);
 
       showError(
-        "Your partner account is pending verification. Please wait for Admin approval."
+        "Your Vendor / Partner account is pending verification. Please wait for Admin approval."
       );
 
       return;
     }
 
-    // =======================================================
-    // INDIVIDUAL ACCOUNT
-    // =======================================================
+    /*
+     * INDIVIDUAL ACCOUNT
+     */
     if (userData.role === "individual") {
       navigate("/customer-dashboard");
       return;
@@ -372,9 +337,12 @@ const Auth = () => {
     showError("Invalid account type.");
   };
 
-  // =========================================================
-  // EMAIL LOGIN
-  // =========================================================
+  /*
+   * ============================================================
+   * EMAIL LOGIN
+   * ============================================================
+   */
+
   const handleEmailLogin = async () => {
     if (!formData.email || !formData.password) {
       showError("Please enter email and password.");
@@ -390,7 +358,8 @@ const Auth = () => {
         formData.password
       );
 
-      const userData = await checkUserProfile(result.user);
+      const userData =
+        await checkUserProfile(result.user);
 
       if (!userData) {
         await signOut(auth);
@@ -403,16 +372,16 @@ const Auth = () => {
       }
 
       /*
-        ADMIN can login regardless of selected account type.
-      */
+       * ADMIN can login regardless of selected account type
+       */
       if (userData.role === "admin") {
         await redirectUser(userData);
         return;
       }
 
       /*
-        Account type protection.
-      */
+       * ACCOUNT TYPE CHECK
+       */
       if (userData.role !== role) {
         await signOut(auth);
 
@@ -422,7 +391,9 @@ const Auth = () => {
             : "Individual";
 
         showError(
-          `This account is registered as ${accountType}.`
+          "This account is registered as " +
+            accountType +
+            "."
         );
 
         return;
@@ -437,9 +408,12 @@ const Auth = () => {
     }
   };
 
-  // =========================================================
-  // GOOGLE LOGIN
-  // =========================================================
+  /*
+   * ============================================================
+   * GOOGLE LOGIN
+   * ============================================================
+   */
+
   const handleGoogleLogin = async () => {
     setLoading(true);
 
@@ -450,34 +424,29 @@ const Auth = () => {
         prompt: "select_account",
       });
 
-      const result = await signInWithPopup(
-        auth,
-        provider
-      );
+      const result =
+        await signInWithPopup(auth, provider);
 
       const firebaseUser = result.user;
 
       /*
-        Check if Google account already exists.
-      */
+       * CHECK EXISTING PROFILE
+       */
       const existingProfile =
         await checkUserProfile(firebaseUser);
 
-      // =====================================================
-      // EXISTING ACCOUNT
-      // =====================================================
       if (existingProfile) {
         /*
-          ADMIN can login regardless of selected account type.
-        */
+         * ADMIN
+         */
         if (existingProfile.role === "admin") {
           await redirectUser(existingProfile);
           return;
         }
 
         /*
-          Account type protection.
-        */
+         * ACCOUNT TYPE CHECK
+         */
         if (existingProfile.role !== role) {
           await signOut(auth);
 
@@ -487,19 +456,25 @@ const Auth = () => {
               : "Individual";
 
           showError(
-            `This Google account is already registered as ${accountType}.`
+            "This Google account is already registered as " +
+              accountType +
+              "."
           );
 
           return;
         }
 
+        /*
+         * EXISTING VENDOR / INDIVIDUAL
+         */
         await redirectUser(existingProfile);
+
         return;
       }
 
-      // =====================================================
-      // NEW GOOGLE ACCOUNT
-      // =====================================================
+      /*
+       * NEW GOOGLE USER
+       */
       const userData = {
         uid: firebaseUser.uid,
         role: role,
@@ -507,21 +482,15 @@ const Auth = () => {
           role === "vendor"
             ? "pending"
             : "active",
-
         fullName:
           firebaseUser.displayName || "",
-
         email:
           firebaseUser.email || "",
-
         phone:
           firebaseUser.phoneNumber || "",
-
         photoURL:
           firebaseUser.photoURL || "",
-
         provider: "google",
-
         createdAt:
           new Date().toISOString(),
       };
@@ -531,9 +500,9 @@ const Auth = () => {
         userData
       );
 
-      // =====================================================
-      // GOOGLE VENDOR
-      // =====================================================
+      /*
+       * NEW GOOGLE VENDOR
+       */
       if (role === "vendor") {
         await signOut(auth);
 
@@ -544,9 +513,9 @@ const Auth = () => {
         return;
       }
 
-      // =====================================================
-      // GOOGLE INDIVIDUAL
-      // =====================================================
+      /*
+       * NEW GOOGLE INDIVIDUAL
+       */
       navigate("/customer-dashboard");
     } catch (error) {
       console.error("Google Login Error:", error);
@@ -556,9 +525,12 @@ const Auth = () => {
     }
   };
 
-  // =========================================================
-  // REGISTER
-  // =========================================================
+  /*
+   * ============================================================
+   * REGISTER
+   * ============================================================
+   */
+
   const handleRegister = async () => {
     if (
       !formData.fullName ||
@@ -590,25 +562,18 @@ const Auth = () => {
 
       const userData = {
         uid: user.uid,
-
         role: role,
-
         status:
           role === "vendor"
             ? "pending"
             : "active",
-
         fullName:
           formData.fullName.trim(),
-
         email:
           formData.email.trim(),
-
         phone:
           formData.phone.trim(),
-
         provider: "password",
-
         createdAt:
           new Date().toISOString(),
       };
@@ -647,9 +612,12 @@ const Auth = () => {
     }
   };
 
-  // =========================================================
-  // RESET PASSWORD
-  // =========================================================
+  /*
+   * ============================================================
+   * RESET PASSWORD
+   * ============================================================
+   */
+
   const handleResetPassword = async (event) => {
     event.preventDefault();
 
@@ -657,7 +625,6 @@ const Auth = () => {
       showError(
         "Please enter your registered email."
       );
-
       return;
     }
 
@@ -689,9 +656,12 @@ const Auth = () => {
     }
   };
 
-  // =========================================================
-  // AUTH FORM
-  // =========================================================
+  /*
+   * ============================================================
+   * AUTH FORM
+   * ============================================================
+   */
+
   const handleAuth = async (event) => {
     event.preventDefault();
 
@@ -702,9 +672,12 @@ const Auth = () => {
     }
   };
 
-  // =========================================================
-  // ACCOUNT ROLES
-  // =========================================================
+  /*
+   * ============================================================
+   * ROLES
+   * ============================================================
+   */
+
   const roles = [
     {
       id: "individual",
@@ -718,12 +691,17 @@ const Auth = () => {
     },
   ];
 
+  /*
+   * ============================================================
+   * UI
+   * ============================================================
+   */
+
   return (
     <div className="min-h-screen bg-[#f8fafc] bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] flex items-center justify-center p-4 py-12 font-sans">
 
       <div className="bg-white w-full max-w-[550px] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.08)] overflow-hidden border border-slate-100">
 
-        {/* HEADER */}
         <div className="pt-10 pb-7 px-8 text-center">
 
           <div className="w-16 h-1 bg-indigo-600 mx-auto mb-6 rounded-full" />
@@ -744,7 +722,6 @@ const Auth = () => {
 
         <div className="px-8 pb-10">
 
-          {/* ACCOUNT TYPE */}
           <div className="mb-7">
 
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
@@ -772,18 +749,19 @@ const Auth = () => {
                       : "text-slate-500 hover:text-slate-700")
                   }
                 >
+
                   {item.icon}
 
                   <span className="text-xs uppercase tracking-wider">
                     {item.label}
                   </span>
+
                 </button>
               ))}
 
             </div>
           </div>
 
-          {/* MESSAGE */}
           {message.text && (
             <div
               className={
@@ -797,13 +775,11 @@ const Auth = () => {
             </div>
           )}
 
-          {/* FORM */}
           <form
             onSubmit={handleAuth}
             className="space-y-4"
           >
 
-            {/* REGISTER FIELDS */}
             {!isLogin && (
               <>
                 <div className="relative">
@@ -839,7 +815,6 @@ const Auth = () => {
               </>
             )}
 
-            {/* EMAIL */}
             <div className="relative">
 
               <Mail
@@ -859,7 +834,6 @@ const Auth = () => {
 
             </div>
 
-            {/* PASSWORD */}
             <div className="relative">
 
               <Lock
@@ -899,7 +873,6 @@ const Auth = () => {
 
             </div>
 
-            {/* FORGOT PASSWORD */}
             {isLogin && (
               <div className="flex justify-end">
 
@@ -916,12 +889,12 @@ const Auth = () => {
               </div>
             )}
 
-            {/* SUBMIT */}
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-[#1e293b] text-white py-4 rounded-2xl font-bold text-sm shadow-lg hover:bg-indigo-600 transition-all flex justify-center items-center gap-2 disabled:opacity-60"
             >
+
               {loading ? (
                 <Loader2 className="animate-spin" />
               ) : (
@@ -933,9 +906,9 @@ const Auth = () => {
                   <ArrowRight size={17} />
                 </>
               )}
+
             </button>
 
-            {/* GOOGLE */}
             {isLogin && (
               <>
                 <div className="flex items-center gap-3 py-2">
@@ -956,16 +929,17 @@ const Auth = () => {
                   disabled={loading}
                   className="w-full bg-white border border-slate-200 text-slate-700 py-4 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all flex justify-center items-center gap-3 disabled:opacity-60"
                 >
+
                   <Chrome size={19} />
 
                   Continue with Google
+
                 </button>
               </>
             )}
 
           </form>
 
-          {/* SWITCH LOGIN / REGISTER */}
           <div className="mt-8 text-center">
 
             <button
@@ -990,7 +964,6 @@ const Auth = () => {
         </div>
       </div>
 
-      {/* RESET PASSWORD MODAL */}
       {showResetModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-6 z-50">
 
@@ -1050,11 +1023,13 @@ const Auth = () => {
                 disabled={resetLoading}
                 className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm flex justify-center disabled:opacity-60"
               >
+
                 {resetLoading ? (
                   <Loader2 className="animate-spin" />
                 ) : (
                   "Send Reset Link"
                 )}
+
               </button>
 
               <button
@@ -1078,4 +1053,3 @@ const Auth = () => {
 };
 
 export default Auth;
-```
