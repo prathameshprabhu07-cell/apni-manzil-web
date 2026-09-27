@@ -8,7 +8,7 @@ import Layout from './components/Layout';
 // 1. FIREBASE & DATABASE CONFIGURATION
 // ==========================================
 import { db, auth } from './firebase'; 
-import { collection, onSnapshot, query, limit } from "firebase/firestore";
+import { collection, onSnapshot, query, limit, doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 // ==========================================
