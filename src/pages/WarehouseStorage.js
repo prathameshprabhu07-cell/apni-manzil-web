@@ -10,12 +10,12 @@ import { sendWhatsAppNotification } from '../utils/whatsapp';
 const WarehouseStorage = () => {
   const navigate = useNavigate(); 
   
-  // n8n प्रोडक्शन URL
-  const webhookUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
+  // n8n production URL
+  const webhookUrl = "https://tail-origin-drain-dietary.trycloudflare.com/webhook/warehouse";
 
-  // ✅ हा तुमचा सुधारित कोड आहे
+  // Warehouse booking / inquiry handler
   const handleWarehouseBooking = async (serviceTitle) => {
-    // 🚀 नेव्हिगेशन लॉजिक जसे होते तसे
+    // Navigation logic remains unchanged
     if (serviceTitle === "Short Term Storage") { navigate('/short-term-storage'); return; }
     if (serviceTitle === "Long Term Storage") { navigate('/long-term-storage'); return; }
     if (serviceTitle === "Fulfillment Warehouse") { navigate('/fulfillment-storage'); return; }
@@ -23,7 +23,7 @@ const WarehouseStorage = () => {
     if (serviceTitle === "Inventory Management") { navigate('/inventory-management'); return; }
     if (serviceTitle === "Bulk & Pallet Storage") { navigate('/bulk-pallet-storage'); return; }
 
-    // n8n ला डेटा पाठवण्यासाठी फेच रिक्वेस्ट
+    // Send data to n8n
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',
@@ -38,13 +38,13 @@ const WarehouseStorage = () => {
       });
 
       if (response.ok) {
-        alert(`${serviceTitle} साठी तुमची चौकशी यशस्वीरित्या पाठवण्यात आली आहे!`);
+        alert(`${serviceTitle} inquiry has been submitted successfully!`);
       } else {
-        alert("काहीतरी तांत्रिक अडचण आली आहे, कृपया पुन्हा प्रयत्न करा.");
+        alert("Something went wrong. Please try again.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("सर्व्हरशी कनेक्ट होताना अडचण आली.");
+      alert("Unable to connect to the server.");
     }
   };
 
@@ -62,28 +62,59 @@ const WarehouseStorage = () => {
       <div className="bg-gradient-to-r from-[#002D5E] to-blue-600 text-white py-20 px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 z-10 space-y-6">
-            <p className="text-sm font-bold opacity-80 uppercase tracking-[0.3em]">Home / Warehouse & Storage</p>
-            <h1 className="text-5xl md:text-6xl font-black leading-tight">Warehouse & <br/><span className="text-orange-400">Storage</span></h1>
-            <p className="text-xl font-medium opacity-90 max-w-lg">Secure, scalable, and smart storage solutions for businesses and individuals. Modern facilities with 24/7 monitoring.</p>
+            <p className="text-sm font-bold opacity-80 uppercase tracking-[0.3em]">
+              Home / Warehouse & Storage
+            </p>
+
+            <h1 className="text-5xl md:text-6xl font-black leading-tight">
+              Warehouse & <br/>
+              <span className="text-orange-400">Storage</span>
+            </h1>
+
+            <p className="text-xl font-medium opacity-90 max-w-lg">
+              Secure, scalable, and smart storage solutions for businesses and individuals. Modern facilities with 24/7 monitoring.
+            </p>
           </div>
+
           <div className="md:w-1/2 mt-12 md:mt-0 relative">
             <div className="absolute -inset-4 bg-orange-500/20 blur-3xl rounded-full"></div>
-            <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1000" alt="Modern Warehouse" className="rounded-[3rem] shadow-2xl border-8 border-white/10 relative z-10 object-cover h-80 w-full" />
+
+            <img 
+              src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1000" 
+              alt="Modern Warehouse" 
+              className="rounded-[3rem] shadow-2xl border-8 border-white/10 relative z-10 object-cover h-80 w-full" 
+            />
           </div>
         </div>
       </div>
 
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16 space-y-4">
-          <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-wider">Select a Storage Service</h2>
+          <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-wider">
+            Select a Storage Service
+          </h2>
+
           <div className="w-24 h-1.5 bg-orange-500 mx-auto rounded-full"></div>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {warehouseServices.map((service) => (
-            <div key={service.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:border-orange-400 transition-all group flex flex-col items-center text-center space-y-4">
-              <div className={`${service.color} p-6 rounded-[2rem] group-hover:scale-110 transition-transform`}>{service.icon}</div>
-              <h3 className="text-xl font-black text-slate-800">{service.title}</h3>
-              <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
+            <div 
+              key={service.id} 
+              className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:border-orange-400 transition-all group flex flex-col items-center text-center space-y-4"
+            >
+              <div className={`${service.color} p-6 rounded-[2rem] group-hover:scale-110 transition-transform`}>
+                {service.icon}
+              </div>
+
+              <h3 className="text-xl font-black text-slate-800">
+                {service.title}
+              </h3>
+
+              <p className="text-slate-500 font-medium leading-relaxed">
+                {service.desc}
+              </p>
+
               <button 
                 onClick={() => handleWarehouseBooking(service.title)}
                 className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-lg shadow-orange-100 cursor-pointer"
@@ -99,16 +130,42 @@ const WarehouseStorage = () => {
       <section className="max-w-5xl mx-auto px-6 pb-20">
         <div className="space-y-12">
           {[
-            { title: "Short Term Storage", desc: "Flexible weekly or monthly storage for temporary needs. Whether you are dealing with seasonal spikes or temporary space constraints, our short-term storage provides a scalable and cost-effective solution tailored to your immediate business demands." },
-            { title: "Long Term Storage", desc: "Secure long-term solutions for your excess inventory. Keep your stock safe and organized over extended periods with our reliable, climate-monitored facilities designed to protect your goods until you are ready to ship them." },
-            { title: "Fulfillment Warehouse", desc: "Complete pick, pack, and ship services for e-commerce. We streamline your order fulfillment process by managing the entire cycle—from receiving orders to professional packing and final shipment—ensuring your customers receive their items promptly." },
-            { title: "Cold Storage", desc: "Temperature controlled storage for perishable goods. Preserve the quality and shelf life of your sensitive products with our advanced, temperature-regulated cold storage units, specially designed to meet the highest safety standards for perishables." },
-            { title: "Inventory Management", desc: "Real-time tracking and management of your stock. Gain complete visibility over your inventory with our sophisticated tracking system, allowing you to monitor stock levels, predict demand, and optimize your operations with precision." },
-            { title: "Bulk & Pallet Storage", desc: "Spacious areas for large items and heavy pallets. Our expansive warehouse facilities are optimized to accommodate large-volume shipments, offering secure and easily accessible storage space for your bulk goods and heavy pallets." }
+            { 
+              title: "Short Term Storage", 
+              desc: "Flexible weekly or monthly storage for temporary needs. Whether you are dealing with seasonal spikes or temporary space constraints, our short-term storage provides a scalable and cost-effective solution tailored to your immediate business demands." 
+            },
+            { 
+              title: "Long Term Storage", 
+              desc: "Secure long-term solutions for your excess inventory. Keep your stock safe and organized over extended periods with our reliable, climate-monitored facilities designed to protect your goods until you are ready to ship them." 
+            },
+            { 
+              title: "Fulfillment Warehouse", 
+              desc: "Complete pick, pack, and ship services for e-commerce. We streamline your order fulfillment process by managing the entire cycle—from receiving orders to professional packing and final shipment—ensuring your customers receive their items promptly." 
+            },
+            { 
+              title: "Cold Storage", 
+              desc: "Temperature controlled storage for perishable goods. Preserve the quality and shelf life of your sensitive products with our advanced, temperature-regulated cold storage units, specially designed to meet the highest safety standards for perishables." 
+            },
+            { 
+              title: "Inventory Management", 
+              desc: "Real-time tracking and management of your stock. Gain complete visibility over your inventory with our sophisticated tracking system, allowing you to monitor stock levels, predict demand, and optimize your operations with precision." 
+            },
+            { 
+              title: "Bulk & Pallet Storage", 
+              desc: "Spacious areas for large items and heavy pallets. Our expansive warehouse facilities are optimized to accommodate large-volume shipments, offering secure and easily accessible storage space for your bulk goods and heavy pallets." 
+            }
           ].map((item, index) => (
-            <div key={index} className="border-l-4 border-blue-600 pl-6 hover:bg-slate-50 p-4 transition-all rounded-r-2xl">
-              <h4 className="text-xl font-black text-slate-800 mb-2">{item.title}</h4>
-              <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
+            <div 
+              key={index} 
+              className="border-l-4 border-blue-600 pl-6 hover:bg-slate-50 p-4 transition-all rounded-r-2xl"
+            >
+              <h4 className="text-xl font-black text-slate-800 mb-2">
+                {item.title}
+              </h4>
+
+              <p className="text-slate-600 font-medium leading-relaxed">
+                {item.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -116,24 +173,42 @@ const WarehouseStorage = () => {
 
       <div className="max-w-7xl mx-auto px-6 mb-24">
         <div className="bg-[#002D5E] rounded-[4rem] p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 shadow-2xl relative overflow-hidden text-white border-t-8 border-orange-500">
+          
           <div className="md:w-1/3 flex justify-center">
-             <div className="bg-white/10 p-10 rounded-full backdrop-blur-md">
-                <ShieldCheck size={120} className="text-orange-400" />
-             </div>
-          </div>
-          <div className="md:w-2/3 space-y-8">
-            <h2 className="text-4xl font-black">Get Safe & <span className="text-orange-400">Affordable</span> Storage!</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 font-bold text-lg"><CheckCircle2 className="text-orange-400" /> Safe & Secure</div>
-              <div className="flex items-center gap-3 font-bold text-lg"><CheckCircle2 className="text-orange-400" /> Flexible Solutions</div>
-              <div className="flex items-center gap-3 font-bold text-lg"><CheckCircle2 className="text-orange-400" /> Affordable Rates</div>
-              <div className="flex items-center gap-3 font-bold text-lg"><CheckCircle2 className="text-orange-400" /> 24/7 Monitoring</div>
+            <div className="bg-white/10 p-10 rounded-full backdrop-blur-md">
+              <ShieldCheck size={120} className="text-orange-400" />
             </div>
+          </div>
+
+          <div className="md:w-2/3 space-y-8">
+            <h2 className="text-4xl font-black">
+              Get Safe & <span className="text-orange-400">Affordable</span> Storage!
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 font-bold text-lg">
+                <CheckCircle2 className="text-orange-400" /> Safe & Secure
+              </div>
+
+              <div className="flex items-center gap-3 font-bold text-lg">
+                <CheckCircle2 className="text-orange-400" /> Flexible Solutions
+              </div>
+
+              <div className="flex items-center gap-3 font-bold text-lg">
+                <CheckCircle2 className="text-orange-400" /> Affordable Rates
+              </div>
+
+              <div className="flex items-center gap-3 font-bold text-lg">
+                <CheckCircle2 className="text-orange-400" /> 24/7 Monitoring
+              </div>
+            </div>
+
             <button 
               onClick={() => handleWarehouseBooking("Long Term Storage")} 
               className="bg-orange-500 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center gap-4 group cursor-pointer"
             >
-              Get Quote Now <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+              Get Quote Now 
+              <ArrowRight className="group-hover:translate-x-2 transition-transform" />
             </button>
           </div>
         </div>

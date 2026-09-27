@@ -31,7 +31,7 @@ const TruckOwnerRegister = () => {
   // n8n WEBHOOK
   // =========================================================
   const N8N_WEBHOOK_URL =
-    "https://satisfy-behaviour-hardwood-stationery.trycloudflare.com/webhook/Truck-Owner";
+    "https://tail-origin-drain-dietary.trycloudflare.com/webhook/Truck-Owner";
 
   // =========================================================
   // VEHICLES

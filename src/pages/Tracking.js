@@ -17,7 +17,7 @@ const Tracking = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5678/webhook/4b54e0a4-ba4b-484f-8d2d-d804f5b65348", {
+      const response = await fetch("https://tail-origin-drain-dietary.trycloudflare.com/webhook/Traking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
