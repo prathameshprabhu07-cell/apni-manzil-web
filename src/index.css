@@ -1,7 +1,12 @@
-/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Apni Manzil - Global CSS */
+
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
 }
 
@@ -12,11 +17,11 @@ body {
 
 .card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 .navbar {
-  background-color: #0056b3 !important; 
+  background-color: #0056b3 !important;
 }
 
 .btn-primary {
@@ -29,24 +34,41 @@ body {
   border: none;
 }
 
-/* मूळ अ‍ॅनिमेशन्स */
+/* Floating Animation */
+
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
 
+/* Slow Bounce */
+
 @keyframes bounce-slow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .animate-bounce-slow {
   animation: bounce-slow 3s ease-in-out infinite;
 }
+
+/* Drop Shadow */
 
 .drop-shadow-3xl {
   filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.2));
