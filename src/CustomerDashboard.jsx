@@ -1,4 +1,3 @@
-```jsx
 import React, { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard,
@@ -28,6 +27,7 @@ import {
 } from "lucide-react";
 
 import { auth, db } from "./firebaseConfig";
+
 import {
   doc,
   getDoc,
@@ -37,7 +37,11 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+
+import {
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
 
 const CustomerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -55,9 +59,10 @@ const CustomerDashboard = () => {
 
   const [cancellingBookingId, setCancellingBookingId] = useState(null);
 
-  // --------------------------------------------------
-  // AUTH + CUSTOMER PROFILE + BOOKINGS
-  // --------------------------------------------------
+  /* =====================================================
+     AUTH + PROFILE + BOOKINGS
+  ===================================================== */
+
   useEffect(() => {
     let unsubscribeBookings = null;
 
@@ -72,7 +77,6 @@ const CustomerDashboard = () => {
         }
 
         try {
-          // USER PROFILE
           const userRef = doc(
             db,
             "users",
@@ -96,8 +100,6 @@ const CustomerDashboard = () => {
           });
 
           setLoading(false);
-
-          // CUSTOMER BOOKINGS
           setBookingsLoading(true);
 
           const bookingsRef = collection(
@@ -117,30 +119,39 @@ const CustomerDashboard = () => {
           unsubscribeBookings = onSnapshot(
             bookingsQuery,
             (snapshot) => {
-              const bookingList = snapshot.docs.map(
-                (bookingDoc) => ({
+              const bookingList = [];
+
+              snapshot.docs.forEach((bookingDoc) => {
+                bookingList.push({
                   id: bookingDoc.id,
                   ...bookingDoc.data(),
-                })
-              );
+                });
+              });
 
-              // Newest booking first
               bookingList.sort((a, b) => {
                 const getTime = (value) => {
-                  if (!value) return 0;
-
-                  if (
-                    value &&
-                    typeof value.toDate === "function"
-                  ) {
-                    return value.toDate().getTime();
+                  if (!value) {
+                    return 0;
                   }
 
-                  const parsed = new Date(value).getTime();
+                  if (
+                    typeof value.toDate ===
+                    "function"
+                  ) {
+                    return value
+                      .toDate()
+                      .getTime();
+                  }
 
-                  return Number.isNaN(parsed)
-                    ? 0
-                    : parsed;
+                  const time = new Date(
+                    value
+                  ).getTime();
+
+                  if (Number.isNaN(time)) {
+                    return 0;
+                  }
+
+                  return time;
                 };
 
                 return (
@@ -187,14 +198,17 @@ const CustomerDashboard = () => {
     };
   }, []);
 
-  // --------------------------------------------------
-  // CLOSE PROFILE DROPDOWN
-  // --------------------------------------------------
+  /* =====================================================
+     CLOSE PROFILE DROPDOWN
+  ===================================================== */
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         profileRef.current &&
-        !profileRef.current.contains(event.target)
+        !profileRef.current.contains(
+          event.target
+        )
       ) {
         setProfileOpen(false);
       }
@@ -213,23 +227,30 @@ const CustomerDashboard = () => {
     };
   }, []);
 
-  // --------------------------------------------------
-  // LOGOUT
-  // --------------------------------------------------
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
       window.location.href = "/login";
     } catch (err) {
-      console.error("Logout error:", err);
+      console.error(
+        "Logout error:",
+        err
+      );
     }
   };
 
-  // --------------------------------------------------
-  // CANCEL BOOKING
-  // --------------------------------------------------
-  const handleCancelBooking = async (booking) => {
-    if (!booking?.id) {
+  /* =====================================================
+     CANCEL BOOKING
+  ===================================================== */
+
+  const handleCancelBooking = async (
+    booking
+  ) => {
+    if (!booking || !booking.id) {
       alert("Booking ID not found.");
       return;
     }
@@ -242,13 +263,13 @@ const CustomerDashboard = () => {
       .trim()
       .toLowerCase();
 
-    // Already cancelled
     if (currentStatus.includes("cancel")) {
-      alert("This booking is already cancelled.");
+      alert(
+        "This booking is already cancelled."
+      );
       return;
     }
 
-    // Delivered booking cannot be cancelled
     if (currentStatus.includes("deliver")) {
       alert(
         "Delivered bookings cannot be cancelled."
@@ -256,11 +277,12 @@ const CustomerDashboard = () => {
       return;
     }
 
-    // Shipment already dispatched
     if (
       currentStatus.includes("dispatch") ||
       currentStatus.includes("shipped") ||
-      currentStatus.includes("out for delivery") ||
+      currentStatus.includes(
+        "out for delivery"
+      ) ||
       currentStatus.includes("transit")
     ) {
       alert(
@@ -270,7 +292,8 @@ const CustomerDashboard = () => {
     }
 
     const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this booking?\n\nBooking ID: " +
+      "Are you sure you want to cancel this booking?\n\n" +
+        "Booking ID: " +
         booking.id +
         "\n\nPlease confirm to continue."
     );
@@ -280,7 +303,9 @@ const CustomerDashboard = () => {
     }
 
     try {
-      setCancellingBookingId(booking.id);
+      setCancellingBookingId(
+        booking.id
+      );
 
       const bookingRef = doc(
         db,
@@ -291,7 +316,8 @@ const CustomerDashboard = () => {
       await updateDoc(bookingRef, {
         status: "Cancelled",
         cancelledBy: "customer",
-        cancelledAt: new Date().toISOString(),
+        cancelledAt:
+          new Date().toISOString(),
       });
 
       alert(
@@ -311,18 +337,21 @@ const CustomerDashboard = () => {
     }
   };
 
-  // --------------------------------------------------
-  // DATE FORMAT
-  // --------------------------------------------------
+  /* =====================================================
+     DATE
+  ===================================================== */
+
   const formatDate = (dateValue) => {
-    if (!dateValue) return "Not available";
+    if (!dateValue) {
+      return "Not available";
+    }
 
     try {
       let date;
 
       if (
-        dateValue &&
-        typeof dateValue.toDate === "function"
+        typeof dateValue.toDate ===
+        "function"
       ) {
         date = dateValue.toDate();
       } else {
@@ -333,90 +362,122 @@ const CustomerDashboard = () => {
         return "Not available";
       }
 
-      return date.toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
-    } catch (error) {
+      return date.toLocaleDateString(
+        "en-IN",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }
+      );
+    } catch (err) {
       return "Not available";
     }
   };
 
-  // --------------------------------------------------
-  // INITIAL
-  // --------------------------------------------------
-  const getInitial = () => {
-    if (!userData?.fullName) return "U";
+  /* =====================================================
+     PROFILE HELPERS
+  ===================================================== */
 
-    return userData.fullName
+  const getInitial = () => {
+    if (
+      !userData ||
+      !userData.fullName
+    ) {
+      return "U";
+    }
+
+    return String(
+      userData.fullName
+    )
       .charAt(0)
       .toUpperCase();
   };
 
-  // --------------------------------------------------
-  // ACCOUNT TYPE
-  // --------------------------------------------------
   const getAccountType = () => {
-    if (!userData?.role) return "Individual";
-
-    if (userData.role === "individual") {
+    if (
+      !userData ||
+      !userData.role
+    ) {
       return "Individual";
     }
 
-    if (userData.role === "vendor") {
+    if (
+      userData.role ===
+      "individual"
+    ) {
+      return "Individual";
+    }
+
+    if (
+      userData.role === "vendor"
+    ) {
       return "Vendor / Partner";
     }
 
     return userData.role;
   };
 
-  // --------------------------------------------------
-  // PROVIDER
-  // --------------------------------------------------
   const getProviderName = () => {
-    if (!userData?.provider) {
+    if (
+      !userData ||
+      !userData.provider
+    ) {
       return "Not available";
     }
 
-    if (userData.provider === "password") {
+    if (
+      userData.provider ===
+      "password"
+    ) {
       return "Email & Password";
     }
 
-    if (userData.provider === "google") {
+    if (
+      userData.provider ===
+      "google"
+    ) {
       return "Google";
     }
 
     return userData.provider;
   };
 
-  // --------------------------------------------------
-  // SIDEBAR
-  // --------------------------------------------------
+  /* =====================================================
+     SIDEBAR
+  ===================================================== */
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSidebarOpen(false);
   };
 
-  // --------------------------------------------------
-  // STATUS NORMALIZATION
-  // --------------------------------------------------
-  const getBookingStatus = (booking) => {
+  /* =====================================================
+     BOOKING STATUS
+  ===================================================== */
+
+  const getBookingStatus = (
+    booking
+  ) => {
+    if (!booking) {
+      return "pending";
+    }
+
     const status =
-      booking?.status ||
-      booking?.bookingStatus ||
+      booking.status ||
+      booking.bookingStatus ||
       "Pending";
 
-    return String(status).trim().toLowerCase();
+    return String(status)
+      .trim()
+      .toLowerCase();
   };
 
-  // --------------------------------------------------
-  // BOOKING COUNTS
-  // --------------------------------------------------
-  const totalShipments = bookings.length;
+  const totalShipments =
+    bookings.length;
 
-  const inTransitCount = bookings.filter(
-    (booking) => {
+  const inTransitCount =
+    bookings.filter((booking) => {
       const status =
         getBookingStatus(booking);
 
@@ -424,22 +485,24 @@ const CustomerDashboard = () => {
         status.includes("transit") ||
         status.includes("shipped") ||
         status.includes("dispatch") ||
-        status.includes("out for delivery")
+        status.includes(
+          "out for delivery"
+        )
       );
-    }
-  ).length;
+    }).length;
 
-  const deliveredCount = bookings.filter(
-    (booking) => {
+  const deliveredCount =
+    bookings.filter((booking) => {
       const status =
         getBookingStatus(booking);
 
-      return status.includes("deliver");
-    }
-  ).length;
+      return status.includes(
+        "deliver"
+      );
+    }).length;
 
-  const rtoCount = bookings.filter(
-    (booking) => {
+  const rtoCount =
+    bookings.filter((booking) => {
       const status =
         getBookingStatus(booking);
 
@@ -448,33 +511,48 @@ const CustomerDashboard = () => {
         status.includes("return") ||
         status.includes("cancel")
       );
-    }
-  ).length;
+    }).length;
 
-  // --------------------------------------------------
-  // STATUS BADGE
-  // --------------------------------------------------
-  const getStatusClass = (status) => {
-    const normalized =
-      String(status || "").toLowerCase();
+  const getStatusClass = (
+    status
+  ) => {
+    const normalized = String(
+      status || ""
+    ).toLowerCase();
 
-    if (normalized.includes("deliver")) {
+    if (
+      normalized.includes(
+        "deliver"
+      )
+    ) {
       return "bg-emerald-50 text-emerald-700 border-emerald-100";
     }
 
     if (
-      normalized.includes("transit") ||
-      normalized.includes("shipped") ||
-      normalized.includes("dispatch")
+      normalized.includes(
+        "transit"
+      ) ||
+      normalized.includes(
+        "shipped"
+      ) ||
+      normalized.includes(
+        "dispatch"
+      )
     ) {
       return "bg-blue-50 text-blue-700 border-blue-100";
     }
 
     if (
-      normalized.includes("cancel") ||
-      normalized.includes("return") ||
+      normalized.includes(
+        "cancel"
+      ) ||
+      normalized.includes(
+        "return"
+      ) ||
       normalized.includes("rto") ||
-      normalized.includes("reject")
+      normalized.includes(
+        "reject"
+      )
     ) {
       return "bg-red-50 text-red-700 border-red-100";
     }
@@ -482,24 +560,32 @@ const CustomerDashboard = () => {
     return "bg-amber-50 text-amber-700 border-amber-100";
   };
 
-  // --------------------------------------------------
-  // CAN CUSTOMER CANCEL?
-  // --------------------------------------------------
-  const canCustomerCancel = (booking) => {
-    const status = getBookingStatus(booking);
+  const canCustomerCancel = (
+    booking
+  ) => {
+    const status =
+      getBookingStatus(booking);
 
-    if (status.includes("cancel")) {
-      return false;
-    }
-
-    if (status.includes("deliver")) {
+    if (
+      status.includes("cancel")
+    ) {
       return false;
     }
 
     if (
-      status.includes("dispatch") ||
+      status.includes("deliver")
+    ) {
+      return false;
+    }
+
+    if (
+      status.includes(
+        "dispatch"
+      ) ||
       status.includes("shipped") ||
-      status.includes("out for delivery") ||
+      status.includes(
+        "out for delivery"
+      ) ||
       status.includes("transit")
     ) {
       return false;
@@ -508,9 +594,10 @@ const CustomerDashboard = () => {
     return true;
   };
 
-  // --------------------------------------------------
-  // LOADING
-  // --------------------------------------------------
+  /* =====================================================
+     LOADING
+  ===================================================== */
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
@@ -528,9 +615,10 @@ const CustomerDashboard = () => {
     );
   }
 
-  // --------------------------------------------------
-  // ERROR
-  // --------------------------------------------------
+  /* =====================================================
+     ERROR
+  ===================================================== */
+
   if (error) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
@@ -561,10 +649,15 @@ const CustomerDashboard = () => {
     );
   }
 
+  /* =====================================================
+     DASHBOARD
+  ===================================================== */
+
   return (
     <div className="min-h-screen bg-slate-100 flex font-sans">
 
       {/* SIDEBAR */}
+
       <aside
         className={
           "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform " +
@@ -574,12 +667,10 @@ const CustomerDashboard = () => {
           " md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col"
         }
       >
+        {/* HEADER */}
 
-        {/* SIDEBAR HEADER */}
         <div className="p-6 flex items-center justify-between border-b border-slate-100">
-
           <div className="flex items-center gap-3">
-
             <div className="bg-[#FF5E00] p-2 rounded-xl text-white font-black text-xl">
               AM
             </div>
@@ -593,7 +684,6 @@ const CustomerDashboard = () => {
                 Logistics Hub
               </span>
             </div>
-
           </div>
 
           <button
@@ -604,40 +694,48 @@ const CustomerDashboard = () => {
           >
             <X size={24} />
           </button>
-
         </div>
 
-        {/* SIDEBAR NAVIGATION */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        {/* NAVIGATION */}
 
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <button
             onClick={() =>
-              handleTabChange("dashboard")
+              handleTabChange(
+                "dashboard"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "dashboard"
+              (activeTab ===
+              "dashboard"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
           >
-            <LayoutDashboard size={20} />
+            <LayoutDashboard
+              size={20}
+            />
             Dashboard
           </button>
 
           <button
             onClick={() =>
-              handleTabChange("courier")
+              handleTabChange(
+                "courier"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "courier"
+              (activeTab ===
+              "courier"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
           >
             <Package size={20} />
-            Courier & Parcel Services
+            Courier & Parcel
+            Services
           </button>
 
           <button
@@ -652,22 +750,27 @@ const CustomerDashboard = () => {
             }
           >
             <Home size={20} />
-            Home & Personal Transport
+            Home & Personal
+            Transport
           </button>
 
           <button
             onClick={() =>
-              handleTabChange("industrial")
+              handleTabChange(
+                "industrial"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "industrial"
+              (activeTab ===
+              "industrial"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
           >
             <Truck size={20} />
-            Industrial / Factory Transport
+            Industrial / Factory
+            Transport
           </button>
 
           <button
@@ -676,22 +779,27 @@ const CustomerDashboard = () => {
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "global"
+              (activeTab ===
+              "global"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
           >
             <Globe size={20} />
-            International / Import-Export
+            International /
+            Import-Export
           </button>
 
           <button
             onClick={() =>
-              handleTabChange("specialized")
+              handleTabChange(
+                "specialized"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "specialized"
+              (activeTab ===
+              "specialized"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
@@ -706,11 +814,14 @@ const CustomerDashboard = () => {
 
           <button
             onClick={() =>
-              handleTabChange("settings")
+              handleTabChange(
+                "settings"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "settings"
+              (activeTab ===
+              "settings"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
@@ -721,11 +832,14 @@ const CustomerDashboard = () => {
 
           <button
             onClick={() =>
-              handleTabChange("reports")
+              handleTabChange(
+                "reports"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "reports"
+              (activeTab ===
+              "reports"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
@@ -736,11 +850,14 @@ const CustomerDashboard = () => {
 
           <button
             onClick={() =>
-              handleTabChange("payments")
+              handleTabChange(
+                "payments"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "payments"
+              (activeTab ===
+              "payments"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
@@ -748,19 +865,21 @@ const CustomerDashboard = () => {
             <CreditCard size={20} />
             Payment History
           </button>
-
         </nav>
 
-        {/* SIDEBAR BOTTOM */}
-        <div className="p-4 border-t border-slate-100">
+        {/* BOTTOM */}
 
+        <div className="p-4 border-t border-slate-100">
           <button
             onClick={() =>
-              handleTabChange("support")
+              handleTabChange(
+                "support"
+              )
             }
             className={
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
-              (activeTab === "support"
+              (activeTab ===
+              "support"
                 ? "bg-[#001D3D] text-white shadow-lg"
                 : "text-slate-600 hover:bg-slate-50")
             }
@@ -776,19 +895,17 @@ const CustomerDashboard = () => {
             <LogOut size={20} />
             Logout
           </button>
-
         </div>
-
       </aside>
 
       {/* MAIN */}
+
       <div className="flex-1 md:ml-64 flex flex-col min-w-0">
 
         {/* HEADER */}
+
         <header className="bg-white border-b border-slate-200 h-20 px-6 flex items-center justify-between sticky top-0 z-40">
-
           <div className="flex items-center gap-4">
-
             <button
               onClick={() =>
                 setSidebarOpen(true)
@@ -799,7 +916,6 @@ const CustomerDashboard = () => {
             </button>
 
             <div className="relative hidden sm:block w-72">
-
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                 size={18}
@@ -810,23 +926,18 @@ const CustomerDashboard = () => {
                 placeholder="Search tracking ID, orders..."
                 className="w-full pl-10 pr-4 py-2 bg-slate-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-[#001D3D]"
               />
-
             </div>
-
           </div>
 
           <div className="flex items-center gap-4">
-
             <button className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl relative">
               <Bell size={20} />
             </button>
 
-            {/* PROFILE */}
             <div
               ref={profileRef}
               className="relative pl-4 border-l border-slate-200"
             >
-
               <button
                 type="button"
                 onClick={() =>
@@ -836,22 +947,21 @@ const CustomerDashboard = () => {
                 }
                 className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 transition"
               >
-
                 <div className="w-10 h-10 rounded-full bg-[#001D3D] text-white flex items-center justify-center font-black">
                   {getInitial()}
                 </div>
 
                 <div className="hidden sm:block text-left">
-
                   <h4 className="font-bold text-xs text-[#001D3D]">
-                    {userData?.fullName ||
-                      "User"}
+                    {userData &&
+                    userData.fullName
+                      ? userData.fullName
+                      : "User"}
                   </h4>
 
                   <span className="text-[10px] font-bold text-slate-400">
                     My Profile
                   </span>
-
                 </div>
 
                 <ChevronDown
@@ -863,43 +973,40 @@ const CustomerDashboard = () => {
                       : "")
                   }
                 />
-
               </button>
 
               {/* PROFILE DROPDOWN */}
+
               {profileOpen && (
                 <div className="absolute right-0 top-full mt-3 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50">
 
                   <div className="p-5 bg-[#001D3D] text-white">
-
                     <div className="flex items-center gap-3">
-
                       <div className="w-12 h-12 rounded-full bg-white text-[#001D3D] flex items-center justify-center font-black text-lg">
                         {getInitial()}
                       </div>
 
                       <div className="min-w-0">
-
                         <h3 className="font-black truncate">
-                          {userData?.fullName ||
-                            "User"}
+                          {userData &&
+                          userData.fullName
+                            ? userData.fullName
+                            : "User"}
                         </h3>
 
                         <p className="text-xs text-slate-300 truncate">
-                          {userData?.email ||
-                            "Email not available"}
+                          {userData &&
+                          userData.email
+                            ? userData.email
+                            : "Email not available"}
                         </p>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div className="p-4 space-y-2">
 
                     <div className="p-3 bg-slate-50 rounded-xl">
-
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <User size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -908,14 +1015,14 @@ const CustomerDashboard = () => {
                       </div>
 
                       <p className="text-sm font-bold text-[#001D3D]">
-                        {userData?.fullName ||
-                          "Not available"}
+                        {userData &&
+                        userData.fullName
+                          ? userData.fullName
+                          : "Not available"}
                       </p>
-
                     </div>
 
                     <div className="p-3 bg-slate-50 rounded-xl">
-
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <Mail size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -924,14 +1031,14 @@ const CustomerDashboard = () => {
                       </div>
 
                       <p className="text-sm font-bold text-[#001D3D] break-all">
-                        {userData?.email ||
-                          "Not available"}
+                        {userData &&
+                        userData.email
+                          ? userData.email
+                          : "Not available"}
                       </p>
-
                     </div>
 
                     <div className="p-3 bg-slate-50 rounded-xl">
-
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <Phone size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -940,16 +1047,16 @@ const CustomerDashboard = () => {
                       </div>
 
                       <p className="text-sm font-bold text-[#001D3D]">
-                        {userData?.phone ||
-                          "Not available"}
+                        {userData &&
+                        userData.phone
+                          ? userData.phone
+                          : "Not available"}
                       </p>
-
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
 
                       <div className="p-3 bg-slate-50 rounded-xl">
-
                         <div className="flex items-center gap-2 text-slate-400 mb-1">
                           <Shield size={15} />
                           <span className="text-[10px] font-black uppercase">
@@ -960,11 +1067,9 @@ const CustomerDashboard = () => {
                         <p className="text-xs font-bold text-[#001D3D]">
                           {getAccountType()}
                         </p>
-
                       </div>
 
                       <div className="p-3 bg-slate-50 rounded-xl">
-
                         <div className="flex items-center gap-2 text-slate-400 mb-1">
                           <User size={15} />
                           <span className="text-[10px] font-black uppercase">
@@ -975,13 +1080,11 @@ const CustomerDashboard = () => {
                         <p className="text-xs font-bold text-[#001D3D]">
                           {getProviderName()}
                         </p>
-
                       </div>
 
                     </div>
 
                     <div className="p-3 bg-slate-50 rounded-xl">
-
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
                         <Calendar size={15} />
                         <span className="text-[10px] font-black uppercase">
@@ -991,33 +1094,30 @@ const CustomerDashboard = () => {
 
                       <p className="text-sm font-bold text-[#001D3D]">
                         {formatDate(
-                          userData?.createdAt
+                          userData &&
+                          userData.createdAt
                         )}
                       </p>
-
                     </div>
 
                     <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
-
                       <div className="flex items-center justify-between">
-
                         <span className="text-[10px] font-black text-emerald-700 uppercase">
                           Account Status
                         </span>
 
                         <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">
-                          {userData?.status ||
-                            "active"}
+                          {userData &&
+                          userData.status
+                            ? userData.status
+                            : "active"}
                         </span>
-
                       </div>
-
                     </div>
 
                   </div>
 
                   <div className="border-t border-slate-100 p-3">
-
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm text-red-500 hover:bg-red-50"
@@ -1025,36 +1125,33 @@ const CustomerDashboard = () => {
                       <LogOut size={17} />
                       Logout
                     </button>
-
                   </div>
 
                 </div>
               )}
-
             </div>
-
           </div>
-
         </header>
 
         {/* BODY */}
+
         <main className="p-6 space-y-6 flex-1">
 
           {/* WELCOME */}
+
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-
               <div>
-
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                   Individual Account
                 </p>
 
                 <h2 className="text-2xl md:text-3xl font-black text-[#001D3D]">
                   Welcome,{" "}
-                  {userData?.fullName ||
-                    "User"}{" "}
+                  {userData &&
+                  userData.fullName
+                    ? userData.fullName
+                    : "User"}{" "}
                   👋
                 </h2>
 
@@ -1063,34 +1160,28 @@ const CustomerDashboard = () => {
                   services and shipments
                   from one place.
                 </p>
-
               </div>
 
               <div className="px-4 py-3 bg-emerald-50 rounded-xl border border-emerald-100">
-
                 <div className="flex items-center gap-2">
-
                   <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></div>
 
                   <span className="text-xs font-black text-emerald-700 uppercase">
-                    {userData?.status ||
-                      "active"}
+                    {userData &&
+                    userData.status
+                      ? userData.status
+                      : "active"}
                   </span>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
 
-          {/* LOGISTICS STATS */}
+          {/* STATS */}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            {/* SHIPMENTS */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
               <div className="w-11 h-11 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
                 <Package size={22} />
               </div>
@@ -1108,12 +1199,9 @@ const CustomerDashboard = () => {
               <p className="text-[11px] text-slate-400 mt-2">
                 Total bookings
               </p>
-
             </div>
 
-            {/* IN TRANSIT */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
               <div className="w-11 h-11 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-4">
                 <Truck size={22} />
               </div>
@@ -1131,12 +1219,9 @@ const CustomerDashboard = () => {
               <p className="text-[11px] text-slate-400 mt-2">
                 Active shipments
               </p>
-
             </div>
 
-            {/* DELIVERED */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
               <div className="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
                 <CheckCircle2 size={22} />
               </div>
@@ -1154,12 +1239,9 @@ const CustomerDashboard = () => {
               <p className="text-[11px] text-slate-400 mt-2">
                 Completed shipments
               </p>
-
             </div>
 
-            {/* RTO */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
               <div className="w-11 h-11 bg-red-50 text-red-500 rounded-xl flex items-center justify-center mb-4">
                 <AlertCircle size={22} />
               </div>
@@ -1177,18 +1259,16 @@ const CustomerDashboard = () => {
               <p className="text-[11px] text-slate-400 mt-2">
                 Returned or cancelled
               </p>
-
             </div>
 
           </div>
 
-          {/* MY BOOKINGS */}
+          {/* BOOKINGS */}
+
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
             <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-
               <div>
-
                 <h3 className="font-black text-[#001D3D] text-lg">
                   My Recent Bookings
                 </h3>
@@ -1197,11 +1277,9 @@ const CustomerDashboard = () => {
                   Your bookings and shipment
                   activity
                 </p>
-
               </div>
 
               <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
-
                 <Package size={15} />
 
                 {bookings.length}{" "}
@@ -1209,15 +1287,11 @@ const CustomerDashboard = () => {
                 {bookings.length !== 1
                   ? "s"
                   : ""}
-
               </div>
-
             </div>
 
             {bookingsLoading ? (
-
               <div className="p-10 text-center">
-
                 <Loader2
                   size={28}
                   className="mx-auto mb-3 animate-spin text-[#001D3D]"
@@ -1226,13 +1300,9 @@ const CustomerDashboard = () => {
                 <p className="text-sm font-bold text-slate-500">
                   Loading your bookings...
                 </p>
-
               </div>
-
             ) : bookings.length === 0 ? (
-
               <div className="p-10 text-center">
-
                 <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Package
                     size={28}
@@ -1248,16 +1318,12 @@ const CustomerDashboard = () => {
                   Your confirmed bookings
                   will appear here.
                 </p>
-
               </div>
-
             ) : (
-
               <div className="divide-y divide-slate-100">
 
                 {bookings.map(
                   (booking) => {
-
                     const status =
                       booking.status ||
                       booking.bookingStatus ||
@@ -1273,9 +1339,17 @@ const CustomerDashboard = () => {
                       "Courier Partner";
 
                     const price =
-                      booking.price ??
-                      booking.amount ??
-                      null;
+                      booking.price !==
+                      undefined &&
+                      booking.price !==
+                      null
+                        ? booking.price
+                        : booking.amount !==
+                          undefined &&
+                          booking.amount !==
+                          null
+                        ? booking.amount
+                        : null;
 
                     const normalizedStatus =
                       String(status)
@@ -1296,10 +1370,8 @@ const CustomerDashboard = () => {
                         key={booking.id}
                         className="p-5 hover:bg-slate-50 transition"
                       >
-
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-                          {/* LEFT */}
                           <div className="flex items-start gap-4 min-w-0">
 
                             <div className="w-11 h-11 bg-[#001D3D] text-white rounded-xl flex items-center justify-center shrink-0">
@@ -1359,16 +1431,12 @@ const CustomerDashboard = () => {
                                 </div>
 
                               </div>
-
                             </div>
-
                           </div>
 
-                          {/* RIGHT */}
                           <div className="flex flex-wrap items-center gap-5 lg:justify-end">
 
                             <div>
-
                               <p className="text-[9px] font-black text-slate-400 uppercase">
                                 Courier
                               </p>
@@ -1376,11 +1444,9 @@ const CustomerDashboard = () => {
                               <p className="text-xs font-black text-[#001D3D] mt-1">
                                 {courier}
                               </p>
-
                             </div>
 
                             <div>
-
                               <p className="text-[9px] font-black text-slate-400 uppercase">
                                 Date
                               </p>
@@ -1394,12 +1460,10 @@ const CustomerDashboard = () => {
                                   booking.createdAt
                                 )}
                               </p>
-
                             </div>
 
                             {price !== null && (
                               <div>
-
                                 <p className="text-[9px] font-black text-slate-400 uppercase">
                                   Amount
                                 </p>
@@ -1407,14 +1471,11 @@ const CustomerDashboard = () => {
                                 <p className="text-sm font-black text-[#FF5E00] mt-1">
                                   ₹{price}
                                 </p>
-
                               </div>
                             )}
 
-                            {/* CANCEL BUTTON */}
                             {showCancelButton && (
                               <div>
-
                                 <button
                                   type="button"
                                   disabled={
@@ -1444,11 +1505,9 @@ const CustomerDashboard = () => {
                                     "Cancel Booking"
                                   )}
                                 </button>
-
                               </div>
                             )}
 
-                            {/* CANCELLED MESSAGE */}
                             {normalizedStatus.includes(
                               "cancel"
                             ) && (
@@ -1460,21 +1519,18 @@ const CustomerDashboard = () => {
                             )}
 
                           </div>
-
                         </div>
-
                       </div>
                     );
                   }
                 )}
 
               </div>
-
             )}
-
           </div>
 
           {/* ACCOUNT INFORMATION */}
+
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
 
             <h3 className="font-black text-[#001D3D] text-lg mb-4">
@@ -1484,19 +1540,19 @@ const CustomerDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
               <div className="bg-slate-50 rounded-xl p-4">
-
                 <p className="text-[10px] font-black text-slate-400 uppercase mb-2">
                   Firebase User ID
                 </p>
 
                 <p className="text-xs font-mono font-bold text-[#001D3D] break-all">
-                  {userData?.uid}
+                  {userData &&
+                  userData.uid
+                    ? userData.uid
+                    : "Not available"}
                 </p>
-
               </div>
 
               <div className="bg-slate-50 rounded-xl p-4">
-
                 <p className="text-[10px] font-black text-slate-400 uppercase mb-2">
                   Total Bookings
                 </p>
@@ -1504,11 +1560,9 @@ const CustomerDashboard = () => {
                 <p className="text-2xl font-black text-[#001D3D]">
                   {bookings.length}
                 </p>
-
               </div>
 
             </div>
-
           </div>
 
         </main>
@@ -1518,4 +1572,3 @@ const CustomerDashboard = () => {
 };
 
 export default CustomerDashboard;
-```
