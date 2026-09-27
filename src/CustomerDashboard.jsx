@@ -35,6 +35,7 @@ import {
   query,
   where,
   onSnapshot,
+  updateDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
@@ -51,6 +52,8 @@ const CustomerDashboard = () => {
 
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
+
+  const [cancellingBookingId, setCancellingBookingId] = useState(null);
 
   // --------------------------------------------------
   // AUTH + CUSTOMER PROFILE + BOOKINGS
@@ -223,6 +226,92 @@ const CustomerDashboard = () => {
   };
 
   // --------------------------------------------------
+  // CANCEL BOOKING
+  // --------------------------------------------------
+  const handleCancelBooking = async (booking) => {
+    if (!booking?.id) {
+      alert("Booking ID not found.");
+      return;
+    }
+
+    const currentStatus = String(
+      booking.status ||
+        booking.bookingStatus ||
+        "Pending"
+    )
+      .trim()
+      .toLowerCase();
+
+    // Already cancelled
+    if (currentStatus.includes("cancel")) {
+      alert("This booking is already cancelled.");
+      return;
+    }
+
+    // Delivered booking cannot be cancelled
+    if (currentStatus.includes("deliver")) {
+      alert(
+        "Delivered bookings cannot be cancelled."
+      );
+      return;
+    }
+
+    // Shipment already dispatched
+    if (
+      currentStatus.includes("dispatch") ||
+      currentStatus.includes("shipped") ||
+      currentStatus.includes("out for delivery") ||
+      currentStatus.includes("transit")
+    ) {
+      alert(
+        "This shipment has already been processed or dispatched and cannot be cancelled from the dashboard."
+      );
+      return;
+    }
+
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this booking?\n\nBooking ID: " +
+        booking.id +
+        "\n\nPlease confirm to continue."
+    );
+
+    if (!confirmCancel) {
+      return;
+    }
+
+    try {
+      setCancellingBookingId(booking.id);
+
+      const bookingRef = doc(
+        db,
+        "bookings",
+        booking.id
+      );
+
+      await updateDoc(bookingRef, {
+        status: "Cancelled",
+        cancelledBy: "customer",
+        cancelledAt: new Date().toISOString(),
+      });
+
+      alert(
+        "Booking cancelled successfully."
+      );
+    } catch (err) {
+      console.error(
+        "Cancel booking error:",
+        err
+      );
+
+      alert(
+        "Unable to cancel this booking.\n\nPlease try again."
+      );
+    } finally {
+      setCancellingBookingId(null);
+    }
+  };
+
+  // --------------------------------------------------
   // DATE FORMAT
   // --------------------------------------------------
   const formatDate = (dateValue) => {
@@ -391,6 +480,32 @@ const CustomerDashboard = () => {
     }
 
     return "bg-amber-50 text-amber-700 border-amber-100";
+  };
+
+  // --------------------------------------------------
+  // CAN CUSTOMER CANCEL?
+  // --------------------------------------------------
+  const canCustomerCancel = (booking) => {
+    const status = getBookingStatus(booking);
+
+    if (status.includes("cancel")) {
+      return false;
+    }
+
+    if (status.includes("deliver")) {
+      return false;
+    }
+
+    if (
+      status.includes("dispatch") ||
+      status.includes("shipped") ||
+      status.includes("out for delivery") ||
+      status.includes("transit")
+    ) {
+      return false;
+    }
+
+    return true;
   };
 
   // --------------------------------------------------
@@ -1162,6 +1277,20 @@ const CustomerDashboard = () => {
                       booking.amount ??
                       null;
 
+                    const normalizedStatus =
+                      String(status)
+                        .trim()
+                        .toLowerCase();
+
+                    const showCancelButton =
+                      canCustomerCancel(
+                        booking
+                      );
+
+                    const isCancelling =
+                      cancellingBookingId ===
+                      booking.id;
+
                     return (
                       <div
                         key={booking.id}
@@ -1279,6 +1408,54 @@ const CustomerDashboard = () => {
                                   ₹{price}
                                 </p>
 
+                              </div>
+                            )}
+
+                            {/* CANCEL BUTTON */}
+                            {showCancelButton && (
+                              <div>
+
+                                <button
+                                  type="button"
+                                  disabled={
+                                    isCancelling
+                                  }
+                                  onClick={() =>
+                                    handleCancelBooking(
+                                      booking
+                                    )
+                                  }
+                                  className={
+                                    "px-4 py-2 rounded-xl border text-xs font-black transition flex items-center justify-center gap-2 " +
+                                    (isCancelling
+                                      ? "border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed"
+                                      : "border-red-200 text-red-600 hover:bg-red-50")
+                                  }
+                                >
+                                  {isCancelling ? (
+                                    <>
+                                      <Loader2
+                                        size={14}
+                                        className="animate-spin"
+                                      />
+                                      Cancelling...
+                                    </>
+                                  ) : (
+                                    "Cancel Booking"
+                                  )}
+                                </button>
+
+                              </div>
+                            )}
+
+                            {/* CANCELLED MESSAGE */}
+                            {normalizedStatus.includes(
+                              "cancel"
+                            ) && (
+                              <div className="px-3 py-2 bg-red-50 border border-red-100 rounded-xl">
+                                <p className="text-[10px] font-black text-red-600 uppercase">
+                                  Cancelled
+                                </p>
                               </div>
                             )}
 
