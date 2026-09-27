@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router-dom';
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [msmeUsers, setMsmeUsers] = useState(0);
+  const [registeredUsers, setRegisteredUsers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('All');
 
@@ -36,9 +37,12 @@ const AdminDashboard = () => {
 
   useEffect(() => {
 
-    // Firebase Admin authentication is already handled
+    // Firebase Admin authentication is handled
     // by App.js using users/{uid}.role === "admin".
-    // Old localStorage admin check removed.
+
+    // ==============================
+    // BOOKINGS
+    // ==============================
 
     const q = query(
       collection(db, "bookings"),
@@ -62,6 +66,10 @@ const AdminDashboard = () => {
       }
     );
 
+    // ==============================
+    // MSME USERS
+    // ==============================
+
     const msmeQuery = collection(db, "msme_profile");
 
     const unsubscribeMsme = onSnapshot(
@@ -74,14 +82,43 @@ const AdminDashboard = () => {
       }
     );
 
+    // ==============================
+    // ALL REGISTERED USERS
+    // ==============================
+
+    const usersQuery = collection(db, "users");
+
+    const unsubscribeUsers = onSnapshot(
+      usersQuery,
+      (snapshot) => {
+        setRegisteredUsers(snapshot.size);
+
+        console.log(
+          "Total Registered Users:",
+          snapshot.size
+        );
+      },
+      (err) => {
+        console.error("Users Firestore Error:", err);
+      }
+    );
+
+    // ==============================
+    // CLEANUP
+    // ==============================
+
     return () => {
       unsubscribeOrders();
       unsubscribeMsme();
+      unsubscribeUsers();
     };
 
   }, []);
 
-  // --- Firebase Admin Logout ---
+  // ==============================
+  // FIREBASE ADMIN LOGOUT
+  // ==============================
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -95,6 +132,10 @@ const AdminDashboard = () => {
       alert("Logout failed!");
     }
   };
+
+  // ==============================
+  // UPDATE ORDER STATUS
+  // ==============================
 
   const updateStatus = async (orderId, newStatus) => {
     try {
@@ -112,22 +153,44 @@ const AdminDashboard = () => {
     }
   };
 
+  // ==============================
+  // DELETE ORDER
+  // ==============================
+
   const deleteOrder = async (id) => {
+
     if (window.confirm("ही ऑर्डर डिलीट करायची का?")) {
 
       try {
-        await deleteDoc(doc(db, "bookings", id));
+
+        await deleteDoc(
+          doc(db, "bookings", id)
+        );
+
       } catch (err) {
+
         console.error("Delete Error:", err);
+
         alert("❌ Delete Failed!");
+
       }
     }
   };
 
+  // ==============================
+  // FILTER ORDERS
+  // ==============================
+
   const filteredOrders =
     filterStatus === 'All'
       ? orders
-      : orders.filter(o => o.status === filterStatus);
+      : orders.filter(
+          o => o.status === filterStatus
+        );
+
+  // ==============================
+  // CARD STYLE
+  // ==============================
 
   const cardStyle = {
     backgroundColor: 'white',
@@ -139,6 +202,10 @@ const AdminDashboard = () => {
     gap: '15px',
     borderBottom: '4px solid #FF5E00'
   };
+
+  // ==============================
+  // LOADING
+  // ==============================
 
   if (loading) {
     return (
@@ -158,6 +225,7 @@ const AdminDashboard = () => {
   }
 
   return (
+
     <div
       style={{
         padding: '30px',
@@ -167,7 +235,10 @@ const AdminDashboard = () => {
       }}
     >
 
-      {/* HEADER */}
+      {/* ==============================
+          HEADER
+      ============================== */}
+
       <div
         style={{
           display: 'flex',
@@ -178,6 +249,7 @@ const AdminDashboard = () => {
       >
 
         <div>
+
           <h1
             style={{
               color: '#001D3D',
@@ -187,10 +259,13 @@ const AdminDashboard = () => {
               fontStyle: 'italic'
             }}
           >
+
             APNI MANZIL{' '}
+
             <span style={{ color: '#FF5E00' }}>
               SUPER ADMIN
             </span>
+
           </h1>
 
           <p
@@ -203,6 +278,7 @@ const AdminDashboard = () => {
           >
             LOGISTICS CONTROL CENTER
           </p>
+
         </div>
 
         <div
@@ -214,7 +290,9 @@ const AdminDashboard = () => {
         >
 
           <select
-            onChange={(e) => setFilterStatus(e.target.value)}
+            onChange={(e) =>
+              setFilterStatus(e.target.value)
+            }
             style={{
               padding: '10px 20px',
               borderRadius: '12px',
@@ -223,14 +301,31 @@ const AdminDashboard = () => {
               cursor: 'pointer'
             }}
           >
-            <option value="All">All Bookings</option>
-            <option value="Pending">Pending</option>
-            <option value="Paid">Paid</option>
-            <option value="In Transit">In Transit</option>
-            <option value="Delivered">Delivered</option>
+
+            <option value="All">
+              All Bookings
+            </option>
+
+            <option value="Pending">
+              Pending
+            </option>
+
+            <option value="Paid">
+              Paid
+            </option>
+
+            <option value="In Transit">
+              In Transit
+            </option>
+
+            <option value="Delivered">
+              Delivered
+            </option>
+
           </select>
 
           {/* LOGOUT */}
+
           <button
             onClick={handleLogout}
             style={{
@@ -246,13 +341,21 @@ const AdminDashboard = () => {
               fontWeight: 'bold'
             }}
           >
-            <LogOut size={18} /> Logout
+
+            <LogOut size={18} />
+
+            Logout
+
           </button>
 
         </div>
+
       </div>
 
-      {/* SUMMARY CARDS */}
+      {/* ==============================
+          SUMMARY CARDS
+      ============================== */}
+
       <div
         style={{
           display: 'grid',
@@ -263,8 +366,52 @@ const AdminDashboard = () => {
         }}
       >
 
-        {/* MSME */}
+        {/* REGISTERED USERS */}
+
         <div style={cardStyle}>
+
+          <div
+            style={{
+              backgroundColor: '#EDE9FE',
+              padding: '12px',
+              borderRadius: '12px',
+              color: '#6D28D9'
+            }}
+          >
+
+            <Users />
+
+          </div>
+
+          <div>
+
+            <div
+              style={{
+                fontSize: '11px',
+                color: '#94a3b8',
+                fontWeight: 'bold'
+              }}
+            >
+              REGISTERED USERS
+            </div>
+
+            <div
+              style={{
+                fontSize: '24px',
+                fontWeight: '900'
+              }}
+            >
+              {registeredUsers}
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* MSME */}
+
+        <div style={cardStyle}>
+
           <div
             style={{
               backgroundColor: '#DBEAFE',
@@ -273,10 +420,13 @@ const AdminDashboard = () => {
               color: '#1E40AF'
             }}
           >
+
             <Users />
+
           </div>
 
           <div>
+
             <div
               style={{
                 fontSize: '11px',
@@ -295,11 +445,15 @@ const AdminDashboard = () => {
             >
               {msmeUsers}
             </div>
+
           </div>
+
         </div>
 
         {/* ORDERS */}
+
         <div style={cardStyle}>
+
           <div
             style={{
               backgroundColor: '#FFEDD5',
@@ -308,10 +462,13 @@ const AdminDashboard = () => {
               color: '#9A3412'
             }}
           >
+
             <Package />
+
           </div>
 
           <div>
+
             <div
               style={{
                 fontSize: '11px',
@@ -330,11 +487,15 @@ const AdminDashboard = () => {
             >
               {orders.length}
             </div>
+
           </div>
+
         </div>
 
         {/* SYSTEM */}
+
         <div style={cardStyle}>
+
           <div
             style={{
               backgroundColor: '#DCFCE7',
@@ -343,10 +504,13 @@ const AdminDashboard = () => {
               color: '#166534'
             }}
           >
+
             <Truck />
+
           </div>
 
           <div>
+
             <div
               style={{
                 fontSize: '11px',
@@ -366,18 +530,24 @@ const AdminDashboard = () => {
             >
               LIVE
             </div>
+
           </div>
+
         </div>
 
       </div>
 
-      {/* BOOKINGS */}
+      {/* ==============================
+          BOOKINGS
+      ============================== */}
+
       <div
         style={{
           backgroundColor: 'white',
           padding: '25px',
           borderRadius: '20px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.03)'
+          boxShadow:
+            '0 10px 30px rgba(0,0,0,0.03)'
         }}
       >
 
@@ -400,15 +570,18 @@ const AdminDashboard = () => {
           >
 
             <thead>
+
               <tr
                 style={{
                   textAlign: 'left',
                   color: '#94a3b8',
                   fontSize: '11px',
                   textTransform: 'uppercase',
-                  borderBottom: '2px solid #f1f5f9'
+                  borderBottom:
+                    '2px solid #f1f5f9'
                 }}
               >
+
                 <th style={{ padding: '15px' }}>
                   Customer & Service
                 </th>
@@ -428,7 +601,9 @@ const AdminDashboard = () => {
                 <th style={{ padding: '15px' }}>
                   Action
                 </th>
+
               </tr>
+
             </thead>
 
             <tbody>
@@ -444,6 +619,7 @@ const AdminDashboard = () => {
                 >
 
                   {/* CUSTOMER */}
+
                   <td style={{ padding: '15px' }}>
 
                     <div
@@ -455,10 +631,12 @@ const AdminDashboard = () => {
                         color: '#001D3D'
                       }}
                     >
+
                       <User size={14} />
 
                       {order.customerName ||
                         "No Name"}
+
                     </div>
 
                     <div
@@ -483,6 +661,7 @@ const AdminDashboard = () => {
                   </td>
 
                   {/* ROUTE */}
+
                   <td style={{ padding: '15px' }}>
 
                     <div
@@ -491,9 +670,13 @@ const AdminDashboard = () => {
                         fontWeight: '700'
                       }}
                     >
+
                       {order.pickupAddress}
+
                       {' ➔ '}
+
                       {order.dropAddress}
+
                     </div>
 
                     <div
@@ -506,15 +689,18 @@ const AdminDashboard = () => {
                         marginTop: '4px'
                       }}
                     >
+
                       <Phone size={12} />
 
                       {order.customerPhone ||
                         "No Number"}
+
                     </div>
 
                   </td>
 
                   {/* PARTNER */}
+
                   <td style={{ padding: '15px' }}>
 
                     <div
@@ -538,6 +724,7 @@ const AdminDashboard = () => {
                   </td>
 
                   {/* STATUS */}
+
                   <td style={{ padding: '15px' }}>
 
                     <span
@@ -546,23 +733,28 @@ const AdminDashboard = () => {
                         borderRadius: '8px',
                         fontSize: '10px',
                         fontWeight: '900',
+
                         backgroundColor:
                           order.status === 'Paid'
                             ? '#DCFCE7'
                             : '#FEF3C7',
+
                         color:
                           order.status === 'Paid'
                             ? '#166534'
                             : '#92400E'
                       }}
                     >
+
                       {order.status ||
                         'PENDING'}
+
                     </span>
 
                   </td>
 
                   {/* ACTION */}
+
                   <td style={{ padding: '15px' }}>
 
                     <div
@@ -579,10 +771,12 @@ const AdminDashboard = () => {
                             e.target.value
                           )
                         }
+
                         defaultValue={
                           order.status ||
                           'Pending'
                         }
+
                         style={{
                           padding: '5px',
                           borderRadius: '6px',
@@ -592,6 +786,7 @@ const AdminDashboard = () => {
                           fontWeight: 'bold'
                         }}
                       >
+
                         <option value="Pending">
                           Pending
                         </option>
@@ -607,12 +802,14 @@ const AdminDashboard = () => {
                         <option value="Delivered">
                           Delivered
                         </option>
+
                       </select>
 
                       <button
                         onClick={() =>
                           deleteOrder(order.id)
                         }
+
                         style={{
                           color: '#ef4444',
                           border: 'none',
@@ -620,7 +817,9 @@ const AdminDashboard = () => {
                           cursor: 'pointer'
                         }}
                       >
+
                         <Trash2 size={18} />
+
                       </button>
 
                     </div>
