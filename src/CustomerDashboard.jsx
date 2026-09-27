@@ -1,3 +1,4 @@
+```jsx
 import React, { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard,
@@ -22,10 +23,19 @@ import {
   Settings,
   FileText,
   CreditCard,
+  MapPin,
+  CheckCircle2,
 } from "lucide-react";
 
 import { auth, db } from "./firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const CustomerDashboard = () => {
@@ -33,50 +43,150 @@ const CustomerDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
 
   const [userData, setUserData] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [bookingsLoading, setBookingsLoading] = useState(true);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Profile dropdown
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
+  // --------------------------------------------------
+  // AUTH + CUSTOMER PROFILE + BOOKINGS
+  // --------------------------------------------------
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
-        setError("User is not logged in.");
-        setLoading(false);
-        return;
-      }
+    let unsubscribeBookings = null;
 
-      try {
-        const userRef = doc(db, "users", firebaseUser.uid);
-        const userSnapshot = await getDoc(userRef);
-
-        if (!userSnapshot.exists()) {
-          setError("User profile not found.");
+    const unsubscribeAuth = onAuthStateChanged(
+      auth,
+      async (firebaseUser) => {
+        if (!firebaseUser) {
+          setError("User is not logged in.");
           setLoading(false);
+          setBookingsLoading(false);
           return;
         }
 
-        const data = userSnapshot.data();
+        try {
+          // USER PROFILE
+          const userRef = doc(
+            db,
+            "users",
+            firebaseUser.uid
+          );
 
-        setUserData({
-          ...data,
-          uid: firebaseUser.uid,
-        });
+          const userSnapshot = await getDoc(userRef);
 
-        setLoading(false);
-      } catch (err) {
-        console.error("Customer profile error:", err);
-        setError("Unable to load your profile.");
-        setLoading(false);
+          if (!userSnapshot.exists()) {
+            setError("User profile not found.");
+            setLoading(false);
+            setBookingsLoading(false);
+            return;
+          }
+
+          const data = userSnapshot.data();
+
+          setUserData({
+            ...data,
+            uid: firebaseUser.uid,
+          });
+
+          setLoading(false);
+
+          // CUSTOMER BOOKINGS
+          setBookingsLoading(true);
+
+          const bookingsRef = collection(
+            db,
+            "bookings"
+          );
+
+          const bookingsQuery = query(
+            bookingsRef,
+            where(
+              "customerId",
+              "==",
+              firebaseUser.uid
+            )
+          );
+
+          unsubscribeBookings = onSnapshot(
+            bookingsQuery,
+            (snapshot) => {
+              const bookingList = snapshot.docs.map(
+                (bookingDoc) => ({
+                  id: bookingDoc.id,
+                  ...bookingDoc.data(),
+                })
+              );
+
+              // Newest booking first
+              bookingList.sort((a, b) => {
+                const getTime = (value) => {
+                  if (!value) return 0;
+
+                  if (
+                    value &&
+                    typeof value.toDate === "function"
+                  ) {
+                    return value.toDate().getTime();
+                  }
+
+                  const parsed = new Date(value).getTime();
+
+                  return Number.isNaN(parsed)
+                    ? 0
+                    : parsed;
+                };
+
+                return (
+                  getTime(b.createdAt) -
+                  getTime(a.createdAt)
+                );
+              });
+
+              setBookings(bookingList);
+              setBookingsLoading(false);
+            },
+            (bookingError) => {
+              console.error(
+                "Customer bookings error:",
+                bookingError
+              );
+
+              setBookings([]);
+              setBookingsLoading(false);
+            }
+          );
+        } catch (err) {
+          console.error(
+            "Customer dashboard error:",
+            err
+          );
+
+          setError(
+            "Unable to load your dashboard."
+          );
+
+          setLoading(false);
+          setBookingsLoading(false);
+        }
       }
-    });
+    );
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+
+      if (unsubscribeBookings) {
+        unsubscribeBookings();
+      }
+    };
   }, []);
 
-  // Close profile dropdown when clicking outside
+  // --------------------------------------------------
+  // CLOSE PROFILE DROPDOWN
+  // --------------------------------------------------
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -87,13 +197,22 @@ const CustomerDashboard = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
     };
   }, []);
 
+  // --------------------------------------------------
+  // LOGOUT
+  // --------------------------------------------------
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -103,28 +222,52 @@ const CustomerDashboard = () => {
     }
   };
 
+  // --------------------------------------------------
+  // DATE FORMAT
+  // --------------------------------------------------
   const formatDate = (dateValue) => {
     if (!dateValue) return "Not available";
 
-    const date = new Date(dateValue);
+    try {
+      let date;
 
-    if (Number.isNaN(date.getTime())) {
+      if (
+        dateValue &&
+        typeof dateValue.toDate === "function"
+      ) {
+        date = dateValue.toDate();
+      } else {
+        date = new Date(dateValue);
+      }
+
+      if (Number.isNaN(date.getTime())) {
+        return "Not available";
+      }
+
+      return date.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    } catch (error) {
       return "Not available";
     }
-
-    return date.toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
   };
 
+  // --------------------------------------------------
+  // INITIAL
+  // --------------------------------------------------
   const getInitial = () => {
     if (!userData?.fullName) return "U";
 
-    return userData.fullName.charAt(0).toUpperCase();
+    return userData.fullName
+      .charAt(0)
+      .toUpperCase();
   };
 
+  // --------------------------------------------------
+  // ACCOUNT TYPE
+  // --------------------------------------------------
   const getAccountType = () => {
     if (!userData?.role) return "Individual";
 
@@ -139,8 +282,13 @@ const CustomerDashboard = () => {
     return userData.role;
   };
 
+  // --------------------------------------------------
+  // PROVIDER
+  // --------------------------------------------------
   const getProviderName = () => {
-    if (!userData?.provider) return "Not available";
+    if (!userData?.provider) {
+      return "Not available";
+    }
 
     if (userData.provider === "password") {
       return "Email & Password";
@@ -153,12 +301,101 @@ const CustomerDashboard = () => {
     return userData.provider;
   };
 
-  // Sidebar item helper
+  // --------------------------------------------------
+  // SIDEBAR
+  // --------------------------------------------------
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSidebarOpen(false);
   };
 
+  // --------------------------------------------------
+  // STATUS NORMALIZATION
+  // --------------------------------------------------
+  const getBookingStatus = (booking) => {
+    const status =
+      booking?.status ||
+      booking?.bookingStatus ||
+      "Pending";
+
+    return String(status).trim().toLowerCase();
+  };
+
+  // --------------------------------------------------
+  // BOOKING COUNTS
+  // --------------------------------------------------
+  const totalShipments = bookings.length;
+
+  const inTransitCount = bookings.filter(
+    (booking) => {
+      const status =
+        getBookingStatus(booking);
+
+      return (
+        status.includes("transit") ||
+        status.includes("shipped") ||
+        status.includes("dispatch") ||
+        status.includes("out for delivery")
+      );
+    }
+  ).length;
+
+  const deliveredCount = bookings.filter(
+    (booking) => {
+      const status =
+        getBookingStatus(booking);
+
+      return status.includes("deliver");
+    }
+  ).length;
+
+  const rtoCount = bookings.filter(
+    (booking) => {
+      const status =
+        getBookingStatus(booking);
+
+      return (
+        status.includes("rto") ||
+        status.includes("return") ||
+        status.includes("cancel")
+      );
+    }
+  ).length;
+
+  // --------------------------------------------------
+  // STATUS BADGE
+  // --------------------------------------------------
+  const getStatusClass = (status) => {
+    const normalized =
+      String(status || "").toLowerCase();
+
+    if (normalized.includes("deliver")) {
+      return "bg-emerald-50 text-emerald-700 border-emerald-100";
+    }
+
+    if (
+      normalized.includes("transit") ||
+      normalized.includes("shipped") ||
+      normalized.includes("dispatch")
+    ) {
+      return "bg-blue-50 text-blue-700 border-blue-100";
+    }
+
+    if (
+      normalized.includes("cancel") ||
+      normalized.includes("return") ||
+      normalized.includes("rto") ||
+      normalized.includes("reject")
+    ) {
+      return "bg-red-50 text-red-700 border-red-100";
+    }
+
+    return "bg-amber-50 text-amber-700 border-amber-100";
+  };
+
+  // --------------------------------------------------
+  // LOADING
+  // --------------------------------------------------
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
@@ -176,6 +413,9 @@ const CustomerDashboard = () => {
     );
   }
 
+  // --------------------------------------------------
+  // ERROR
+  // --------------------------------------------------
   if (error) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
@@ -194,7 +434,9 @@ const CustomerDashboard = () => {
           </p>
 
           <button
-            onClick={() => window.location.reload()}
+            onClick={() =>
+              window.location.reload()
+            }
             className="px-5 py-2.5 bg-[#001D3D] text-white rounded-xl text-sm font-bold"
           >
             Try Again
@@ -209,9 +451,13 @@ const CustomerDashboard = () => {
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col`}
+        className={
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform " +
+          (sidebarOpen
+            ? "translate-x-0"
+            : "-translate-x-full") +
+          " md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col"
+        }
       >
 
         {/* SIDEBAR HEADER */}
@@ -236,7 +482,9 @@ const CustomerDashboard = () => {
           </div>
 
           <button
-            onClick={() => setSidebarOpen(false)}
+            onClick={() =>
+              setSidebarOpen(false)
+            }
             className="md:hidden text-slate-400 hover:text-black"
           >
             <X size={24} />
@@ -247,117 +495,140 @@ const CustomerDashboard = () => {
         {/* SIDEBAR NAVIGATION */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
 
-          {/* DASHBOARD */}
           <button
-            onClick={() => handleTabChange("dashboard")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "dashboard"
+            onClick={() =>
+              handleTabChange("dashboard")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "dashboard"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <LayoutDashboard size={20} />
             Dashboard
           </button>
 
-          {/* SERVICES */}
           <button
-            onClick={() => handleTabChange("courier")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "courier"
+            onClick={() =>
+              handleTabChange("courier")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "courier"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <Package size={20} />
             Courier & Parcel Services
           </button>
 
           <button
-            onClick={() => handleTabChange("home")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "home"
+            onClick={() =>
+              handleTabChange("home")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "home"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <Home size={20} />
             Home & Personal Transport
           </button>
 
           <button
-            onClick={() => handleTabChange("industrial")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "industrial"
+            onClick={() =>
+              handleTabChange("industrial")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "industrial"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <Truck size={20} />
             Industrial / Factory Transport
           </button>
 
           <button
-            onClick={() => handleTabChange("global")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "global"
+            onClick={() =>
+              handleTabChange("global")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "global"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <Globe size={20} />
             International / Import-Export
           </button>
 
           <button
-            onClick={() => handleTabChange("specialized")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "specialized"
+            onClick={() =>
+              handleTabChange("specialized")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "specialized"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <Shield size={20} />
             Specialized Transport
           </button>
 
-          {/* DIVIDER */}
           <div className="pt-3 pb-1">
             <div className="border-t border-slate-100"></div>
           </div>
 
-          {/* ACCOUNT / TOOLS */}
           <button
-            onClick={() => handleTabChange("settings")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "settings"
+            onClick={() =>
+              handleTabChange("settings")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "settings"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <Settings size={20} />
             Settings
           </button>
 
           <button
-            onClick={() => handleTabChange("reports")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "reports"
+            onClick={() =>
+              handleTabChange("reports")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "reports"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <FileText size={20} />
             Reports
           </button>
 
           <button
-            onClick={() => handleTabChange("payments")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "payments"
+            onClick={() =>
+              handleTabChange("payments")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "payments"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <CreditCard size={20} />
             Payment History
@@ -368,20 +639,21 @@ const CustomerDashboard = () => {
         {/* SIDEBAR BOTTOM */}
         <div className="p-4 border-t border-slate-100">
 
-          {/* SUPPORT */}
           <button
-            onClick={() => handleTabChange("support")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
-              activeTab === "support"
+            onClick={() =>
+              handleTabChange("support")
+            }
+            className={
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm " +
+              (activeTab === "support"
                 ? "bg-[#001D3D] text-white shadow-lg"
-                : "text-slate-600 hover:bg-slate-50"
-            }`}
+                : "text-slate-600 hover:bg-slate-50")
+            }
           >
             <Headphones size={20} />
             Support & Help
           </button>
 
-          {/* LOGOUT */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 mt-2 rounded-xl font-bold text-sm text-red-500 hover:bg-red-50"
@@ -403,7 +675,9 @@ const CustomerDashboard = () => {
           <div className="flex items-center gap-4">
 
             <button
-              onClick={() => setSidebarOpen(true)}
+              onClick={() =>
+                setSidebarOpen(true)
+              }
               className="md:hidden text-slate-600"
             >
               <Menu size={24} />
@@ -426,7 +700,6 @@ const CustomerDashboard = () => {
 
           </div>
 
-          {/* RIGHT HEADER */}
           <div className="flex items-center gap-4">
 
             <button className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl relative">
@@ -441,7 +714,11 @@ const CustomerDashboard = () => {
 
               <button
                 type="button"
-                onClick={() => setProfileOpen((prev) => !prev)}
+                onClick={() =>
+                  setProfileOpen(
+                    (prev) => !prev
+                  )
+                }
                 className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 transition"
               >
 
@@ -452,7 +729,8 @@ const CustomerDashboard = () => {
                 <div className="hidden sm:block text-left">
 
                   <h4 className="font-bold text-xs text-[#001D3D]">
-                    {userData?.fullName || "User"}
+                    {userData?.fullName ||
+                      "User"}
                   </h4>
 
                   <span className="text-[10px] font-bold text-slate-400">
@@ -463,9 +741,12 @@ const CustomerDashboard = () => {
 
                 <ChevronDown
                   size={16}
-                  className={`hidden sm:block text-slate-400 transition-transform ${
-                    profileOpen ? "rotate-180" : ""
-                  }`}
+                  className={
+                    "hidden sm:block text-slate-400 transition-transform " +
+                    (profileOpen
+                      ? "rotate-180"
+                      : "")
+                  }
                 />
 
               </button>
@@ -485,11 +766,13 @@ const CustomerDashboard = () => {
                       <div className="min-w-0">
 
                         <h3 className="font-black truncate">
-                          {userData?.fullName || "User"}
+                          {userData?.fullName ||
+                            "User"}
                         </h3>
 
                         <p className="text-xs text-slate-300 truncate">
-                          {userData?.email || "Email not available"}
+                          {userData?.email ||
+                            "Email not available"}
                         </p>
 
                       </div>
@@ -500,7 +783,6 @@ const CustomerDashboard = () => {
 
                   <div className="p-4 space-y-2">
 
-                    {/* FULL NAME */}
                     <div className="p-3 bg-slate-50 rounded-xl">
 
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
@@ -511,12 +793,12 @@ const CustomerDashboard = () => {
                       </div>
 
                       <p className="text-sm font-bold text-[#001D3D]">
-                        {userData?.fullName || "Not available"}
+                        {userData?.fullName ||
+                          "Not available"}
                       </p>
 
                     </div>
 
-                    {/* EMAIL */}
                     <div className="p-3 bg-slate-50 rounded-xl">
 
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
@@ -527,12 +809,12 @@ const CustomerDashboard = () => {
                       </div>
 
                       <p className="text-sm font-bold text-[#001D3D] break-all">
-                        {userData?.email || "Not available"}
+                        {userData?.email ||
+                          "Not available"}
                       </p>
 
                     </div>
 
-                    {/* MOBILE */}
                     <div className="p-3 bg-slate-50 rounded-xl">
 
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
@@ -543,12 +825,12 @@ const CustomerDashboard = () => {
                       </div>
 
                       <p className="text-sm font-bold text-[#001D3D]">
-                        {userData?.phone || "Not available"}
+                        {userData?.phone ||
+                          "Not available"}
                       </p>
 
                     </div>
 
-                    {/* ACCOUNT + LOGIN */}
                     <div className="grid grid-cols-2 gap-2">
 
                       <div className="p-3 bg-slate-50 rounded-xl">
@@ -583,7 +865,6 @@ const CustomerDashboard = () => {
 
                     </div>
 
-                    {/* ACCOUNT CREATED */}
                     <div className="p-3 bg-slate-50 rounded-xl">
 
                       <div className="flex items-center gap-2 text-slate-400 mb-1">
@@ -594,12 +875,13 @@ const CustomerDashboard = () => {
                       </div>
 
                       <p className="text-sm font-bold text-[#001D3D]">
-                        {formatDate(userData?.createdAt)}
+                        {formatDate(
+                          userData?.createdAt
+                        )}
                       </p>
 
                     </div>
 
-                    {/* STATUS */}
                     <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
 
                       <div className="flex items-center justify-between">
@@ -609,7 +891,8 @@ const CustomerDashboard = () => {
                         </span>
 
                         <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">
-                          {userData?.status || "active"}
+                          {userData?.status ||
+                            "active"}
                         </span>
 
                       </div>
@@ -618,7 +901,6 @@ const CustomerDashboard = () => {
 
                   </div>
 
-                  {/* DROPDOWN LOGOUT */}
                   <div className="border-t border-slate-100 p-3">
 
                     <button
@@ -655,11 +937,16 @@ const CustomerDashboard = () => {
                 </p>
 
                 <h2 className="text-2xl md:text-3xl font-black text-[#001D3D]">
-                  Welcome, {userData?.fullName || "User"} 👋
+                  Welcome,{" "}
+                  {userData?.fullName ||
+                    "User"}{" "}
+                  👋
                 </h2>
 
                 <p className="text-sm text-slate-500 mt-2">
-                  Manage your logistics services and shipments from one place.
+                  Manage your logistics
+                  services and shipments
+                  from one place.
                 </p>
 
               </div>
@@ -671,7 +958,8 @@ const CustomerDashboard = () => {
                   <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></div>
 
                   <span className="text-xs font-black text-emerald-700 uppercase">
-                    {userData?.status || "active"}
+                    {userData?.status ||
+                      "active"}
                   </span>
 
                 </div>
@@ -682,7 +970,7 @@ const CustomerDashboard = () => {
 
           </div>
 
-          {/* LOGISTICS SECTION */}
+          {/* LOGISTICS STATS */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
             {/* SHIPMENTS */}
@@ -697,11 +985,13 @@ const CustomerDashboard = () => {
               </p>
 
               <p className="text-3xl font-black text-[#001D3D] mt-1">
-                —
+                {bookingsLoading
+                  ? "..."
+                  : totalShipments}
               </p>
 
               <p className="text-[11px] text-slate-400 mt-2">
-                Shipment data will appear here
+                Total bookings
               </p>
 
             </div>
@@ -718,11 +1008,13 @@ const CustomerDashboard = () => {
               </p>
 
               <p className="text-3xl font-black text-[#001D3D] mt-1">
-                —
+                {bookingsLoading
+                  ? "..."
+                  : inTransitCount}
               </p>
 
               <p className="text-[11px] text-slate-400 mt-2">
-                No shipment data connected yet
+                Active shipments
               </p>
 
             </div>
@@ -731,7 +1023,7 @@ const CustomerDashboard = () => {
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
               <div className="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
-                <Package size={22} />
+                <CheckCircle2 size={22} />
               </div>
 
               <p className="text-xs font-bold text-slate-400 uppercase">
@@ -739,11 +1031,13 @@ const CustomerDashboard = () => {
               </p>
 
               <p className="text-3xl font-black text-[#001D3D] mt-1">
-                —
+                {bookingsLoading
+                  ? "..."
+                  : deliveredCount}
               </p>
 
               <p className="text-[11px] text-slate-400 mt-2">
-                No shipment data connected yet
+                Completed shipments
               </p>
 
             </div>
@@ -760,33 +1054,281 @@ const CustomerDashboard = () => {
               </p>
 
               <p className="text-3xl font-black text-[#001D3D] mt-1">
-                —
+                {bookingsLoading
+                  ? "..."
+                  : rtoCount}
               </p>
 
               <p className="text-[11px] text-slate-400 mt-2">
-                No shipment data connected yet
+                Returned or cancelled
               </p>
 
             </div>
 
           </div>
 
-          {/* ACCOUNT ID */}
+          {/* MY BOOKINGS */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+            <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+              <div>
+
+                <h3 className="font-black text-[#001D3D] text-lg">
+                  My Recent Bookings
+                </h3>
+
+                <p className="text-xs text-slate-400 mt-1">
+                  Your bookings and shipment
+                  activity
+                </p>
+
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+
+                <Package size={15} />
+
+                {bookings.length}{" "}
+                Booking
+                {bookings.length !== 1
+                  ? "s"
+                  : ""}
+
+              </div>
+
+            </div>
+
+            {bookingsLoading ? (
+
+              <div className="p-10 text-center">
+
+                <Loader2
+                  size={28}
+                  className="mx-auto mb-3 animate-spin text-[#001D3D]"
+                />
+
+                <p className="text-sm font-bold text-slate-500">
+                  Loading your bookings...
+                </p>
+
+              </div>
+
+            ) : bookings.length === 0 ? (
+
+              <div className="p-10 text-center">
+
+                <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Package
+                    size={28}
+                    className="text-slate-400"
+                  />
+                </div>
+
+                <h4 className="font-black text-[#001D3D]">
+                  No bookings yet
+                </h4>
+
+                <p className="text-xs text-slate-400 mt-2">
+                  Your confirmed bookings
+                  will appear here.
+                </p>
+
+              </div>
+
+            ) : (
+
+              <div className="divide-y divide-slate-100">
+
+                {bookings.map(
+                  (booking) => {
+
+                    const status =
+                      booking.status ||
+                      booking.bookingStatus ||
+                      "Pending";
+
+                    const service =
+                      booking.serviceType ||
+                      "Logistics Service";
+
+                    const courier =
+                      booking.courierName ||
+                      booking.courier_name ||
+                      "Courier Partner";
+
+                    const price =
+                      booking.price ??
+                      booking.amount ??
+                      null;
+
+                    return (
+                      <div
+                        key={booking.id}
+                        className="p-5 hover:bg-slate-50 transition"
+                      >
+
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+                          {/* LEFT */}
+                          <div className="flex items-start gap-4 min-w-0">
+
+                            <div className="w-11 h-11 bg-[#001D3D] text-white rounded-xl flex items-center justify-center shrink-0">
+                              <Package
+                                size={20}
+                              />
+                            </div>
+
+                            <div className="min-w-0">
+
+                              <div className="flex flex-wrap items-center gap-2">
+
+                                <h4 className="font-black text-[#001D3D] text-sm">
+                                  {service}
+                                </h4>
+
+                                <span
+                                  className={
+                                    "px-2 py-1 rounded-lg border text-[9px] font-black uppercase " +
+                                    getStatusClass(
+                                      status
+                                    )
+                                  }
+                                >
+                                  {status}
+                                </span>
+
+                              </div>
+
+                              <p className="text-[10px] font-bold text-slate-400 mt-1 break-all">
+                                Booking ID:{" "}
+                                {booking.id}
+                              </p>
+
+                              <div className="flex flex-wrap gap-4 mt-3">
+
+                                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
+                                  <MapPin
+                                    size={14}
+                                    className="text-[#FF5E00]"
+                                  />
+
+                                  {booking.pickupPincode ||
+                                    booking.pickupAddress ||
+                                    "Pickup"}
+                                </div>
+
+                                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
+                                  <MapPin
+                                    size={14}
+                                    className="text-[#001D3D]"
+                                  />
+
+                                  {booking.dropPincode ||
+                                    booking.dropAddress ||
+                                    "Drop"}
+                                </div>
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+                          {/* RIGHT */}
+                          <div className="flex flex-wrap items-center gap-5 lg:justify-end">
+
+                            <div>
+
+                              <p className="text-[9px] font-black text-slate-400 uppercase">
+                                Courier
+                              </p>
+
+                              <p className="text-xs font-black text-[#001D3D] mt-1">
+                                {courier}
+                              </p>
+
+                            </div>
+
+                            <div>
+
+                              <p className="text-[9px] font-black text-slate-400 uppercase">
+                                Date
+                              </p>
+
+                              <p className="text-xs font-black text-[#001D3D] mt-1 flex items-center gap-1">
+                                <Calendar
+                                  size={13}
+                                />
+
+                                {formatDate(
+                                  booking.createdAt
+                                )}
+                              </p>
+
+                            </div>
+
+                            {price !== null && (
+                              <div>
+
+                                <p className="text-[9px] font-black text-slate-400 uppercase">
+                                  Amount
+                                </p>
+
+                                <p className="text-sm font-black text-[#FF5E00] mt-1">
+                                  ₹{price}
+                                </p>
+
+                              </div>
+                            )}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+                    );
+                  }
+                )}
+
+              </div>
+
+            )}
+
+          </div>
+
+          {/* ACCOUNT INFORMATION */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
 
             <h3 className="font-black text-[#001D3D] text-lg mb-4">
               Account Information
             </h3>
 
-            <div className="bg-slate-50 rounded-xl p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              <p className="text-[10px] font-black text-slate-400 uppercase mb-2">
-                Firebase User ID
-              </p>
+              <div className="bg-slate-50 rounded-xl p-4">
 
-              <p className="text-xs font-mono font-bold text-[#001D3D] break-all">
-                {userData?.uid}
-              </p>
+                <p className="text-[10px] font-black text-slate-400 uppercase mb-2">
+                  Firebase User ID
+                </p>
+
+                <p className="text-xs font-mono font-bold text-[#001D3D] break-all">
+                  {userData?.uid}
+                </p>
+
+              </div>
+
+              <div className="bg-slate-50 rounded-xl p-4">
+
+                <p className="text-[10px] font-black text-slate-400 uppercase mb-2">
+                  Total Bookings
+                </p>
+
+                <p className="text-2xl font-black text-[#001D3D]">
+                  {bookings.length}
+                </p>
+
+              </div>
 
             </div>
 
@@ -799,3 +1341,4 @@ const CustomerDashboard = () => {
 };
 
 export default CustomerDashboard;
+```
