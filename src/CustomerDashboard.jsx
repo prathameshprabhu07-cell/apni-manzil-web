@@ -43,6 +43,14 @@ import {
   signOut,
 } from "firebase/auth";
 
+/* =====================================================
+   N8N CANCEL PRODUCTION WEBHOOK
+===================================================== */
+
+const CANCEL_WEBHOOK_URL =
+  "https://tail-origin-drain-dietary.trycloudflare.com/webhook/courier-Cancel-Order";
+
+
 const CustomerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -57,7 +65,8 @@ const CustomerDashboard = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
-  const [cancellingBookingId, setCancellingBookingId] = useState(null);
+  const [cancellingBookingId, setCancellingBookingId] =
+    useState(null);
 
   /* =====================================================
      AUTH + PROFILE + BOOKINGS
@@ -245,6 +254,7 @@ const CustomerDashboard = () => {
 
   /* =====================================================
      CANCEL BOOKING
+     FIREBASE -> N8N -> NIMBUSPOST
   ===================================================== */
 
   const handleCancelBooking = async (
@@ -263,12 +273,17 @@ const CustomerDashboard = () => {
       .trim()
       .toLowerCase();
 
+    /* Already cancelled */
+
     if (currentStatus.includes("cancel")) {
       alert(
-        "This booking is already cancelled."
+        "⚠️ Shipment Already Cancelled\n\n" +
+          "This shipment has already been cancelled."
       );
       return;
     }
+
+    /* Delivered */
 
     if (currentStatus.includes("deliver")) {
       alert(
@@ -276,6 +291,8 @@ const CustomerDashboard = () => {
       );
       return;
     }
+
+    /* Already dispatched / shipped */
 
     if (
       currentStatus.includes("dispatch") ||
@@ -291,11 +308,51 @@ const CustomerDashboard = () => {
       return;
     }
 
+    /* =================================================
+       FIND NIMBUSPOST INTERNAL ORDER ID
+       IMPORTANT:
+       NimbusPost cancellation requires data.order_id
+       UUID, NOT AM-XXXXXXXXXXXX order number.
+    ================================================= */
+
+    const nimbusOrderId =
+      booking.nimbusOrderId ||
+      booking.nimbus_order_id ||
+      booking.order_id ||
+      booking.orderId ||
+      booking.shipmentOrderId ||
+      booking.shipment_order_id ||
+      booking.nimbusData?.order_id ||
+      booking.nimbusResponse?.data?.order_id ||
+      booking.createOrderResponse?.data?.order_id ||
+      booking.apiResponse?.data?.order_id;
+
+    if (!nimbusOrderId) {
+      console.error(
+        "NimbusPost order ID not found in booking:",
+        booking
+      );
+
+      alert(
+        "⚠️ NimbusPost Order ID Not Found\n\n" +
+          "This booking does not contain the NimbusPost internal order ID required for cancellation.\n\n" +
+          "Please contact Apni Manzil support."
+      );
+
+      return;
+    }
+
+    /* =================================================
+       CONFIRMATION
+    ================================================= */
+
     const confirmCancel = window.confirm(
       "Are you sure you want to cancel this booking?\n\n" +
         "Booking ID: " +
         booking.id +
-        "\n\nPlease confirm to continue."
+        "\n\n" +
+        "This will cancel the shipment with the courier partner.\n\n" +
+        "Please confirm to continue."
     );
 
     if (!confirmCancel) {
@@ -307,21 +364,166 @@ const CustomerDashboard = () => {
         booking.id
       );
 
+      /* ===============================================
+         CALL N8N CANCEL WEBHOOK
+      =============================================== */
+
+      const response = await fetch(
+        CANCEL_WEBHOOK_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            order_id: String(
+              nimbusOrderId
+            ),
+
+            booking_id: String(
+              booking.id
+            ),
+
+            order_number:
+              booking.orderNumber ||
+              booking.order_number ||
+              booking.orderNumber ||
+              null,
+          }),
+        }
+      );
+
+      /* ===============================================
+         READ RESPONSE
+      =============================================== */
+
+      let result = null;
+
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        console.error(
+          "Cancel response JSON error:",
+          jsonError
+        );
+      }
+
+      console.log(
+        "🔥 N8N CANCEL RESPONSE:",
+        result
+      );
+
+      /* ===============================================
+         HTTP ERROR
+      =============================================== */
+
+      if (!response.ok) {
+        const errorMessage =
+          result?.message ||
+          result?.error ||
+          "Unable to cancel shipment.";
+
+        /* Already cancelled from NimbusPost */
+
+        if (
+          String(errorMessage)
+            .toLowerCase()
+            .includes("already") ||
+          String(errorMessage)
+            .toLowerCase()
+            .includes("cancelled")
+        ) {
+          await updateDoc(
+            doc(
+              db,
+              "bookings",
+              booking.id
+            ),
+            {
+              status: "Cancelled",
+              bookingStatus: "Cancelled",
+              cancellationMessage:
+                "Shipment was already cancelled.",
+            }
+          );
+
+          alert(
+            "⚠️ Shipment Already Cancelled\n\n" +
+              "This shipment has already been cancelled."
+          );
+
+          return;
+        }
+
+        throw new Error(
+          errorMessage
+        );
+      }
+
+      /* ===============================================
+         N8N SUCCESS CHECK
+      =============================================== */
+
+      if (
+        !result ||
+        result.success !== true
+      ) {
+        const errorMessage =
+          result?.message ||
+          result?.error ||
+          "Shipment cancellation failed.";
+
+        throw new Error(
+          errorMessage
+        );
+      }
+
+      /* ===============================================
+         UPDATE FIRESTORE ONLY AFTER
+         NIMBUSPOST SUCCESS
+      =============================================== */
+
       const bookingRef = doc(
         db,
         "bookings",
         booking.id
       );
 
-      await updateDoc(bookingRef, {
-        status: "Cancelled",
-        cancelledBy: "customer",
-        cancelledAt:
-          new Date().toISOString(),
-      });
+      await updateDoc(
+        bookingRef,
+        {
+          status: "Cancelled",
+
+          bookingStatus:
+            "Cancelled",
+
+          cancelledBy:
+            "customer",
+
+          cancelledAt:
+            new Date().toISOString(),
+
+          nimbusOrderId:
+            String(nimbusOrderId),
+
+          cancellationMessage:
+            "Shipment cancelled successfully.",
+
+          cancellationResponse:
+            result,
+        }
+      );
+
+      /* ===============================================
+         SUCCESS MESSAGE
+      =============================================== */
 
       alert(
-        "Booking cancelled successfully."
+        "✅ Shipment Cancelled Successfully\n\n" +
+          "Your shipment has been cancelled successfully."
       );
     } catch (err) {
       console.error(
@@ -330,7 +532,9 @@ const CustomerDashboard = () => {
       );
 
       alert(
-        "Unable to cancel this booking.\n\nPlease try again."
+        "❌ Unable to Cancel Shipment\n\n" +
+          (err?.message ||
+            "Please try again later.")
       );
     } finally {
       setCancellingBookingId(null);
@@ -1340,14 +1544,14 @@ const CustomerDashboard = () => {
 
                     const price =
                       booking.price !==
-                      undefined &&
+                        undefined &&
                       booking.price !==
-                      null
+                        null
                         ? booking.price
                         : booking.amount !==
-                          undefined &&
+                            undefined &&
                           booking.amount !==
-                          null
+                            null
                         ? booking.amount
                         : null;
 
@@ -1462,7 +1666,8 @@ const CustomerDashboard = () => {
                               </p>
                             </div>
 
-                            {price !== null && (
+                            {price !==
+                              null && (
                               <div>
                                 <p className="text-[9px] font-black text-slate-400 uppercase">
                                   Amount
