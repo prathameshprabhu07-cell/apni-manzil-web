@@ -40,6 +40,7 @@ import InternationalLogistics from './pages/InternationalLogistics';
 import EcommerceLogistics from './pages/EcommerceLogistics';
 import SpecialLogistics from './pages/SpecialLogistics';
 import AISmartLogistics from './pages/AISmartLogistics';
+import LogisticsAI from './pages/LogisticsAI';
 import VendorDashboard from './pages/VendorDashboard';
 
 // --- Partner Forms ---
@@ -471,8 +472,21 @@ function App() {
             element={<SpecialLogistics />}
           />
 
+          {/* ==========================================
+              🤖 APNI MANZIL AI
+          ========================================== */}
+
           <Route
             path="/ai-smart-logistics"
+            element={<LogisticsAI />}
+          />
+
+          {/* ==========================================
+              OLD AI SMART LOGISTICS PAGE
+          ========================================== */}
+
+          <Route
+            path="/ai-smart-logistics-old"
             element={<AISmartLogistics />}
           />
 

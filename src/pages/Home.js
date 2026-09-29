@@ -350,10 +350,6 @@ const Home = () => {
             {/* LEFT */}
             <div className="lg:col-span-7">
 
-              {/* =================================================
-                  NEW BRAND POSITIONING
-                  ================================================= */}
-
               <div className="mb-7">
 
                 <p className="text-orange-400 text-xs md:text-sm font-black uppercase tracking-[0.18em] mb-2">
@@ -715,9 +711,10 @@ const Home = () => {
               </p>
 
               <button
-                onClick={() => navigate("/ai-smart-logistics")}
+                onClick={handleAIRequest}
                 className="mt-7 bg-orange-500 hover:bg-white hover:text-[#002D5E] text-white px-7 py-4 rounded-2xl font-black text-sm flex items-center gap-3 transition-all"
               >
+                <Bot size={18} />
                 Start with AI
                 <ArrowRight size={18} />
               </button>
@@ -1450,9 +1447,7 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-3 mt-7">
 
                 <button
-                  onClick={() =>
-                    navigate("/ai-smart-logistics")
-                  }
+                  onClick={handleAIRequest}
                   className="bg-orange-500 hover:bg-white hover:text-[#002D5E] text-white px-7 py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all"
                 >
                   <Bot size={18} />
