@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Bot,
   Send,
@@ -63,14 +63,6 @@ const LogisticsAI = () => {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
 
-  const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [messages, isTyping]);
-
   // =====================================================
   // LIVE APNI MANZIL AI - n8n + GEMINI
   // =====================================================
@@ -115,7 +107,7 @@ const LogisticsAI = () => {
         data?.reply ||
         "Sorry, I could not generate a response right now.";
 
-      // Show Gemini response
+      // Show AI response
       setMessages((prev) => [
         ...prev,
         {
@@ -358,7 +350,7 @@ const LogisticsAI = () => {
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[680px]">
 
               {/* Chat Header */}
-              <div className="px-4 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
+              <div className="px-4 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
 
                 <div className="flex items-center gap-3">
 
@@ -400,7 +392,7 @@ const LogisticsAI = () => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-300 to-slate-200 p-4 sm:p-6">
+              <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-gradient-to-b from-slate-300 to-slate-200 p-4 sm:p-6">
 
                 {messages.length === 0 ? (
 
@@ -531,8 +523,6 @@ const LogisticsAI = () => {
                       </div>
                     )}
 
-                    <div ref={messagesEndRef} />
-
                   </div>
 
                 )}
@@ -540,7 +530,7 @@ const LogisticsAI = () => {
               </div>
 
               {/* Input */}
-              <div className="p-3 sm:p-4 border-t border-slate-100 bg-white">
+              <div className="p-3 sm:p-4 border-t border-slate-100 bg-white shrink-0">
 
                 <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-1.5 focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-100 transition">
 
@@ -550,6 +540,7 @@ const LogisticsAI = () => {
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
+                        e.preventDefault();
                         handleSend();
                       }
                     }}
