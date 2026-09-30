@@ -118,7 +118,6 @@ const LogisticsAI = () => {
       ===================================================== */}
       <section className="relative overflow-hidden bg-[#001D3D] text-white">
 
-        {/* Background glow */}
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-32 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
 
@@ -208,6 +207,9 @@ const LogisticsAI = () => {
       ===================================================== */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-8">
 
+        {/* =================================================
+            QUICK ACTIONS + CHAT
+        ================================================= */}
         <div className="grid lg:grid-cols-[330px_1fr] gap-6">
 
           {/* =================================================
@@ -278,17 +280,6 @@ const LogisticsAI = () => {
 
               </div>
 
-            </div>
-
-            {/* =================================================
-                AI IMAGE
-            ================================================= */}
-            <div className="mt-4 rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-white">
-              <img
-                src={aiLogisticsBanner}
-                alt="Apni Manzil AI Logistics"
-                className="w-full h-auto object-cover"
-              />
             </div>
 
             {/* Trust card */}
@@ -549,6 +540,18 @@ const LogisticsAI = () => {
 
           </section>
 
+        </div>
+
+        {/* =================================================
+            FULL WIDTH AI LOGISTICS BANNER
+            BELOW CHAT
+        ================================================= */}
+        <div className="mt-6 rounded-3xl overflow-hidden border border-slate-200 shadow-md bg-white">
+          <img
+            src={aiLogisticsBanner}
+            alt="Apni Manzil AI Logistics"
+            className="w-full h-auto object-cover block"
+          />
         </div>
 
       </main>
