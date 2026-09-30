@@ -48,7 +48,7 @@ import {
 ===================================================== */
 
 const CANCEL_WEBHOOK_URL =
-  "https://tail-origin-drain-dietary.trycloudflare.com/webhook/courier-Cancel-Order";
+  "https://lone-join-clock-commission.trycloudflare.com/webhook/courier-Cancel-Order";
 
 
 const CustomerDashboard = () => {

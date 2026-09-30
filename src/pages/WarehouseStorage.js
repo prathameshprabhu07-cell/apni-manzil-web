@@ -11,7 +11,7 @@ const WarehouseStorage = () => {
   const navigate = useNavigate(); 
   
   // n8n production URL
-  const webhookUrl = "https://tail-origin-drain-dietary.trycloudflare.com/webhook/warehouse";
+  const webhookUrl = "https://lone-join-clock-commission.trycloudflare.com/webhook/warehouse";
 
   // Warehouse booking / inquiry handler
   const handleWarehouseBooking = async (serviceTitle) => {

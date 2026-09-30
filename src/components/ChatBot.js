@@ -18,7 +18,7 @@ const ChatBot = () => {
 
   // Apni Manzil AI n8n Webhook
   const AI_WEBHOOK_URL =
-    "https://tail-origin-drain-dietary.trycloudflare.com/webhook/apni-manzil-ai";
+    "https://lone-join-clock-commission.trycloudflare.com/webhook/apni-manzil-ai";
 
   // Auto scroll
   useEffect(() => {

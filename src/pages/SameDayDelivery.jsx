@@ -25,7 +25,7 @@ const SameDayDelivery = () => {
   const [selectedRate, setSelectedRate] = useState(null);
 
   const n8nUrl =
-    "https://tail-origin-drain-dietary.trycloudflare.com/webhook/apni-manzil-hyperlocal";
+    "https://lone-join-clock-commission.trycloudflare.com/webhook/apni-manzil-hyperlocal";
 
   const [formData, setFormData] = useState({
     senderName: '',

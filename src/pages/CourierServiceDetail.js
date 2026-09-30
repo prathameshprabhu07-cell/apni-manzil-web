@@ -22,7 +22,7 @@ import {
 // ============================================================
 
 const BACKEND_BASE_URL =
-  'https://tail-origin-drain-dietary.trycloudflare.com/webhook/apni-manzil-logistics';
+  'https://lone-join-clock-commission.trycloudflare.com/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();

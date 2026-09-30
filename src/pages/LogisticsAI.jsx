@@ -71,33 +71,72 @@ const LogisticsAI = () => {
     });
   }, [messages, isTyping]);
 
-  const handleSend = () => {
-    const text = message.trim();
+  // =====================================================
+  // LIVE APNI MANZIL AI - n8n + GEMINI
+  // =====================================================
+  const handleSend = async () => {
+    const userMessage = message.trim();
 
-    if (!text || isTyping) return;
+    if (!userMessage || isTyping) return;
 
+    // Show user message immediately
     setMessages((prev) => [
       ...prev,
       {
         type: "user",
-        text,
+        text: userMessage,
       },
     ]);
 
     setMessage("");
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const response = await fetch(
+        "https://lone-join-clock-commission.trycloudflare.com/webhook/apni-manzil-ai-test",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: userMessage,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const aiReply =
+        data?.reply ||
+        "Sorry, I could not generate a response right now.";
+
+      // Show Gemini response
       setMessages((prev) => [
         ...prev,
         {
           type: "ai",
-          text: "I'm your Apni Manzil AI Assistant. I'll help you find the right logistics solution. Live AI will be connected in the next step.",
+          text: aiReply,
         },
       ]);
+    } catch (error) {
+      console.error("Apni Manzil AI Error:", error);
 
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          text:
+            "Sorry, I'm unable to connect to Apni Manzil AI right now. Please try again.",
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 700);
+    }
   };
 
   const handleQuickAction = (text) => {

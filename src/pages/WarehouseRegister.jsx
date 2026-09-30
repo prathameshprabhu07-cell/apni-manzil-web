@@ -142,7 +142,7 @@ const WarehousePartnerRegister = () => {
 
     try {
       // Sending all form data to your webhook endpoint
-      const response = await fetch('https://tail-origin-drain-dietary.trycloudflare.com/webhook/Warehouse_Partner', {
+      const response = await fetch('https://lone-join-clock-commission.trycloudflare.com/webhook/Warehouse_Partner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
