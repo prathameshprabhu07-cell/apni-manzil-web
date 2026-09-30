@@ -17,6 +17,8 @@ import {
   MessageCircle,
 } from "lucide-react";
 
+import aiLogisticsBanner from "../assets/ai-logistics-banner.png";
+
 const quickActions = [
   {
     icon: Package,
@@ -276,6 +278,17 @@ const LogisticsAI = () => {
 
               </div>
 
+            </div>
+
+            {/* =================================================
+                AI IMAGE
+            ================================================= */}
+            <div className="mt-4 rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-white">
+              <img
+                src={aiLogisticsBanner}
+                alt="Apni Manzil AI Logistics"
+                className="w-full h-auto object-cover"
+              />
             </div>
 
             {/* Trust card */}
