@@ -26,7 +26,7 @@ const SeaFreightForm = () => {
 
   // Keep your existing n8n webhook flow
   const n8nUrl =
-    "http://localhost:5678/webhook/apni-manzil-logistics";
+    "https://lone-join-clock-commission.trycloudflare.com/webhook/Sea-Freight";
 
   const [formData, setFormData] = useState({
     // 1. Customer
