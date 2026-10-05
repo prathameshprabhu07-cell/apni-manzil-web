@@ -85,7 +85,7 @@ const LogisticsAI = () => {
 
     try {
       const response = await fetch(
-        "https://lone-join-clock-commission.trycloudflare.com/webhook/Ai-Booking",
+        "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/Ai-Booking",
         {
           method: "POST",
           headers: {

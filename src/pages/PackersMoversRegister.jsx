@@ -127,7 +127,7 @@ const PackersMoversRegister = () => {
     console.log("Form Submitted:", formData);
 
     try {
-      await fetch('https://lone-join-clock-commission.trycloudflare.com/webhook/Packer_Partner', {
+      await fetch('https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/Packer_Partner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

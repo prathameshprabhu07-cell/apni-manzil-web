@@ -22,7 +22,7 @@ import {
 // ============================================================
 
 const BACKEND_BASE_URL =
-  'https://lone-join-clock-commission.trycloudflare.com/webhook/apni-manzil-logistics';
+  'https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();

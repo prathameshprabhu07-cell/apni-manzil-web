@@ -26,6 +26,9 @@ import {
   X,
 } from "lucide-react";
 
+const WEBHOOK_URL =
+  "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/packer-movers";
+
 const initialForm = {
   contactName: "",
   companyName: "",
@@ -184,7 +187,9 @@ function Field({ label, required, children, hint }) {
       <label className="mb-2 block text-sm font-medium text-slate-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
+
       {children}
+
       {hint && (
         <p className="mt-1 text-xs text-slate-500">{hint}</p>
       )}
@@ -202,6 +207,8 @@ export default function OfficeShiftingForm({
   isSubmitting = false,
 }) {
   const [form, setForm] = useState(initialForm);
+
+  const [localSubmitting, setLocalSubmitting] = useState(false);
 
   const [openSections, setOpenSections] = useState({
     customer: true,
@@ -291,26 +298,79 @@ export default function OfficeShiftingForm({
       return;
     }
 
-    const payload = {
-      ...form,
-      photos,
-      video,
-      serviceType: "office_shifting",
-      requestSource: "apni_manzil",
-      submittedAt: new Date().toISOString(),
-    };
+    setLocalSubmitting(true);
 
-    if (onSubmit) {
-      await onSubmit(payload);
-    } else {
-      console.log("OFFICE SHIFTING REQUEST:", payload);
-      alert("Office shifting request submitted successfully!");
+    try {
+      const payload = {
+        ...form,
+
+        photos: photos.map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
+
+        video: video
+          ? {
+              name: video.name,
+              type: video.type,
+              size: video.size,
+            }
+          : null,
+
+        serviceType: "office_shifting",
+        requestSource: "apni_manzil",
+        submittedAt: new Date().toISOString(),
+      };
+
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Webhook error: ${response.status}`);
+      }
+
+      const responseText = await response.text();
+
+      let result = null;
+
+      try {
+        result = responseText ? JSON.parse(responseText) : null;
+      } catch {
+        result = responseText;
+      }
+
+      console.log("OFFICE SHIFTING WEBHOOK RESPONSE:", result);
+
+      if (onSubmit) {
+        await onSubmit(payload);
+      }
+
+      alert(
+        "Office shifting request submitted successfully! Our relocation partners will review your requirement."
+      );
+    } catch (error) {
+      console.error("OFFICE SHIFTING SUBMIT ERROR:", error);
+
+      alert(
+        "Unable to submit your request right now. Please try again."
+      );
+    } finally {
+      setLocalSubmitting(false);
     }
   };
+
+  const submitting = isSubmitting || localSubmitting;
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-8">
       <div className="mx-auto max-w-5xl">
+
         {/* Header */}
         <div className="mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 to-blue-500 p-7 text-white shadow-lg">
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
@@ -347,11 +407,14 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("customer")}
           >
             <div className="grid gap-5 md:grid-cols-2">
+
               <Field label="Contact Person Name" required>
                 <input
                   className={inputClass}
                   value={form.contactName}
-                  onChange={(e) => update("contactName", e.target.value)}
+                  onChange={(e) =>
+                    update("contactName", e.target.value)
+                  }
                   placeholder="Enter your name"
                   required
                 />
@@ -361,7 +424,9 @@ export default function OfficeShiftingForm({
                 <input
                   className={inputClass}
                   value={form.companyName}
-                  onChange={(e) => update("companyName", e.target.value)}
+                  onChange={(e) =>
+                    update("companyName", e.target.value)
+                  }
                   placeholder="Company name"
                   required
                 />
@@ -370,6 +435,7 @@ export default function OfficeShiftingForm({
               <Field label="Mobile Number" required>
                 <div className="relative">
                   <Phone className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+
                   <input
                     className={`${inputClass} pl-11`}
                     type="tel"
@@ -406,11 +472,14 @@ export default function OfficeShiftingForm({
               <Field label="Email">
                 <div className="relative">
                   <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+
                   <input
                     className={`${inputClass} pl-11`}
                     type="email"
                     value={form.email}
-                    onChange={(e) => update("email", e.target.value)}
+                    onChange={(e) =>
+                      update("email", e.target.value)
+                    }
                     placeholder="company@example.com"
                   />
                 </div>
@@ -426,6 +495,7 @@ export default function OfficeShiftingForm({
                   placeholder="GSTIN (optional)"
                 />
               </Field>
+
             </div>
           </Section>
 
@@ -438,14 +508,22 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("move")}
           >
             <div className="grid gap-5 md:grid-cols-3">
+
               <Field label="Shifting Type" required>
                 <select
                   className={selectClass}
                   value={form.moveType}
-                  onChange={(e) => update("moveType", e.target.value)}
+                  onChange={(e) =>
+                    update("moveType", e.target.value)
+                  }
                 >
-                  <option value="within_city">Within Same City</option>
-                  <option value="between_cities">One City to Another</option>
+                  <option value="within_city">
+                    Within Same City
+                  </option>
+
+                  <option value="between_cities">
+                    One City to Another
+                  </option>
                 </select>
               </Field>
 
@@ -454,7 +532,9 @@ export default function OfficeShiftingForm({
                   className={inputClass}
                   type="date"
                   value={form.shiftingDate}
-                  onChange={(e) => update("shiftingDate", e.target.value)}
+                  onChange={(e) =>
+                    update("shiftingDate", e.target.value)
+                  }
                   min={new Date().toISOString().split("T")[0]}
                   required
                 />
@@ -463,14 +543,18 @@ export default function OfficeShiftingForm({
               <Field label="Preferred Pickup Time">
                 <div className="relative">
                   <Clock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+
                   <input
                     className={`${inputClass} pl-11`}
                     type="time"
                     value={form.pickupTime}
-                    onChange={(e) => update("pickupTime", e.target.value)}
+                    onChange={(e) =>
+                      update("pickupTime", e.target.value)
+                    }
                   />
                 </div>
               </Field>
+
             </div>
           </Section>
 
@@ -483,23 +567,29 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("pickup")}
           >
             <div className="space-y-5">
+
               <Field label="Complete Pickup Address" required>
                 <textarea
                   className={inputClass}
                   rows="3"
                   value={form.pickupAddress}
-                  onChange={(e) => update("pickupAddress", e.target.value)}
+                  onChange={(e) =>
+                    update("pickupAddress", e.target.value)
+                  }
                   placeholder="Building, street, area, landmark..."
                   required
                 />
               </Field>
 
               <div className="grid gap-5 md:grid-cols-3">
+
                 <Field label="City" required>
                   <input
                     className={inputClass}
                     value={form.pickupCity}
-                    onChange={(e) => update("pickupCity", e.target.value)}
+                    onChange={(e) =>
+                      update("pickupCity", e.target.value)
+                    }
                     placeholder="Mumbai"
                     required
                   />
@@ -509,7 +599,9 @@ export default function OfficeShiftingForm({
                   <input
                     className={inputClass}
                     value={form.pickupState}
-                    onChange={(e) => update("pickupState", e.target.value)}
+                    onChange={(e) =>
+                      update("pickupState", e.target.value)
+                    }
                     placeholder="Maharashtra"
                     required
                   />
@@ -535,7 +627,9 @@ export default function OfficeShiftingForm({
                   <select
                     className={selectClass}
                     value={form.pickupFloor}
-                    onChange={(e) => update("pickupFloor", e.target.value)}
+                    onChange={(e) =>
+                      update("pickupFloor", e.target.value)
+                    }
                   >
                     <option>Ground Floor</option>
                     <option>1st Floor</option>
@@ -551,7 +645,9 @@ export default function OfficeShiftingForm({
                   <select
                     className={selectClass}
                     value={form.pickupLift}
-                    onChange={(e) => update("pickupLift", e.target.value)}
+                    onChange={(e) =>
+                      update("pickupLift", e.target.value)
+                    }
                   >
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
@@ -562,12 +658,15 @@ export default function OfficeShiftingForm({
                   <select
                     className={selectClass}
                     value={form.pickupParking}
-                    onChange={(e) => update("pickupParking", e.target.value)}
+                    onChange={(e) =>
+                      update("pickupParking", e.target.value)
+                    }
                   >
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                   </select>
                 </Field>
+
               </div>
 
               <Field label="Narrow Lane / Access Problem?">
@@ -582,6 +681,7 @@ export default function OfficeShiftingForm({
                   <option value="yes">Yes</option>
                 </select>
               </Field>
+
             </div>
           </Section>
 
@@ -594,23 +694,29 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("drop")}
           >
             <div className="space-y-5">
+
               <Field label="Complete Drop Address" required>
                 <textarea
                   className={inputClass}
                   rows="3"
                   value={form.dropAddress}
-                  onChange={(e) => update("dropAddress", e.target.value)}
+                  onChange={(e) =>
+                    update("dropAddress", e.target.value)
+                  }
                   placeholder="New office building, street, area..."
                   required
                 />
               </Field>
 
               <div className="grid gap-5 md:grid-cols-3">
+
                 <Field label="City" required>
                   <input
                     className={inputClass}
                     value={form.dropCity}
-                    onChange={(e) => update("dropCity", e.target.value)}
+                    onChange={(e) =>
+                      update("dropCity", e.target.value)
+                    }
                     placeholder="Pune"
                     required
                   />
@@ -620,7 +726,9 @@ export default function OfficeShiftingForm({
                   <input
                     className={inputClass}
                     value={form.dropState}
-                    onChange={(e) => update("dropState", e.target.value)}
+                    onChange={(e) =>
+                      update("dropState", e.target.value)
+                    }
                     placeholder="Maharashtra"
                     required
                   />
@@ -646,7 +754,9 @@ export default function OfficeShiftingForm({
                   <select
                     className={selectClass}
                     value={form.dropFloor}
-                    onChange={(e) => update("dropFloor", e.target.value)}
+                    onChange={(e) =>
+                      update("dropFloor", e.target.value)
+                    }
                   >
                     <option>Ground Floor</option>
                     <option>1st Floor</option>
@@ -662,7 +772,9 @@ export default function OfficeShiftingForm({
                   <select
                     className={selectClass}
                     value={form.dropLift}
-                    onChange={(e) => update("dropLift", e.target.value)}
+                    onChange={(e) =>
+                      update("dropLift", e.target.value)
+                    }
                   >
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
@@ -673,24 +785,30 @@ export default function OfficeShiftingForm({
                   <select
                     className={selectClass}
                     value={form.dropParking}
-                    onChange={(e) => update("dropParking", e.target.value)}
+                    onChange={(e) =>
+                      update("dropParking", e.target.value)
+                    }
                   >
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                   </select>
                 </Field>
+
               </div>
 
               <Field label="Narrow Lane / Access Problem?">
                 <select
                   className={selectClass}
                   value={form.dropAccessIssue}
-                  onChange={(e) => update("dropAccessIssue", e.target.value)}
+                  onChange={(e) =>
+                    update("dropAccessIssue", e.target.value)
+                  }
                 >
                   <option value="no">No</option>
                   <option value="yes">Yes</option>
                 </select>
               </Field>
+
             </div>
           </Section>
 
@@ -703,6 +821,7 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("items")}
           >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
               {itemConfig.map(({ key, label, icon: Icon }) => (
                 <div
                   key={key}
@@ -710,6 +829,7 @@ export default function OfficeShiftingForm({
                 >
                   <div className="mb-3 flex items-center gap-2">
                     <Icon className="h-4 w-4 text-blue-600" />
+
                     <span className="text-sm font-medium text-slate-700">
                       {label}
                     </span>
@@ -720,21 +840,27 @@ export default function OfficeShiftingForm({
                     min="0"
                     className={inputClass}
                     value={form.items[key]}
-                    onChange={(e) => updateItem(key, e.target.value)}
+                    onChange={(e) =>
+                      updateItem(key, e.target.value)
+                    }
                     placeholder="Quantity"
                   />
                 </div>
               ))}
+
             </div>
 
             <div className="mt-5 grid gap-5 md:grid-cols-2">
+
               <Field label="Approx. Number of Boxes / Cartons">
                 <input
                   type="number"
                   min="0"
                   className={inputClass}
                   value={form.approxBoxes}
-                  onChange={(e) => update("approxBoxes", e.target.value)}
+                  onChange={(e) =>
+                    update("approxBoxes", e.target.value)
+                  }
                   placeholder="e.g. 30"
                 />
               </Field>
@@ -743,16 +869,31 @@ export default function OfficeShiftingForm({
                 <select
                   className={selectClass}
                   value={form.approxWeight}
-                  onChange={(e) => update("approxWeight", e.target.value)}
+                  onChange={(e) =>
+                    update("approxWeight", e.target.value)
+                  }
                 >
-                  <option value="dont_know">I Don't Know</option>
-                  <option value="under_100">Under 100 kg</option>
-                  <option value="100_300">100–300 kg</option>
-                  <option value="300_500">300–500 kg</option>
-                  <option value="500_1000">500 kg–1 Ton</option>
-                  <option value="over_1000">More than 1 Ton</option>
+                  <option value="dont_know">
+                    I Don't Know
+                  </option>
+                  <option value="under_100">
+                    Under 100 kg
+                  </option>
+                  <option value="100_300">
+                    100–300 kg
+                  </option>
+                  <option value="300_500">
+                    300–500 kg
+                  </option>
+                  <option value="500_1000">
+                    500 kg–1 Ton
+                  </option>
+                  <option value="over_1000">
+                    More than 1 Ton
+                  </option>
                 </select>
               </Field>
+
             </div>
           </Section>
 
@@ -765,6 +906,7 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("services")}
           >
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
               {serviceConfig.map(([key, label]) => (
                 <label
                   key={key}
@@ -777,14 +919,18 @@ export default function OfficeShiftingForm({
                   <input
                     type="checkbox"
                     checked={form.services[key]}
-                    onChange={(e) => updateService(key, e.target.checked)}
+                    onChange={(e) =>
+                      updateService(key, e.target.checked)
+                    }
                     className="h-4 w-4 rounded border-slate-300 text-blue-600"
                   />
+
                   <span className="text-sm font-medium text-slate-700">
                     {label}
                   </span>
                 </label>
               ))}
+
             </div>
           </Section>
 
@@ -801,6 +947,7 @@ export default function OfficeShiftingForm({
             </p>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
               {specialConfig.map(([key, label]) => (
                 <label
                   key={key}
@@ -818,11 +965,13 @@ export default function OfficeShiftingForm({
                     }
                     className="h-4 w-4 rounded border-slate-300 text-orange-600"
                   />
+
                   <span className="text-sm font-medium text-slate-700">
                     {label}
                   </span>
                 </label>
               ))}
+
             </div>
           </Section>
 
@@ -835,6 +984,7 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("photos")}
           >
             <div className="grid gap-5 md:grid-cols-2">
+
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
                   Upload Office / Item Photos
@@ -842,9 +992,11 @@ export default function OfficeShiftingForm({
 
                 <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center hover:border-blue-400 hover:bg-blue-50 transition">
                   <Camera className="mb-3 h-8 w-8 text-blue-500" />
+
                   <span className="font-medium text-slate-700">
                     Click to upload photos
                   </span>
+
                   <span className="mt-1 text-xs text-slate-500">
                     Up to 8 images
                   </span>
@@ -860,6 +1012,7 @@ export default function OfficeShiftingForm({
 
                 {photos.length > 0 && (
                   <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+
                     {photos.map((file, index) => (
                       <div
                         key={`${file.name}-${index}`}
@@ -878,6 +1031,7 @@ export default function OfficeShiftingForm({
                         </button>
                       </div>
                     ))}
+
                   </div>
                 )}
               </div>
@@ -889,9 +1043,11 @@ export default function OfficeShiftingForm({
 
                 <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center hover:border-blue-400 hover:bg-blue-50 transition">
                   <Video className="mb-3 h-8 w-8 text-blue-500" />
+
                   <span className="font-medium text-slate-700">
                     Upload a short video
                   </span>
+
                   <span className="mt-1 text-xs text-slate-500">
                     Optional – helps partners estimate the requirement
                   </span>
@@ -912,6 +1068,7 @@ export default function OfficeShiftingForm({
                   </div>
                 )}
               </div>
+
             </div>
           </Section>
 
@@ -924,40 +1081,49 @@ export default function OfficeShiftingForm({
             onToggle={() => toggleSection("final")}
           >
             <div className="space-y-5">
+
               <Field label="Special Instructions">
                 <textarea
                   className={inputClass}
                   rows="4"
                   value={form.specialInstructions}
                   onChange={(e) =>
-                    update("specialInstructions", e.target.value)
+                    update(
+                      "specialInstructions",
+                      e.target.value
+                    )
                   }
                   placeholder="Tell us anything else about your office shifting requirement..."
                 />
               </Field>
 
               <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+
                 <input
                   type="checkbox"
                   checked={form.agree}
-                  onChange={(e) => update("agree", e.target.checked)}
+                  onChange={(e) =>
+                    update("agree", e.target.checked)
+                  }
                   className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600"
                   required
                 />
 
                 <span className="text-sm text-slate-600">
-                  I confirm that the information provided by me is correct
-                  and can be used by Apni Manzil to arrange quotations from
-                  relevant logistics / relocation partners.
+                  I confirm that the information provided by me is
+                  correct and can be used by Apni Manzil to arrange
+                  quotations from relevant logistics / relocation
+                  partners.
                 </span>
+
               </label>
 
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={submitting}
                 className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? (
+                {submitting ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
                     Submitting Request...
@@ -971,11 +1137,13 @@ export default function OfficeShiftingForm({
               </button>
 
               <p className="text-center text-xs text-slate-500">
-                Apni Manzil will review your requirement and connect it with
-                suitable relocation partners.
+                Apni Manzil will review your requirement and connect
+                it with suitable relocation partners.
               </p>
+
             </div>
           </Section>
+
         </form>
       </div>
     </div>

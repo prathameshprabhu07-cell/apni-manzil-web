@@ -17,7 +17,7 @@ const InternationalDelivery = () => {
   const [selectedRate, setSelectedRate] = useState(null);
   
   // n8n लोकल प्रोडक्शन वेबहूक URL
-  const n8nUrl = "https://lone-join-clock-commission.trycloudflare.com/webhook/international-courier";
+  const n8nUrl = "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/international-courier";
 
   const [formData, setFormData] = useState({
     // FROM (Sender Details)

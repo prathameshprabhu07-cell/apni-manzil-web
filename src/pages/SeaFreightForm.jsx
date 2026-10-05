@@ -26,7 +26,7 @@ const SeaFreightForm = () => {
 
   // Keep your existing n8n webhook flow
   const n8nUrl =
-    "https://lone-join-clock-commission.trycloudflare.com/webhook/Sea-Freight";
+    "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/Sea-Freight";
 
   const [formData, setFormData] = useState({
     // 1. Customer

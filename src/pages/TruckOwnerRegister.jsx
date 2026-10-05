@@ -31,7 +31,7 @@ const TruckOwnerRegister = () => {
   // n8n WEBHOOK
   // =========================================================
   const N8N_WEBHOOK_URL =
-    "https://lone-join-clock-commission.trycloudflare.com/webhook/Truck-Owner";
+    "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/Truck-Owner";
 
   // =========================================================
   // VEHICLES
