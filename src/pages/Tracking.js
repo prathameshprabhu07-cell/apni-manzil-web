@@ -17,7 +17,7 @@ const Tracking = () => {
     }
 
     try {
-      const response = await fetch("https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/Traking", {
+      const response = await fetch("https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/Traking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

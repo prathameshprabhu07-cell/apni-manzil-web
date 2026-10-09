@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 const WEBHOOK_URL =
-  "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/packer-movers";
+  "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/packer-movers";
 
 const initialForm = {
   contactName: "",

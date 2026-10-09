@@ -18,7 +18,7 @@ const ChatBot = () => {
 
   // Apni Manzil AI n8n Webhook
   const AI_WEBHOOK_URL =
-    "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/apni-manzil-ai";
+    "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/apni-manzil-ai";
 
   // Auto scroll
   useEffect(() => {

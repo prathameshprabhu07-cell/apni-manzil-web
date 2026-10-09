@@ -17,7 +17,7 @@ import {
 import airFreightBanner from "../assets/air-freight-banner.png";
 
 const AIR_CARGO_WEBHOOK =
-  "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/Air-Cargo";
+  "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/Air-Cargo";
 
 const emptyPackage = {
   pieces: 1,

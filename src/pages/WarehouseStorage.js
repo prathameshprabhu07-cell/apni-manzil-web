@@ -11,7 +11,7 @@ const WarehouseStorage = () => {
   const navigate = useNavigate(); 
   
   // n8n production URL
-  const webhookUrl = "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/warehouse";
+  const webhookUrl = "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/warehouse";
 
   // Warehouse booking / inquiry handler
   const handleWarehouseBooking = async (serviceTitle) => {

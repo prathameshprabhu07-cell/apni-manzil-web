@@ -48,7 +48,7 @@ import {
 ===================================================== */
 
 const CANCEL_WEBHOOK_URL =
-  "https://coating-vocabulary-gcc-cognitive.trycloudflare.com/webhook/courier-Cancel-Order";
+  "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/courier-Cancel-Order";
 
 
 const CustomerDashboard = () => {
