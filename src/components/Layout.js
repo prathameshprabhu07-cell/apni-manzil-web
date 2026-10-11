@@ -1,743 +1,918 @@
-```jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-
 import {
   Menu,
   X,
-  Phone,
+  ChevronDown,
+  ChevronRight,
+  Truck,
+  Package,
+  Warehouse,
   Globe,
+  ShieldCheck,
   User,
+  Users,
   LogIn,
   UserPlus,
+  LayoutDashboard,
   LogOut,
-  ChevronDown,
-  Truck,
-  Building2,
-  Facebook,
-  Instagram,
-  Linkedin,
+  Phone,
   Mail,
-  MapPin
+  MapPin,
+  MessageCircle,
+  Headphones,
+  ArrowRight,
+  Briefcase,
+  Sparkles,
+  Building2,
+  CircleUserRound,
 } from 'lucide-react';
 
 const Layout = ({ children, user }) => {
-  const [isServiceOpen, setIsServiceOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showDashboardModal, setShowDashboardModal] = useState(false);
-
   const navigate = useNavigate();
 
-  // Secure booking
+  const [isServiceOpen, setIsServiceOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileServiceOpen, setIsMobileServiceOpen] = useState(false);
+  const [showDashboardModal, setShowDashboardModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const services = [
+    {
+      name: 'Courier & Parcel Delivery',
+      path: '/courier-service',
+      icon: Package,
+    },
+    {
+      name: 'Hyperlocal / Bike Delivery',
+      path: '/hyperlocal-service',
+      icon: Truck,
+    },
+    {
+      name: 'Truck & Transport Booking',
+      path: '/truck-transport',
+      icon: Truck,
+    },
+    {
+      name: 'Packers & Movers',
+      path: '/packers-movers',
+      icon: Package,
+    },
+    {
+      name: 'Warehouse & Storage',
+      path: '/warehouse-storage',
+      icon: Warehouse,
+    },
+    {
+      name: 'International Logistics',
+      path: '/international-logistics',
+      icon: Globe,
+    },
+    {
+      name: 'E-commerce Logistics',
+      path: '/ecommerce-logistics',
+      icon: Building2,
+    },
+    {
+      name: 'Special Logistics',
+      path: '/special-logistics',
+      icon: ShieldCheck,
+    },
+    {
+      name: 'AI Smart Logistics',
+      path: '/ai-smart-logistics',
+      icon: Sparkles,
+    },
+  ];
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setIsMobileServiceOpen(false);
+  };
+
   const secureBooking = (callback) => {
-    if (user) {
-      if (typeof callback === 'function') {
-        callback();
-      }
-    } else {
-      alert('सर्व्हिस बुक करण्यासाठी कृपया आधी लॉगिन करा.');
+    if (!user) {
+      alert('Please login or register before continuing.');
       navigate('/login');
+      return;
+    }
+
+    if (typeof callback === 'function') {
+      callback();
     }
   };
 
-  // Firebase logout
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await signOut(auth);
       setIsMobileMenuOpen(false);
       setShowDashboardModal(false);
       navigate('/');
     } catch (error) {
-      console.error('Logout Error:', error);
-      alert('Logout करताना अडचण आली. कृपया पुन्हा प्रयत्न करा.');
+      console.error('Logout failed:', error);
+      alert('Logout failed. Please try again.');
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
-  // All services
-  const services = [
-    { name: 'Truck Transport', path: '/truck-transport' },
-    { name: 'Packers & Movers', path: '/packers-movers' },
-    { name: 'Warehouse Storage', path: '/warehouse-storage' },
-    { name: 'Courier Service', path: '/courier-service' },
-    { name: 'Special Logistics', path: '/special-logistics' },
-    { name: 'AI Smart Logistics', path: '/ai-smart-logistics' }
-  ];
-
-  const closeMobileMenu = () => {
+  const handleDashboardClick = () => {
+    setShowDashboardModal(true);
     setIsMobileMenuOpen(false);
-    setIsServiceOpen(false);
   };
 
-  const openDashboard = () => {
+  const handleNavigation = (path) => {
+    navigate(path);
     closeMobileMenu();
-
-    if (user) {
-      navigate('/customer-dashboard');
-    } else {
-      setShowDashboardModal(true);
-    }
+    setIsServiceOpen(false);
+    setShowDashboardModal(false);
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans text-[#001D3D]">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-white text-slate-800">
+      {/* Top information bar */}
+      <div className="hidden bg-[#002D5E] text-white md:block">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm">
+          <div className="flex flex-wrap items-center gap-5">
+            <a
+              href="https://wa.me/917218852356"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition hover:text-orange-300"
+            >
+              <MessageCircle size={16} />
+              <span>WhatsApp Support</span>
+            </a>
 
-      {/* TOP INFORMATION BAR */}
-      <div className="hidden md:flex bg-[#001D3D] text-white px-6 lg:px-12 py-3 justify-between items-center text-[11px] lg:text-xs font-bold relative z-[61]">
+            <a
+              href="mailto:help@apnimanzil.co.in"
+              className="inline-flex items-center gap-2 transition hover:text-orange-300"
+            >
+              <Mail size={16} />
+              <span>help@apnimanzil.co.in</span>
+            </a>
+          </div>
 
-        <div className="flex items-center gap-5 lg:gap-8">
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <span className="max-w-48 truncate">
+                  Welcome{user.displayName ? `, ${user.displayName}` : ''}
+                </span>
 
-          <a
-            href="https://wa.me/917218852356"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 border-r border-slate-700 pr-5 lg:pr-8 hover:text-[#FF5E00] transition-colors"
-          >
-            <Phone size={14} className="text-[#FF5E00]" />
-            24/7 WHATSAPP SUPPORT: +91 7218852356
-          </a>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="inline-flex items-center gap-2 transition hover:text-orange-300 disabled:opacity-60"
+                >
+                  <LogOut size={15} />
+                  {isLoggingOut ? 'Logging out...' : 'Logout'}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center gap-2 transition hover:text-orange-300"
+                >
+                  <LogIn size={15} />
+                  Login
+                </Link>
 
-          <span className="flex items-center gap-2">
-            <Globe size={14} className="text-[#FF5E00]" />
-            GLOBAL LOGISTICS NETWORK
-          </span>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-2 transition hover:text-orange-300"
+                >
+                  <UserPlus size={15} />
+                  Sign Up
+                </Link>
+              </>
+            )}
 
-        </div>
-
-        <div className="flex items-center gap-5 lg:gap-7">
-
-          {!user ? (
-            <>
-              <Link
-                to="/login"
-                className="flex items-center gap-2 hover:text-[#FF5E00] transition-colors uppercase"
-              >
-                <LogIn size={14} />
-                Login
-              </Link>
-
-              <Link
-                to="/register"
-                className="flex items-center gap-2 text-[#FF5E00] hover:text-white transition-colors uppercase border-l border-slate-700 pl-5 lg:pl-8"
-              >
-                <UserPlus size={14} />
-                Sign Up
-              </Link>
-            </>
-          ) : (
-            <div className="flex items-center gap-4">
-
-              <span className="text-[#FF5E00] uppercase border-r border-slate-700 pr-4">
-                Hi, {user.email ? user.email.split('@')[0] : 'User'}
-              </span>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="flex items-center gap-2 hover:text-red-400 transition-colors uppercase"
-              >
-                <LogOut size={14} />
-                Logout
-              </button>
-
-            </div>
-          )}
-
-          <Link
-            to="/track"
-            className="hover:text-[#FF5E00] transition-colors uppercase border-l border-slate-700 pl-5 lg:pl-8"
-          >
-            Track Shipment
-          </Link>
-
+            <Link
+              to="/track"
+              className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-4 py-1.5 font-semibold text-white transition hover:bg-orange-600"
+            >
+              Track Shipment
+              <ArrowRight size={15} />
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* RESPONSIVE NAVBAR */}
-      <nav className="bg-white border-b border-gray-200 px-3 sm:px-6 lg:px-10 py-3 sm:py-4 sticky top-0 z-[60] shadow-sm">
-
-        <div className="max-w-[1600px] mx-auto flex justify-between items-center gap-2 sm:gap-4">
-
-          {/* BRAND LOGO */}
+      {/* Main navigation */}
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
+        <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-3 px-4 py-3">
+          {/* Logo */}
           <Link
             to="/"
             onClick={closeMobileMenu}
-            className="flex items-center gap-2 sm:gap-3 min-w-0"
+            className="flex min-w-0 shrink-0 items-center gap-2"
+            aria-label="Apni Manzil Home"
           >
-
             <img
               src="/favicon.png"
               alt="Apni Manzil Logo"
-              className="h-10 sm:h-14 lg:h-16 w-auto max-w-[58px] sm:max-w-none object-contain border-r-4 border-[#FF5E00] pr-2 sm:pr-3"
+              className="h-11 w-11 rounded-lg object-contain"
+              onError={(event) => {
+                event.currentTarget.style.display = 'none';
+              }}
             />
 
-            <div className="flex flex-col min-w-0">
-
-              <span className="text-base sm:text-xl lg:text-2xl font-black tracking-tight uppercase italic leading-tight whitespace-nowrap">
-                Apni Manzil
+            <div className="min-w-0 leading-tight">
+              <span className="block text-lg font-extrabold tracking-tight text-[#002D5E] sm:text-xl">
+                Apni <span className="text-orange-500">Manzil</span>
               </span>
 
-              <span className="text-[7px] sm:text-[9px] lg:text-[10px] font-black text-[#FF5E00] tracking-[0.08em] sm:tracking-[0.18em] uppercase mt-1 whitespace-nowrap">
-                Logistics & Supply Chain
+              <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:block">
+                Global Logistics Network
               </span>
-
             </div>
-
           </Link>
 
-          {/* DESKTOP NAVIGATION */}
-          <div className="hidden lg:flex items-center gap-5 xl:gap-8 text-xs xl:text-[13px] font-black tracking-wide text-[#001D3D]">
-
+          {/* Desktop navigation */}
+          <nav className="hidden items-center gap-5 lg:flex">
             <Link
               to="/"
-              className="hover:text-[#FF5E00] transition-colors"
+              className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
             >
-              HOME
+              Home
             </Link>
 
-            {/* DESKTOP SERVICES DROPDOWN */}
+            {/* Services dropdown */}
             <div
-              className="relative py-3"
+              className="relative"
               onMouseEnter={() => setIsServiceOpen(true)}
               onMouseLeave={() => setIsServiceOpen(false)}
             >
-
               <button
                 type="button"
                 onClick={() => setIsServiceOpen((previous) => !previous)}
-                className="flex items-center gap-1 hover:text-[#FF5E00] transition-colors"
                 aria-expanded={isServiceOpen}
+                className="inline-flex items-center gap-1 whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
               >
-                SERVICES
-
+                Services
                 <ChevronDown
                   size={16}
-                  className={isServiceOpen ? 'rotate-180 transition-transform' : 'transition-transform'}
+                  className={`transition-transform ${isServiceOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
               {isServiceOpen && (
-                <div className="absolute top-full left-0 w-64 bg-white shadow-xl border-t-4 border-[#FF5E00] py-3 z-[100] rounded-b-lg">
+                <div className="absolute left-0 top-full z-50 w-72 pt-3">
+                  <div className="overflow-hidden rounded-xl border border-slate-200 bg-white py-2 shadow-xl">
+                    {services.map((service) => {
+                      const ServiceIcon = service.icon;
 
-                  {services.map((service) => (
-                    <Link
-                      key={service.path}
-                      to={service.path}
-                      onClick={() => setIsServiceOpen(false)}
-                      className="block px-6 py-3 text-slate-700 hover:bg-slate-50 hover:text-[#FF5E00] font-bold text-sm transition-colors"
-                    >
-                      {service.name}
-                    </Link>
-                  ))}
+                      return (
+                        <Link
+                          key={service.path}
+                          to={service.path}
+                          onClick={() => setIsServiceOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 transition hover:bg-orange-50 hover:text-[#002D5E]"
+                        >
+                          <ServiceIcon
+                            size={18}
+                            className="shrink-0 text-orange-500"
+                          />
 
+                          <span>{service.name}</span>
+
+                          <ChevronRight
+                            size={15}
+                            className="ml-auto shrink-0"
+                          />
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
-
             </div>
 
             <Link
               to="/partner-registration"
-              className="text-[#FF5E00] hover:text-[#001D3D] transition-colors whitespace-nowrap"
+              className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
             >
-              BECOME A PARTNER
+              Become a Partner
             </Link>
 
-            <button
-              type="button"
-              onClick={openDashboard}
-              className="border-2 border-[#001D3D] px-4 xl:px-6 py-2.5 hover:bg-[#001D3D] hover:text-white transition-colors uppercase font-black text-xs rounded-sm shadow-sm flex items-center gap-2 whitespace-nowrap"
+            <Link
+              to="/about"
+              className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
             >
-              <User size={16} />
+              About Us
+            </Link>
 
-              {user ? 'MY DASHBOARD' : 'DASHBOARD'}
-            </button>
+            <Link
+              to="/contact"
+              className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
+            >
+              Contact
+            </Link>
+          </nav>
 
+          {/* Desktop action buttons */}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            {user ? (
+              <>
+                <button
+                  type="button"
+                  onClick={handleDashboardClick}
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#002D5E] px-3 py-2 text-sm font-semibold text-[#002D5E] transition hover:bg-blue-50"
+                >
+                  <LayoutDashboard size={17} />
+                  Dashboard
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  aria-label="Logout"
+                  title="Logout"
+                  className="rounded-lg p-2 text-slate-600 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-60"
+                >
+                  <LogOut size={19} />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-[#002D5E] transition hover:bg-blue-50"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  to="/register"
+                  className="whitespace-nowrap rounded-lg bg-orange-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-orange-600"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
 
-          {/* MOBILE AND TABLET BUTTONS */}
-          <div className="flex lg:hidden items-center gap-2 shrink-0">
-
-            <button
-              type="button"
-              onClick={openDashboard}
-              className="h-10 w-10 flex items-center justify-center rounded-lg border border-slate-200 text-[#001D3D] hover:bg-slate-100 transition-colors"
-              aria-label="Open Dashboard"
-            >
-              <User size={21} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen((previous) => !previous)}
-              className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#001D3D] text-white hover:bg-[#FF5E00] transition-colors"
-              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isMobileMenuOpen}
-            >
-              {isMobileMenuOpen ? <X size={23} /> : <Menu size={23} />}
-            </button>
-
-          </div>
-
+          {/* Mobile menu button */}
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen((previous) => !previous)}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-[#002D5E] transition hover:bg-slate-100 lg:hidden"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
 
-        {/* MOBILE NAVIGATION MENU */}
+        {/* Mobile navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden max-h-[75vh] overflow-y-auto mt-4 border-t border-slate-200 pt-3 pb-2">
-
-            <div className="flex flex-col gap-1 text-sm font-bold text-[#001D3D]">
-
+          <div className="border-t border-slate-200 bg-white shadow-lg lg:hidden">
+            <nav className="mx-auto max-w-7xl px-4 py-3">
               <Link
                 to="/"
                 onClick={closeMobileMenu}
-                className="px-4 py-3 rounded-lg hover:bg-slate-100 transition-colors"
+                className="flex items-center rounded-lg px-3 py-3 font-semibold text-slate-700 transition hover:bg-orange-50 hover:text-orange-600"
               >
                 Home
               </Link>
 
-              {/* MOBILE SERVICES DROPDOWN */}
-              <button
-                type="button"
-                onClick={() => setIsServiceOpen((previous) => !previous)}
-                className="px-4 py-3 flex items-center justify-between rounded-lg hover:bg-slate-100 transition-colors text-left"
-                aria-expanded={isServiceOpen}
-              >
-                Services
+              {/* Mobile services */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setIsMobileServiceOpen((previous) => !previous)
+                  }
+                  aria-expanded={isMobileServiceOpen}
+                  className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-semibold text-slate-700 transition hover:bg-orange-50 hover:text-orange-600"
+                >
+                  <span>Services</span>
 
-                <ChevronDown
-                  size={18}
-                  className={isServiceOpen ? 'rotate-180 transition-transform' : 'transition-transform'}
-                />
-              </button>
+                  <ChevronDown
+                    size={18}
+                    className={`transition-transform ${isMobileServiceOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
 
-              {isServiceOpen && (
-                <div className="ml-4 border-l-2 border-[#FF5E00]">
+                {isMobileServiceOpen && (
+                  <div className="mb-2 ml-3 border-l-2 border-orange-200 pl-3">
+                    {services.map((service) => {
+                      const ServiceIcon = service.icon;
 
-                  {services.map((service) => (
-                    <Link
-                      key={service.path}
-                      to={service.path}
-                      onClick={closeMobileMenu}
-                      className="block px-5 py-3 text-slate-600 hover:text-[#FF5E00] hover:bg-slate-50 transition-colors"
-                    >
-                      {service.name}
-                    </Link>
-                  ))}
+                      return (
+                        <Link
+                          key={service.path}
+                          to={service.path}
+                          onClick={closeMobileMenu}
+                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-slate-600 transition hover:bg-orange-50 hover:text-[#002D5E]"
+                        >
+                          <ServiceIcon
+                            size={17}
+                            className="shrink-0 text-orange-500"
+                          />
 
-                </div>
-              )}
+                          <span>{service.name}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
 
               <Link
                 to="/partner-registration"
                 onClick={closeMobileMenu}
-                className="px-4 py-3 rounded-lg text-[#FF5E00] hover:bg-slate-100 transition-colors"
+                className="flex items-center rounded-lg px-3 py-3 font-semibold text-slate-700 transition hover:bg-orange-50 hover:text-orange-600"
               >
                 Become a Partner
               </Link>
 
               <Link
+                to="/about"
+                onClick={closeMobileMenu}
+                className="flex items-center rounded-lg px-3 py-3 font-semibold text-slate-700 transition hover:bg-orange-50 hover:text-orange-600"
+              >
+                About Us
+              </Link>
+
+              <Link
+                to="/contact"
+                onClick={closeMobileMenu}
+                className="flex items-center rounded-lg px-3 py-3 font-semibold text-slate-700 transition hover:bg-orange-50 hover:text-orange-600"
+              >
+                Contact Us
+              </Link>
+
+              <Link
                 to="/track"
                 onClick={closeMobileMenu}
-                className="px-4 py-3 rounded-lg hover:bg-slate-100 transition-colors"
+                className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-[#002D5E] px-4 py-3 font-bold text-white transition hover:bg-blue-900"
               >
+                <Package size={18} />
                 Track Shipment
               </Link>
 
-              {!user ? (
-                <>
+              <a
+                href="https://wa.me/917218852356"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-green-500 px-4 py-3 font-semibold text-green-700 transition hover:bg-green-50"
+              >
+                <MessageCircle size={18} />
+                WhatsApp Support
+              </a>
 
-                  <Link
-                    to="/login"
-                    onClick={closeMobileMenu}
-                    className="mx-2 mt-2 py-3 text-center rounded-lg bg-[#001D3D] text-white hover:bg-[#FF5E00] transition-colors"
-                  >
-                    Login
-                  </Link>
+              <div className="my-3 border-t border-slate-200" />
 
-                  <Link
-                    to="/register"
-                    onClick={closeMobileMenu}
-                    className="mx-2 py-3 text-center rounded-lg border-2 border-[#FF5E00] text-[#001D3D] hover:bg-orange-50 transition-colors"
-                  >
-                    Create Account
-                  </Link>
+              {user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#002D5E] text-white">
+                      <User size={20} />
+                    </div>
 
-                </>
-              ) : (
-                <>
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-500">
+                        Logged in as
+                      </p>
+
+                      <p className="truncate font-semibold text-[#002D5E]">
+                        {user.displayName || user.email || 'User'}
+                      </p>
+                    </div>
+                  </div>
 
                   <button
                     type="button"
-                    onClick={() => {
-                      closeMobileMenu();
-                      navigate('/customer-dashboard');
-                    }}
-                    className="mx-2 mt-2 py-3 rounded-lg bg-[#001D3D] text-white hover:bg-[#FF5E00] transition-colors"
+                    onClick={handleDashboardClick}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#002D5E] px-4 py-3 font-semibold text-[#002D5E] transition hover:bg-blue-50"
                   >
-                    My Dashboard
+                    <LayoutDashboard size={18} />
+                    Dashboard
                   </button>
 
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="mx-2 py-3 rounded-lg border border-red-200 text-red-600 flex items-center justify-center gap-2 hover:bg-red-50 transition-colors"
+                    disabled={isLoggingOut}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60"
                   >
-                    <LogOut size={17} />
-                    Logout
+                    <LogOut size={18} />
+                    {isLoggingOut ? 'Logging out...' : 'Logout'}
                   </button>
-
-                </>
-              )}
-
-              {/* MOBILE CONTACT INFORMATION */}
-              <div className="mt-3 mx-2 p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
-
-                <p className="text-xs text-slate-500 flex items-center gap-2">
-                  <Globe size={16} className="text-[#FF5E00]" />
-                  Global Logistics Network
-                </p>
-
-                <a
-                  href="https://wa.me/917218852356"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-green-700 hover:text-green-800"
-                >
-                  <Phone size={17} />
-                  WhatsApp Support
-                </a>
-
-                <a
-                  href="mailto:help@apnimanzil.co.in"
-                  className="flex items-center gap-2 text-slate-700 hover:text-[#FF5E00]"
-                >
-                  <Mail size={17} />
-                  help@apnimanzil.co.in
-                </a>
-
-              </div>
-
-            </div>
-
-          </div>
-        )}
-
-      </nav>
-
-      {/* DASHBOARD MODAL */}
-      {showDashboardModal && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4"
-          onClick={() => setShowDashboardModal(false)}
-        >
-
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="dashboard-modal-title"
-            className="bg-white rounded-2xl p-5 sm:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border-t-[8px] border-[#FF5E00]"
-            onClick={(event) => event.stopPropagation()}
-          >
-
-            <button
-              type="button"
-              onClick={() => setShowDashboardModal(false)}
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-black transition-colors"
-              aria-label="Close dashboard modal"
-            >
-              <X size={25} />
-            </button>
-
-            <div className="text-center mb-7 sm:mb-10 pt-3">
-
-              <h2
-                id="dashboard-modal-title"
-                className="text-2xl sm:text-3xl font-black text-[#001D3D] uppercase italic tracking-tight"
-              >
-                Choose Portal
-              </h2>
-
-              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">
-                Access Your Secure Dashboard
-              </p>
-
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-
-              {/* CUSTOMER PORTAL */}
-              <div className="flex flex-col p-5 sm:p-6 rounded-2xl border border-slate-200 bg-slate-50 hover:border-[#FF5E00] transition-colors">
-
-                <div className="bg-white p-3 sm:p-4 rounded-xl w-fit mb-4 shadow-sm text-[#001D3D]">
-                  <User size={30} />
                 </div>
-
-                <h3 className="font-black text-[#001D3D] uppercase text-sm mb-2">
-                  MSME / Individual
-                </h3>
-
-                <p className="text-xs text-slate-500 mb-5">
-                  Book logistics services and manage your shipments.
-                </p>
-
-                <div className="mt-auto space-y-3">
-
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
                   <Link
                     to="/login"
-                    onClick={() => setShowDashboardModal(false)}
-                    className="block w-full text-center py-3 bg-[#001D3D] text-white text-xs font-black uppercase rounded-lg hover:bg-[#FF5E00] transition-colors"
+                    onClick={closeMobileMenu}
+                    className="flex items-center justify-center gap-2 rounded-lg border border-[#002D5E] px-3 py-3 font-semibold text-[#002D5E] transition hover:bg-blue-50"
                   >
+                    <LogIn size={18} />
                     Login
                   </Link>
 
                   <Link
                     to="/register"
-                    onClick={() => setShowDashboardModal(false)}
-                    className="block w-full text-center py-3 border-2 border-[#001D3D] text-[#001D3D] text-xs font-black uppercase rounded-lg hover:bg-slate-100 transition-colors"
+                    onClick={closeMobileMenu}
+                    className="flex items-center justify-center gap-2 rounded-lg bg-orange-500 px-3 py-3 font-bold text-white transition hover:bg-orange-600"
                   >
-                    Register
+                    <UserPlus size={18} />
+                    Sign Up
                   </Link>
-
                 </div>
-
-              </div>
-
-              {/* PARTNER PORTAL */}
-              <div className="flex flex-col p-5 sm:p-6 rounded-2xl border border-slate-200 bg-slate-50 hover:border-[#FF5E00] transition-colors">
-
-                <div className="bg-white p-3 sm:p-4 rounded-xl w-fit mb-4 shadow-sm text-[#001D3D]">
-                  <Truck size={30} />
-                </div>
-
-                <h3 className="font-black text-[#001D3D] uppercase text-sm mb-2">
-                  Vendor / Partner
-                </h3>
-
-                <p className="text-xs text-slate-500 mb-5">
-                  Access your partner account and logistics opportunities.
-                </p>
-
-                <div className="mt-auto space-y-3">
-
-                  <Link
-                    to="/login"
-                    onClick={() => setShowDashboardModal(false)}
-                    className="block w-full text-center py-3 bg-[#001D3D] text-white text-xs font-black uppercase rounded-lg hover:bg-[#FF5E00] transition-colors"
-                  >
-                    Login
-                  </Link>
-
-                  <Link
-                    to="/vendor-register"
-                    onClick={() => setShowDashboardModal(false)}
-                    className="block w-full text-center py-3 border-2 border-[#001D3D] text-[#001D3D] text-xs font-black uppercase rounded-lg hover:bg-slate-100 transition-colors"
-                  >
-                    Become a Partner
-                  </Link>
-
-                </div>
-
-              </div>
-
-            </div>
-
+              )}
+            </nav>
           </div>
+        )}
+      </header>
 
-        </div>
-      )}
-
-      {/* MAIN PAGE CONTENT */}
-      <main className="flex-grow flex flex-col relative z-0">
+      {/* Main page content */}
+      <main className="min-w-0 flex-1">
         {React.isValidElement(children)
-          ? React.cloneElement(children, { secureBooking, user })
+          ? React.cloneElement(children, {
+              secureBooking,
+              user,
+            })
           : children}
       </main>
 
-      {/* PROFESSIONAL FOOTER */}
-      <footer className="bg-[#001D3D] text-white pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-12 border-t-8 border-[#FF5E00] relative z-10">
-
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-9 lg:gap-12">
-
-          {/* COMPANY INFORMATION */}
-          <div>
-
-            <h4 className="text-2xl font-black mb-5 italic uppercase tracking-tight">
-              <Link to="/">Apni Manzil</Link>
-            </h4>
-
-            <p className="text-slate-400 text-xs font-bold leading-7 uppercase tracking-wide mb-6">
-              Simplifying logistics for every destination across the globe.
-              India's growing logistics aggregator platform.
-            </p>
-
-            <div className="flex items-center gap-5">
-
-              <a
-                href="https://www.facebook.com/share/1AjZxsuL4h/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="text-slate-400 hover:text-[#FF5E00] transition-colors"
+      {/* Footer */}
+      <footer className="mt-auto bg-[#002D5E] text-white">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+            {/* Company information */}
+            <div>
+              <Link
+                to="/"
+                className="mb-4 inline-flex items-center gap-3"
               >
-                <Facebook size={19} />
-              </a>
-
-              <a
-                href="https://www.instagram.com/prathameshprabhu07?igsh=MXA2Ym92ZnE3N2lkcA=="
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="text-slate-400 hover:text-[#FF5E00] transition-colors"
-              >
-                <Instagram size={19} />
-              </a>
-
-              <a
-                href="https://www.linkedin.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="text-slate-400 hover:text-[#FF5E00] transition-colors"
-              >
-                <Linkedin size={19} />
-              </a>
-
-            </div>
-
-          </div>
-
-          {/* SUPPORT LINKS */}
-          <div>
-
-            <h5 className="text-[#FF5E00] font-black text-xs uppercase tracking-widest mb-5">
-              Support & Info
-            </h5>
-
-            <ul className="space-y-4 text-xs font-bold uppercase tracking-wide text-slate-300">
-
-              <li className="hover:text-white transition-colors">
-                <Link to="/about">About Us</Link>
-              </li>
-
-              <li className="hover:text-white transition-colors">
-                <Link to="/help">Help Center</Link>
-              </li>
-
-              <li className="hover:text-white transition-colors">
-                <Link to="/track">Service Areas</Link>
-              </li>
-
-              <li className="hover:text-white transition-colors">
-                <Link to="/partner-registration">Become a Partner</Link>
-              </li>
-
-              <li className="hover:text-white transition-colors">
-                <Link to="/privacy-policy">Privacy Policy</Link>
-              </li>
-
-            </ul>
-
-          </div>
-
-          {/* SERVICES */}
-          <div>
-
-            <h5 className="text-[#FF5E00] font-black text-xs uppercase tracking-widest mb-5">
-              Our Services
-            </h5>
-
-            <ul className="space-y-4 text-xs font-bold uppercase tracking-wide text-slate-300">
-
-              {services.map((service) => (
-                <li
-                  key={service.path}
-                  className="hover:text-white transition-colors"
-                >
-                  <Link to={service.path}>{service.name}</Link>
-                </li>
-              ))}
-
-            </ul>
-
-          </div>
-
-          {/* CONTACT INFORMATION */}
-          <div>
-
-            <h5 className="text-[#FF5E00] font-black text-xs uppercase tracking-widest mb-5">
-              Contact Us
-            </h5>
-
-            <ul className="space-y-5 text-xs font-bold tracking-wide text-slate-300">
-
-              <li className="flex items-start gap-3 leading-6">
-                <MapPin
-                  size={18}
-                  className="text-[#FF5E00] shrink-0 mt-1"
+                <img
+                  src="/favicon.png"
+                  alt="Apni Manzil"
+                  className="h-11 w-11 rounded-lg bg-white object-contain p-1"
+                  onError={(event) => {
+                    event.currentTarget.style.display = 'none';
+                  }}
                 />
 
-                <span>
-                  KUDAL, SINDHUDURG, 416520,
-                  MAHARASHTRA, INDIA
+                <span className="text-xl font-extrabold">
+                  Apni <span className="text-orange-400">Manzil</span>
                 </span>
-              </li>
+              </Link>
 
-              <li className="flex items-start gap-3">
+              <p className="mb-4 text-sm leading-7 text-blue-100">
+                Your trusted logistics aggregation platform for courier,
+                transport, packers and movers, and logistics solutions across
+                India.
+              </p>
 
-                <Mail
-                  size={18}
-                  className="text-[#FF5E00] shrink-0"
-                />
-
-                <a
-                  href="mailto:help@apnimanzil.co.in"
-                  className="hover:text-white transition-colors break-all"
-                >
-                  help@apnimanzil.co.in
-                </a>
-
-              </li>
-
-              <li className="flex items-start gap-3">
-
-                <Phone
-                  size={18}
-                  className="text-[#FF5E00] shrink-0"
-                />
-
+              <div className="flex flex-wrap gap-3">
                 <a
                   href="https://wa.me/917218852356"
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  rel="noreferrer"
+                  aria-label="WhatsApp"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-orange-500"
                 >
-                  +91 7218852356
+                  <MessageCircle size={19} />
                 </a>
 
-              </li>
+                <a
+                  href="mailto:help@apnimanzil.co.in"
+                  aria-label="Email Apni Manzil"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-orange-500"
+                >
+                  <Mail size={19} />
+                </a>
+              </div>
+            </div>
 
-            </ul>
+            {/* Quick links */}
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Quick Links</h3>
 
+              <ul className="space-y-3 text-sm text-blue-100">
+                <li>
+                  <Link
+                    to="/"
+                    className="transition hover:text-orange-300"
+                  >
+                    Home
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/about"
+                    className="transition hover:text-orange-300"
+                  >
+                    About Us
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/contact"
+                    className="transition hover:text-orange-300"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/partner-registration"
+                    className="transition hover:text-orange-300"
+                  >
+                    Become a Partner
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/track"
+                    className="transition hover:text-orange-300"
+                  >
+                    Track Shipment
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Services */}
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Our Services</h3>
+
+              <ul className="space-y-3 text-sm text-blue-100">
+                {services.map((service) => (
+                  <li key={service.path}>
+                    <Link
+                      to={service.path}
+                      className="transition hover:text-orange-300"
+                    >
+                      {service.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact information */}
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Contact Us</h3>
+
+              <ul className="space-y-4 text-sm text-blue-100">
+                <li className="flex items-start gap-3">
+                  <Phone
+                    size={18}
+                    className="mt-0.5 shrink-0 text-orange-400"
+                  />
+
+                  <div>
+                    <p className="font-semibold text-white">Phone / WhatsApp</p>
+
+                    <a
+                      href="https://wa.me/917218852356"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="break-words transition hover:text-orange-300"
+                    >
+                      +91 72188 52356
+                    </a>
+                  </div>
+                </li>
+
+                <li className="flex items-start gap-3">
+                  <Mail
+                    size={18}
+                    className="mt-0.5 shrink-0 text-orange-400"
+                  />
+
+                  <div className="min-w-0">
+                    <p className="font-semibold text-white">Email</p>
+
+                    <a
+                      href="mailto:help@apnimanzil.co.in"
+                      className="break-all transition hover:text-orange-300"
+                    >
+                      help@apnimanzil.co.in
+                    </a>
+                  </div>
+                </li>
+
+                <li className="flex items-start gap-3">
+                  <MapPin
+                    size={18}
+                    className="mt-0.5 shrink-0 text-orange-400"
+                  />
+
+                  <div>
+                    <p className="font-semibold text-white">Location</p>
+                    <p>Kudal, Sindhudurg, Maharashtra, India</p>
+                  </div>
+                </li>
+
+                <li className="flex items-start gap-3">
+                  <Headphones
+                    size={18}
+                    className="mt-0.5 shrink-0 text-orange-400"
+                  />
+
+                  <div>
+                    <p className="font-semibold text-white">Support</p>
+                    <p>Customer support available 24/7</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
 
+          {/* Footer bottom */}
+          <div className="mt-10 flex flex-col gap-4 border-t border-white/20 pt-6 text-center text-xs text-blue-100 sm:flex-row sm:items-center sm:justify-between sm:text-left">
+            <p>
+              © {new Date().getFullYear()} Apni Manzil. All rights reserved.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+              <Link
+                to="/privacy-policy"
+                className="transition hover:text-orange-300"
+              >
+                Privacy Policy
+              </Link>
+
+              <Link
+                to="/terms-and-conditions"
+                className="transition hover:text-orange-300"
+              >
+                Terms & Conditions
+              </Link>
+            </div>
+          </div>
         </div>
-
-        {/* COPYRIGHT */}
-        <div className="max-w-7xl mx-auto mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-slate-800 text-center">
-
-          <p className="text-slate-500 text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-6">
-            © 2026 APNI MANZIL LOGISTICS SOLUTIONS PVT LTD.
-            <br className="sm:hidden" />
-            ALL RIGHTS RESERVED.
-          </p>
-
-        </div>
-
       </footer>
 
+      {/* Dashboard selection modal */}
+      {showDashboardModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/60 p-4"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setShowDashboardModal(false);
+            }
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dashboard-modal-title"
+            className="my-auto w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
+          >
+            <div className="flex items-center justify-between bg-[#002D5E] px-5 py-4 text-white sm:px-6">
+              <div>
+                <h2
+                  id="dashboard-modal-title"
+                  className="text-lg font-bold sm:text-xl"
+                >
+                  Choose Your Dashboard
+                </h2>
+
+                <p className="mt-1 text-xs text-blue-100 sm:text-sm">
+                  Select the account type you want to access.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowDashboardModal(false)}
+                aria-label="Close dashboard selection"
+                className="rounded-lg p-2 transition hover:bg-white/10"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            <div className="space-y-4 p-5 sm:p-6">
+              {/* Customer dashboard */}
+              <div>
+                <h3 className="mb-3 flex items-center gap-2 font-bold text-[#002D5E]">
+                  <Users size={19} />
+                  Customer Dashboard
+                </h3>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('/login')}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[#002D5E]">
+                      <CircleUserRound size={21} />
+                    </div>
+
+                    <div>
+                      <p className="font-bold text-slate-800">Individual</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Personal bookings
+                      </p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('/login')}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600">
+                      <Briefcase size={21} />
+                    </div>
+
+                    <div>
+                      <p className="font-bold text-slate-800">Business / MSME</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Business shipments
+                      </p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-200" />
+
+              {/* Partner dashboard */}
+              <div>
+                <h3 className="mb-3 flex items-center gap-2 font-bold text-[#002D5E]">
+                  <Truck size={19} />
+                  Partner Dashboard
+                </h3>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('/login')}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-700">
+                      <Truck size={21} />
+                    </div>
+
+                    <div>
+                      <p className="font-bold text-slate-800">Transporter</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Manage transport leads
+                      </p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('/login')}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700">
+                      <Building2 size={21} />
+                    </div>
+
+                    <div>
+                      <p className="font-bold text-slate-800">Service Partner</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Manage partner leads
+                      </p>
+                    </div>
+                  </button>
+                </div>
+
+                <Link
+                  to="/vendor-register"
+                  onClick={() => setShowDashboardModal(false)}
+                  className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 font-bold text-white transition hover:bg-orange-600"
+                >
+                  Register as a Partner
+                  <ArrowRight size={18} />
+                </Link>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowDashboardModal(false)}
+                className="w-full rounded-lg border border-slate-200 px-4 py-3 font-semibold text-slate-600 transition hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Layout;
-```
