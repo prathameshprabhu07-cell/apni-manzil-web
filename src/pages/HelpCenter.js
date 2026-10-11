@@ -97,7 +97,7 @@ const HelpCenter = () => {
         </button>
         
         <LifeBuoy size={50} style={{ marginBottom: '15px', opacity: 0.9 }} />
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', margin: 0 }}>Help Center</h1>
+        <h1 style={{ fontSize: 'clamp(1.75rem, 7vw, 2.5rem)', fontWeight: 'bold', margin: 0 }}>Help Center</h1>
         <p style={{ fontSize: '1.1rem', marginTop: '10px', opacity: 0.8 }}>Search for solutions or get in touch with our experts</p>
         
         {/* Search Bar */}
@@ -116,7 +116,7 @@ const HelpCenter = () => {
       <div style={{ maxWidth: '1000px', margin: '-40px auto 60px auto', padding: '0 20px' }}>
         
         {/* Contact Method Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '20px' }}>
           {contactOptions.map((opt, i) => (
             <div 
               key={i} 

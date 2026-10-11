@@ -17,7 +17,7 @@ const LogisticsStats = () => {
       <h2 style={{ textAlign: 'center', marginBottom: '40px', color: '#333' }}>Logistics Industry Insights</h2>
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', 
         gap: '20px', 
         maxWidth: '1200px', 
         margin: '0 auto' 

@@ -650,7 +650,7 @@ const CourierServiceDetail = () => {
             Back to Home
           </button>
 
-          <h1 className="text-4xl md:text-5xl font-black mb-4">
+          <h1 className="text-3xl md:text-5xl font-black mb-4">
             Book Your Parcel
           </h1>
 
@@ -663,9 +663,9 @@ const CourierServiceDetail = () => {
 
       <div className="max-w-5xl mx-auto -mt-16 px-6 relative z-50">
 
-        <div className="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border-4 border-orange-50">
+        <div className="bg-white rounded-[1.75rem] sm:rounded-[3rem] shadow-2xl p-5 sm:p-8 md:p-12 border-4 border-orange-50">
 
-          <h2 className="text-3xl font-black text-[#002D5E] mb-10 flex items-center gap-3 border-b-2 border-slate-100 pb-4">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#002D5E] mb-8 sm:mb-10 flex items-center gap-3 border-b-2 border-slate-100 pb-4">
             <Package
               className="text-orange-500"
               size={32}
@@ -1260,7 +1260,7 @@ const CourierServiceDetail = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full md:w-auto px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 cursor-pointer"
+                className="w-full md:w-auto px-6 sm:px-12 py-5 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-wider md:tracking-[0.2em] shadow-xl hover:bg-orange-600 transition flex items-center justify-center gap-3 cursor-pointer"
               >
 
                 {loading

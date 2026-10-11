@@ -66,7 +66,7 @@ const WarehouseStorage = () => {
               Home / Warehouse & Storage
             </p>
 
-            <h1 className="text-5xl md:text-6xl font-black leading-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight">
               Warehouse & <br/>
               <span className="text-orange-400">Storage</span>
             </h1>
@@ -205,7 +205,7 @@ const WarehouseStorage = () => {
 
             <button 
               onClick={() => handleWarehouseBooking("Long Term Storage")} 
-              className="bg-orange-500 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center gap-4 group cursor-pointer"
+              className="bg-orange-500 text-white w-full sm:w-auto px-6 sm:px-12 py-4 sm:py-6 rounded-3xl font-black uppercase tracking-wider md:tracking-[0.2em] text-sm hover:bg-orange-600 transition shadow-2xl flex items-center justify-center gap-4 group cursor-pointer"
             >
               Get Quote Now 
               <ArrowRight className="group-hover:translate-x-2 transition-transform" />
@@ -215,7 +215,7 @@ const WarehouseStorage = () => {
       </div>
 
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        className="w-full h-[280px] sm:h-[400px] md:h-[550px] flex items-start justify-center text-center pt-10 md:pt-[60px] relative overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
@@ -225,7 +225,7 @@ const WarehouseStorage = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+          <h2 className="text-white text-2xl sm:text-4xl md:text-6xl font-[950] uppercase tracking-wide md:tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
             One Solution for All Logistics
           </h2>
         </div>

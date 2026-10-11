@@ -147,7 +147,7 @@ const EcommerceLogistics = () => {
       <div className="bg-[#002D5E] text-white py-20 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 space-y-6 text-center md:text-left">
-            <h1 className="text-5xl font-black leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-black leading-tight">
               E-commerce <span className="text-orange-400">Logistics</span>
             </h1>
             <p className="text-xl opacity-90 font-medium max-w-lg mx-auto md:mx-0">
@@ -164,7 +164,7 @@ const EcommerceLogistics = () => {
           <div className="md:w-1/2 mt-10 md:mt-0 flex justify-center">
              <div className="relative">
                 <div className="absolute -inset-4 bg-orange-500/20 rounded-full blur-3xl animate-pulse"></div>
-                <ShoppingCart size={180} className="text-white relative z-10" />
+                <ShoppingCart size={180} className="text-white relative z-10 w-24 h-24 sm:w-36 sm:h-36 md:w-[180px] md:h-[180px]" />
              </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ const EcommerceLogistics = () => {
       {/* 2. Services Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-black text-slate-800 uppercase tracking-widest">Select an E-commerce Service</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-800 uppercase tracking-wide md:tracking-widest">Select an E-commerce Service</h2>
           <div className="w-20 h-1.5 bg-orange-500 mx-auto mt-4 rounded-full"></div>
         </div>
 
@@ -223,7 +223,7 @@ const EcommerceLogistics = () => {
       <div className="max-w-7xl mx-auto px-6 mb-24">
         <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-[3rem] p-10 md:p-16 flex flex-col md:flex-row items-center gap-10 shadow-2xl">
             <div className="md:w-2/3 space-y-6 text-white text-center md:text-left">
-               <h2 className="text-4xl font-black leading-tight">Boost Your Online Sales with Our <span className="text-orange-400">Logistics Solutions!</span></h2>
+               <h2 className="text-2xl sm:text-4xl font-black leading-tight">Boost Your Online Sales with Our <span className="text-orange-400">Logistics Solutions!</span></h2>
                <div className="flex flex-wrap gap-6 justify-center md:justify-start">
                   <div className="flex items-center gap-2"><CheckCircle size={20} className="text-orange-400"/> <span className="font-bold">Lowest Rates</span></div>
                   <div className="flex items-center gap-2"><CheckCircle size={20} className="text-orange-400"/> <span className="font-bold">Fast Delivery</span></div>
@@ -242,7 +242,7 @@ const EcommerceLogistics = () => {
 
       {/* 5. Final branded section */}
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        className="w-full h-[280px] sm:h-[400px] md:h-[550px] flex items-start justify-center text-center pt-10 md:pt-[60px] relative overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
@@ -252,7 +252,7 @@ const EcommerceLogistics = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+          <h2 className="text-white text-2xl sm:text-4xl md:text-6xl font-[950] uppercase tracking-wide md:tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
             One Solution for All Logistics
           </h2>
         </div>

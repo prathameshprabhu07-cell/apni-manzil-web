@@ -112,9 +112,10 @@ const ChatBot = () => {
     <div
       style={{
         position: "fixed",
-        bottom: "20px",
-        right: "20px",
+        bottom: "max(12px, env(safe-area-inset-bottom))",
+        right: "12px",
         zIndex: 1000,
+        maxWidth: "calc(100vw - 24px)",
       }}
     >
       {/* Chat Button */}
@@ -143,8 +144,8 @@ const ChatBot = () => {
       {isOpen && (
         <div
           style={{
-            width: "320px",
-            height: "450px",
+            width: "min(320px, calc(100vw - 24px))",
+            height: "min(450px, calc(100dvh - 120px))",
             backgroundColor: "white",
             borderRadius: "15px",
             boxShadow: "0 10px 30px rgba(0,0,0,0.15)",

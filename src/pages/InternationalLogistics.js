@@ -86,7 +86,7 @@ const InternationalLogistics = () => {
             <div className="inline-block bg-orange-500/20 px-4 py-1 rounded-full border border-orange-500/30">
                <p className="text-xs font-black text-orange-400 uppercase tracking-widest">Global Network • 190+ Countries</p>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tighter">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black leading-tight tracking-tighter">
               International <br/><span className="text-orange-400">Logistics</span>
             </h1>
             <p className="text-xl font-medium opacity-90 max-w-lg leading-relaxed">
@@ -96,7 +96,7 @@ const InternationalLogistics = () => {
           <div className="md:w-1/2 mt-12 md:mt-0 relative flex justify-center">
             <div className="absolute -inset-10 bg-blue-400/20 blur-[100px] rounded-full animate-pulse"></div>
             <div className="bg-white/5 backdrop-blur-xl p-8 rounded-[4rem] border border-white/10 relative z-10">
-               <Globe size={220} className="text-orange-400 animate-[spin_20s_linear_infinite]" />
+               <Globe size={220} className="text-orange-400 animate-[spin_20s_linear_infinite] w-28 h-28 sm:w-40 sm:h-40 md:w-[220px] md:h-[220px]" />
             </div>
           </div>
         </div>
@@ -197,7 +197,7 @@ const InternationalLogistics = () => {
             
             <button 
               onClick={() => handleGlobalBooking("International Export Quote")}
-              className="bg-white text-[#002D5E] px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-orange-500 hover:text-white transition shadow-2xl cursor-pointer"
+              className="bg-white text-[#002D5E] w-full sm:w-auto px-6 sm:px-12 py-4 sm:py-6 rounded-3xl font-black uppercase tracking-wider md:tracking-[0.2em] text-sm hover:bg-orange-500 hover:text-white transition shadow-2xl cursor-pointer"
             >
               Get Export Quote
             </button>
@@ -215,7 +215,7 @@ const InternationalLogistics = () => {
 
       {/* 5. FINAL SECTION */}
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        className="w-full h-[280px] sm:h-[400px] md:h-[550px] flex items-start justify-center text-center pt-10 md:pt-[60px] relative overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
@@ -225,7 +225,7 @@ const InternationalLogistics = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+          <h2 className="text-white text-2xl sm:text-4xl md:text-6xl font-[950] uppercase tracking-wide md:tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
             One Solution for All Logistics
           </h2>
         </div>

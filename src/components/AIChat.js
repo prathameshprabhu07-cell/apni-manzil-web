@@ -67,9 +67,10 @@ const AIChat = () => {
     <div
       style={{
         position: "fixed",
-        bottom: "20px",
-        right: "20px",
+        bottom: "max(12px, env(safe-area-inset-bottom))",
+        right: "12px",
         zIndex: 1000,
+        maxWidth: "calc(100vw - 24px)",
       }}
     >
       {!isOpen ? (
@@ -88,8 +89,8 @@ const AIChat = () => {
         <div
           className="card shadow-lg border-0 rounded-4"
           style={{
-            width: "320px",
-            height: "450px",
+            width: "min(320px, calc(100vw - 24px))",
+            height: "min(450px, calc(100dvh - 120px))",
             display: "flex",
             flexDirection: "column",
           }}

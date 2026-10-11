@@ -16,7 +16,7 @@ const TruckTransportService = () => {
       
       {/* 🚛 १. हिरो सेक्शन */}
       <div 
-        className="relative text-white pt-12 pb-48 px-6 md:px-16 overflow-hidden bg-[#002D5E]"
+        className="relative text-white pt-12 pb-32 sm:pb-48 px-4 md:px-16 overflow-hidden bg-[#002D5E]"
         style={{
           backgroundImage: `linear-gradient(to right, rgba(0,45,94,0.95), rgba(0,45,94,0.5)), url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=2000')`,
           backgroundSize: 'cover',
@@ -24,7 +24,7 @@ const TruckTransportService = () => {
         }}
       >
         {/* रेट कॅल्क्युलेटर बॉक्स */}
-        <div className="absolute top-8 right-6 md:right-16 z-50">
+        <div className="absolute top-4 right-4 md:top-8 md:right-16 z-20">
           <div className="bg-orange-500 border border-orange-400 p-4 rounded-2xl flex items-center gap-4 hover:scale-105 transition-all duration-300 cursor-pointer shadow-xl">
              <Calculator size={24} className="text-white"/>
              <div className="hidden sm:block">
@@ -42,7 +42,7 @@ const TruckTransportService = () => {
         </button>
         
         <div className="relative z-10 flex flex-col items-start text-left max-w-4xl space-y-6">
-          <h1 className="text-5xl md:text-8xl font-[1000] tracking-tighter leading-none uppercase drop-shadow-2xl">
+          <h1 className="text-3xl sm:text-5xl md:text-8xl font-[1000] tracking-tighter leading-none uppercase drop-shadow-2xl">
             Reliable <span className="text-orange-500">Fleet</span> <br/> On Demand
           </h1>
           <p className="text-white/90 text-lg font-bold max-w-xl bg-[#002D5E]/50 backdrop-blur-sm p-4 rounded-xl border-l-4 border-orange-500">
@@ -111,7 +111,7 @@ const TruckTransportService = () => {
 
       {/* 🚛 ३. खालचा ब्रँडेड सेक्शन */}
       <div 
-        className="w-full h-[600px] flex items-end justify-center text-center pb-[100px] relative overflow-hidden rounded-t-[4rem] md:rounded-t-[6rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
+        className="w-full h-[320px] sm:h-[450px] md:h-[600px] flex items-end justify-center text-center pb-12 md:pb-[100px] relative overflow-hidden rounded-t-[2rem] md:rounded-t-[6rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
         style={{
           backgroundImage: `linear-gradient(to top, rgba(0,45,94,1), rgba(0,45,94,0.2)), url('/truck-bg.png'), url('https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=2000')`,
           backgroundSize: 'cover',
@@ -120,10 +120,10 @@ const TruckTransportService = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-5xl md:text-7xl font-[1000] uppercase tracking-tighter drop-shadow-2xl leading-[0.9]">
+          <h2 className="text-white text-3xl sm:text-5xl md:text-7xl font-[1000] uppercase tracking-tighter drop-shadow-2xl leading-[0.9]">
             Apni Manzil <br/> <span className="text-orange-500">Logistics</span>
           </h2>
-          <p className="text-white/60 mt-4 font-bold uppercase tracking-[4px]">Verified Trucks • Safe Delivery • Best Rates</p>
+          <p className="text-white/60 mt-4 font-bold uppercase tracking-wider md:tracking-[4px] text-xs sm:text-base">Verified Trucks • Safe Delivery • Best Rates</p>
         </div>
       </div>
 

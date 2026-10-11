@@ -31,7 +31,7 @@ const About = () => {
         textAlign: 'center',
         background: 'linear-gradient(135deg, #004080 0%, #002d59 100%)'
       }}>
-        <h1 style={{ fontSize: '3.2rem', fontWeight: 'bold', marginBottom: '20px' }}>Redefining Indian Logistics</h1>
+        <h1 style={{ fontSize: 'clamp(1.75rem, 8vw, 3.2rem)', fontWeight: 'bold', marginBottom: '20px' }}>Redefining Indian Logistics</h1>
         <p style={{ fontSize: '1.25rem', maxWidth: '850px', margin: '0 auto', lineHeight: '1.6', opacity: 0.9 }}>
           Apni Manzil is a tech-driven logistics platform dedicated to providing seamless, safe, and highly reliable supply chain solutions across the Indian subcontinent.
         </p>
@@ -39,9 +39,9 @@ const About = () => {
 
       {/* 2. Our Vision & Platform Strategy */}
       <div style={sectionStyle}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '60px', alignItems: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px', alignItems: 'center' }}>
           <div>
-            <h2 style={{ color: '#004080', fontSize: '2.4rem', marginBottom: '25px', fontWeight: 'bold' }}>The Apni Manzil Edge</h2>
+            <h2 style={{ color: '#004080', fontSize: 'clamp(1.5rem, 5vw, 2.4rem)', marginBottom: '25px', fontWeight: 'bold' }}>The Apni Manzil Edge</h2>
             <p style={{ fontSize: '1.1rem', lineHeight: '1.8', color: '#555', marginBottom: '20px' }}>
               In a fragmented market like Indian logistics, **Apni Manzil** acts as a unified digital bridge. Our platform integrates advanced route optimization, real-time tracking, and a massive network of verified partners.
             </p>
@@ -50,9 +50,9 @@ const About = () => {
             </p>
           </div>
           <div style={{ position: 'relative' }}>
-            <div style={{ backgroundColor: '#eef4ff', height: '400px', borderRadius: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ backgroundColor: '#eef4ff', height: 'min(400px, 55vw)', minHeight: '220px', borderRadius: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                <Truck size={150} color="#004080" opacity={0.2} />
-               <div style={{ position: 'absolute', bottom: '30px', left: '-20px', backgroundColor: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
+               <div style={{ position: 'absolute', bottom: '16px', left: '12px', backgroundColor: 'white', padding: '16px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <CheckCircle2 color="#008a5e" />
                     <span style={{ fontWeight: 'bold' }}>100% Secure Transit</span>
@@ -68,7 +68,7 @@ const About = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ textAlign: 'center', color: '#004080', fontSize: '2.2rem', marginBottom: '50px', fontWeight: 'bold' }}>Why Choose Our Platform?</h2>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '30px' }}>
             <div style={benefitCardStyle}>
               <ShieldCheck size={40} color="#008a5e" style={{ marginBottom: '20px' }} />
               <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '12px' }}>Safety First Policy</h3>
@@ -112,7 +112,7 @@ const About = () => {
         textAlign: 'center',
         marginTop: '40px'
       }}>
-        <h2 style={{ fontSize: '2.5rem', marginBottom: '25px' }}>Grow Your Business With Us</h2>
+        <h2 style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)', marginBottom: '25px' }}>Grow Your Business With Us</h2>
         <p style={{ marginBottom: '40px', opacity: 0.8, fontSize: '1.1rem' }}>Experience the new standard of professional logistics in India.</p>
         <button 
           onClick={() => navigate('/')}

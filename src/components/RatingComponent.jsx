@@ -60,13 +60,13 @@ const RatingComponent = () => {
           </div>
 
           {/* Face Emojis Section */}
-          <div className="flex justify-between items-center gap-2 pt-2">
+          <div className="flex flex-wrap justify-center sm:justify-between items-center gap-2 pt-2">
             {moodList.map((item, idx) => (
               <button
                 type="button"
                 key={idx}
                 onClick={() => setMood(item.label)}
-                className={`flex flex-col items-center p-3 rounded-2xl border-2 transition-all ${
+                className={`flex min-w-[4.25rem] flex-1 flex-col items-center p-2 sm:p-3 rounded-2xl border-2 transition-all ${
                   mood === item.label 
                     ? 'border-orange-500 bg-orange-50 scale-110 shadow-md' 
                     : `border-slate-100 bg-slate-50 ${item.color}`

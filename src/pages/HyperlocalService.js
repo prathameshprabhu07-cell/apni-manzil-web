@@ -48,10 +48,10 @@ const HyperlocalService = () => {
       
       {/* 1. Hero Section with Blue Shade & Rider Image */}
       <section className="relative bg-gradient-to-r from-blue-700 to-blue-500 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-16 py-10 md:py-10 flex flex-col md:flex-row items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-16 py-10 flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 z-10">
             <p className="text-sm font-bold opacity-80 mb-2">Home / Hyperlocal / Bike Delivery</p>
-            <h1 className="text-4xl md:text-6xl font-black mb-4">Hyperlocal / Bike Delivery</h1>
+            <h1 className="text-3xl md:text-6xl font-black mb-4">Hyperlocal / Bike Delivery</h1>
             <div className="bg-blue-900/30 backdrop-blur-md inline-block px-6 py-2 rounded-lg border-l-4 border-orange-500">
               <p className="text-xl font-bold">Fast Local Delivery within City</p>
             </div>
@@ -187,7 +187,7 @@ const HyperlocalService = () => {
 
       {/* 4. फायनल ब्रँडेड ट्रक इमेज सेक्शन */}
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative"
+        className="w-full h-[280px] sm:h-[400px] md:h-[550px] flex items-start justify-center text-center pt-10 md:pt-[60px] relative overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
@@ -197,7 +197,7 @@ const HyperlocalService = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+          <h2 className="text-white text-2xl sm:text-4xl md:text-6xl font-[950] uppercase tracking-wide md:tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
             One Solution for All Logistics
           </h2>
         </div>

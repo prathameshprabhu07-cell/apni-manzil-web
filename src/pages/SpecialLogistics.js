@@ -86,7 +86,7 @@ const SpecialLogistics = () => {
          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
             <div className="text-left space-y-4">
                <p className="text-sm font-bold opacity-80 uppercase tracking-widest">Home / Special Logistics</p>
-               <h1 className="text-5xl md:text-6xl font-black tracking-tight">Special <span className="text-yellow-400">Logistics</span></h1>
+               <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight">Special <span className="text-yellow-400">Logistics</span></h1>
                <p className="text-xl font-bold opacity-90">Special Handling Delivery</p>
             </div>
             <div className="hidden md:block">
@@ -193,7 +193,7 @@ const SpecialLogistics = () => {
  
           <button 
             onClick={() => handleSpecialBooking("Special Handling Quote Request")}
-            className="bg-orange-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-xl mt-8 md:mt-0 relative z-10 cursor-pointer"
+            className="bg-orange-500 text-white w-full md:w-auto px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition shadow-xl mt-8 md:mt-0 relative z-10 cursor-pointer"
           >
             Get a Quote!
           </button>
@@ -202,7 +202,7 @@ const SpecialLogistics = () => {
 
       {/* 6. FINAL BRANDED TRUCK IMAGE SECTION */}
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        className="w-full h-[280px] sm:h-[400px] md:h-[550px] flex items-start justify-center text-center pt-10 md:pt-[60px] relative overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
@@ -212,7 +212,7 @@ const SpecialLogistics = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+          <h2 className="text-white text-2xl sm:text-4xl md:text-6xl font-[950] uppercase tracking-wide md:tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
             One Solution for All Logistics
           </h2>
         </div>

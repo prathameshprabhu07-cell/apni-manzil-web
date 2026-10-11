@@ -132,7 +132,7 @@ const Layout = ({ children, user }) => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-white text-slate-800">
+    <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip bg-white text-slate-800">
       {/* Top information bar */}
       <div className="hidden bg-[#002D5E] text-white md:block">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm">
@@ -373,8 +373,8 @@ const Layout = ({ children, user }) => {
 
         {/* Mobile navigation */}
         {isMobileMenuOpen && (
-          <div className="border-t border-slate-200 bg-white shadow-lg lg:hidden">
-            <nav className="mx-auto max-w-7xl px-4 py-3">
+          <div className="max-h-[min(70dvh,calc(100dvh-72px))] overflow-y-auto overscroll-contain border-t border-slate-200 bg-white shadow-lg lg:hidden">
+            <nav className="mx-auto max-w-7xl px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <Link
                 to="/"
                 onClick={closeMobileMenu}

@@ -78,13 +78,13 @@ const AISmartLogistics = () => {
          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
             <div className="text-left space-y-4 md:w-1/2">
                <p className="text-xs font-bold opacity-80 uppercase tracking-[0.3em]">Home / AI Smart Logistics</p>
-               <h1 className="text-5xl md:text-7xl font-black tracking-tight">AI Smart <span className="text-orange-400">Logistics</span></h1>
+               <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight">AI Smart <span className="text-orange-400">Logistics</span></h1>
                <p className="text-xl font-bold opacity-90 leading-relaxed">Advanced Automation for Efficient Shipping</p>
             </div>
             <div className="md:w-1/2 flex justify-end">
                <div className="relative">
                   <div className="absolute -inset-4 bg-blue-400/20 blur-3xl rounded-full animate-pulse"></div>
-                  <Bot size={240} className="text-blue-100 opacity-20 relative z-10" />
+                  <Bot size={240} className="text-blue-100 opacity-20 relative z-10 w-28 h-28 sm:w-40 sm:h-40 md:w-[240px] md:h-[240px]" />
                </div>
             </div>
          </div>
@@ -145,7 +145,7 @@ const AISmartLogistics = () => {
 
       {/* ५. ब्रँडेड ट्रक इमेज सेक्शन */}
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center mt-20 pt-[60px] relative overflow-hidden"
+        className="w-full h-[280px] sm:h-[400px] md:h-[550px] flex items-start justify-center text-center mt-12 md:mt-20 pt-10 md:pt-[60px] relative overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
@@ -155,7 +155,7 @@ const AISmartLogistics = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+          <h2 className="text-white text-2xl sm:text-4xl md:text-6xl font-[950] uppercase tracking-wide md:tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
             One Solution for All Logistics
           </h2>
         </div>

@@ -103,7 +103,7 @@ const PackersAndMovers = () => {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 z-10">
             <p className="text-sm font-bold opacity-80 mb-2 uppercase tracking-widest">Home / Truck & Movers</p>
-            <h1 className="text-5xl font-black mb-4">Packers & Movers</h1>
+            <h1 className="text-3xl sm:text-5xl font-black mb-4">Packers & Movers</h1>
             <p className="text-xl font-medium opacity-90 italic">Reliable Relocation Services for Your Home or Office</p>
           </div>
           <div className="md:w-1/2 mt-10 md:mt-0">
@@ -164,7 +164,7 @@ const PackersAndMovers = () => {
 
       {/* Footer Image Section */}
       <div 
-        className="w-full h-[550px] flex items-start justify-center text-center pt-[60px] relative overflow-hidden"
+        className="w-full h-[280px] sm:h-[400px] md:h-[550px] flex items-start justify-center text-center pt-10 md:pt-[60px] relative overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/truck-bg.png')`,
           backgroundSize: 'cover',
@@ -174,7 +174,7 @@ const PackersAndMovers = () => {
         }}
       >
         <div className="max-w-5xl px-6 relative z-10">
-          <h2 className="text-white text-4xl md:text-6xl font-[950] uppercase tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
+          <h2 className="text-white text-2xl sm:text-4xl md:text-6xl font-[950] uppercase tracking-wide md:tracking-[3px] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] leading-tight">
             One Solution for All Logistics
           </h2>
         </div>

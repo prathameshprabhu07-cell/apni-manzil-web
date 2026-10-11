@@ -269,7 +269,7 @@ const Home = () => {
   // --------------------------------------------------
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans overflow-x-hidden">
+    <div className="min-h-screen min-w-0 bg-slate-50 text-slate-900 font-sans overflow-x-clip">
 
       {/* =====================================================
           TOP TICKER
@@ -327,7 +327,7 @@ const Home = () => {
           HERO SECTION
       ====================================================== */}
 
-      <section className="relative min-h-[620px] md:min-h-[650px] flex items-center overflow-hidden">
+      <section className="relative min-h-[480px] md:min-h-[650px] flex items-center overflow-hidden">
 
         {/* Background */}
         <div className="absolute inset-0">
@@ -352,11 +352,11 @@ const Home = () => {
 
               <div className="mb-7">
 
-                <p className="text-orange-400 text-xs md:text-sm font-black uppercase tracking-[0.18em] mb-2">
+                <p className="text-orange-400 text-xs md:text-sm font-black uppercase tracking-wider md:tracking-[0.18em] mb-2 max-w-full">
                   India’s AI Smart Logistics Aggregator Platform
                 </p>
 
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
+                <h2 className="text-xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
                   One Solution for{" "}
                   <span className="text-orange-500">
                     All Delivery
@@ -366,7 +366,7 @@ const Home = () => {
               </div>
 
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full mb-6">
+              <div className="inline-flex max-w-full flex-wrap items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full mb-6">
 
                 <Sparkles
                   size={16}
@@ -380,7 +380,7 @@ const Home = () => {
               </div>
 
               {/* Heading */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.98] tracking-tight mb-6">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.05] md:leading-[0.98] tracking-tight mb-6">
 
                 Tell us what you
 
@@ -606,7 +606,7 @@ const Home = () => {
             One Platform
           </p>
 
-          <h2 className="text-3xl md:text-5xl font-black text-[#002D5E] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-[#002D5E] tracking-tight">
             What do you need to move?
           </h2>
 
@@ -692,7 +692,7 @@ const Home = () => {
 
               </div>
 
-              <h2 className="text-4xl md:text-6xl font-black text-white leading-tight">
+              <h2 className="text-3xl md:text-6xl font-black text-white leading-tight">
 
                 Your requirement.
 
@@ -806,11 +806,11 @@ const Home = () => {
 
           <div>
 
-            <p className="text-orange-500 font-black text-xs uppercase tracking-[0.3em] mb-3">
+            <p className="text-orange-500 font-black text-xs uppercase tracking-wider md:tracking-[0.3em] mb-3">
               Compare Before You Book
             </p>
 
-            <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] leading-tight">
+            <h2 className="text-3xl md:text-5xl font-black text-[#002D5E] leading-tight">
               Choose the logistics option that fits your need.
             </h2>
 
@@ -936,7 +936,7 @@ const Home = () => {
         className="max-w-7xl mx-auto px-5 md:px-8 py-8"
       >
 
-        <div className="bg-white rounded-[35px] p-7 md:p-12 shadow-xl border border-slate-100">
+        <div className="bg-white rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-xl border border-slate-100">
 
           <div className="grid lg:grid-cols-5 gap-10 items-center">
 
@@ -971,7 +971,7 @@ const Home = () => {
 
               </div>
 
-              <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] mt-4 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-black text-[#002D5E] mt-4 leading-tight">
                 Track your
                 <span className="text-orange-500">
                   {" "}shipment.
@@ -1095,7 +1095,7 @@ const Home = () => {
             Explore
           </p>
 
-          <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] mt-2">
+          <h2 className="text-3xl md:text-5xl font-black text-[#002D5E] mt-2">
             All Logistics Services
           </h2>
 
@@ -1230,7 +1230,7 @@ const Home = () => {
             Simple Process
           </p>
 
-          <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] mt-2">
+          <h2 className="text-3xl md:text-5xl font-black text-[#002D5E] mt-2">
             Logistics made simple.
           </h2>
 
@@ -1292,7 +1292,7 @@ const Home = () => {
 
       <section className="max-w-7xl mx-auto px-5 md:px-8 py-8">
 
-        <div className="bg-white rounded-[35px] p-8 md:p-12 border border-slate-100">
+        <div className="bg-white rounded-[24px] md:rounded-[35px] p-5 md:p-12 border border-slate-100">
 
           <div className="text-center mb-12">
 
@@ -1300,7 +1300,7 @@ const Home = () => {
               Why Apni Manzil
             </p>
 
-            <h2 className="text-4xl md:text-5xl font-black text-[#002D5E] mt-2">
+            <h2 className="text-3xl md:text-5xl font-black text-[#002D5E] mt-2">
               One platform. Multiple logistics needs.
             </h2>
 
@@ -1384,7 +1384,7 @@ const Home = () => {
 
       <section className="max-w-7xl mx-auto px-5 md:px-8 py-16">
 
-        <div className="bg-white rounded-[35px] p-8 md:p-12 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-sm border border-slate-100">
 
           <div className="text-center mb-8">
 
@@ -1418,20 +1418,20 @@ const Home = () => {
           <img
             src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=1600"
             alt="Apni Manzil Logistics"
-            className="w-full h-[430px] md:h-[520px] object-cover"
+            className="w-full h-[360px] sm:h-[430px] md:h-[520px] object-cover"
           />
 
           <div className="absolute inset-0 bg-gradient-to-r from-[#002D5E]/95 via-[#002D5E]/70 to-transparent" />
 
           <div className="absolute inset-0 flex items-center">
 
-            <div className="px-7 md:px-14 max-w-2xl">
+            <div className="px-5 md:px-14 max-w-2xl">
 
               <p className="text-orange-400 font-black text-xs uppercase tracking-[0.3em] mb-4">
                 APNI MANZIL
               </p>
 
-              <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.95]">
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white leading-[1.05] md:leading-[0.95]">
                 Your logistics.
                 <br />
                 <span className="text-orange-500">
