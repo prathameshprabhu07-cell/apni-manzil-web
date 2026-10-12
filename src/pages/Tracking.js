@@ -17,7 +17,7 @@ const Tracking = () => {
     }
 
     try {
-      const response = await fetch("https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Traking", {
+      const response = await fetch("https://sega-cos-daisy-signing.trycloudflare.com/webhook/Traking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

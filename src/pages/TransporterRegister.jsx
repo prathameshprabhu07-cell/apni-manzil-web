@@ -33,7 +33,7 @@ import { auth } from "../firebase";
 // n8n WEBHOOK
 // ==========================================================
 const N8N_WEBHOOK_URL =
-  "https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Transporter";
+  "https://sega-cos-daisy-signing.trycloudflare.com/webhook/Transporter";
 
 const initialFormData = {
   companyName: "",

@@ -22,7 +22,7 @@ import {
 // ============================================================
 
 const BACKEND_BASE_URL =
-  'https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/apni-manzil-logistics';
+  'https://sega-cos-daisy-signing.trycloudflare.com/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();

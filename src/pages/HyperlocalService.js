@@ -15,7 +15,7 @@ const HyperlocalService = () => {
   // मोबाईल नंबर स्टेट
   const [mobileNumber, setMobileNumber] = useState("");
 
-  const n8nUrl = "https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/apni-manzil-hyperlocal";
+  const n8nUrl = "https://sega-cos-daisy-signing.trycloudflare.com/webhook/apni-manzil-hyperlocal";
 
   // ट्रॅकिंग फंक्शन
   const trackBooking = async (serviceName) => {

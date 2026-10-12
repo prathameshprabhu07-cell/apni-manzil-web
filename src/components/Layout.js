@@ -134,7 +134,7 @@ const Layout = ({ children, user }) => {
   return (
     <div className="flex min-h-screen min-w-0 flex-col bg-white text-slate-800">
       {/* Top information bar */}
-      <div className="hidden bg-[#002D5E] text-white xl:block">
+      <div className="hidden bg-[#002D5E] text-white lg:block">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm">
           <div className="flex flex-wrap items-center gap-5">
             <a
@@ -235,7 +235,7 @@ const Layout = ({ children, user }) => {
           </Link>
 
           {/* Desktop navigation */}
-          <nav className="hidden items-center gap-5 xl:flex">
+          <nav className="hidden items-center gap-5 lg:flex">
             <Link
               to="/"
               className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
@@ -311,7 +311,7 @@ const Layout = ({ children, user }) => {
           </nav>
 
           {/* Desktop action buttons */}
-          <div className="hidden shrink-0 items-center gap-2 xl:flex">
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
             {user ? (
               <>
                 <button
@@ -357,7 +357,7 @@ const Layout = ({ children, user }) => {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen((previous) => !previous)}
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-[#002D5E] transition hover:bg-slate-100 xl:hidden"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-[#002D5E] transition hover:bg-slate-100 lg:hidden"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
           >
@@ -367,7 +367,7 @@ const Layout = ({ children, user }) => {
 
         {/* Mobile navigation */}
         {isMobileMenuOpen && (
-          <div className="max-h-[min(70dvh,calc(100dvh-72px))] overflow-y-auto overscroll-contain border-t border-slate-200 bg-white shadow-lg xl:hidden">
+          <div className="max-h-[min(70dvh,calc(100dvh-72px))] overflow-y-auto overscroll-contain border-t border-slate-200 bg-white shadow-lg lg:hidden">
             <nav className="mx-auto max-w-7xl px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <Link
                 to="/"

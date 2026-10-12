@@ -142,7 +142,7 @@ const WarehousePartnerRegister = () => {
 
     try {
       // Sending all form data to your webhook endpoint
-      const response = await fetch('https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Warehouse_Partner', {
+      const response = await fetch('https://sega-cos-daisy-signing.trycloudflare.com/webhook/Warehouse_Partner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ import {
 import airFreightBanner from "../assets/air-freight-banner.png";
 
 const AIR_CARGO_WEBHOOK =
-  "https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Air-Cargo";
+  "https://sega-cos-daisy-signing.trycloudflare.com/webhook/Air-Cargo";
 
 const emptyPackage = {
   pieces: 1,

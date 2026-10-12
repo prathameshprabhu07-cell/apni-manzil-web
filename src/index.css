@@ -10,6 +10,8 @@
   --am-orange: #FF5E00;
   --am-background: #F8FAFC;
   --am-white: #FFFFFF;
+  --am-border: #E2E8F0;
+  --am-focus-ring: rgba(255, 94, 0, 0.28);
 }
 
 *,
@@ -33,6 +35,9 @@ body {
   font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--am-background);
   color: var(--am-dark);
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 #root {
@@ -59,12 +64,34 @@ textarea {
   max-width: 100%;
 }
 
+button,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select {
+  min-height: 44px;
+}
+
+input,
+select,
+textarea,
+fieldset {
+  min-width: 0;
+}
+
 button {
   cursor: pointer;
 }
 
 a {
   text-decoration: none;
+}
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--am-focus-ring);
+  outline-offset: 2px;
+}
+
+.table-responsive {
+  overscroll-behavior-x: contain;
 }
 
 .navbar {
@@ -196,7 +223,7 @@ a {
 
 @media (max-width: 767px) {
   body {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .container,
@@ -226,7 +253,13 @@ a {
   span,
   li {
     overflow-wrap: anywhere;
-    word-break: break-word;
+    word-break: normal;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
   }
 
 }
@@ -237,5 +270,9 @@ a {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
   }
 }

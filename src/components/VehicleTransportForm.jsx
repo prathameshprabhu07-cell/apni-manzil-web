@@ -20,7 +20,7 @@ const VehicleTransportForm = () => {
     
     try {
       // n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
-      await fetch("https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/packer-movers", {
+      await fetch("https://sega-cos-daisy-signing.trycloudflare.com/webhook/packer-movers", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finalData)
