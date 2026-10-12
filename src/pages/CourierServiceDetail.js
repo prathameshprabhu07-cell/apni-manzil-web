@@ -22,7 +22,7 @@ import {
 // ============================================================
 
 const BACKEND_BASE_URL =
-  'https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/apni-manzil-logistics';
+  'https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();

@@ -26,7 +26,7 @@ const SeaFreightForm = () => {
 
   // Keep your existing n8n webhook flow
   const n8nUrl =
-    "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/Sea-Freight";
+    "https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/Sea-Freight";
 
   const [formData, setFormData] = useState({
     // 1. Customer

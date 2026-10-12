@@ -181,7 +181,7 @@ const PackersMoversRegister = () => {
 
     try {
       await fetch(
-        'https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/Packer_Partner',
+        'https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/Packer_Partner',
         {
           method: 'POST',
           headers: {
