@@ -158,13 +158,13 @@ const InternationalDelivery = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-20 font-sans">
       {/* Header with Airplane Theme */}
-      <div className="bg-gradient-to-r from-[#002D5E] to-blue-700 text-white p-6 flex items-center justify-between sticky top-0 z-50 shadow-md">
+      <div className="bg-gradient-to-r from-[#002D5E] to-blue-700 text-white p-3 sm:p-6 flex items-center justify-between gap-2 sticky top-[72px] z-30 shadow-md">
         <button type="button" onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full cursor-pointer hover:bg-white/20 transition"><ArrowLeft size={20}/></button>
-        <div className="flex items-center gap-3">
-          <Plane className="text-blue-300 animate-pulse" size={28} />
-          <h1 className="text-lg font-black italic uppercase tracking-wider">International <span className="text-orange-400">Courier</span></h1>
+        <div className="flex min-w-0 flex-1 items-center justify-center gap-2 sm:gap-3">
+          <Plane className="shrink-0 text-blue-300 animate-pulse" size={24} />
+          <h1 className="min-w-0 text-sm sm:text-lg font-black italic uppercase tracking-wide sm:tracking-wider">International <span className="text-orange-400">Courier</span></h1>
         </div>
-        <div className="w-10"></div>
+        <div className="hidden w-10 shrink-0 sm:block"></div>
       </div>
 
       <div className="max-w-3xl mx-auto p-4 pt-8">

@@ -43,10 +43,10 @@ const Tracking = () => {
     <div className="min-h-screen bg-slate-50 pb-20">
       
       {/* 1. HERO SEARCH SECTION */}
-      <div className="bg-[#001D3D] text-white pt-20 pb-32 px-6 text-center relative overflow-hidden">
+      <div className="bg-[#001D3D] text-white pt-14 md:pt-20 pb-24 md:pb-32 px-4 sm:px-6 text-center relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10"><Truck size={300} /></div>
         <div className="max-w-4xl mx-auto relative z-10 space-y-6">
-          <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black italic tracking-tighter uppercase">
             Track Your <span className="text-[#FF5E00]">Shipment</span>
           </h1>
           <p className="text-slate-400 font-bold tracking-widest text-sm uppercase">Enter your tracking ID to get real-time updates</p>
@@ -78,14 +78,14 @@ const Tracking = () => {
               <input 
                 type="text" 
                 placeholder="Enter Tracking ID (e.g. AM-12345)" 
-                className="w-full py-4 bg-transparent outline-none text-slate-800 font-black"
+                className="min-w-0 w-full py-4 bg-transparent outline-none text-sm sm:text-base text-slate-800 font-black"
                 value={trackingId}
                 onChange={(e) => setTrackingId(e.target.value)}
               />
             </div>
 
             {/* Track Now Button */}
-            <button type="submit" className="bg-[#FF5E00] text-white px-10 py-4 rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-[#e05200] transition-all w-full md:w-auto shrink-0 cursor-pointer">
+            <button type="submit" className="bg-[#FF5E00] text-white px-6 sm:px-10 py-4 rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-[#e05200] transition-all w-full md:w-auto shrink-0 cursor-pointer">
               Track Now
             </button>
           </form>

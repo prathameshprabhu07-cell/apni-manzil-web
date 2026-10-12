@@ -97,15 +97,15 @@ const CustomsClearanceForm = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-[3rem] shadow-xl border border-slate-100 overflow-hidden">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#001F3F] to-blue-800 text-white p-10 text-center relative">
+        <div className="bg-gradient-to-r from-[#001F3F] to-blue-800 text-white p-6 md:p-10 text-center relative">
           <div className="inline-block bg-purple-500/20 px-4 py-1 rounded-full border border-purple-400/30 mb-3">
             <p className="text-xs font-black text-purple-300 uppercase tracking-widest">EXIM & Compliance Support</p>
           </div>
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight">Customs Clearance Portal</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight">Customs Clearance Portal</h1>
           <p className="text-slate-200 mt-2 font-medium">Hassle-free documentation and fast clearance across Indian ports & airports.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-8 md:p-12 space-y-8 md:space-y-10">
           
           {/* 1. Customer Details */}
           <div className="space-y-6">

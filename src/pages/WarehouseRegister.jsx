@@ -192,7 +192,7 @@ const WarehousePartnerRegister = () => {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
       
       {/* Top Bar */}
-      <div className="bg-[#002D5E] text-white py-6 px-6 sticky top-0 z-50 shadow-md">
+      <div className="bg-[#002D5E] text-white py-6 px-6 sticky top-[72px] z-30 shadow-md">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button 
             onClick={() => navigate(-1)} 
@@ -686,7 +686,7 @@ const WarehousePartnerRegister = () => {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-xs font-bold uppercase text-slate-600 mb-2">Preferred Lead Communication Mode</label>
-                <div className="flex gap-4">
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-4">
                   {["WhatsApp", "Email", "Phone Call", "SMS"].map((mode) => (
                     <label key={mode} className={`flex items-center gap-2 p-3 rounded-2xl border cursor-pointer transition flex-1 justify-center ${formData.leadCommMode.includes(mode) ? 'bg-orange-50 border-orange-500 text-orange-900 font-bold' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
                       <input 

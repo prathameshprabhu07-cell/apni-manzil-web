@@ -74,7 +74,7 @@ const AISmartLogistics = () => {
     <div className="min-h-screen bg-white font-sans text-slate-900">
       
       {/* 1. HERO SECTION (Tech Blue Theme) */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white py-20 px-6 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white py-14 md:py-20 px-4 sm:px-6 relative overflow-hidden">
          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
             <div className="text-left space-y-4 md:w-1/2">
                <p className="text-xs font-bold opacity-80 uppercase tracking-[0.3em]">Home / AI Smart Logistics</p>
@@ -93,7 +93,7 @@ const AISmartLogistics = () => {
 
       {/* 2. SECTION TITLE */}
       <div className="text-center py-12">
-        <h2 className="text-3xl font-black text-slate-800 tracking-tight">Select an AI Logistics Service Category</h2>
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Select an AI Logistics Service Category</h2>
         <div className="h-1 w-20 bg-orange-500 mx-auto mt-4 rounded-full"></div>
       </div>
 
@@ -130,7 +130,7 @@ const AISmartLogistics = () => {
                <ShieldCheck size={50} className="text-cyan-400" />
             </div>
             <div>
-              <h3 className="text-3xl font-black mb-3">Enhance Your Logistics with AI Technology!</h3>
+              <h3 className="text-2xl sm:text-3xl font-black mb-3">Enhance Your Logistics with AI Technology!</h3>
               <p className="text-blue-200/70 font-bold uppercase tracking-widest text-xs leading-relaxed">Optimize Your Supply Chain with Cutting-Edge AI Solutions.</p>
             </div>
           </div>

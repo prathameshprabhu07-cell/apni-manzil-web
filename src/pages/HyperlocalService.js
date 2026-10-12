@@ -51,7 +51,7 @@ const HyperlocalService = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-16 py-10 flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 z-10">
             <p className="text-sm font-bold opacity-80 mb-2">Home / Hyperlocal / Bike Delivery</p>
-            <h1 className="text-3xl md:text-6xl font-black mb-4">Hyperlocal / Bike Delivery</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-6xl font-black mb-4">Hyperlocal / Bike Delivery</h1>
             <div className="bg-blue-900/30 backdrop-blur-md inline-block px-6 py-2 rounded-lg border-l-4 border-orange-500">
               <p className="text-xl font-bold">Fast Local Delivery within City</p>
             </div>

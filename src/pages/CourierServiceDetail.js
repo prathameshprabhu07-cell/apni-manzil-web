@@ -718,7 +718,7 @@ const CourierServiceDetail = () => {
                   />
 
                   {formData.pickupCity && (
-                    <div className="grid grid-cols-2 gap-2 mt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
 
                       <input
                         name="pickupCity"
@@ -765,7 +765,7 @@ const CourierServiceDetail = () => {
                   />
 
                   {formData.dropCity && (
-                    <div className="grid grid-cols-2 gap-2 mt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
 
                       <input
                         name="dropCity"

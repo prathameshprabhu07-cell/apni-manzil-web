@@ -30,7 +30,7 @@ const OrderFulfillmentForm = () => {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '30px auto', padding: '25px', background: '#f9f9f9', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ maxWidth: '800px', margin: 'clamp(16px, 4vw, 30px) auto', padding: 'clamp(16px, 4vw, 25px)', background: '#f9f9f9', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', fontFamily: 'Arial, sans-serif' }}>
       
       {/* 📦 Order Fulfillment Banner Image */}
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -43,7 +43,24 @@ const OrderFulfillmentForm = () => {
         <p style={{ color: '#7f8c8d' }}>Scale your e-commerce business with our end-to-end warehousing and fulfillment solutions.</p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+      <style>{`
+        .order-fulfillment-form {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 15px;
+        }
+
+        @media (max-width: 575px) {
+          .order-fulfillment-form {
+            grid-template-columns: minmax(0, 1fr);
+          }
+
+          .order-fulfillment-form > div[style*="span 2"] {
+            grid-column: 1 / -1 !important;
+          }
+        }
+      `}</style>
+      <form onSubmit={handleSubmit} className="order-fulfillment-form">
         
         {/* Company Name */}
         <div style={{ gridColumn: 'span 2' }}>

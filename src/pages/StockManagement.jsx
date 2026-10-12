@@ -65,12 +65,12 @@ function StockManagement() {
       <div className="max-w-4xl mx-auto">
         
         {/* Header Banner */}
-        <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl mb-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+        <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-[2.5rem] p-5 sm:p-8 md:p-12 text-white shadow-xl mb-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
           <div className="relative z-10 max-w-xl">
             <span className="bg-blue-500/30 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block backdrop-blur-md">
               E-Commerce Sub-Service
             </span>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight mb-4">
               Stock & Inventory Management
             </h1>
             <p className="text-blue-100 text-base md:text-lg opacity-90 leading-relaxed">
@@ -97,7 +97,7 @@ function StockManagement() {
         )}
 
         {/* Form Container */}
-        <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 p-8 md:p-12">
+        <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 p-4 sm:p-8 md:p-12">
           <form onSubmit={handleSubmit} className="space-y-6">
             <h3 className="text-xl font-extrabold text-slate-800 border-b pb-4 mb-6 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-blue-600" /> Enter Your Requirement Details

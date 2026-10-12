@@ -146,9 +146,9 @@ const VendorDashboard = ({ partnerData }) => {
               <Truck className="text-white" size={26} />
             </div>
 
-            <div>
+            <div className="min-w-0">
 
-              <h1 className="text-3xl md:text-4xl font-black text-[#001D3D] uppercase italic tracking-tight">
+              <h1 className="break-words text-2xl sm:text-3xl md:text-4xl font-black text-[#001D3D] uppercase italic tracking-tight">
                 {partner.Company_Name ||
                   partner.Business_Name ||
                   "Partner Dashboard"}
@@ -401,7 +401,7 @@ const VendorDashboard = ({ partnerData }) => {
         </div>
 
         {isTransporter && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-6">
 
             <StatusBox
               label="FTL"

@@ -238,7 +238,7 @@ const PackersMoversRegister = () => {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
 
       {/* Top Bar */}
-      <div className="bg-[#002D5E] text-white py-6 px-6 sticky top-0 z-50 shadow-md">
+      <div className="bg-[#002D5E] text-white py-6 px-6 sticky top-[72px] z-30 shadow-md">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
 
           <button

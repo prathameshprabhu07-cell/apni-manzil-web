@@ -37,7 +37,7 @@ const VehicleTransportForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-40">
       {/* --- Header --- */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-0 z-50 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 sticky top-[72px] z-30 shadow-lg">
         <h1 className="text-xl font-black italic tracking-tighter">APNI MANZIL <span className="text-orange-400">VEHICLE LOGISTICS</span></h1>
         <p className="text-[10px] uppercase font-bold tracking-widest opacity-70">Safe Car & Bike Relocation</p>
       </div>
@@ -200,13 +200,13 @@ const VehicleTransportForm = () => {
       </div>
 
       {/* --- Footer Summary --- */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-6 flex items-center justify-between px-10 shadow-2xl z-[100]">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-3 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:p-6 sm:px-10 shadow-2xl z-[100]">
         <div className="flex flex-col">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Transport Mode</span>
-          <span className="text-xl font-black text-[#002D5E]">{formData.transportType} <span className="text-orange-500">Carrier</span></span>
+          <span className="text-sm sm:text-xl font-black text-[#002D5E]">{formData.transportType} <span className="text-orange-500">Carrier</span></span>
         </div>
-        <button onClick={handleSubmit} disabled={loading} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
-          {loading ? "Processing..." : "Get Vehicle Quote"} <ArrowRight size={20} />
+        <button onClick={handleSubmit} disabled={loading} className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-4 sm:px-10 py-3 sm:py-4 rounded-2xl font-black uppercase text-xs sm:text-sm tracking-wide sm:tracking-widest flex items-center justify-center gap-3 shadow-xl transition-all active:scale-95">
+          {loading ? "Processing..." : "Get Vehicle Quote"} <ArrowRight size={18} />
         </button>
       </div>
     </div>

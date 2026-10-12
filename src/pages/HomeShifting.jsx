@@ -76,7 +76,7 @@ const ApniManzilFinalForm = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-40">
       {/* Header */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-0 z-50 shadow-md">
+      <div className="bg-[#002D5E] text-white p-6 sticky top-[72px] z-30 shadow-md">
         <h1 className="text-xl font-black tracking-tighter italic">APNI MANZIL <span className="text-orange-500 italic">MOVERS</span></h1>
         <div className="flex items-center gap-2 mt-1">
           <div className="h-1 w-12 bg-orange-500 rounded-full"></div>
@@ -122,7 +122,7 @@ const ApniManzilFinalForm = () => {
           </h2>
           <div className="grid grid-cols-1 gap-4">
             <textarea name="pickupAddress" placeholder="Full Pickup Address" rows="2" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-red-500 text-sm font-bold" />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input name="pickupPincode" placeholder="Pickup Pincode" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-red-500 text-sm font-bold" />
               <div className="relative">
                 <Layers size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -139,7 +139,7 @@ const ApniManzilFinalForm = () => {
           </h2>
           <div className="grid grid-cols-1 gap-4">
             <textarea name="dropAddress" placeholder="Full Drop Address" rows="2" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-green-500 text-sm font-bold" />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input name="dropPincode" placeholder="Drop Pincode" onChange={handleChange} className="p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-green-500 text-sm font-bold" />
               <div className="relative">
                 <Layers size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -201,13 +201,13 @@ const ApniManzilFinalForm = () => {
       </div>
 
       {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-6 flex items-center justify-between px-10 shadow-[0_-15px_40px_rgba(0,0,0,0.08)] z-[100]">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-3 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:p-6 sm:px-10 shadow-[0_-15px_40px_rgba(0,0,0,0.08)] z-[100]">
         <div className="flex flex-col">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Total Items</span>
           <span className="text-2xl font-black text-[#002D5E]">{totalItems}</span>
         </div>
-        <button onClick={handleSubmit} disabled={loading} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl active:scale-95 transition-all">
-          {loading ? "Processing..." : "Proceed to Rates"} <Truck size={20} />
+        <button onClick={handleSubmit} disabled={loading} className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-4 sm:px-10 py-3 sm:py-4 rounded-2xl font-black uppercase text-xs sm:text-sm tracking-wide sm:tracking-widest flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
+          {loading ? "Processing..." : "Proceed to Rates"} <Truck size={18} />
         </button>
       </div>
     </div>

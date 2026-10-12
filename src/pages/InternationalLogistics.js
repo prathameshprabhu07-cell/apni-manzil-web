@@ -80,7 +80,7 @@ const InternationalLogistics = () => {
     <div className="min-h-screen bg-slate-50 font-sans">
       
       {/* 1. HERO SECTION */}
-      <div className="bg-gradient-to-r from-[#001F3F] to-blue-800 text-white py-24 px-6 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#001F3F] to-blue-800 text-white py-16 md:py-24 px-4 sm:px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 z-10 space-y-6">
             <div className="inline-block bg-orange-500/20 px-4 py-1 rounded-full border border-orange-500/30">
@@ -103,7 +103,7 @@ const InternationalLogistics = () => {
       </div>
 
       {/* 2. SUB SERVICES GRID */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         <div className="text-center mb-16 space-y-4">
           <h2 className="text-3xl font-black text-[#002D5E] uppercase tracking-wider">Choose Global Service</h2>
           <div className="w-24 h-1.5 bg-orange-500 mx-auto rounded-full"></div>
@@ -113,12 +113,12 @@ const InternationalLogistics = () => {
           {globalServices.map((service) => (
             <div 
               key={service.id} 
-              className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:border-orange-400 transition-all group flex flex-col items-center text-center space-y-5"
+              className="bg-white p-7 sm:p-10 rounded-3xl sm:rounded-[3rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:border-orange-400 transition-all group flex flex-col items-center text-center space-y-5"
             >
               <div className={`${service.color} p-7 rounded-[2.5rem] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
                 {service.icon}
               </div>
-              <h3 className="text-2xl font-black text-slate-800">{service.title}</h3>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800">{service.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{service.desc}</p>
               
               {service.id === 1 ? (
@@ -183,9 +183,9 @@ const InternationalLogistics = () => {
 
       {/* 4. TRUST BANNER */}
       <div className="max-w-7xl mx-auto px-6 mb-24">
-        <div className="bg-[#002D5E] rounded-[4rem] p-12 md:p-20 flex flex-col md:flex-row items-center gap-12 shadow-2xl relative overflow-hidden text-white border-b-[12px] border-orange-500">
+        <div className="bg-[#002D5E] rounded-3xl md:rounded-[4rem] p-7 sm:p-10 md:p-20 flex flex-col md:flex-row items-center gap-8 md:gap-12 shadow-2xl relative overflow-hidden text-white border-b-[12px] border-orange-500">
           <div className="md:w-1/2 space-y-8">
-            <h2 className="text-5xl font-black leading-tight">Fastest Cross-Border <br/><span className="text-orange-400">Shipping Solutions</span></h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight">Fastest Cross-Border <br/><span className="text-orange-400">Shipping Solutions</span></h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
                 <Zap size={24} className="text-orange-400" /> <span className="font-bold">Express Delivery</span>

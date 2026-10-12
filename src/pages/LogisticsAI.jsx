@@ -192,7 +192,7 @@ const LogisticsAI = () => {
             </div>
 
             {/* Right stats */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
 
               <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 text-center min-w-[82px]">
                 <Zap className="mx-auto text-orange-400 mb-2" size={20} />
@@ -246,7 +246,7 @@ const LogisticsAI = () => {
           {/* =================================================
               QUICK ACTIONS
           ================================================= */}
-          <aside>
+          <aside className="min-w-0">
 
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
@@ -345,7 +345,7 @@ const LogisticsAI = () => {
           {/* =================================================
               CHAT
           ================================================= */}
-          <section>
+          <section className="min-w-0">
 
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[680px]">
 

@@ -269,7 +269,7 @@ const Home = () => {
   // --------------------------------------------------
 
   return (
-    <div className="min-h-screen min-w-0 bg-slate-50 text-slate-900 font-sans overflow-x-clip">
+    <div className="min-h-screen min-w-0 bg-slate-50 text-slate-900 font-sans">
 
       {/* =====================================================
           TOP TICKER
@@ -400,7 +400,7 @@ const Home = () => {
 
                 <div className="bg-white rounded-[18px] p-2 flex flex-col sm:flex-row gap-2">
 
-                  <div className="flex-1 flex items-center px-3">
+                  <div className="flex min-w-0 flex-1 items-center px-3">
 
                     <Bot
                       size={22}
@@ -419,7 +419,7 @@ const Home = () => {
                         }
                       }}
                       placeholder="Example: Send 20kg from Mumbai to Pune..."
-                      className="w-full bg-transparent outline-none text-slate-800 font-semibold text-sm md:text-base py-3"
+                      className="min-w-0 w-full bg-transparent outline-none text-slate-800 font-semibold text-sm md:text-base py-3"
                     />
 
                     <Mic
@@ -678,9 +678,9 @@ const Home = () => {
 
         <div className="max-w-7xl mx-auto px-5 md:px-8">
 
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
+          <div className="grid min-w-0 grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
-            <div>
+            <div className="min-w-0">
 
               <div className="inline-flex items-center gap-2 bg-white/10 text-orange-400 px-4 py-2 rounded-full border border-white/10 mb-5">
 
@@ -692,7 +692,7 @@ const Home = () => {
 
               </div>
 
-              <h2 className="text-3xl md:text-6xl font-black text-white leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-6xl font-black text-white leading-tight">
 
                 Your requirement.
 
@@ -721,7 +721,7 @@ const Home = () => {
 
             </div>
 
-            <div className="bg-white/10 border border-white/10 rounded-[32px] p-5 md:p-7">
+            <div className="min-w-0 bg-white/10 border border-white/10 rounded-[32px] p-5 md:p-7">
 
               <div className="bg-white rounded-2xl p-5">
 
@@ -936,9 +936,9 @@ const Home = () => {
         className="max-w-7xl mx-auto px-5 md:px-8 py-8"
       >
 
-        <div className="bg-white rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-xl border border-slate-100">
+        <div className="bg-white w-full min-w-0 rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-xl border border-slate-100">
 
-          <div className="grid lg:grid-cols-5 gap-10 items-center">
+          <div className="grid w-full min-w-0 grid-cols-1 lg:grid-cols-5 gap-10 items-center">
 
             <div className="lg:col-span-2 flex justify-center">
 
@@ -959,7 +959,7 @@ const Home = () => {
 
             </div>
 
-            <div className="lg:col-span-3">
+            <div className="min-w-0 lg:col-span-3">
 
               <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-600 px-4 py-2 rounded-full border border-orange-100">
 
@@ -988,14 +988,14 @@ const Home = () => {
                 className="mt-7"
               >
 
-                <div className="grid md:grid-cols-2 gap-3">
+                <div className="grid min-w-0 md:grid-cols-2 gap-3">
 
                   <select
                     value={trackingService}
                     onChange={(e) =>
                       setTrackingService(e.target.value)
                     }
-                    className="bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 outline-none font-bold text-sm text-[#002D5E]"
+                    className="min-w-0 w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 outline-none font-bold text-sm text-[#002D5E]"
                   >
 
                     <option>
@@ -1036,7 +1036,7 @@ const Home = () => {
 
                   </select>
 
-                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4">
+                  <div className="flex min-w-0 items-center bg-slate-50 border border-slate-200 rounded-2xl px-4">
 
                     <Search
                       size={20}
@@ -1050,7 +1050,7 @@ const Home = () => {
                         setTrackingIdInput(e.target.value)
                       }
                       placeholder="Enter Tracking ID"
-                      className="bg-transparent outline-none w-full py-4 font-bold text-sm"
+                      className="min-w-0 bg-transparent outline-none w-full py-4 font-bold text-sm"
                     />
 
                   </div>

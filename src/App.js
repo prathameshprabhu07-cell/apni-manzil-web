@@ -99,7 +99,7 @@ import RatingComponent from './components/RatingComponent';
 const AirFreight = () => (
   <div
     style={{
-      padding: '120px 50px',
+      padding: 'clamp(2rem, 8vw, 7.5rem) clamp(1rem, 4vw, 3.125rem)',
       textAlign: 'center',
       minHeight: '70vh',
       background: '#f0f9ff'
@@ -108,7 +108,7 @@ const AirFreight = () => (
     <h1
       style={{
         color: '#0369a1',
-        fontSize: '3rem',
+        fontSize: 'clamp(1.75rem, 6vw, 3rem)',
         fontWeight: '900'
       }}
     >
@@ -120,7 +120,7 @@ const AirFreight = () => (
 const Customs = () => (
   <div
     style={{
-      padding: '120px 50px',
+      padding: 'clamp(2rem, 8vw, 7.5rem) clamp(1rem, 4vw, 3.125rem)',
       textAlign: 'center',
       minHeight: '70vh',
       background: '#f5f3ff'
@@ -129,7 +129,7 @@ const Customs = () => (
     <h1
       style={{
         color: '#6d28d9',
-        fontSize: '3rem',
+        fontSize: 'clamp(1.75rem, 6vw, 3rem)',
         fontWeight: '900'
       }}
     >
@@ -141,7 +141,7 @@ const Customs = () => (
 const TradeFinance = () => (
   <div
     style={{
-      padding: '120px 50px',
+      padding: 'clamp(2rem, 8vw, 7.5rem) clamp(1rem, 4vw, 3.125rem)',
       textAlign: 'center',
       minHeight: '70vh',
       background: '#fff1f2'
@@ -150,7 +150,7 @@ const TradeFinance = () => (
     <h1
       style={{
         color: '#be123c',
-        fontSize: '3rem',
+        fontSize: 'clamp(1.75rem, 6vw, 3rem)',
         fontWeight: '900'
       }}
     >

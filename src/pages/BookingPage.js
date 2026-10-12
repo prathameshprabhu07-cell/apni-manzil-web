@@ -47,7 +47,7 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-12 px-6">
+    <div className="min-h-screen bg-[#F8FAFC] py-10 px-4 sm:px-6 md:py-12">
       <div className="max-w-3xl mx-auto">
         {/* Back Button */}
         <button 
@@ -59,7 +59,7 @@ const BookingPage = () => {
 
         <div className="bg-white rounded-[3rem] shadow-2xl overflow-hidden border-4 border-[#002D5E]/5">
           {/* Header */}
-          <div className="bg-[#002D5E] p-10 text-center">
+          <div className="bg-[#002D5E] p-6 sm:p-10 text-center">
             <h1 className="text-white text-3xl md:text-5xl font-black mb-2 uppercase tracking-tight">
               Complete Your <span className="text-orange-400">Booking</span>
             </h1>
@@ -67,7 +67,7 @@ const BookingPage = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit} className="p-5 sm:p-10 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
             <div className="space-y-2">
               <label className="text-xs font-black uppercase text-slate-400 ml-4">Full Name</label>
               <input 

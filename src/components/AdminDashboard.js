@@ -522,7 +522,7 @@ const AdminDashboard = () => {
 
             <div className="overflow-x-auto">
 
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[760px] text-sm">
 
                 <thead className="bg-gray-100">
 
@@ -816,7 +816,7 @@ const AdminDashboard = () => {
 
             <div className="overflow-x-auto">
 
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[800px] text-sm">
 
                 <thead className="bg-gray-100">
 

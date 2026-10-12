@@ -51,7 +51,7 @@ const CommercialMovingForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-40">
       {/* Header */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-0 z-50 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 sticky top-[72px] z-30 shadow-lg">
         <h1 className="text-xl font-black italic tracking-tighter">APNI MANZIL <span className="text-green-400">COMMERCIAL</span></h1>
         <p className="text-[10px] uppercase font-bold tracking-widest opacity-70">Business & Industrial Relocation</p>
       </div>
@@ -63,7 +63,7 @@ const CommercialMovingForm = () => {
           <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
             <Building2 size={16} className="text-blue-600" /> 1. Business Type
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {businessTypes.map(type => (
               <button 
                 key={type}
@@ -151,13 +151,13 @@ const CommercialMovingForm = () => {
       </div>
 
       {/* Footer Summary */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-6 flex items-center justify-between px-10 shadow-2xl z-[100]">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-3 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:p-6 sm:px-10 shadow-2xl z-[100]">
         <div className="flex flex-col">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Business Type</span>
-          <span className="text-xl font-black text-[#002D5E]">{formData.businessType}</span>
+          <span className="text-sm sm:text-xl font-black text-[#002D5E]">{formData.businessType}</span>
         </div>
-        <button onClick={handleSubmit} disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl transition-all active:scale-95">
-          {loading ? "Processing..." : "Send Inquiry"} <ArrowRight size={20} />
+        <button onClick={handleSubmit} disabled={loading} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-10 py-3 sm:py-4 rounded-2xl font-black uppercase text-xs sm:text-sm tracking-wide sm:tracking-widest flex items-center justify-center gap-3 shadow-xl transition-all active:scale-95">
+          {loading ? "Processing..." : "Send Inquiry"} <ArrowRight size={18} />
         </button>
       </div>
     </div>

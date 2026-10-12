@@ -69,7 +69,7 @@ const ShortTermStorageForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-12">
       {/* 🟦 Header */}
-      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-0 z-50 shadow-md">
+      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[72px] z-30 shadow-md">
         <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition">
           <ArrowLeft size={20}/>
         </button>

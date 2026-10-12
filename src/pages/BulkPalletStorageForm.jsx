@@ -61,7 +61,7 @@ const BulkPalletStorageForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-12 font-sans">
       {/* 🟦 Header */}
-      <div className="bg-amber-600 text-white p-6 flex items-center gap-4 sticky top-0 z-50 shadow-lg">
+      <div className="bg-amber-600 text-white p-6 flex items-center gap-4 sticky top-[72px] z-30 shadow-lg">
         <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition cursor-pointer">
           <ArrowLeft size={20}/>
         </button>
@@ -188,9 +188,9 @@ const BulkPalletStorageForm = () => {
               className="form-input" 
               onChange={handleChange} 
             />
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <div className="flex flex-col gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 sm:flex-row sm:items-center sm:justify-between">
                <span className="text-xs font-bold text-slate-600">Contract Type</span>
-               <div className="flex gap-2">
+               <div className="flex flex-wrap gap-2">
                   {['Monthly', 'Yearly', 'Project Base'].map((opt) => (
                     <button key={opt} type="button" onClick={() => setFormData({...formData, contractType: opt})}
                     className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all cursor-pointer ${formData.contractType === opt ? 'bg-emerald-600 text-white' : 'bg-white text-slate-400'}`}>{opt}</button>

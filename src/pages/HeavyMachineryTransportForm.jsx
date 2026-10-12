@@ -90,15 +90,15 @@ const HeavyMachineryTransportForm = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-900 to-blue-900 text-white p-8 text-center">
-          <h1 className="text-3xl font-black tracking-tight flex items-center justify-center gap-3">
+        <div className="bg-gradient-to-r from-slate-900 to-blue-900 text-white p-5 sm:p-8 text-center">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex flex-wrap items-center justify-center gap-3">
             <HardHat size={36} className="text-yellow-400" />
             Heavy Machinery Transport Booking
           </h1>
           <p className="text-slate-300 mt-2 font-medium">Safe Transport of Heavy Equipment, Industrial Plants & Machinery</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-10">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-8 sm:space-y-10">
 
           {/* 1. Customer Details */}
           <div>

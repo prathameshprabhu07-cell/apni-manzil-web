@@ -56,16 +56,16 @@ const ColdStorageDetail = () => {
   return (
     <div className="min-h-screen bg-[#F0F9FF] font-sans">
       {/* Header */}
-      <div className="bg-[#004080] text-white pt-12 pb-24 px-6 md:px-16 relative">
+      <div className="bg-[#004080] text-white pt-8 md:pt-12 pb-20 md:pb-24 px-4 sm:px-6 md:px-16 relative">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-cyan-400 mb-8 font-bold hover:text-cyan-300 transition cursor-pointer">
           <ArrowLeft size={20}/> Back to Services
         </button>
-        <h1 className="text-4xl md:text-6xl font-black mb-2 tracking-tight">Cold Storage Booking</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-2 tracking-tight">Cold Storage Booking</h1>
         <p className="text-cyan-400 text-lg font-black uppercase tracking-widest">Preserving Freshness, Guaranteed</p>
       </div>
 
-      <div className="max-w-4xl mx-auto -mt-16 px-6 pb-20">
-        <div className="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border-4 border-blue-50">
+      <div className="max-w-4xl mx-auto -mt-16 px-4 sm:px-6 pb-20">
+        <div className="bg-white rounded-[2.5rem] shadow-2xl p-5 sm:p-8 md:p-12 border-4 border-blue-50">
           <h2 className="text-2xl font-black text-[#004080] mb-8 flex items-center gap-3 border-b pb-4">
             <ThermometerSnowflake className="text-blue-500" size={28}/> Reserve Your Space
           </h2>

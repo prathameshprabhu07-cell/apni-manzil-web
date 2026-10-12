@@ -29,7 +29,7 @@ const FindLoad = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* 🟢 Header Section */}
-      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-0 z-50 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[72px] z-30 shadow-lg">
         <button 
           onClick={() => navigate(-1)} 
           className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition"
@@ -50,7 +50,7 @@ const FindLoad = () => {
 
         {/* 📝 Text Content */}
         <div className="space-y-4 mb-10">
-          <h2 className="text-4xl md:text-6xl font-[1000] text-[#002D5E] uppercase tracking-tighter leading-none">
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-[1000] text-[#002D5E] uppercase tracking-tighter leading-none">
             🚛 Find <span className="text-orange-600">Load</span>
           </h2>
           <p className="text-slate-500 font-bold text-lg max-w-md mx-auto leading-tight">

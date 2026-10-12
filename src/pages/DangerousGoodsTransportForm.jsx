@@ -133,26 +133,26 @@ const DangerousGoodsTransportForm = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-8 relative">
+        <div className="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-5 sm:p-8 relative">
           <button 
             onClick={() => navigate('/special-logistics')}
             className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/30 transition mb-6 cursor-pointer"
           >
             <ArrowLeft size={16} /> Back to Special Logistics
           </button>
-          <div className="flex items-center gap-4">
-            <div className="bg-white/20 p-4 rounded-2xl">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="shrink-0 bg-white/20 p-3 sm:p-4 rounded-2xl">
               <Flame size={40} className="text-yellow-300" />
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-widest opacity-80">Apni Manzil Secure Transport</p>
-              <h1 className="text-3xl font-black tracking-tight">Dangerous Goods Transport Booking</h1>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Dangerous Goods Transport Booking</h1>
             </div>
           </div>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-8 space-y-10">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-8 sm:space-y-10">
 
           {/* 1. Customer / Company Details */}
           <div className="space-y-4">

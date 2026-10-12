@@ -413,9 +413,9 @@ const BookingForm = ({ serviceName, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
 
-      <div className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] my-8 animate-in zoom-in duration-200">
+    <div className="bg-white rounded-3xl p-5 sm:p-8 max-h-[calc(100dvh-1.5rem)] overflow-y-auto max-w-2xl w-full shadow-2xl relative border-t-[8px] border-[#FF5E00] my-3 sm:my-8 animate-in zoom-in duration-200">
 
         <button
           type="button"

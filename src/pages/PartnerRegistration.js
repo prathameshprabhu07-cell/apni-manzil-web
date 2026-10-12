@@ -72,7 +72,7 @@ const VendorLandingPage = () => {
             Partner Program
           </span>
 
-          <h1 className="text-4xl lg:text-6xl font-[950] italic uppercase tracking-tight leading-none">
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-[950] italic uppercase tracking-tight leading-none">
             Become a <span className="text-orange-500">Partner</span>
           </h1>
 

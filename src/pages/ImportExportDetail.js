@@ -39,14 +39,14 @@ const ImportExportDetail = () => {
   };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'Segoe UI' }}>
+    <div style={{ padding: 'clamp(16px, 4vw, 40px)', maxWidth: '1000px', margin: '0 auto', fontFamily: 'Segoe UI' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <Globe size={50} color="#6a1b9a" />
-        <h1 style={{ color: '#004080' }}>Global Import & Export Solutions</h1>
+        <h1 style={{ color: '#004080', fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', overflowWrap: 'anywhere' }}>Global Import & Export Solutions</h1>
         <p>Seamless cross-border logistics for your business</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 'clamp(20px, 4vw, 40px)' }}>
         
         {/* Left Side: Services Info */}
         <div>
@@ -60,7 +60,7 @@ const ImportExportDetail = () => {
         </div>
 
         {/* Right Side: Enquiry Form */}
-        <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '15px', boxShadow: '0 5px 20px rgba(0,0,0,0.1)' }}>
+        <div style={{ backgroundColor: '#fff', padding: 'clamp(16px, 3vw, 30px)', borderRadius: '15px', boxShadow: '0 5px 20px rgba(0,0,0,0.1)' }}>
           <h4 style={{ marginBottom: '20px' }}>Request a Quote</h4>
           <form onSubmit={handleSubmit}>
             <input 

@@ -76,9 +76,9 @@ const PharmaColdChainForm = () => {
 
   if (submitted) {
     return (
-      <div className="max-w-3xl mx-auto my-16 p-10 bg-white rounded-3xl shadow-xl border-t-8 border-blue-600 text-center">
+      <div className="max-w-3xl mx-auto my-10 sm:my-16 p-5 sm:p-10 bg-white rounded-3xl shadow-xl border-t-8 border-blue-600 text-center">
         <CheckCircle size={64} className="text-green-500 mx-auto mb-4" />
-        <h2 className="text-3xl font-black text-[#001D3D] uppercase italic tracking-tighter mb-2">Pharma Booking Confirmed!</h2>
+        <h2 className="text-2xl sm:text-3xl font-black text-[#001D3D] uppercase italic tracking-tighter mb-2">Pharma Booking Confirmed!</h2>
         <p className="text-slate-600 font-bold text-sm mb-6">Your temperature-controlled pharmaceutical shipment request has been registered securely. Our specialized pharma logistics team will connect with you shortly.</p>
         <button 
           onClick={() => setSubmitted(false)} 
@@ -90,11 +90,11 @@ const PharmaColdChainForm = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto my-12 p-8 md:p-12 bg-white rounded-3xl shadow-2xl border-t-[10px] border-blue-700 text-[#001D3D]">
+    <div className="max-w-4xl mx-auto my-8 md:my-12 p-4 sm:p-8 md:p-12 bg-white rounded-3xl shadow-2xl border-t-[10px] border-blue-700 text-[#001D3D]">
       <div className="text-center mb-10">
-        <div className="flex justify-center items-center gap-2 mb-2">
+        <div className="flex flex-wrap justify-center items-center gap-2 mb-2">
           <ShieldCheck size={36} className="text-blue-600" />
-          <h1 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter">Pharma & Vaccine Cold Chain Logistics</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase italic tracking-tighter">Pharma & Vaccine Cold Chain Logistics</h1>
         </div>
         <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Secure, Temperature-Validated Supply Chain for Pharmaceuticals</p>
       </div>

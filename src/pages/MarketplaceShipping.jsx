@@ -72,7 +72,7 @@ const MarketplaceShipping = () => {
         <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
           <Zap size={16} /> E-Commerce Logistics Aggregator
         </div>
-        <h1 className="text-4xl font-extrabold sm:text-5xl text-slate-900 tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
           Marketplace <span className="text-blue-600">Shipping & Fulfillment</span>
         </h1>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -84,7 +84,7 @@ const MarketplaceShipping = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 grid grid-cols-1 md:grid-cols-12">
         
         {/* Left Info Panel with Marketplace Image Grid */}
-        <div className="md:col-span-4 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 p-8 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="md:col-span-4 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 p-5 sm:p-8 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
           
           <div className="relative z-10">
@@ -130,7 +130,7 @@ const MarketplaceShipping = () => {
         </div>
 
         {/* Right Form Panel */}
-        <div className="md:col-span-8 p-8 sm:p-10">
+        <div className="md:col-span-8 p-5 sm:p-8 md:p-10">
           {successMessage && (
             <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-sm font-medium flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />

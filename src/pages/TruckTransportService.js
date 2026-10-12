@@ -12,11 +12,11 @@ const TruckTransportService = () => {
   const n8nUrl = "http://localhost:5678/webhook/apni-manzil-logistics";
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans overflow-x-hidden text-slate-900">
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-900">
       
       {/* 🚛 १. हिरो सेक्शन */}
       <div 
-        className="relative text-white pt-12 pb-32 sm:pb-48 px-4 md:px-16 overflow-hidden bg-[#002D5E]"
+        className="relative text-white pt-8 md:pt-12 pb-24 sm:pb-48 px-4 md:px-16 overflow-hidden bg-[#002D5E]"
         style={{
           backgroundImage: `linear-gradient(to right, rgba(0,45,94,0.95), rgba(0,45,94,0.5)), url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=2000')`,
           backgroundSize: 'cover',
@@ -24,7 +24,7 @@ const TruckTransportService = () => {
         }}
       >
         {/* रेट कॅल्क्युलेटर बॉक्स */}
-        <div className="absolute top-4 right-4 md:top-8 md:right-16 z-20">
+        <div className="relative z-20 mb-4 ml-auto w-fit md:absolute md:top-8 md:right-16 md:mb-0">
           <div className="bg-orange-500 border border-orange-400 p-4 rounded-2xl flex items-center gap-4 hover:scale-105 transition-all duration-300 cursor-pointer shadow-xl">
              <Calculator size={24} className="text-white"/>
              <div className="hidden sm:block">
@@ -42,7 +42,7 @@ const TruckTransportService = () => {
         </button>
         
         <div className="relative z-10 flex flex-col items-start text-left max-w-4xl space-y-6">
-          <h1 className="text-3xl sm:text-5xl md:text-8xl font-[1000] tracking-tighter leading-none uppercase drop-shadow-2xl">
+          <h1 className="text-4xl sm:text-5xl md:text-8xl font-[1000] tracking-tighter leading-none uppercase drop-shadow-2xl">
             Reliable <span className="text-orange-500">Fleet</span> <br/> On Demand
           </h1>
           <p className="text-white/90 text-lg font-bold max-w-xl bg-[#002D5E]/50 backdrop-blur-sm p-4 rounded-xl border-l-4 border-orange-500">
@@ -58,12 +58,12 @@ const TruckTransportService = () => {
           {/* OPTION 1: BOOK TRUCK */}
           <div 
             onClick={() => navigate('/book-truck')}
-            className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-[#002D5E] hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
+            className="group bg-white rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-[#002D5E] hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
           >
             <div className="bg-orange-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-orange-500 transition-all duration-500 shadow-inner">
               <Truck size={50} className="text-orange-600 group-hover:text-white" />
             </div>
-            <h2 className="text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Book Truck</h2>
+            <h2 className="text-2xl md:text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Book Truck</h2>
             <p className="text-slate-500 font-bold group-hover:text-blue-100/70 mb-8 max-w-[250px] transition-colors duration-500 text-sm">
               Need a full vehicle for shifting or commercial load? Book instantly.
             </p>
@@ -75,12 +75,12 @@ const TruckTransportService = () => {
           {/* OPTION 2: FIND LOADS */}
           <div 
             onClick={() => navigate('/find-load')}
-            className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
+            className="group bg-white rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-orange-600 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
           >
             <div className="bg-blue-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-[#002D5E] transition-all duration-500 shadow-inner">
               <Box size={50} className="text-[#002D5E] group-hover:text-white" />
             </div>
-            <h2 className="text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Find Loads</h2>
+            <h2 className="text-2xl md:text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Find Loads</h2>
             <p className="text-slate-500 font-bold group-hover:text-orange-100/70 mb-8 max-w-[250px] transition-colors duration-500 text-sm">
               Are you a truck owner? Find daily loads for your vehicle.
             </p>
@@ -92,12 +92,12 @@ const TruckTransportService = () => {
           {/* OPTION 3: PART LOAD */}
           <div 
             onClick={() => navigate('/book-part-load')}
-            className="group bg-white rounded-[3rem] p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-green-700 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
+            className="group bg-white rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center hover:bg-green-700 hover:-translate-y-4 transition-all duration-500 ease-out cursor-pointer"
           >
             <div className="bg-green-100 p-8 rounded-[2.5rem] mb-6 group-hover:bg-white transition-all duration-500 shadow-inner">
               <PackagePlus size={50} className="text-green-700" />
             </div>
-            <h2 className="text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Part Load</h2>
+            <h2 className="text-2xl md:text-3xl font-[1000] text-[#002D5E] group-hover:text-white mb-4 transition-colors duration-500 uppercase">Part Load</h2>
             <p className="text-slate-500 font-bold group-hover:text-green-50 mb-8 max-w-[250px] transition-colors duration-500 text-sm">
               Less goods? Share truck space and save up to 40% on transport.
             </p>

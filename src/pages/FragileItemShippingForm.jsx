@@ -83,15 +83,15 @@ const FragileItemShippingForm = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8 text-center">
-          <h1 className="text-3xl font-black tracking-tight flex items-center justify-center gap-3">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 sm:p-8 text-center">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex flex-wrap items-center justify-center gap-3">
             <ShieldAlert size={36} className="text-yellow-400" />
             Fragile Item Shipping & Special Handling
           </h1>
           <p className="text-blue-100 mt-2 font-medium">Safe, Secure & Professional Transport for Delicate Goods</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-10">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-8 sm:space-y-10">
 
           {/* 1. Customer Details */}
           <div>

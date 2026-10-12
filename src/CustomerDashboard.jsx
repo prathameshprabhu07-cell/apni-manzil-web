@@ -860,11 +860,20 @@ const CustomerDashboard = () => {
   return (
     <div className="min-h-screen bg-slate-100 flex font-sans">
 
+      {sidebarOpen && (
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Close dashboard navigation"
+          className="fixed inset-0 z-[45] bg-slate-900/40 md:hidden"
+        />
+      )}
+
       {/* SIDEBAR */}
 
       <aside
         className={
-          "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform " +
+          "fixed inset-y-0 left-0 z-50 w-64 max-w-[calc(100vw-2rem)] bg-white border-r border-slate-200 transform " +
           (sidebarOpen
             ? "translate-x-0"
             : "-translate-x-full") +
@@ -1108,7 +1117,7 @@ const CustomerDashboard = () => {
 
         {/* HEADER */}
 
-        <header className="bg-white border-b border-slate-200 h-20 px-6 flex items-center justify-between sticky top-0 z-40">
+        <header className="bg-white border-b border-slate-200 min-h-20 px-4 sm:px-6 flex items-center justify-between gap-2 sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <button
               onClick={() =>
