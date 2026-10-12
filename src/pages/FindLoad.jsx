@@ -29,7 +29,7 @@ const FindLoad = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* 🟢 Header Section */}
-      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[77px] z-30 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[72px] lg:top-[108px] z-30 shadow-lg">
         <button 
           onClick={() => navigate(-1)} 
           type="button"

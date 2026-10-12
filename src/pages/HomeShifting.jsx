@@ -76,7 +76,7 @@ const ApniManzilFinalForm = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-40">
       {/* Header */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-[77px] z-30 shadow-md">
+      <div className="bg-[#002D5E] text-white p-6 sticky top-[72px] lg:top-[108px] z-30 shadow-md">
         <h1 className="text-xl font-black tracking-tighter italic">APNI MANZIL <span className="text-orange-500 italic">MOVERS</span></h1>
         <div className="flex items-center gap-2 mt-1">
           <div className="h-1 w-12 bg-orange-500 rounded-full"></div>

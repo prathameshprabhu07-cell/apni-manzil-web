@@ -699,7 +699,7 @@ const SameDayDelivery = () => {
 
       {/* HEADER */}
 
-      <div className="bg-black text-white p-6 flex items-center justify-between sticky top-[77px] z-30">
+      <div className="bg-black text-white p-6 flex items-center justify-between sticky top-[72px] lg:top-[108px] z-30">
 
         <button
           type="button"

@@ -192,7 +192,7 @@ const WarehousePartnerRegister = () => {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
       
       {/* Top Bar */}
-      <div className="bg-[#002D5E] text-white py-3 px-4 sticky top-[77px] z-30 shadow-md sm:py-6 sm:px-6">
+      <div className="bg-[#002D5E] text-white py-3 px-4 sticky top-[72px] lg:top-[108px] z-30 shadow-md sm:py-6 sm:px-6">
         <div className="max-w-4xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <button 
             onClick={() => navigate(-1)} 

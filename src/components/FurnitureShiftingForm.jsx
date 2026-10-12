@@ -54,7 +54,7 @@ const FurnitureShiftingForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-40">
       {/* Header */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-[77px] z-30 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 sticky top-[72px] lg:top-[108px] z-30 shadow-lg">
         <h1 className="text-xl font-black italic tracking-tighter">APNI MANZIL <span className="text-blue-400">FURNITURE</span></h1>
         <p className="text-[10px] uppercase font-bold tracking-widest opacity-70">Expert Furniture Handling</p>
       </div>

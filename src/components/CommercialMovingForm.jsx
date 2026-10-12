@@ -51,7 +51,7 @@ const CommercialMovingForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-40">
       {/* Header */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-[77px] z-30 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 sticky top-[72px] lg:top-[108px] z-30 shadow-lg">
         <h1 className="text-xl font-black italic tracking-tighter">APNI MANZIL <span className="text-green-400">COMMERCIAL</span></h1>
         <p className="text-[10px] uppercase font-bold tracking-widest opacity-70">Business & Industrial Relocation</p>
       </div>
@@ -139,7 +139,7 @@ const CommercialMovingForm = () => {
           <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
             <Truck size={16} className="text-green-600" /> 4. Service Add-ons
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {serviceOptions.map(service => (
               <label key={service} className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 accent-blue-600" onChange={() => handleServiceToggle(service)} />
