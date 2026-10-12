@@ -142,7 +142,7 @@ const WarehousePartnerRegister = () => {
 
     try {
       // Sending all form data to your webhook endpoint
-      const response = await fetch('https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/Warehouse_Partner', {
+      const response = await fetch('https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Warehouse_Partner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -196,7 +196,7 @@ const WarehousePartnerRegister = () => {
         <div className="max-w-4xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex items-center gap-2 self-start text-xs font-black uppercase bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition cursor-pointer sm:self-auto"
+            className="flex min-h-11 items-center gap-2 self-start text-xs font-black uppercase bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition cursor-pointer sm:self-auto"
           >
             <ArrowLeft size={16} /> Back
           </button>

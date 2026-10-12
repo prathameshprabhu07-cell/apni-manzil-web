@@ -36,7 +36,7 @@ const TruckTransportService = () => {
 
         <button 
           onClick={() => navigate('/')} 
-          className="relative z-10 flex items-center gap-2 text-orange-400 mb-12 font-black hover:translate-x-[-5px] transition-transform duration-300 cursor-pointer bg-black/20 w-fit px-4 py-2 rounded-full backdrop-blur-md"
+          className="relative z-10 flex min-h-11 items-center gap-2 text-orange-400 mb-12 font-black hover:translate-x-[-5px] transition-transform duration-300 cursor-pointer bg-black/20 w-fit px-4 py-2 rounded-full backdrop-blur-md"
         >
           <ArrowLeft size={20}/> BACK TO HOME
         </button>

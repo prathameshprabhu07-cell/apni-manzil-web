@@ -29,10 +29,11 @@ const FindLoad = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* 🟢 Header Section */}
-      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[72px] z-30 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[77px] z-30 shadow-lg">
         <button 
           onClick={() => navigate(-1)} 
-          className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition"
+          type="button"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
         >
           <ArrowLeft size={20}/>
         </button>

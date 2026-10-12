@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 const WEBHOOK_URL =
-  "https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/packer-movers";
+  "https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/packer-movers";
 
 const initialForm = {
   contactName: "",

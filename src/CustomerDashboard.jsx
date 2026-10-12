@@ -48,7 +48,7 @@ import {
 ===================================================== */
 
 const CANCEL_WEBHOOK_URL =
-  "https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/courier-Cancel-Order";
+  "https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/courier-Cancel-Order";
 
 
 const CustomerDashboard = () => {

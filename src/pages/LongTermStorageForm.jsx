@@ -86,7 +86,7 @@ const LongTermStorageForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-12 font-sans">
       {/* 🟦 Header */}
-      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[72px] z-30 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[77px] z-30 shadow-lg">
         <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition">
           <ArrowLeft size={20}/>
         </button>

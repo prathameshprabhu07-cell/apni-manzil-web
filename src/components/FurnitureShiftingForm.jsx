@@ -35,7 +35,7 @@ const FurnitureShiftingForm = () => {
     
     try {
       // n8n ला डेटा पाठवा (Production URL अपडेट केली आहे)
-      await fetch("https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/packer-movers", {
+      await fetch("https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/packer-movers", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finalData)
@@ -54,7 +54,7 @@ const FurnitureShiftingForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-40">
       {/* Header */}
-      <div className="bg-[#002D5E] text-white p-6 sticky top-[72px] z-30 shadow-lg">
+      <div className="bg-[#002D5E] text-white p-6 sticky top-[77px] z-30 shadow-lg">
         <h1 className="text-xl font-black italic tracking-tighter">APNI MANZIL <span className="text-blue-400">FURNITURE</span></h1>
         <p className="text-[10px] uppercase font-bold tracking-widest opacity-70">Expert Furniture Handling</p>
       </div>
@@ -127,11 +127,11 @@ const FurnitureShiftingForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {items.map(item => (
                 <div key={item.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                  <span className="text-sm font-bold text-slate-700">{item.name}</span>
-                  <div className="flex items-center gap-4 bg-white px-2 py-1.5 rounded-xl border border-slate-100">
-                    <button onClick={() => handleQty(item.id, -1)} className="text-slate-400"><Minus size={18}/></button>
+                  <span className="min-w-0 flex-1 pr-2 text-sm font-bold text-slate-700">{item.name}</span>
+                  <div className="flex shrink-0 items-center gap-1 bg-white px-1 py-1 rounded-xl border border-slate-100">
+                    <button type="button" aria-label={`Decrease ${item.name} quantity`} onClick={() => handleQty(item.id, -1)} className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50"><Minus size={18}/></button>
                     <span className="font-black text-slate-900 w-5 text-center">{cart[item.id] || 0}</span>
-                    <button onClick={() => handleQty(item.id, 1)} className="text-blue-600"><Plus size={18}/></button>
+                    <button type="button" aria-label={`Increase ${item.name} quantity`} onClick={() => handleQty(item.id, 1)} className="flex h-11 w-11 items-center justify-center rounded-lg text-blue-600 hover:bg-blue-50"><Plus size={18}/></button>
                   </div>
                 </div>
               ))}

@@ -84,8 +84,8 @@ const BookTruck = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-10">
-      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[72px] z-30 shadow-lg">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition cursor-pointer"><ArrowLeft size={20}/></button>
+      <div className="bg-[#002D5E] text-white p-6 flex items-center gap-4 sticky top-[77px] z-30 shadow-lg">
+        <button type="button" onClick={() => navigate(-1)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20 cursor-pointer"><ArrowLeft size={20}/></button>
         <h1 className="text-xl font-black italic uppercase tracking-tighter">Book <span className="text-orange-400">Truck</span></h1>
       </div>
 

@@ -17,7 +17,7 @@ const Tracking = () => {
     }
 
     try {
-      const response = await fetch("https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/Traking", {
+      const response = await fetch("https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Traking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const Tracking = () => {
               <Search className="text-slate-400 shrink-0" />
               <input 
                 type="text" 
-                placeholder="Enter Tracking ID (e.g. AM-12345)" 
+                placeholder="Enter Tracking ID"
                 className="min-w-0 w-full py-4 bg-transparent outline-none text-sm sm:text-base text-slate-800 font-black"
                 value={trackingId}
                 onChange={(e) => setTrackingId(e.target.value)}

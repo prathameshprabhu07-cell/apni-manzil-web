@@ -85,7 +85,7 @@ const LogisticsAI = () => {
 
     try {
       const response = await fetch(
-        "https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/Ai-Booking",
+        "https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Ai-Booking",
         {
           method: "POST",
           headers: {
@@ -445,7 +445,7 @@ const LogisticsAI = () => {
                           <button
                             key={item}
                             onClick={() => setMessage(item)}
-                            className="px-3 py-2 rounded-full bg-white border border-slate-200 text-xs text-slate-700 hover:border-orange-300 hover:text-orange-600 transition"
+                            className="min-h-[44px] px-3 py-2 rounded-full bg-white border border-slate-200 text-xs text-slate-700 hover:border-orange-300 hover:text-orange-600 transition"
                           >
                             {item}
                           </button>

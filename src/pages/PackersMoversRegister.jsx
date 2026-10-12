@@ -181,7 +181,7 @@ const PackersMoversRegister = () => {
 
     try {
       await fetch(
-        'https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/Packer_Partner',
+        'https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/Packer_Partner',
         {
           method: 'POST',
           headers: {

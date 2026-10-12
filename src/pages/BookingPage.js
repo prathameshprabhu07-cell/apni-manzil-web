@@ -52,7 +52,7 @@ const BookingPage = () => {
         {/* Back Button */}
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-[#002D5E] font-black mb-8 hover:text-orange-500 transition cursor-pointer"
+          className="flex min-h-11 items-center gap-2 text-[#002D5E] font-black mb-8 hover:text-orange-500 transition cursor-pointer"
         >
           <ArrowLeft size={24} /> BACK TO SERVICES
         </button>

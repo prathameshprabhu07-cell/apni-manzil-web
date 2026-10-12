@@ -18,7 +18,7 @@ const ChatBot = () => {
 
   // Apni Manzil AI n8n Webhook
   const AI_WEBHOOK_URL =
-    "https://postcards-arbitration-configuring-matthew.trycloudflare.com/webhook/apni-manzil-ai";
+    "https://https://sega-cos-daisy-signing.trycloudflare.com/webhook/apni-manzil-ai";
 
   // Auto scroll
   useEffect(() => {
