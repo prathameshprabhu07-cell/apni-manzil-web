@@ -238,18 +238,18 @@ const PackersMoversRegister = () => {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
 
       {/* Top Bar */}
-      <div className="bg-[#002D5E] text-white py-6 px-6 sticky top-[72px] z-30 shadow-md">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+      <div className="bg-[#002D5E] text-white py-3 px-4 sticky top-[77px] z-30 shadow-md sm:py-6 sm:px-6">
+        <div className="max-w-4xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-xs font-black uppercase bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition cursor-pointer"
+            className="flex items-center gap-2 self-start text-xs font-black uppercase bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition cursor-pointer sm:self-auto"
           >
             <ArrowLeft size={16} />
             Back
           </button>
 
-          <h1 className="text-sm lg:text-lg font-[950] uppercase italic tracking-wider">
+          <h1 className="w-full text-center text-xs font-[950] uppercase italic tracking-wider sm:w-auto sm:text-sm lg:text-lg">
             Packers & Movers Partner Registration
           </h1>
 
@@ -1565,7 +1565,7 @@ const PackersMoversRegister = () => {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-5 rounded-2xl font-black uppercase text-sm tracking-wider shadow-2xl hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-[1rem] rounded-2xl font-black uppercase text-sm tracking-wider shadow-2xl hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2"
             >
               Submit Partner Registration →
             </button>

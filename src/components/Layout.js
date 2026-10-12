@@ -357,7 +357,7 @@ const Layout = ({ children, user }) => {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen((previous) => !previous)}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-[#002D5E] transition hover:bg-slate-100 xl:hidden"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-[#002D5E] transition hover:bg-slate-100 xl:hidden"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
           >

@@ -142,7 +142,7 @@ const LogisticsAI = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-300 pt-16 md:pt-20">
+    <div className="min-h-screen bg-slate-300">
 
       {/* =====================================================
           PREMIUM AI HERO
@@ -152,7 +152,7 @@ const LogisticsAI = () => {
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-32 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-14">
+        <div className="relative max-w-7xl mx-auto px-[1rem] sm:px-6 py-10 md:py-14">
 
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
 
@@ -192,7 +192,7 @@ const LogisticsAI = () => {
             </div>
 
             {/* Right stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
 
               <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 text-center min-w-[82px]">
                 <Zap className="mx-auto text-orange-400 mb-2" size={20} />

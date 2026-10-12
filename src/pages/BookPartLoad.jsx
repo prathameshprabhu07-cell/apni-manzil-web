@@ -87,7 +87,7 @@ const BookPartLoad = () => {
                 <label className="text-[10px] font-bold text-slate-400 ml-4 mb-1 uppercase">Loading Date</label>
                 <div className="relative">
                   <Calendar size={18} className="absolute left-4 top-4 text-slate-400" />
-                  <input type="date" name="date" required className="form-input pl-12" onChange={handleChange} />
+                  <input type="date" name="date" required className="form-input has-leading-icon" onChange={handleChange} />
                 </div>
               </div>
             </div>
@@ -102,8 +102,8 @@ const BookPartLoad = () => {
               <div className="relative">
                 <Weight size={18} className="absolute left-4 top-4 text-slate-400" />
                 <input 
-                  type="number" name="weight" placeholder="Approx Weight (in KG)" 
-                  required className="form-input pl-12" onChange={handleChange} 
+                  type="number" name="weight" placeholder="Weight (KG)"
+                  required className="form-input has-leading-icon" onChange={handleChange}
                 />
               </div>
               <select name="materialType" className="form-input font-bold" onChange={handleChange}>
@@ -125,9 +125,9 @@ const BookPartLoad = () => {
               <MessageSquare size={18} className="absolute left-4 top-4 text-slate-400" />
               <textarea 
                 name="details" 
-                placeholder="Tell us more about your goods (e.g., number of boxes, fragile item, etc.)" 
+                placeholder="Describe your goods (e.g., boxes, fragile items)"
                 rows="3"
-                className="form-input pl-12 pt-4 resize-none"
+                className="form-input has-leading-icon pt-4 resize-none"
                 onChange={handleChange}
               ></textarea>
             </div>
@@ -176,6 +176,9 @@ const BookPartLoad = () => {
           outline: none;
           transition: all 0.2s;
           color: #1e293b;
+        }
+        .form-input.has-leading-icon {
+          padding-left: 3rem;
         }
         .form-input:focus {
           border-color: #15803d;

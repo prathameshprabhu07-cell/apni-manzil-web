@@ -316,7 +316,7 @@ const CustomsClearanceForm = () => {
                 value={formData.problemDescription} 
                 onChange={handleInputChange} 
                 placeholder="उदा. Shipment customs मध्ये hold आहे. Documents complete नाहीत. Duty calculation हवी आहे. CHA हवा आहे." 
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 focus:outline-none focus:border-blue-600 font-medium"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-[1.25rem] focus:outline-none focus:border-blue-600 font-medium"
               ></textarea>
             </div>
           </div>

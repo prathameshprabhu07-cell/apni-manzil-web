@@ -127,7 +127,7 @@ const BookTruck = () => {
                       name="otherMaterial" 
                       placeholder="Specify your load type..." 
                       required 
-                      className="form-input pl-12 border-orange-200 bg-orange-50/30" 
+                      className="form-input has-leading-icon border-orange-200 bg-orange-50/30"
                       onChange={handleChange} 
                     />
                   </div>
@@ -135,7 +135,7 @@ const BookTruck = () => {
 
                 <div className="relative">
                    <Weight size={18} className="absolute left-4 top-4 text-slate-400" />
-                   <input type="number" name="weight" step="0.1" placeholder="Total Weight (in Tons)" required className="form-input pl-12" onChange={handleChange} />
+                   <input type="number" name="weight" step="0.1" placeholder="Weight (Tons)" required className="form-input has-leading-icon" onChange={handleChange} />
                 </div>
               </div>
 
@@ -244,6 +244,9 @@ const BookTruck = () => {
           outline: none;
           transition: all 0.2s;
           color: #1e293b;
+        }
+        .form-input.has-leading-icon {
+          padding-left: 3rem;
         }
         .form-input:focus {
           border-color: #002D5E;

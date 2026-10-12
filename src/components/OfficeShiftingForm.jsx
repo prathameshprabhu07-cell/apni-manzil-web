@@ -156,7 +156,7 @@ function Section({ number, title, icon: Icon, children, open, onToggle }) {
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition"
+        className="w-full flex items-center justify-between p-[1rem] sm:p-[1.25rem] text-left hover:bg-slate-50 transition"
       >
         <div className="flex items-center gap-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 font-bold">
@@ -176,7 +176,7 @@ function Section({ number, title, icon: Icon, children, open, onToggle }) {
         )}
       </button>
 
-      {open && <div className="border-t border-slate-100 p-5">{children}</div>}
+      {open && <div className="border-t border-slate-100 p-[1rem] sm:p-[1.25rem]">{children}</div>}
     </div>
   );
 }
@@ -373,7 +373,7 @@ export default function OfficeShiftingForm({
 
         {/* Header */}
         <div className="mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 to-blue-500 p-7 text-white shadow-lg">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-[1.25rem] md:flex-row md:items-center md:justify-between">
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm">
                 <Building2 className="h-4 w-4" />
@@ -406,7 +406,7 @@ export default function OfficeShiftingForm({
             open={openSections.customer}
             onToggle={() => toggleSection("customer")}
           >
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-[1.25rem] md:grid-cols-2">
 
               <Field label="Contact Person Name" required>
                 <input
@@ -507,7 +507,7 @@ export default function OfficeShiftingForm({
             open={openSections.move}
             onToggle={() => toggleSection("move")}
           >
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid gap-[1.25rem] md:grid-cols-3">
 
               <Field label="Shifting Type" required>
                 <select
@@ -581,7 +581,7 @@ export default function OfficeShiftingForm({
                 />
               </Field>
 
-              <div className="grid gap-5 md:grid-cols-3">
+              <div className="grid gap-[1.25rem] md:grid-cols-3">
 
                 <Field label="City" required>
                   <input
@@ -708,7 +708,7 @@ export default function OfficeShiftingForm({
                 />
               </Field>
 
-              <div className="grid gap-5 md:grid-cols-3">
+              <div className="grid gap-[1.25rem] md:grid-cols-3">
 
                 <Field label="City" required>
                   <input
@@ -850,7 +850,7 @@ export default function OfficeShiftingForm({
 
             </div>
 
-            <div className="mt-5 grid gap-5 md:grid-cols-2">
+            <div className="mt-[1.25rem] grid gap-[1.25rem] md:grid-cols-2">
 
               <Field label="Approx. Number of Boxes / Cartons">
                 <input
@@ -983,7 +983,7 @@ export default function OfficeShiftingForm({
             open={openSections.photos}
             onToggle={() => toggleSection("photos")}
           >
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-[1.25rem] md:grid-cols-2">
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">

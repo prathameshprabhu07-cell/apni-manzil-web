@@ -666,7 +666,7 @@ export default function TransporterRegister() {
         >
 
           {/* Company */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Building2}
@@ -804,7 +804,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Business */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={FileText}
@@ -859,7 +859,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Address */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={MapPin}
@@ -901,7 +901,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Fleet */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Truck}
@@ -1071,7 +1071,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Transportation Services */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Route}
@@ -1125,7 +1125,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Goods */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Package}
@@ -1189,7 +1189,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Operating Area */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Globe}
@@ -1254,7 +1254,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Operations */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Clock3}
@@ -1310,7 +1310,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Additional Services */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={ShieldCheck}
@@ -1369,7 +1369,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Pricing */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={IndianRupee}
@@ -1449,7 +1449,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Documents */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={FileText}
@@ -1506,7 +1506,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Bank */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={CreditCard}
@@ -1550,7 +1550,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Profile */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Globe}
@@ -1586,7 +1586,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Emergency */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={Phone}
@@ -1619,7 +1619,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Declaration */}
-          <section className="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-orange-100 bg-white p-[1.25rem] shadow-sm sm:p-8">
 
             <SectionTitle
               icon={CheckCircle2}
@@ -1667,7 +1667,7 @@ export default function TransporterRegister() {
           </section>
 
           {/* Submit */}
-          <div className="rounded-2xl bg-[#002D5E] p-5 text-white shadow-lg sm:p-8">
+          <div className="rounded-2xl bg-[#002D5E] p-[1.25rem] text-white shadow-lg sm:p-8">
 
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 

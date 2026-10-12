@@ -72,9 +72,9 @@ const PackersAndMovers = () => {
       {/* --- FORM MODAL --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[999] flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-red-500 cursor-pointer"><X /></button>
-            <h2 className="text-2xl font-black text-slate-800 mb-6 uppercase italic">Quick Quote Form</h2>
+          <div className="bg-white w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[2.5rem] p-8 shadow-2xl relative">
+            <button type="button" aria-label="Close quick quote form" onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-red-500 cursor-pointer"><X /></button>
+            <h2 className="pr-12 text-xl sm:text-2xl font-black text-slate-800 mb-6 uppercase italic">Quick Quote Form</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <input required type="text" placeholder="Your Name" className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-orange-500 font-bold" onChange={(e) => setFormData({...formData, customerName: e.target.value})} />
               <input required type="text" placeholder="Phone Number" className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-orange-500 font-bold" onChange={(e) => setFormData({...formData, customerPhone: e.target.value})} />
@@ -90,7 +90,7 @@ const PackersAndMovers = () => {
                 <option value="Commercial">Commercial</option>
               </select>
               <input required type="date" className="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-500" onChange={(e) => setFormData({...formData, moveDate: e.target.value})} />
-              <button disabled={loading} type="submit" className="w-full bg-[#ff5e00] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-orange-600 transition-all active:scale-95 cursor-pointer">
+              <button disabled={loading} type="submit" className="w-full bg-[#ff5e00] text-white py-[0.875rem] rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-orange-600 transition-all active:scale-95 cursor-pointer">
                 {loading ? "Posting..." : "Confirm & Get Rates"}
               </button>
             </form>

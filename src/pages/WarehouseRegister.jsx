@@ -192,15 +192,15 @@ const WarehousePartnerRegister = () => {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
       
       {/* Top Bar */}
-      <div className="bg-[#002D5E] text-white py-6 px-6 sticky top-[72px] z-30 shadow-md">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+      <div className="bg-[#002D5E] text-white py-3 px-4 sticky top-[77px] z-30 shadow-md sm:py-6 sm:px-6">
+        <div className="max-w-4xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex items-center gap-2 text-xs font-black uppercase bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition cursor-pointer"
+            className="flex items-center gap-2 self-start text-xs font-black uppercase bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition cursor-pointer sm:self-auto"
           >
             <ArrowLeft size={16} /> Back
           </button>
-          <h1 className="text-sm lg:text-lg font-[950] uppercase italic tracking-wider">Warehouse Partner Registration</h1>
+          <h1 className="w-full text-center text-xs font-[950] uppercase italic tracking-wider sm:w-auto sm:text-sm lg:text-lg">Warehouse Partner Registration</h1>
         </div>
       </div>
 
@@ -265,7 +265,7 @@ const WarehousePartnerRegister = () => {
               <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">2. 📦 Warehouse Type (What type of storage do you provide?)</h3>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[
                 "General / Dry Warehouse", "Cold Storage", "Temperature Controlled Warehouse", 
                 "Frozen Storage", "Food Storage", "Pharmaceutical Storage", 
@@ -412,7 +412,7 @@ const WarehousePartnerRegister = () => {
               <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">6. 🚛 Loading & Unloading Facilities</h3>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[
                 "Loading / Unloading", "Dock Leveler", "Loading Bay", "Forklift", 
                 "Pallet Truck", "Crane", "Weighing Scale", "Labour Available", 
@@ -438,7 +438,7 @@ const WarehousePartnerRegister = () => {
               <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">7. 🔐 Warehouse Security</h3>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[
                 "CCTV", "24×7 Security Guard", "Fire Safety System", "Fire Extinguishers", 
                 "Access Control", "Alarm System", "Insurance Available", "Pest Control"
@@ -468,7 +468,7 @@ const WarehousePartnerRegister = () => {
               <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">8. 💻 Warehouse Technology</h3>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[
                 "Inventory Management System", "Barcode Scanning", "RFID", "WMS", 
                 "Stock Reports", "Online Inventory Tracking", "API Integration"
@@ -501,7 +501,7 @@ const WarehousePartnerRegister = () => {
               <h3 className="text-lg font-[950] text-[#002D5E] uppercase italic">9. 📋 Services Offered</h3>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[
                 "Storage Only", "Loading / Unloading", "Pick & Pack", "Inventory Management", 
                 "Order Fulfilment", "Labelling", "Repacking", "Sorting", 
@@ -532,7 +532,7 @@ const WarehousePartnerRegister = () => {
 
             <div>
               <label className="block text-xs font-bold uppercase text-slate-600 mb-2">Pricing Type</label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {[
                   "Per Sq. Ft. / Month", "Per Pallet / Month", "Per Ton / Month", 
                   "Per Box / Month", "Per Day", "Custom Pricing"
@@ -785,7 +785,7 @@ const WarehousePartnerRegister = () => {
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-5 rounded-[2rem] font-black uppercase text-sm tracking-wider shadow-xl hover:brightness-110 transition cursor-pointer disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-[1rem] rounded-[2rem] font-black uppercase text-sm tracking-wider shadow-xl hover:brightness-110 transition cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? 'Submitting Details...' : 'Submit Warehouse Registration'}
             </button>

@@ -67,14 +67,14 @@ const BookingPage = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-5 sm:p-10 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
+          <form onSubmit={handleSubmit} className="p-[1.25rem] sm:p-[2.5rem] grid grid-cols-1 md:grid-cols-2 gap-[1.25rem] sm:gap-[2rem]">
             <div className="space-y-2">
               <label className="text-xs font-black uppercase text-slate-400 ml-4">Full Name</label>
               <input 
                 name="senderName" 
                 required 
                 placeholder="John Doe" 
-                className="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
+                className="w-full p-[1.25rem] bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
                 onChange={handleInputChange} 
               />
             </div>
@@ -92,7 +92,7 @@ const BookingPage = () => {
                   name="senderPhone" 
                   required 
                   placeholder="0000000000" 
-                  className="w-full p-5 pl-0 bg-slate-50 border-none outline-none font-bold"
+                  className="w-full py-[1rem] pl-0 bg-slate-50 border-none outline-none font-bold"
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, '').slice(0, 10);
                     setFormData({ ...formData, senderPhone: val });
@@ -107,7 +107,7 @@ const BookingPage = () => {
                 name="pickupPincode" 
                 required 
                 placeholder="400001" 
-                className="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
+                className="w-full p-[1.25rem] bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
                 onChange={handleInputChange} 
               />
             </div>
@@ -118,7 +118,7 @@ const BookingPage = () => {
                 name="weight" 
                 required 
                 placeholder="0.5" 
-                className="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
+                className="w-full p-[1.25rem] bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
                 onChange={handleInputChange} 
               />
             </div>
@@ -130,7 +130,7 @@ const BookingPage = () => {
                 required
                 rows="3"
                 placeholder="Enter full destination address..." 
-                className="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
+                className="w-full p-[1.25rem] bg-slate-50 rounded-2xl border-2 border-transparent focus:border-orange-400 outline-none font-bold transition-all"
                 onChange={handleInputChange}
               ></textarea>
             </div>

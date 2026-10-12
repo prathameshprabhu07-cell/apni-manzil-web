@@ -113,7 +113,9 @@ const ChatBot = () => {
       {/* Chat Button */}
       {!isOpen && (
         <button
+          type="button"
           onClick={() => setIsOpen(true)}
+          aria-label="Open AI chat"
           style={{
             backgroundColor: "#004080",
             color: "white",
@@ -172,11 +174,26 @@ const ChatBot = () => {
               </span>
             </div>
 
-            <X
-              size={20}
-              style={{ cursor: "pointer" }}
+            <button
+              type="button"
+              aria-label="Close AI chat"
               onClick={() => setIsOpen(false)}
-            />
+              style={{
+                width: "44px",
+                height: "44px",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                border: "none",
+                background: "transparent",
+                color: "white",
+                cursor: "pointer",
+              }}
+            >
+              <X size={20} aria-hidden="true" />
+            </button>
           </div>
 
           {/* Messages Area */}
@@ -264,6 +281,8 @@ const ChatBot = () => {
             />
 
             <button
+              type="button"
+              aria-label="Send message"
               onClick={handleSend}
               disabled={loading}
               style={{
@@ -275,9 +294,16 @@ const ChatBot = () => {
                 cursor: loading
                   ? "default"
                   : "pointer",
+                width: "44px",
+                height: "44px",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
               }}
             >
-              <Send size={20} />
+              <Send size={20} aria-hidden="true" />
             </button>
           </div>
         </div>

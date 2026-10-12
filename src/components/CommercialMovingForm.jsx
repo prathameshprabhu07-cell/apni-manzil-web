@@ -126,7 +126,7 @@ const CommercialMovingForm = () => {
             <ClipboardList size={16} className="text-purple-600" /> 3. Inventory Overview
           </h2>
           <textarea 
-            className="w-full p-5 bg-slate-50 rounded-[1.5rem] border-2 border-dashed border-slate-200 outline-none focus:border-blue-500 font-bold text-sm"
+            className="w-full p-[1.25rem] bg-slate-50 rounded-[1.5rem] border-2 border-dashed border-slate-200 outline-none focus:border-blue-500 font-bold text-sm"
             rows="5"
             placeholder="Mention items like office chairs, server racks, glass counters, etc..."
             value={formData.extraNote}

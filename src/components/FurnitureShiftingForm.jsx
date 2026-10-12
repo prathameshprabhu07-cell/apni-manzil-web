@@ -145,7 +145,7 @@ const FurnitureShiftingForm = () => {
             <MessageSquare size={20} /> Other Items & Instructions
           </h2>
           <textarea 
-            className="w-full p-5 bg-white rounded-2xl border-none shadow-sm focus:ring-2 ring-indigo-400 text-sm font-bold text-slate-700"
+            className="w-full p-[1.25rem] bg-white rounded-2xl border-none shadow-sm focus:ring-2 ring-indigo-400 text-sm font-bold text-slate-700"
             rows="4"
             placeholder="Describe other items like Mandir, Safe, Gym items etc..."
             value={extraNote}

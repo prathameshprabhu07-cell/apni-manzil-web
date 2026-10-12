@@ -1042,7 +1042,7 @@ const Section = ({
           {icon}
         </div>
 
-        <h2 className="text-xl font-black text-[#001D3D] uppercase italic">
+        <h2 className="min-w-0 break-normal text-base sm:text-xl font-black text-[#001D3D] uppercase italic">
           {title}
         </h2>
 
