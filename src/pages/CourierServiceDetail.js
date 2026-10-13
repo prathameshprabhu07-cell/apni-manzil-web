@@ -663,7 +663,7 @@ const CourierServiceDetail = () => {
 
       <div className="max-w-5xl mx-auto -mt-16 px-6 relative z-50">
 
-        <div className="bg-white rounded-[1.75rem] sm:rounded-[3rem] shadow-2xl p-5 sm:p-8 md:p-12 border-4 border-orange-50">
+        <div className="courier-booking-panel bg-white rounded-[1.75rem] sm:rounded-[3rem] shadow-2xl p-5 sm:p-8 md:p-12 border-4 border-orange-50">
 
           <h2 className="text-2xl sm:text-3xl font-black text-[#002D5E] mb-8 sm:mb-10 flex items-center gap-3 border-b-2 border-slate-100 pb-4">
             <Package
@@ -675,7 +675,7 @@ const CourierServiceDetail = () => {
 
           <form
             onSubmit={handleFinalBooking}
-            className="space-y-12"
+            className="courier-contact-form space-y-8 md:space-y-12"
           >
 
             {/* ==================================================
@@ -1006,9 +1006,9 @@ const CourierServiceDetail = () => {
                 2. SENDER / RECEIVER
             ================================================== */}
 
-            <div className="pt-10 border-t-2 border-slate-100">
+            <div className="pt-6 sm:pt-8 border-t-2 border-slate-100">
 
-              <h3 className="text-xl font-black text-[#002D5E] mb-6 flex items-center gap-2">
+              <h3 className="text-lg sm:text-xl font-black text-[#002D5E] mb-4 sm:mb-6 flex items-center gap-2">
 
                 <CheckCircle2
                   size={24}
@@ -1019,13 +1019,13 @@ const CourierServiceDetail = () => {
 
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+              <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
 
                 {/* Sender */}
 
-                <div className="space-y-5 bg-blue-50/50 p-6 md:p-8 rounded-[2rem] border border-blue-100">
+                <div className="courier-contact-card min-w-0 space-y-4 bg-blue-50/50 p-4 sm:p-5 md:p-6 rounded-2xl border border-blue-100">
 
-                  <h4 className="text-lg font-black text-blue-900 flex items-center gap-2">
+                  <h4 className="text-base sm:text-lg font-black text-blue-900 flex items-center gap-2">
                     <User size={18} />
                     Sender (From)
                   </h4>
@@ -1036,12 +1036,12 @@ const CourierServiceDetail = () => {
                     onChange={handleInputChange}
                     required
                     placeholder="Full Name"
-                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"
+                    className="courier-contact-input"
                   />
 
-                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className="courier-phone-field">
 
-                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r">
+                    <span className="courier-country-code">
                       +91
                     </span>
 
@@ -1052,7 +1052,7 @@ const CourierServiceDetail = () => {
                       type="tel"
                       maxLength="10"
                       placeholder="Mobile Number"
-                      className="w-full p-4 border-none font-bold outline-none"
+                      className="courier-phone-input"
                       onChange={(e) =>
                         handlePhoneInput(
                           e,
@@ -1075,7 +1075,7 @@ const CourierServiceDetail = () => {
                     required
                     maxLength="6"
                     placeholder="Pickup Pincode"
-                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"
+                    className="courier-contact-input"
                   />
 
                   {formData.pickupCity && (
@@ -1087,7 +1087,7 @@ const CourierServiceDetail = () => {
                         value={formData.pickupCity}
                         onChange={handleInputChange}
                         placeholder="City"
-                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs"
+                        className="courier-contact-input"
                       />
 
                       <input
@@ -1095,7 +1095,7 @@ const CourierServiceDetail = () => {
                         value={formData.pickupState}
                         onChange={handleInputChange}
                         placeholder="State"
-                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs"
+                        className="courier-contact-input"
                       />
 
                     </div>
@@ -1109,16 +1109,16 @@ const CourierServiceDetail = () => {
                     required
                     rows="3"
                     placeholder="Address"
-                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"
+                    className="courier-contact-input"
                   />
 
                 </div>
 
                 {/* Receiver */}
 
-                <div className="space-y-5 bg-orange-50/50 p-6 md:p-8 rounded-[2rem] border border-orange-100">
+                <div className="courier-contact-card min-w-0 space-y-4 bg-orange-50/50 p-4 sm:p-5 md:p-6 rounded-2xl border border-orange-100">
 
-                  <h4 className="text-lg font-black text-orange-900 flex items-center gap-2">
+                  <h4 className="text-base sm:text-lg font-black text-orange-900 flex items-center gap-2">
 
                     <MapPin size={18} />
 
@@ -1132,12 +1132,12 @@ const CourierServiceDetail = () => {
                     onChange={handleInputChange}
                     required
                     placeholder="Full Name"
-                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"
+                    className="courier-contact-input"
                   />
 
-                  <div className="flex items-center bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className="courier-phone-field">
 
-                    <span className="bg-slate-100 px-4 py-4 text-slate-500 font-bold border-r">
+                    <span className="courier-country-code">
                       +91
                     </span>
 
@@ -1148,7 +1148,7 @@ const CourierServiceDetail = () => {
                       type="tel"
                       maxLength="10"
                       placeholder="Mobile Number"
-                      className="w-full p-4 border-none font-bold outline-none"
+                      className="courier-phone-input"
                       onChange={(e) =>
                         handlePhoneInput(
                           e,
@@ -1171,7 +1171,7 @@ const CourierServiceDetail = () => {
                     required
                     maxLength="6"
                     placeholder="Delivery Pincode"
-                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"
+                    className="courier-contact-input"
                   />
 
                   {formData.dropCity && (
@@ -1183,7 +1183,7 @@ const CourierServiceDetail = () => {
                         value={formData.dropCity}
                         onChange={handleInputChange}
                         placeholder="City"
-                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs"
+                        className="courier-contact-input"
                       />
 
                       <input
@@ -1191,7 +1191,7 @@ const CourierServiceDetail = () => {
                         value={formData.dropState}
                         onChange={handleInputChange}
                         placeholder="State"
-                        className="w-full p-3 bg-white rounded-xl border-none font-bold outline-none shadow-sm text-xs"
+                        className="courier-contact-input"
                       />
 
                     </div>
@@ -1205,7 +1205,7 @@ const CourierServiceDetail = () => {
                     required
                     rows="3"
                     placeholder="Address"
-                    className="w-full p-4 bg-white rounded-xl border-none font-bold outline-none shadow-sm"
+                    className="courier-contact-input"
                   />
 
                 </div>

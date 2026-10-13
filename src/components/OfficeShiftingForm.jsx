@@ -156,6 +156,7 @@ function Section({ number, title, icon: Icon, children, open, onToggle }) {
       <button
         type="button"
         onClick={onToggle}
+        aria-expanded={open}
         className="w-full flex items-center justify-between p-[1rem] sm:p-[1.25rem] text-left hover:bg-slate-50 transition"
       >
         <div className="flex items-center gap-4">
