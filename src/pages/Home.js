@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
 // Images
 import HeroLogisticsImage from "../assets/global-logistics.png";
@@ -269,7 +270,7 @@ const Home = () => {
   // --------------------------------------------------
 
   return (
-    <div className="min-h-screen min-w-0 bg-slate-50 text-slate-900 font-sans">
+    <div className="home-page min-h-screen min-w-0 bg-slate-50 text-slate-900 font-sans">
 
       {/* =====================================================
           TOP TICKER
@@ -327,7 +328,7 @@ const Home = () => {
           HERO SECTION
       ====================================================== */}
 
-      <section className="relative min-h-[480px] md:min-h-[650px] flex items-center overflow-hidden">
+      <section className="home-hero relative min-h-[480px] md:min-h-[650px] flex items-center overflow-hidden">
 
         {/* Background */}
         <div className="absolute inset-0">
@@ -396,7 +397,7 @@ const Home = () => {
               </p>
 
               {/* AI INPUT */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-[24px] max-w-3xl shadow-2xl">
+              <div className="home-ai-input-panel bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-[24px] max-w-3xl shadow-2xl">
 
                 <div className="bg-white rounded-[18px] p-2 flex flex-col sm:flex-row gap-2">
 
@@ -451,7 +452,7 @@ const Home = () => {
             {/* RIGHT AI CARD */}
             <div className="lg:col-span-5 hidden md:block">
 
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-[32px] p-6 md:p-8 shadow-2xl">
+              <div className="home-ai-preview bg-white/10 backdrop-blur-xl border border-white/20 rounded-[32px] p-6 md:p-8 shadow-2xl">
 
                 <div className="flex items-center gap-4 mb-7">
 
@@ -616,13 +617,13 @@ const Home = () => {
 
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="home-quick-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
           {quickServices.map((service) => (
             <button
               key={service.title}
               onClick={() => navigate(service.path)}
-              className="group flex w-full items-center gap-4 rounded-[20px] border border-slate-100 bg-white p-4 text-left transition-all hover:border-orange-300 hover:shadow-xl sm:block sm:rounded-[24px] sm:p-6"
+              className="home-quick-card group flex w-full items-center gap-4 rounded-[20px] border border-slate-100 bg-white p-4 text-left transition-all hover:border-orange-300 hover:shadow-xl sm:block sm:rounded-[24px] sm:p-6"
             >
 
               <div className="flex shrink-0 items-center justify-between sm:mb-0">
@@ -723,7 +724,7 @@ const Home = () => {
 
             </div>
 
-            <div className="min-w-0 bg-white/10 border border-white/10 rounded-[32px] p-[1.25rem] md:p-7">
+            <div className="home-ai-demo min-w-0 bg-white/10 border border-white/10 rounded-[32px] p-[1.25rem] md:p-7">
 
               <div className="bg-white rounded-2xl p-[1.25rem]">
 
@@ -843,7 +844,7 @@ const Home = () => {
 
           </div>
 
-          <div className="bg-white rounded-[30px] shadow-xl border border-slate-100 p-5">
+          <div className="home-rate-panel bg-white rounded-[30px] shadow-xl border border-slate-100 p-5">
 
             <div className="bg-slate-50 rounded-2xl p-4">
 
@@ -938,7 +939,7 @@ const Home = () => {
         className="max-w-7xl mx-auto px-[1.25rem] md:px-8 py-8"
       >
 
-        <div className="bg-white w-full min-w-0 rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-xl border border-slate-100">
+        <div className="home-track-panel bg-white w-full min-w-0 rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-xl border border-slate-100">
 
           <div className="grid w-full min-w-0 grid-cols-1 lg:grid-cols-5 gap-10 items-center">
 
@@ -1110,7 +1111,7 @@ const Home = () => {
             <div
               key={service.id}
               onClick={() => navigate(service.path)}
-              className="bg-white rounded-[25px] p-6 border border-slate-100 hover:border-orange-300 hover:shadow-xl cursor-pointer group transition-all"
+              className="home-service-tile bg-white rounded-[25px] p-6 border border-slate-100 hover:border-orange-300 hover:shadow-xl cursor-pointer group transition-all"
             >
 
               <div className="flex items-start justify-between">
@@ -1158,7 +1159,7 @@ const Home = () => {
 
           <div className="grid lg:grid-cols-2 gap-8">
 
-            <div className="bg-[#002D5E] rounded-[32px] p-8 md:p-10">
+            <div className="home-business-card bg-[#002D5E] rounded-[32px] p-8 md:p-10">
 
               <Building2
                 size={36}
@@ -1185,7 +1186,7 @@ const Home = () => {
 
             </div>
 
-            <div className="bg-white rounded-[32px] p-8 md:p-10 border border-slate-200">
+            <div className="home-partner-card bg-white rounded-[32px] p-8 md:p-10 border border-slate-200">
 
               <MessageCircle
                 size={36}
@@ -1265,7 +1266,7 @@ const Home = () => {
 
             <div
               key={step.number}
-              className="bg-white rounded-[25px] p-7 border border-slate-100"
+              className="home-process-step bg-white rounded-[25px] p-7 border border-slate-100"
             >
 
               <div className="text-orange-500 font-black text-sm">
@@ -1355,7 +1356,7 @@ const Home = () => {
 
               <div
                 key={item.title}
-                className="p-6 rounded-2xl bg-slate-50 hover:bg-blue-50 transition-colors"
+                className="home-benefit-card p-6 rounded-2xl bg-slate-50 hover:bg-blue-50 transition-colors"
               >
 
                 <div className="w-12 h-12 rounded-xl bg-white text-[#002D5E] flex items-center justify-center shadow-sm">
@@ -1386,7 +1387,7 @@ const Home = () => {
 
       <section className="max-w-7xl mx-auto px-[1.25rem] md:px-8 py-16">
 
-        <div className="bg-white rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-sm border border-slate-100">
+        <div className="home-feedback-panel bg-white rounded-[24px] md:rounded-[35px] p-5 md:p-12 shadow-sm border border-slate-100">
 
           <div className="text-center mb-8">
 
@@ -1415,7 +1416,7 @@ const Home = () => {
 
       <section className="px-[1.25rem] md:px-8 pb-16">
 
-        <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[35px]">
+        <div className="home-final-cta max-w-7xl mx-auto relative overflow-hidden rounded-[35px]">
 
           <img
             src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=1600"

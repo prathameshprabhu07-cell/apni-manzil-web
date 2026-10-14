@@ -1,0 +1,93 @@
+.home-page {
+  background: #f5f8fc;
+}
+
+.home-hero {
+  isolation: isolate;
+  background: #001d3d;
+}
+
+.home-hero h1 {
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgb(0 15 34 / 22%);
+}
+
+.home-ai-input-panel,
+.home-ai-preview,
+.home-ai-demo {
+  box-shadow: 0 18px 48px rgb(0 18 45 / 18%);
+}
+
+.home-quick-card,
+.home-service-tile,
+.home-process-step,
+.home-benefit-card,
+.home-rate-panel,
+.home-track-panel,
+.home-feedback-panel,
+.home-business-card,
+.home-partner-card {
+  box-shadow: 0 8px 24px rgb(15 35 60 / 5%);
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+
+.home-quick-card:hover,
+.home-service-tile:hover,
+.home-process-step:hover,
+.home-benefit-card:hover,
+.home-partner-card:hover {
+  box-shadow: 0 16px 34px rgb(15 35 60 / 11%);
+  transform: translateY(-2px);
+}
+
+.home-rate-panel,
+.home-track-panel,
+.home-feedback-panel,
+.home-business-card,
+.home-partner-card {
+  border-radius: 1.5rem;
+}
+
+.home-service-tile {
+  display: flex;
+  min-height: 225px;
+  flex-direction: column;
+}
+
+.home-service-tile > p:last-child {
+  margin-top: auto;
+}
+
+.home-final-cta {
+  box-shadow: 0 24px 60px rgb(0 18 45 / 18%);
+}
+
+@media (max-width: 639px) {
+  .home-hero h1 {
+    text-wrap: initial;
+  }
+
+  .home-service-tile {
+    min-height: 205px;
+    padding: 1.125rem;
+  }
+
+  .home-business-card,
+  .home-partner-card {
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page *,
+  .home-page *::before,
+  .home-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
