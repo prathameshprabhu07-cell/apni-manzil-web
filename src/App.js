@@ -21,6 +21,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 // ==========================================
 import Home from './pages/Home';
 import About from './pages/About';
+import ContactUs from './pages/ContactUs';
 import ImportExportDetail from './pages/ImportExportDetail';
 import CourierServiceDetail from './pages/CourierServiceDetail';
 import BookingPage from './pages/BookingPage';
@@ -256,6 +257,12 @@ function App() {
             element={<About />}
           />
 
+          {/* CONTACT US PAGE */}
+          <Route
+            path="/contact-us"
+            element={<ContactUs />}
+          />
+
           <Route
             path="/help"
             element={<HelpCenter />}
@@ -473,7 +480,7 @@ function App() {
           />
 
           {/* ==========================================
-              🤖 APNI MANZIL AI
+              APNI MANZIL AI
           ========================================== */}
 
           <Route
@@ -620,7 +627,7 @@ function App() {
           />
 
           {/* ==========================================
-              🔐 PRIVATE ADMIN DASHBOARD
+              PRIVATE ADMIN DASHBOARD
           ========================================== */}
 
           <Route

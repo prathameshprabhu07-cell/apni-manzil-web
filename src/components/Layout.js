@@ -28,6 +28,10 @@ import {
   Sparkles,
   Building2,
   CircleUserRound,
+  Instagram,
+  Facebook,
+  Linkedin,
+  Twitter,
 } from 'lucide-react';
 
 const Layout = ({ children, user }) => {
@@ -133,7 +137,7 @@ const Layout = ({ children, user }) => {
 
   return (
     <div className="flex min-h-screen min-w-0 flex-col bg-white text-slate-800">
-      {/* Top information bar */}
+      {/* Top Information Bar */}
       <div className="hidden bg-[#002D5E] text-white lg:block">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm">
           <div className="flex flex-wrap items-center gap-5">
@@ -204,7 +208,7 @@ const Layout = ({ children, user }) => {
         </div>
       </div>
 
-      {/* Main navigation */}
+      {/* Main Navigation */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
         <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-3 px-4 py-3">
           {/* Logo */}
@@ -234,7 +238,7 @@ const Layout = ({ children, user }) => {
             </div>
           </Link>
 
-          {/* Desktop navigation */}
+          {/* Desktop Navigation */}
           <nav className="hidden items-center gap-5 lg:flex">
             <Link
               to="/"
@@ -243,7 +247,7 @@ const Layout = ({ children, user }) => {
               Home
             </Link>
 
-            {/* Services dropdown */}
+            {/* Services Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => setIsServiceOpen(true)}
@@ -256,9 +260,12 @@ const Layout = ({ children, user }) => {
                 className="inline-flex items-center gap-1 whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
               >
                 Services
+
                 <ChevronDown
                   size={16}
-                  className={`transition-transform ${isServiceOpen ? 'rotate-180' : ''}`}
+                  className={`transition-transform ${
+                    isServiceOpen ? 'rotate-180' : ''
+                  }`}
                 />
               </button>
 
@@ -307,10 +314,9 @@ const Layout = ({ children, user }) => {
             >
               About Us
             </Link>
-
           </nav>
 
-          {/* Desktop action buttons */}
+          {/* Desktop Action Buttons */}
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
             {user ? (
               <>
@@ -353,7 +359,7 @@ const Layout = ({ children, user }) => {
             )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen((previous) => !previous)}
@@ -365,7 +371,7 @@ const Layout = ({ children, user }) => {
           </button>
         </div>
 
-        {/* Mobile navigation */}
+        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="max-h-[min(70dvh,calc(100dvh-72px))] overflow-y-auto overscroll-contain border-t border-slate-200 bg-white shadow-lg lg:hidden">
             <nav className="mx-auto max-w-7xl px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
@@ -377,7 +383,7 @@ const Layout = ({ children, user }) => {
                 Home
               </Link>
 
-              {/* Mobile services */}
+              {/* Mobile Services */}
               <div>
                 <button
                   type="button"
@@ -391,7 +397,9 @@ const Layout = ({ children, user }) => {
 
                   <ChevronDown
                     size={18}
-                    className={`transition-transform ${isMobileServiceOpen ? 'rotate-180' : ''}`}
+                    className={`transition-transform ${
+                      isMobileServiceOpen ? 'rotate-180' : ''
+                    }`}
                   />
                 </button>
 
@@ -437,6 +445,14 @@ const Layout = ({ children, user }) => {
               </Link>
 
               <Link
+                to="/contact-us"
+                onClick={closeMobileMenu}
+                className="flex items-center rounded-lg px-3 py-3 font-semibold text-slate-700 transition hover:bg-orange-50 hover:text-orange-600"
+              >
+                Contact Us
+              </Link>
+
+              <Link
                 to="/track"
                 onClick={closeMobileMenu}
                 className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-[#002D5E] px-4 py-3 font-bold text-white transition hover:bg-blue-900"
@@ -465,9 +481,7 @@ const Layout = ({ children, user }) => {
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-xs text-slate-500">
-                        Logged in as
-                      </p>
+                      <p className="text-xs text-slate-500">Logged in as</p>
 
                       <p className="truncate font-semibold text-[#002D5E]">
                         {user.displayName || user.email || 'User'}
@@ -520,7 +534,7 @@ const Layout = ({ children, user }) => {
         )}
       </header>
 
-      {/* Main page content */}
+      {/* Main Page Content */}
       <main className="min-w-0 flex-1">
         {React.isValidElement(children)
           ? React.cloneElement(children, {
@@ -533,13 +547,10 @@ const Layout = ({ children, user }) => {
       {/* Footer */}
       <footer className="mt-auto bg-[#002D5E] text-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
-            {/* Company information */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
+            {/* Company Information */}
             <div>
-              <Link
-                to="/"
-                className="mb-4 inline-flex items-center gap-3"
-              >
+              <Link to="/" className="mb-4 inline-flex items-center gap-3">
                 <img
                   src="/favicon.png"
                   alt="Apni Manzil"
@@ -554,7 +565,7 @@ const Layout = ({ children, user }) => {
                 </span>
               </Link>
 
-              <p className="mb-4 text-sm leading-7 text-blue-100">
+              <p className="mb-5 text-sm leading-7 text-blue-100">
                 Your trusted logistics aggregation platform for courier,
                 transport, packers and movers, and logistics solutions across
                 India.
@@ -581,9 +592,9 @@ const Layout = ({ children, user }) => {
               </div>
             </div>
 
-            {/* Quick links */}
+            {/* Company Links */}
             <div>
-              <h3 className="mb-4 text-lg font-bold">Quick Links</h3>
+              <h3 className="mb-4 text-lg font-bold">Company</h3>
 
               <ul className="space-y-3 text-sm text-blue-100">
                 <li>
@@ -601,6 +612,24 @@ const Layout = ({ children, user }) => {
                     className="transition hover:text-orange-300"
                   >
                     About Us
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/contact-us"
+                    className="transition hover:text-orange-300"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/careers"
+                    className="transition hover:text-orange-300"
+                  >
+                    Careers
                   </Link>
                 </li>
 
@@ -642,87 +671,97 @@ const Layout = ({ children, user }) => {
               </ul>
             </div>
 
-            {/* Contact information */}
+            {/* Social Media */}
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Follow Us</h3>
+
+              <p className="mb-4 text-sm leading-6 text-blue-100">
+                Stay connected with Apni Manzil for updates, news and logistics
+                solutions.
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="https://www.instagram.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram"
+                  title="Instagram"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-orange-500"
+                >
+                  <Instagram size={19} />
+                </a>
+
+                <a
+                  href="https://www.facebook.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Facebook"
+                  title="Facebook"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-orange-500"
+                >
+                  <Facebook size={19} />
+                </a>
+
+                <a
+                  href="https://www.linkedin.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                  title="LinkedIn"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-orange-500"
+                >
+                  <Linkedin size={19} />
+                </a>
+
+                <a
+                  href="https://x.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="X"
+                  title="X"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-orange-500"
+                >
+                  <Twitter size={19} />
+                </a>
+              </div>
+
+              <p className="mt-4 text-xs text-blue-200">
+                Connect with us online.
+              </p>
+            </div>
+
+            {/* Contact Us - Rightmost Column */}
             <div>
               <h3 className="mb-4 text-lg font-bold">Contact Us</h3>
 
-              <ul className="space-y-4 text-sm text-blue-100">
-                <li className="flex items-start gap-3">
-                  <Phone
-                    size={18}
-                    className="mt-0.5 shrink-0 text-orange-400"
-                  />
+              <p className="mb-4 text-sm leading-6 text-blue-100">
+                Have questions about our services or need help with a shipment?
+                We're here to help!
+              </p>
 
-                  <div>
-                    <p className="font-semibold text-white">Phone / WhatsApp</p>
-
-                    <a
-                      href="https://wa.me/917218852356"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="break-words transition hover:text-orange-300"
-                    >
-                      +91 72188 52356
-                    </a>
-                  </div>
-                </li>
-
-                <li className="flex items-start gap-3">
-                  <Mail
-                    size={18}
-                    className="mt-0.5 shrink-0 text-orange-400"
-                  />
-
-                  <div className="min-w-0">
-                    <p className="font-semibold text-white">Email</p>
-
-                    <a
-                      href="mailto:help@apnimanzil.co.in"
-                      className="break-all transition hover:text-orange-300"
-                    >
-                      help@apnimanzil.co.in
-                    </a>
-                  </div>
-                </li>
-
-                <li className="flex items-start gap-3">
-                  <MapPin
-                    size={18}
-                    className="mt-0.5 shrink-0 text-orange-400"
-                  />
-
-                  <div>
-                    <p className="font-semibold text-white">Location</p>
-                    <p>Kudal, Sindhudurg, Maharashtra, India</p>
-                  </div>
-                </li>
-
-                <li className="flex items-start gap-3">
-                  <Headphones
-                    size={18}
-                    className="mt-0.5 shrink-0 text-orange-400"
-                  />
-
-                  <div>
-                    <p className="font-semibold text-white">Support</p>
-                    <p>Customer support available 24/7</p>
-                  </div>
-                </li>
-              </ul>
+              <Link
+                to="/contact-us"
+                className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-600"
+              >
+                Contact Us
+                <ArrowRight size={17} />
+              </Link>
             </div>
           </div>
 
-          {/* Footer bottom */}
+          {/* Footer Bottom */}
           <div className="mt-10 flex flex-col gap-4 border-t border-white/20 pt-6 text-center text-xs text-blue-100 sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <p>
               © {new Date().getFullYear()} Apni Manzil. All rights reserved.
             </p>
 
+            <p>Global Logistics Network</p>
           </div>
         </div>
       </footer>
 
-      {/* Dashboard selection modal */}
+      {/* Dashboard Selection Modal */}
       {showDashboardModal && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/60 p-4"
@@ -763,7 +802,7 @@ const Layout = ({ children, user }) => {
             </div>
 
             <div className="space-y-4 p-5 sm:p-6">
-              {/* Customer dashboard */}
+              {/* Customer Dashboard */}
               <div>
                 <h3 className="mb-3 flex items-center gap-2 font-bold text-[#002D5E]">
                   <Users size={19} />
@@ -798,7 +837,9 @@ const Layout = ({ children, user }) => {
                     </div>
 
                     <div>
-                      <p className="font-bold text-slate-800">Business / MSME</p>
+                      <p className="font-bold text-slate-800">
+                        Business / MSME
+                      </p>
                       <p className="mt-1 text-xs text-slate-500">
                         Business shipments
                       </p>
@@ -809,7 +850,7 @@ const Layout = ({ children, user }) => {
 
               <div className="border-t border-slate-200" />
 
-              {/* Partner dashboard */}
+              {/* Partner Dashboard */}
               <div>
                 <h3 className="mb-3 flex items-center gap-2 font-bold text-[#002D5E]">
                   <Truck size={19} />
@@ -844,7 +885,9 @@ const Layout = ({ children, user }) => {
                     </div>
 
                     <div>
-                      <p className="font-bold text-slate-800">Service Partner</p>
+                      <p className="font-bold text-slate-800">
+                        Service Partner
+                      </p>
                       <p className="mt-1 text-xs text-slate-500">
                         Manage partner leads
                       </p>
