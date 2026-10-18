@@ -1,2185 +1,480 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
   Plane,
   MapPin,
   Package,
-  User,
-  FileText,
-  ShieldCheck,
-  AlertTriangle,
-  CalendarDays,
-  Upload,
-  Calculator,
-  ArrowRight,
+  Search,
   CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  LoaderCircle,
 } from "lucide-react";
 
-import airFreightBanner from "../assets/air-freight-banner.png";
-
-const AIR_CARGO_WEBHOOK =
+const WEBHOOK_URL =
   "https://sega-cos-daisy-signing.trycloudflare.com/webhook/Air-Cargo";
 
-const emptyPackage = {
-  pieces: 1,
-  packageType: "Carton / Box",
-  length: "",
-  width: "",
-  height: "",
-  dimensionUnit: "cm",
-  weight: "",
-  weightUnit: "kg",
-};
-
 const initialForm = {
-  // Shipment
-  shipmentType: "Export",
-  shipmentMode: "International",
-  serviceType: "Door to Door",
-  servicePriority: "Standard",
-
-  // Origin
   originCountry: "India",
-  originState: "",
   originCity: "",
-  originPincode: "",
-  originAirport: "",
-  pickupAddress: "",
-
-  // Destination
   destinationCountry: "",
-  destinationState: "",
   destinationCity: "",
-  destinationPincode: "",
-  destinationAirport: "",
-  deliveryAddress: "",
-
-  // Shipper
-  shipperName: "",
-  shipperCompany: "",
-  shipperMobile: "",
-  shipperEmail: "",
-  shipperAddress: "",
-  shipperGSTIN: "",
-  shipperIEC: "",
-  shipperTaxId: "",
-
-  // Consignee
-  consigneeName: "",
-  consigneeCompany: "",
-  consigneeMobile: "",
-  consigneeEmail: "",
-  consigneeAddress: "",
-  consigneeTaxId: "",
-
-  // Cargo
-  cargoDescription: "",
-  hsCode: "",
-  commodityType: "",
-  countryOfOrigin: "",
-  quantity: "",
-  unitOfQuantity: "Pieces",
-
-  // Commercial
-  invoiceValue: "",
-  currency: "INR",
-  shipmentPurpose: "Commercial",
-  incoterm: "",
-  declaredValueForCustoms: "",
-  declaredValueForCarriage: "",
-
-  // Special Cargo
-  dangerousGoods: "No",
-  batteryIncluded: "No",
-  perishable: "No",
-  fragile: "No",
-  liveAnimal: "No",
-  temperatureControlled: "No",
-  oversizedCargo: "No",
-
-  // DG
-  unNumber: "",
-  dgClass: "",
-  packingGroup: "",
-  properShippingName: "",
-
-  // Schedule
-  readyDate: "",
-  preferredDeliveryDate: "",
-
-  // Insurance
-  insuranceRequired: "No",
-  insuranceValue: "",
-
-  // Documents
-  commercialInvoice: null,
-  packingList: null,
-  shippingBill: null,
-  certificateOfOrigin: null,
-  iecDocument: null,
-  productCertificate: null,
-  dgDeclaration: null,
-  otherDocuments: null,
-
-  // Customer
-  customerName: "",
-  customerCompany: "",
-  customerMobile: "",
-  customerEmail: "",
-
-  // Other
-  specialInstructions: "",
-
-  // Packages
-  packages: [{ ...emptyPackage }],
+  cargoType: "",
+  weight: "",
+  shipmentDate: "",
 };
 
-export default function AirFreight() {
+export default function AirCargoForm() {
   const [form, setForm] = useState(initialForm);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState("");
+  const [error, setError] = useState("");
 
-  const updateField = (name, value) => {
-    setForm((prev) => ({
-      ...prev,
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setForm((previous) => ({
+      ...previous,
       [name]: value,
     }));
+
+    setError("");
+    setResult("");
   };
 
-  const updatePackage = (index, field, value) => {
-    setForm((prev) => {
-      const packages = [...prev.packages];
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-      packages[index] = {
-        ...packages[index],
-        [field]: value,
-      };
+    setError("");
+    setResult("");
 
-      return {
-        ...prev,
-        packages,
-      };
-    });
-  };
+    if (
+      !form.originCity.trim() ||
+      !form.destinationCountry.trim() ||
+      !form.destinationCity.trim() ||
+      !form.cargoType ||
+      !form.weight ||
+      Number(form.weight) <= 0 ||
+      !form.shipmentDate
+    ) {
+      setError("Please fill in all required fields correctly.");
+      return;
+    }
 
-  const addPackage = () => {
-    setForm((prev) => ({
-      ...prev,
-      packages: [
-        ...prev.packages,
-        {
-          ...emptyPackage,
-        },
-      ],
-    }));
-  };
-
-  const removePackage = (index) => {
-    if (form.packages.length === 1) return;
-
-    setForm((prev) => ({
-      ...prev,
-      packages: prev.packages.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleFile = (name, file) => {
-    setForm((prev) => ({
-      ...prev,
-      [name]: file,
-    }));
-  };
-
-  /*
-   * Air freight volumetric weight.
-   * Final provider/API chargeable weight may differ.
-   */
-  const volumetricWeight = useMemo(() => {
-    let total = 0;
-
-    form.packages.forEach((pkg) => {
-      const l = Number(pkg.length);
-      const w = Number(pkg.width);
-      const h = Number(pkg.height);
-      const pieces = Number(pkg.pieces) || 1;
-
-      if (l > 0 && w > 0 && h > 0) {
-        total += (l * w * h * pieces) / 6000;
-      }
-    });
-
-    return total;
-  }, [form.packages]);
-
-  const actualWeight = useMemo(() => {
-    return form.packages.reduce((total, pkg) => {
-      const weight = Number(pkg.weight) || 0;
-      const pieces = Number(pkg.pieces) || 1;
-
-      return total + weight * pieces;
-    }, 0);
-  }, [form.packages]);
-
-  const chargeableWeight = Math.max(
-    actualWeight,
-    volumetricWeight
-  );
-
-  const totalPieces = form.packages.reduce(
-    (total, pkg) =>
-      total + (Number(pkg.pieces) || 0),
-    0
-  );
-
-  const totalVolumeM3 = useMemo(() => {
-    let volume = 0;
-
-    form.packages.forEach((pkg) => {
-      const l = Number(pkg.length);
-      const w = Number(pkg.width);
-      const h = Number(pkg.height);
-      const pieces = Number(pkg.pieces) || 1;
-
-      if (l > 0 && w > 0 && h > 0) {
-        volume +=
-          (l * w * h * pieces) / 1000000;
-      }
-    });
-
-    return volume;
-  }, [form.packages]);
-
-  /*
-   * ================================
-   * AIR CARGO N8N PRODUCTION WEBHOOK
-   * ================================
-   */
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setSubmitted(false);
-    setSubmitting(true);
+    setLoading(true);
 
     const payload = {
-      ...form,
-
-      calculated: {
-        totalPieces,
-        actualWeightKg: actualWeight,
-        volumetricWeightKg: volumetricWeight,
-        chargeableWeightKg: chargeableWeight,
-        totalVolumeM3,
-      },
-
-      source: "Apni Manzil Air Cargo",
-      requestType: "AIR_FREIGHT_RATE_REQUEST",
+      requestType: "availability_only",
+      serviceType: "air_cargo",
+      platform: "Apni Manzil",
+      originCountry: form.originCountry.trim(),
+      originCity: form.originCity.trim(),
+      destinationCountry: form.destinationCountry.trim(),
+      destinationCity: form.destinationCity.trim(),
+      cargoType: form.cargoType,
+      weightKg: Number(form.weight),
+      shipmentDate: form.shipmentDate,
       submittedAt: new Date().toISOString(),
     };
 
-    console.log(
-      "AIR FREIGHT REQUEST:",
-      payload
-    );
-
     try {
-      /*
-       * Send Air Cargo request to n8n
-       * Production Webhook
-       */
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-      const response = await fetch(
-        AIR_CARGO_WEBHOOK,
-        {
-          method: "POST",
+      const responseText = await response.text();
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+      let data = {};
 
-          body: JSON.stringify(payload),
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          data = { message: responseText };
         }
-      );
+      }
 
       if (!response.ok) {
         throw new Error(
-          `Webhook Error: ${response.status}`
+          data.message ||
+            data.error ||
+            "Unable to submit your enquiry. Please try again."
         );
       }
 
-      const result =
-        await response
-          .json()
-          .catch(() => ({}));
+      const responseData = Array.isArray(data)
+        ? data[0] || {}
+        : data;
 
-      console.log(
-        "AIR CARGO N8N RESPONSE:",
-        result
+      setResult(
+        responseData.message ||
+          responseData.response ||
+          "Your air cargo enquiry has been submitted successfully. Our team will check the route availability."
       );
 
-      setSubmitted(true);
-
-    } catch (error) {
-      console.error(
-        "AIR CARGO N8N ERROR:",
-        error
-      );
-
-      alert(
-        "Air Freight request submit झाला नाही. कृपया पुन्हा try करा."
+      setForm(initialForm);
+    } catch (submitError) {
+      setError(
+        submitError.message ||
+          "Connection failed. Please try again later."
       );
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   const inputClass =
-    "form-control rounded-3 py-2";
+    "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100";
 
-  const selectClass =
-    "form-select rounded-3 py-2";
-
-  const sectionTitle =
-    "fw-bold d-flex align-items-center gap-2 mb-3";
+  const labelClass =
+    "mb-2 block text-sm font-semibold text-slate-700";
 
   return (
-    <div className="container-fluid px-3 px-md-5 py-4">
-
-      {/* ================= HERO ================= */}
-
-      <div
-        className="position-relative overflow-hidden rounded-4 mb-4"
-        style={{
-          minHeight: "260px",
-          backgroundImage: `url(${airFreightBanner})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-
-        <div
-          className="position-absolute top-0 start-0 w-100 h-100"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(0,45,94,0.92), rgba(0,45,94,0.55), rgba(0,0,0,0.15))",
-          }}
-        />
-
-        <div className="position-relative p-4 p-md-5 text-white">
-
-          <div className="d-flex align-items-center gap-2 mb-3">
-            <Plane size={32} />
-
-            <span className="fw-semibold">
-              APNI MANZIL AIR FREIGHT
-            </span>
-          </div>
-
-          <h1 className="fw-bold display-6 mb-2">
-            Global Air Cargo Shipping
-          </h1>
-
-          <p className="mb-0 fs-5">
-            Get international air freight quotes,
-            compare logistics providers and book
-            your shipment.
-          </p>
-
-        </div>
-      </div>
-
-      {/* ================= FORM ================= */}
-
-      <form onSubmit={handleSubmit}>
-
-        {/* ================= 1 SHIPMENT ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <Plane size={22} />
-              1. Shipment Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-3">
-                <label className="form-label fw-semibold">
-                  Shipment Type *
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.shipmentType}
-                  onChange={(e) =>
-                    updateField(
-                      "shipmentType",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>Export</option>
-                  <option>Import</option>
-                </select>
-              </div>
-
-              <div className="col-md-3">
-                <label className="form-label fw-semibold">
-                  Shipment Mode *
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.shipmentMode}
-                  onChange={(e) =>
-                    updateField(
-                      "shipmentMode",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>International</option>
-                  <option>Domestic</option>
-                </select>
-              </div>
-
-              <div className="col-md-3">
-                <label className="form-label fw-semibold">
-                  Service Type *
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.serviceType}
-                  onChange={(e) =>
-                    updateField(
-                      "serviceType",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>Door to Door</option>
-                  <option>Door to Airport</option>
-                  <option>Airport to Door</option>
-                  <option>Airport to Airport</option>
-                </select>
-              </div>
-
-              <div className="col-md-3">
-                <label className="form-label fw-semibold">
-                  Priority
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.servicePriority}
-                  onChange={(e) =>
-                    updateField(
-                      "servicePriority",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>Standard</option>
-                  <option>Express</option>
-                  <option>Urgent</option>
-                </select>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 2 ORIGIN ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <MapPin size={22} />
-              2. Pickup / Origin Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Country *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.originCountry}
-                  onChange={(e) =>
-                    updateField(
-                      "originCountry",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  State
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.originState}
-                  onChange={(e) =>
-                    updateField(
-                      "originState",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  City *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.originCity}
-                  onChange={(e) =>
-                    updateField(
-                      "originCity",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Pincode
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.originPincode}
-                  onChange={(e) =>
-                    updateField(
-                      "originPincode",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Origin Airport / IATA Code
-                </label>
-
-                <input
-                  className={inputClass}
-                  placeholder="e.g. BOM"
-                  value={form.originAirport}
-                  onChange={(e) =>
-                    updateField(
-                      "originAirport",
-                      e.target.value.toUpperCase()
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-12">
-                <label className="form-label fw-semibold">
-                  Pickup Address
-                </label>
-
-                <textarea
-                  className={inputClass}
-                  rows="2"
-                  value={form.pickupAddress}
-                  onChange={(e) =>
-                    updateField(
-                      "pickupAddress",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 3 DESTINATION ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <MapPin size={22} />
-              3. Destination Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Country *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.destinationCountry}
-                  onChange={(e) =>
-                    updateField(
-                      "destinationCountry",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  State / Province
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.destinationState}
-                  onChange={(e) =>
-                    updateField(
-                      "destinationState",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  City *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.destinationCity}
-                  onChange={(e) =>
-                    updateField(
-                      "destinationCity",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Pincode / Postal Code
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.destinationPincode}
-                  onChange={(e) =>
-                    updateField(
-                      "destinationPincode",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Destination Airport / IATA Code
-                </label>
-
-                <input
-                  className={inputClass}
-                  placeholder="e.g. DXB"
-                  value={form.destinationAirport}
-                  onChange={(e) =>
-                    updateField(
-                      "destinationAirport",
-                      e.target.value.toUpperCase()
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-12">
-                <label className="form-label fw-semibold">
-                  Delivery Address
-                </label>
-
-                <textarea
-                  className={inputClass}
-                  rows="2"
-                  value={form.deliveryAddress}
-                  onChange={(e) =>
-                    updateField(
-                      "deliveryAddress",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 4 SHIPPER ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <User size={22} />
-              4. Shipper / Sender Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Shipper Name *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.shipperName}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperName",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Company Name
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.shipperCompany}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperCompany",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Mobile *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.shipperMobile}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperMobile",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Email
-                </label>
-
-                <input
-                  type="email"
-                  className={inputClass}
-                  value={form.shipperEmail}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperEmail",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  GSTIN
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.shipperGSTIN}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperGSTIN",
-                      e.target.value.toUpperCase()
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  IEC Number
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.shipperIEC}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperIEC",
-                      e.target.value.toUpperCase()
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Tax ID / Registration Number
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.shipperTaxId}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperTaxId",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-12">
-                <label className="form-label fw-semibold">
-                  Shipper Address
-                </label>
-
-                <textarea
-                  className={inputClass}
-                  rows="2"
-                  value={form.shipperAddress}
-                  onChange={(e) =>
-                    updateField(
-                      "shipperAddress",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 5 CONSIGNEE ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <User size={22} />
-              5. Consignee / Receiver Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Consignee Name *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.consigneeName}
-                  onChange={(e) =>
-                    updateField(
-                      "consigneeName",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Company Name
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.consigneeCompany}
-                  onChange={(e) =>
-                    updateField(
-                      "consigneeCompany",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Mobile
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.consigneeMobile}
-                  onChange={(e) =>
-                    updateField(
-                      "consigneeMobile",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Email
-                </label>
-
-                <input
-                  type="email"
-                  className={inputClass}
-                  value={form.consigneeEmail}
-                  onChange={(e) =>
-                    updateField(
-                      "consigneeEmail",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Tax ID
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.consigneeTaxId}
-                  onChange={(e) =>
-                    updateField(
-                      "consigneeTaxId",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-12">
-                <label className="form-label fw-semibold">
-                  Consignee Address
-                </label>
-
-                <textarea
-                  className={inputClass}
-                  rows="2"
-                  value={form.consigneeAddress}
-                  onChange={(e) =>
-                    updateField(
-                      "consigneeAddress",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 6 CARGO ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <Package size={22} />
-              6. Cargo / Commodity Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-12">
-                <label className="form-label fw-semibold">
-                  Product / Cargo Description *
-                </label>
-
-                <textarea
-                  className={inputClass}
-                  rows="3"
-                  placeholder="Clearly describe the goods being shipped"
-                  value={form.cargoDescription}
-                  onChange={(e) =>
-                    updateField(
-                      "cargoDescription",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  HS / HSN Code
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.hsCode}
-                  onChange={(e) =>
-                    updateField(
-                      "hsCode",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Commodity Type
-                </label>
-
-                <input
-                  className={inputClass}
-                  placeholder="e.g. Textile, Machinery"
-                  value={form.commodityType}
-                  onChange={(e) =>
-                    updateField(
-                      "commodityType",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Country of Origin
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.countryOfOrigin}
-                  onChange={(e) =>
-                    updateField(
-                      "countryOfOrigin",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Total Quantity
-                </label>
-
-                <input
-                  type="number"
-                  className={inputClass}
-                  value={form.quantity}
-                  onChange={(e) =>
-                    updateField(
-                      "quantity",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Quantity Unit
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.unitOfQuantity}
-                  onChange={(e) =>
-                    updateField(
-                      "unitOfQuantity",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>Pieces</option>
-                  <option>Units</option>
-                  <option>Cartons</option>
-                  <option>Boxes</option>
-                  <option>Kg</option>
-                  <option>Litres</option>
-                  <option>Other</option>
-                </select>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 7 PACKAGES ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <div className="d-flex justify-content-between align-items-center mb-3">
-
-              <h4 className={sectionTitle + " mb-0"}>
-                <Calculator size={22} />
-                7. Package & Weight Details
-              </h4>
-
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={addPackage}
-              >
-                + Add Package
-              </button>
-
+    <main className="min-h-screen bg-slate-50 py-8 sm:py-12">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+
+        {/* AIR CARGO HERO IMAGE */}
+        <section className="relative mb-8 min-h-[320px] overflow-hidden rounded-3xl bg-[#002D5E] shadow-xl sm:min-h-[400px]">
+
+          <img
+            src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=85"
+            alt="Airplane flying above the clouds for international air cargo transportation"
+            className="absolute inset-0 h-full w-full object-cover"
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
+
+          <div className="absolute inset-0 bg-gradient-to-r from-[#002D5E]/95 via-[#002D5E]/75 to-[#002D5E]/20" />
+
+          <div className="relative z-10 flex min-h-[320px] flex-col justify-center px-6 py-10 sm:min-h-[400px] sm:px-12 lg:px-16">
+
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-lg">
+              <Plane size={30} />
             </div>
 
-            {form.packages.map(
-              (pkg, index) => (
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-orange-300 sm:text-sm">
+              APNI MANZIL LOGISTICS
+            </p>
 
-                <div
-                  key={index}
-                  className="border rounded-4 p-3 mb-3"
-                >
+            <h1 className="max-w-2xl text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-5xl">
+              Air Cargo
+              <span className="block text-orange-400">
+                Without Boundaries
+              </span>
+            </h1>
 
-                  <div className="d-flex justify-content-between align-items-center mb-3">
+            <p className="mt-5 max-w-xl text-sm leading-7 text-white/90 sm:text-base">
+              Connect your business with international air cargo
+              opportunities. Share your shipment details and enquire
+              about available routes through Apni Manzil.
+            </p>
 
-                    <h6 className="fw-bold mb-0">
-                      Package {index + 1}
-                    </h6>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <span className="rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm sm:text-sm">
+                ✈ International Cargo
+              </span>
 
-                    {form.packages.length > 1 && (
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() =>
-                          removePackage(index)
-                        }
-                      >
-                        Remove
-                      </button>
-                    )}
+              <span className="rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm sm:text-sm">
+                🌍 Global Routes
+              </span>
 
-                  </div>
+              <span className="rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm sm:text-sm">
+                📦 Business Shipments
+              </span>
+            </div>
+          </div>
+        </section>
 
-                  <div className="row g-3">
+        {/* ENQUIRY FORM */}
+        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
 
-                    <div className="col-md-2">
-                      <label className="form-label">
-                        Pieces
-                      </label>
+          <div className="border-b border-slate-200 px-6 py-6 sm:px-10">
+            <h2 className="text-xl font-bold text-[#002D5E] sm:text-2xl">
+              Air Cargo Availability Enquiry
+            </h2>
 
-                      <input
-                        type="number"
-                        min="1"
-                        className={inputClass}
-                        value={pkg.pieces}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "pieces",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Enter your origin, destination and shipment details
+              to submit an air cargo availability enquiry.
+            </p>
+          </div>
 
-                    <div className="col-md-2">
-                      <label className="form-label">
-                        Package Type
-                      </label>
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-8 p-6 sm:p-10"
+          >
 
-                      <select
-                        className={selectClass}
-                        value={pkg.packageType}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "packageType",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option>Carton / Box</option>
-                        <option>Pallet</option>
-                        <option>Crate</option>
-                        <option>Bag</option>
-                        <option>Drum</option>
-                        <option>Envelope</option>
-                        <option>Other</option>
-                      </select>
-                    </div>
+            {/* ROUTE DETAILS */}
+            <div>
+              <h3 className="mb-5 flex items-center gap-2 text-lg font-bold text-slate-900">
+                <MapPin size={21} className="text-orange-500" />
+                Shipment Route
+              </h3>
 
-                    <div className="col-md-2">
-                      <label className="form-label">
-                        Length
-                      </label>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                      <input
-                        type="number"
-                        step="0.01"
-                        className={inputClass}
-                        value={pkg.length}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "length",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
+                <div>
+                  <label
+                    className={labelClass}
+                    htmlFor="originCountry"
+                  >
+                    Origin Country *
+                  </label>
 
-                    <div className="col-md-2">
-                      <label className="form-label">
-                        Width
-                      </label>
-
-                      <input
-                        type="number"
-                        step="0.01"
-                        className={inputClass}
-                        value={pkg.width}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "width",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="col-md-2">
-                      <label className="form-label">
-                        Height
-                      </label>
-
-                      <input
-                        type="number"
-                        step="0.01"
-                        className={inputClass}
-                        value={pkg.height}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "height",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="col-md-2">
-                      <label className="form-label">
-                        Dimension Unit
-                      </label>
-
-                      <select
-                        className={selectClass}
-                        value={pkg.dimensionUnit}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "dimensionUnit",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option>cm</option>
-                        <option>inch</option>
-                        <option>meter</option>
-                      </select>
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">
-                        Weight per Piece
-                      </label>
-
-                      <input
-                        type="number"
-                        step="0.01"
-                        className={inputClass}
-                        value={pkg.weight}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "weight",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">
-                        Weight Unit
-                      </label>
-
-                      <select
-                        className={selectClass}
-                        value={pkg.weightUnit}
-                        onChange={(e) =>
-                          updatePackage(
-                            index,
-                            "weightUnit",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option>kg</option>
-                        <option>lb</option>
-                      </select>
-                    </div>
-
-                  </div>
-
+                  <input
+                    id="originCountry"
+                    name="originCountry"
+                    value={form.originCountry}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="India"
+                    autoComplete="country-name"
+                    required
+                  />
                 </div>
-              )
-            )}
 
-            {/* CALCULATED SUMMARY */}
+                <div>
+                  <label
+                    className={labelClass}
+                    htmlFor="originCity"
+                  >
+                    Origin City / Airport *
+                  </label>
 
-            <div className="row g-3 mt-2">
-
-              <div className="col-md-3">
-                <div className="bg-light rounded-3 p-3">
-                  <small className="text-muted">
-                    Total Pieces
-                  </small>
-
-                  <h5 className="fw-bold mb-0">
-                    {totalPieces}
-                  </h5>
+                  <input
+                    id="originCity"
+                    name="originCity"
+                    value={form.originCity}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="e.g. Mumbai"
+                    required
+                  />
                 </div>
-              </div>
 
-              <div className="col-md-3">
-                <div className="bg-light rounded-3 p-3">
-                  <small className="text-muted">
-                    Actual Weight
-                  </small>
+                <div>
+                  <label
+                    className={labelClass}
+                    htmlFor="destinationCountry"
+                  >
+                    Destination Country *
+                  </label>
 
-                  <h5 className="fw-bold mb-0">
-                    {actualWeight.toFixed(2)} kg
-                  </h5>
+                  <input
+                    id="destinationCountry"
+                    name="destinationCountry"
+                    value={form.destinationCountry}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="e.g. United Arab Emirates"
+                    autoComplete="country-name"
+                    required
+                  />
                 </div>
-              </div>
 
-              <div className="col-md-3">
-                <div className="bg-light rounded-3 p-3">
-                  <small className="text-muted">
-                    Volumetric Weight
-                  </small>
+                <div>
+                  <label
+                    className={labelClass}
+                    htmlFor="destinationCity"
+                  >
+                    Destination City / Airport *
+                  </label>
 
-                  <h5 className="fw-bold mb-0">
-                    {volumetricWeight.toFixed(2)} kg
-                  </h5>
+                  <input
+                    id="destinationCity"
+                    name="destinationCity"
+                    value={form.destinationCity}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="e.g. Dubai"
+                    required
+                  />
                 </div>
+
               </div>
-
-              <div className="col-md-3">
-                <div className="bg-primary text-white rounded-3 p-3">
-                  <small>
-                    Chargeable Weight
-                  </small>
-
-                  <h5 className="fw-bold mb-0">
-                    {chargeableWeight.toFixed(2)} kg
-                  </h5>
-                </div>
-              </div>
-
             </div>
 
-            <div className="mt-3 text-muted small">
-              Total Volume:{" "}
-              <strong>
-                {totalVolumeM3.toFixed(4)} m³
-              </strong>
-            </div>
+            {/* CARGO DETAILS */}
+            <div>
+              <h3 className="mb-5 flex items-center gap-2 text-lg font-bold text-slate-900">
+                <Package size={21} className="text-orange-500" />
+                Cargo Details
+              </h3>
 
-          </div>
-        </div>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
 
-        {/* ================= 8 COMMERCIAL ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <FileText size={22} />
-              8. Commercial & Customs Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Invoice Value
-                </label>
-
-                <input
-                  type="number"
-                  className={inputClass}
-                  value={form.invoiceValue}
-                  onChange={(e) =>
-                    updateField(
-                      "invoiceValue",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Currency
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.currency}
-                  onChange={(e) =>
-                    updateField(
-                      "currency",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>INR</option>
-                  <option>USD</option>
-                  <option>EUR</option>
-                  <option>GBP</option>
-                  <option>AED</option>
-                  <option>SGD</option>
-                  <option>Other</option>
-                </select>
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Shipment Purpose
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.shipmentPurpose}
-                  onChange={(e) =>
-                    updateField(
-                      "shipmentPurpose",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>Commercial</option>
-                  <option>Sample</option>
-                  <option>Personal</option>
-                  <option>Gift</option>
-                  <option>Return</option>
-                </select>
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Incoterm
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.incoterm}
-                  onChange={(e) =>
-                    updateField(
-                      "incoterm",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="">
-                    Select Incoterm
-                  </option>
-                  <option>EXW</option>
-                  <option>FCA</option>
-                  <option>FOB</option>
-                  <option>CFR</option>
-                  <option>CIF</option>
-                  <option>CPT</option>
-                  <option>CIP</option>
-                  <option>DAP</option>
-                  <option>DPU</option>
-                  <option>DDP</option>
-                </select>
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Declared Value for Customs
-                </label>
-
-                <input
-                  type="number"
-                  className={inputClass}
-                  value={
-                    form.declaredValueForCustoms
-                  }
-                  onChange={(e) =>
-                    updateField(
-                      "declaredValueForCustoms",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label fw-semibold">
-                  Declared Value for Carriage
-                </label>
-
-                <input
-                  type="number"
-                  className={inputClass}
-                  value={
-                    form.declaredValueForCarriage
-                  }
-                  onChange={(e) =>
-                    updateField(
-                      "declaredValueForCarriage",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 9 SPECIAL CARGO ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <AlertTriangle size={22} />
-              9. Special Cargo & Handling
-            </h4>
-
-            <div className="row g-3">
-
-              {[
-                ["dangerousGoods", "Dangerous Goods?"],
-                ["batteryIncluded", "Battery Included?"],
-                ["perishable", "Perishable Cargo?"],
-                ["fragile", "Fragile Cargo?"],
-                ["liveAnimal", "Live Animal?"],
-                [
-                  "temperatureControlled",
-                  "Temperature Controlled?",
-                ],
-                ["oversizedCargo", "Oversized Cargo?"],
-              ].map(([name, label]) => (
-
-                <div
-                  className="col-md-3"
-                  key={name}
-                >
-
-                  <label className="form-label fw-semibold">
-                    {label}
+                <div>
+                  <label
+                    className={labelClass}
+                    htmlFor="cargoType"
+                  >
+                    Cargo Type *
                   </label>
 
                   <select
-                    className={selectClass}
-                    value={form[name]}
-                    onChange={(e) =>
-                      updateField(
-                        name,
-                        e.target.value
-                      )
-                    }
+                    id="cargoType"
+                    name="cargoType"
+                    value={form.cargoType}
+                    onChange={handleChange}
+                    className={inputClass}
+                    required
                   >
-                    <option>No</option>
-                    <option>Yes</option>
+                    <option value="">
+                      Select cargo type
+                    </option>
+
+                    <option value="General Cargo">
+                      General Cargo
+                    </option>
+
+                    <option value="Documents">
+                      Documents
+                    </option>
+
+                    <option value="Commercial Goods">
+                      Commercial Goods
+                    </option>
+
+                    <option value="Perishable Goods">
+                      Perishable Goods
+                    </option>
+
+                    <option value="Fragile Goods">
+                      Fragile Goods
+                    </option>
+
+                    <option value="Dangerous Goods">
+                      Dangerous Goods
+                    </option>
+
+                    <option value="Other">
+                      Other
+                    </option>
                   </select>
-
                 </div>
 
-              ))}
-
-            </div>
-
-            {/* DG DETAILS */}
-
-            {form.dangerousGoods === "Yes" && (
-              <div className="border border-warning rounded-4 p-3 mt-4">
-
-                <h6 className="fw-bold text-warning mb-3">
-                  Dangerous Goods Information
-                </h6>
-
-                <div className="row g-3">
-
-                  <div className="col-md-3">
-                    <label className="form-label">
-                      UN Number
-                    </label>
-
-                    <input
-                      className={inputClass}
-                      value={form.unNumber}
-                      onChange={(e) =>
-                        updateField(
-                          "unNumber",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-                  <div className="col-md-3">
-                    <label className="form-label">
-                      DG Class
-                    </label>
-
-                    <input
-                      className={inputClass}
-                      value={form.dgClass}
-                      onChange={(e) =>
-                        updateField(
-                          "dgClass",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-                  <div className="col-md-3">
-                    <label className="form-label">
-                      Packing Group
-                    </label>
-
-                    <input
-                      className={inputClass}
-                      value={form.packingGroup}
-                      onChange={(e) =>
-                        updateField(
-                          "packingGroup",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-                  <div className="col-md-3">
-                    <label className="form-label">
-                      Proper Shipping Name
-                    </label>
-
-                    <input
-                      className={inputClass}
-                      value={
-                        form.properShippingName
-                      }
-                      onChange={(e) =>
-                        updateField(
-                          "properShippingName",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-                </div>
-
-              </div>
-            )}
-
-          </div>
-        </div>
-
-        {/* ================= 10 SCHEDULE ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <CalendarDays size={22} />
-              10. Shipment Schedule
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Cargo Ready / Pickup Date
-                </label>
-
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={form.readyDate}
-                  onChange={(e) =>
-                    updateField(
-                      "readyDate",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Preferred Delivery Date
-                </label>
-
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={
-                    form.preferredDeliveryDate
-                  }
-                  onChange={(e) =>
-                    updateField(
-                      "preferredDeliveryDate",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 11 INSURANCE ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <ShieldCheck size={22} />
-              11. Cargo Insurance
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Insurance Required?
-                </label>
-
-                <select
-                  className={selectClass}
-                  value={form.insuranceRequired}
-                  onChange={(e) =>
-                    updateField(
-                      "insuranceRequired",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option>No</option>
-                  <option>Yes</option>
-                </select>
-              </div>
-
-              {form.insuranceRequired ===
-                "Yes" && (
-                <div className="col-md-6">
-
-                  <label className="form-label fw-semibold">
-                    Insured Value
+                <div>
+                  <label
+                    className={labelClass}
+                    htmlFor="weight"
+                  >
+                    Gross Weight (kg) *
                   </label>
 
                   <input
+                    id="weight"
+                    name="weight"
                     type="number"
+                    min="0.1"
+                    step="0.1"
+                    value={form.weight}
+                    onChange={handleChange}
                     className={inputClass}
-                    value={form.insuranceValue}
-                    onChange={(e) =>
-                      updateField(
-                        "insuranceValue",
-                        e.target.value
-                      )
-                    }
+                    placeholder="e.g. 25"
+                    required
                   />
-
                 </div>
-              )}
 
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 12 DOCUMENTS ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <Upload size={22} />
-              12. Shipment Documents
-            </h4>
-
-            <p className="text-muted small">
-              Upload documents applicable to your
-              shipment. Additional documents may be
-              required depending on commodity,
-              destination and customs requirements.
-            </p>
-
-            <div className="row g-3">
-
-              {[
-                [
-                  "commercialInvoice",
-                  "Commercial Invoice",
-                ],
-                [
-                  "packingList",
-                  "Packing List",
-                ],
-                [
-                  "shippingBill",
-                  "Shipping Bill / Export Document",
-                ],
-                [
-                  "certificateOfOrigin",
-                  "Certificate of Origin",
-                ],
-                [
-                  "iecDocument",
-                  "IEC Document",
-                ],
-                [
-                  "productCertificate",
-                  "Product / Regulatory Certificate",
-                ],
-                [
-                  "dgDeclaration",
-                  "Dangerous Goods Declaration",
-                ],
-                [
-                  "otherDocuments",
-                  "Other Documents",
-                ],
-              ].map(([name, label]) => (
-
-                <div
-                  className="col-md-6"
-                  key={name}
-                >
-
-                  <label className="form-label fw-semibold">
-                    {label}
+                <div>
+                  <label
+                    className={labelClass}
+                    htmlFor="shipmentDate"
+                  >
+                    Expected Shipment Date *
                   </label>
 
                   <input
-                    type="file"
+                    id="shipmentDate"
+                    name="shipmentDate"
+                    type="date"
+                    min={new Date().toISOString().split("T")[0]}
+                    value={form.shipmentDate}
+                    onChange={handleChange}
                     className={inputClass}
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                    onChange={(e) =>
-                      handleFile(
-                        name,
-                        e.target.files?.[0] ||
-                          null
-                      )
-                    }
+                    required
                   />
-
                 </div>
 
-              ))}
-
+              </div>
             </div>
 
-          </div>
-        </div>
-
-        {/* ================= 13 CUSTOMER ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <User size={22} />
-              13. Customer Contact Details
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Customer Name *
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.customerName}
-                  onChange={(e) =>
-                    updateField(
-                      "customerName",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Company Name
-                </label>
-
-                <input
-                  className={inputClass}
-                  value={form.customerCompany}
-                  onChange={(e) =>
-                    updateField(
-                      "customerCompany",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Mobile *
-                </label>
-
-                <input
-                  type="tel"
-                  className={inputClass}
-                  value={form.customerMobile}
-                  onChange={(e) =>
-                    updateField(
-                      "customerMobile",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  Email
-                </label>
-
-                <input
-                  type="email"
-                  className={inputClass}
-                  value={form.customerEmail}
-                  onChange={(e) =>
-                    updateField(
-                      "customerEmail",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-
-        {/* ================= 14 INSTRUCTIONS ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className={sectionTitle}>
-              <FileText size={22} />
-              14. Additional Instructions
-            </h4>
-
-            <textarea
-              className={inputClass}
-              rows="4"
-              placeholder="Any special pickup, delivery, packaging or handling instructions..."
-              value={form.specialInstructions}
-              onChange={(e) =>
-                updateField(
-                  "specialInstructions",
-                  e.target.value
-                )
-              }
-            />
-
-          </div>
-        </div>
-
-        {/* ================= SUMMARY ================= */}
-
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-4">
-
-            <h4 className="fw-bold mb-3">
-              Shipment Summary
-            </h4>
-
-            <div className="row g-3">
-
-              <div className="col-md-3">
-                <div className="bg-light rounded-3 p-3">
-
-                  <small className="text-muted">
-                    Route
-                  </small>
-
-                  <div className="fw-bold">
-                    {form.originAirport ||
-                      "---"}
-                    {" → "}
-                    {form.destinationAirport ||
-                      "---"}
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="col-md-3">
-                <div className="bg-light rounded-3 p-3">
-
-                  <small className="text-muted">
-                    Packages
-                  </small>
-
-                  <div className="fw-bold">
-                    {totalPieces}
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="col-md-3">
-                <div className="bg-light rounded-3 p-3">
-
-                  <small className="text-muted">
-                    Actual Weight
-                  </small>
-
-                  <div className="fw-bold">
-                    {actualWeight.toFixed(2)} kg
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="col-md-3">
-                <div className="bg-primary text-white rounded-3 p-3">
-
-                  <small>
-                    Chargeable Weight
-                  </small>
-
-                  <div className="fw-bold">
-                    {chargeableWeight.toFixed(2)} kg
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-
-        {/* ================= SUBMIT ================= */}
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="btn btn-lg w-100 rounded-3 py-3 fw-bold"
-          style={{
-            backgroundColor: "#002D5E",
-            color: "white",
-            opacity: submitting ? 0.7 : 1,
-          }}
-        >
-
-          <span className="d-flex justify-content-center align-items-center gap-2">
-
-            {submitting ? (
-              <>
-                <span
-                  className="spinner-border spinner-border-sm"
-                  role="status"
-                  aria-hidden="true"
+            {/* ERROR MESSAGE */}
+            {error && (
+              <div
+                role="alert"
+                className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+              >
+                <AlertCircle
+                  size={21}
+                  className="mt-0.5 shrink-0"
                 />
 
-                Sending Air Cargo Request...
-              </>
-            ) : (
-              <>
-                <Plane size={22} />
-
-                Get Air Freight Rates
-
-                <ArrowRight size={22} />
-              </>
+                <p>{error}</p>
+              </div>
             )}
 
-          </span>
+            {/* SUCCESS MESSAGE */}
+            {result && (
+              <div
+                role="status"
+                className="flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800"
+              >
+                <CheckCircle2
+                  size={21}
+                  className="mt-0.5 shrink-0"
+                />
 
-        </button>
+                <p>{result}</p>
+              </div>
+            )}
 
-        {submitted && (
-          <div className="alert alert-success mt-3 rounded-3 d-flex align-items-center">
+            {/* SUBMIT BUTTON */}
+            <div className="flex flex-col gap-4 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
 
-            <CheckCircle2
-              size={20}
-              className="me-2"
-            />
+              <p className="max-w-xl text-xs leading-5 text-slate-500">
+                * Required fields. Actual airline availability,
+                schedules and charges must be confirmed by the
+                relevant cargo provider. This enquiry does not
+                confirm a booking.
+              </p>
 
-            Air Freight request submitted
-            successfully. Our logistics system is
-            processing your request.
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-orange-500 px-6 py-3 font-bold text-white shadow-md transition hover:bg-orange-600 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading ? (
+                  <>
+                    <LoaderCircle
+                      size={19}
+                      className="animate-spin"
+                    />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Search size={19} />
+                    Check Availability
+                    <ArrowRight size={19} />
+                  </>
+                )}
+              </button>
 
-          </div>
-        )}
+            </div>
+          </form>
+        </section>
 
-      </form>
-
-      {/* ================= BOTTOM LANDSCAPE IMAGE ================= */}
-
-      <div className="mt-5 rounded-4 overflow-hidden">
-
-        <img
-          src={airFreightBanner}
-          alt="Global Air Freight and Cargo"
-          className="img-fluid w-100"
-          style={{
-            height: "280px",
-            objectFit: "cover",
-          }}
-        />
+        {/* FOOTER NOTE */}
+        <p className="mt-6 text-center text-xs leading-5 text-slate-500">
+          Apni Manzil — One Solution for All Delivery.
+          Your logistics enquiry starts here.
+        </p>
 
       </div>
-
-    </div>
+    </main>
   );
 }
