@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import {
   Menu,
   X,
@@ -18,11 +19,8 @@ import {
   UserPlus,
   LayoutDashboard,
   LogOut,
-  Phone,
   Mail,
-  MapPin,
   MessageCircle,
-  Headphones,
   ArrowRight,
   Briefcase,
   Sparkles,
@@ -111,9 +109,12 @@ const Layout = ({ children, user }) => {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
+
       await signOut(auth);
+
       setIsMobileMenuOpen(false);
       setShowDashboardModal(false);
+
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -123,9 +124,54 @@ const Layout = ({ children, user }) => {
     }
   };
 
+  // Determine the dashboard from the logged-in user's saved role.
+  const getDashboardPath = async () => {
+    if (!auth.currentUser) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      const userSnapshot = await getDoc(userRef);
+
+      if (!userSnapshot.exists()) {
+        alert(
+          'Your user profile could not be found. Please contact support.'
+        );
+        return;
+      }
+
+      const userData = userSnapshot.data();
+      const role = String(userData.role || '').toLowerCase();
+
+      if (role === 'admin') {
+        navigate('/super-secret-admin-99');
+      } else if (role === 'vendor' || role === 'partner') {
+        navigate('/vendor-dashboard');
+      } else {
+        navigate('/customer-dashboard');
+      }
+
+      setShowDashboardModal(false);
+      closeMobileMenu();
+    } catch (error) {
+      console.error('Unable to open dashboard:', error);
+
+      alert(
+        'Unable to open your dashboard. Please try again.'
+      );
+    }
+  };
+
   const handleDashboardClick = () => {
-    setShowDashboardModal(true);
-    setIsMobileMenuOpen(false);
+    if (!user || !auth.currentUser) {
+      setShowDashboardModal(true);
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+    getDashboardPath();
   };
 
   const handleNavigation = (path) => {
@@ -133,6 +179,70 @@ const Layout = ({ children, user }) => {
     closeMobileMenu();
     setIsServiceOpen(false);
     setShowDashboardModal(false);
+  };
+
+  // Dashboard selection:
+  // Individual / Business -> Customer Dashboard
+  // Transporter / Service Partner -> Vendor Dashboard
+  const handleDashboardSelection = async (path) => {
+    if (!user || !auth.currentUser) {
+      setShowDashboardModal(false);
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      const userSnapshot = await getDoc(userRef);
+
+      if (!userSnapshot.exists()) {
+        alert(
+          'Your user profile could not be found. Please contact support.'
+        );
+        return;
+      }
+
+      const userData = userSnapshot.data();
+      const role = String(userData.role || '').toLowerCase();
+
+      if (role === 'admin') {
+        setShowDashboardModal(false);
+        navigate('/super-secret-admin-99');
+        return;
+      }
+
+      const isVendor =
+        role === 'vendor' ||
+        role === 'partner';
+
+      const requestedVendorDashboard =
+        path === '/vendor-dashboard';
+
+      if (isVendor !== requestedVendorDashboard) {
+        alert(
+          isVendor
+            ? 'Your account is registered as a Vendor / Partner. Opening your Vendor Dashboard.'
+            : 'Your account is registered as an Individual / Customer. Opening your Customer Dashboard.'
+        );
+
+        setShowDashboardModal(false);
+
+        navigate(
+          isVendor
+            ? '/vendor-dashboard'
+            : '/customer-dashboard'
+        );
+
+        return;
+      }
+
+      setShowDashboardModal(false);
+      navigate(path);
+      closeMobileMenu();
+    } catch (error) {
+      console.error('Dashboard selection failed:', error);
+      alert('Unable to open your dashboard. Please try again.');
+    }
   };
 
   return (
@@ -164,7 +274,8 @@ const Layout = ({ children, user }) => {
             {user ? (
               <>
                 <span className="max-w-48 truncate">
-                  Welcome{user.displayName ? `, ${user.displayName}` : ''}
+                  Welcome
+                  {user.displayName ? `, ${user.displayName}` : ''}
                 </span>
 
                 <button
@@ -255,7 +366,9 @@ const Layout = ({ children, user }) => {
             >
               <button
                 type="button"
-                onClick={() => setIsServiceOpen((previous) => !previous)}
+                onClick={() =>
+                  setIsServiceOpen((previous) => !previous)
+                }
                 aria-expanded={isServiceOpen}
                 className="inline-flex items-center gap-1 whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-orange-500"
               >
@@ -362,9 +475,13 @@ const Layout = ({ children, user }) => {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            onClick={() => setIsMobileMenuOpen((previous) => !previous)}
+            onClick={() =>
+              setIsMobileMenuOpen((previous) => !previous)
+            }
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-[#002D5E] transition hover:bg-slate-100 lg:hidden"
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={
+              isMobileMenuOpen ? 'Close menu' : 'Open menu'
+            }
             aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -481,7 +598,9 @@ const Layout = ({ children, user }) => {
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-xs text-slate-500">Logged in as</p>
+                      <p className="text-xs text-slate-500">
+                        Logged in as
+                      </p>
 
                       <p className="truncate font-semibold text-[#002D5E]">
                         {user.displayName || user.email || 'User'}
@@ -550,7 +669,10 @@ const Layout = ({ children, user }) => {
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
             {/* Company Information */}
             <div>
-              <Link to="/" className="mb-4 inline-flex items-center gap-3">
+              <Link
+                to="/"
+                className="mb-4 inline-flex items-center gap-3"
+              >
                 <img
                   src="/favicon.png"
                   alt="Apni Manzil"
@@ -567,8 +689,8 @@ const Layout = ({ children, user }) => {
 
               <p className="mb-5 text-sm leading-7 text-blue-100">
                 Your trusted logistics aggregation platform for courier,
-                transport, packers and movers, and logistics solutions across
-                India.
+                transport, packers and movers, and logistics solutions
+                across India.
               </p>
 
               <div className="flex flex-wrap gap-3">
@@ -598,10 +720,7 @@ const Layout = ({ children, user }) => {
 
               <ul className="space-y-3 text-sm text-blue-100">
                 <li>
-                  <Link
-                    to="/"
-                    className="transition hover:text-orange-300"
-                  >
+                  <Link to="/" className="transition hover:text-orange-300">
                     Home
                   </Link>
                 </li>
@@ -676,8 +795,8 @@ const Layout = ({ children, user }) => {
               <h3 className="mb-4 text-lg font-bold">Follow Us</h3>
 
               <p className="mb-4 text-sm leading-6 text-blue-100">
-                Stay connected with Apni Manzil for updates, news and logistics
-                solutions.
+                Stay connected with Apni Manzil for updates, news and
+                logistics solutions.
               </p>
 
               <div className="flex flex-wrap gap-3">
@@ -731,13 +850,13 @@ const Layout = ({ children, user }) => {
               </p>
             </div>
 
-            {/* Contact Us - Rightmost Column */}
+            {/* Contact Us */}
             <div>
               <h3 className="mb-4 text-lg font-bold">Contact Us</h3>
 
               <p className="mb-4 text-sm leading-6 text-blue-100">
-                Have questions about our services or need help with a shipment?
-                We're here to help!
+                Have questions about our services or need help with a
+                shipment? We're here to help!
               </p>
 
               <Link
@@ -812,7 +931,9 @@ const Layout = ({ children, user }) => {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <button
                     type="button"
-                    onClick={() => handleNavigation('/login')}
+                    onClick={() =>
+                      handleDashboardSelection('/customer-dashboard')
+                    }
                     className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[#002D5E]">
@@ -820,7 +941,9 @@ const Layout = ({ children, user }) => {
                     </div>
 
                     <div>
-                      <p className="font-bold text-slate-800">Individual</p>
+                      <p className="font-bold text-slate-800">
+                        Individual
+                      </p>
                       <p className="mt-1 text-xs text-slate-500">
                         Personal bookings
                       </p>
@@ -829,7 +952,9 @@ const Layout = ({ children, user }) => {
 
                   <button
                     type="button"
-                    onClick={() => handleNavigation('/login')}
+                    onClick={() =>
+                      handleDashboardSelection('/customer-dashboard')
+                    }
                     className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600">
@@ -860,7 +985,9 @@ const Layout = ({ children, user }) => {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <button
                     type="button"
-                    onClick={() => handleNavigation('/login')}
+                    onClick={() =>
+                      handleDashboardSelection('/vendor-dashboard')
+                    }
                     className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-700">
@@ -868,7 +995,9 @@ const Layout = ({ children, user }) => {
                     </div>
 
                     <div>
-                      <p className="font-bold text-slate-800">Transporter</p>
+                      <p className="font-bold text-slate-800">
+                        Transporter
+                      </p>
                       <p className="mt-1 text-xs text-slate-500">
                         Manage transport leads
                       </p>
@@ -877,7 +1006,9 @@ const Layout = ({ children, user }) => {
 
                   <button
                     type="button"
-                    onClick={() => handleNavigation('/login')}
+                    onClick={() =>
+                      handleDashboardSelection('/vendor-dashboard')
+                    }
                     className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-orange-400 hover:bg-orange-50"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700">
