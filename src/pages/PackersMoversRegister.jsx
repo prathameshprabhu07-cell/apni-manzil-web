@@ -1049,7 +1049,6 @@ const PackersMoversRegister = () => {
                 </h3>
 
                 <p className="text-[11px] text-slate-500 font-medium">
-                  Partner Verified + Active झाल्यावर bank details घेऊ
                 </p>
               </div>
 
