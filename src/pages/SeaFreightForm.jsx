@@ -1,1835 +1,663 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   Ship,
-  ArrowLeft,
-  ChevronRight,
-  Upload,
+  MapPin,
+  ArrowRight,
+  Search,
   Anchor,
-  Package,
   Globe2,
-  FileCheck,
-  ShieldCheck,
-  Thermometer,
-  AlertTriangle,
-  Ruler,
+  Container,
+  ExternalLink,
+  LoaderCircle,
+  CheckCircle2,
+  Mail,
+  Weight,
+  Package,
 } from "lucide-react";
-import { sendWhatsAppNotification } from "../utils/whatsapp";
 
-// Add your landscape ship image here:
-// src/assets/sea-freight-ship.jpg
 import seaFreightShip from "../assets/sea-freight-ship.jpg";
 
-const SeaFreightForm = () => {
-  const navigate = useNavigate();
+// Apni Manzil Sea Freight Webhook
+const SEA_FREIGHT_WEBHOOK =
+  "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/apni-manzil-logistics";
 
-  // Keep your existing n8n webhook flow
-  const n8nUrl =
-    "https://sega-cos-daisy-signing.trycloudflare.com/webhook/Sea-Freight";
+const providers = [
+  {
+    name: "Maersk",
+    description: "Global container shipping and logistics.",
+    url: "https://www.maersk.com/",
+  },
+  {
+    name: "Hapag-Lloyd",
+    description: "International container shipping services.",
+    url: "https://www.hapag-lloyd.com/",
+  },
+];
 
-  const [formData, setFormData] = useState({
-    // 1. Customer
-    customerType: "Business",
-    companyName: "",
-    contactPerson: "",
-    mobileNumber: "",
-    whatsappNumber: "",
-    emailAddress: "",
-    gstNumber: "",
-    iecNumber: "",
-
-    // 2. Shipment
-    shipmentType: "Export",
-    serviceRequired: "Door to Door",
-    shipmentMode: "FCL",
-    preferredShipmentDate: "",
-
-    // 3. Shipper
-    shipperCompany: "",
-    shipperName: "",
-    shipperPhone: "",
-    shipperEmail: "",
-    shipperAddress: "",
-    shipperCity: "",
-    shipperState: "",
-    shipperCountry: "India",
-    shipperZip: "",
-
-    // 4. Consignee
-    consigneeCompany: "",
-    consigneeName: "",
-    consigneePhone: "",
-    consigneeEmail: "",
-    consigneeAddress: "",
-    consigneeCity: "",
-    consigneeState: "",
-    consigneeCountry: "",
-    consigneeZip: "",
-
-    // 5. Notify Party
-    notifySameAsConsignee: true,
-    notifyCompany: "",
-    notifyName: "",
-    notifyPhone: "",
-    notifyEmail: "",
-    notifyAddress: "",
-    notifyCountry: "",
-
-    // 6. Origin / Destination
-    placeOfReceipt: "",
-    pickupAddress: "",
-    originPort: "Mumbai (JNPT)",
-    destinationPort: "",
-    destinationCountry: "",
-    finalDestination: "",
-    deliveryAddress: "",
-
-    // 7. Cargo
+export default function SeaFreightForm() {
+  const [form, setForm] = useState({
+    origin: "",
+    destination: "",
     cargoType: "General Cargo",
-    cargoDescription: "",
-    hsCode: "",
-    numberOfPackages: "",
-    packageType: "Cartons",
-    grossWeight: "",
-    netWeight: "",
-    cbm: "",
-
-    // 8. Container
-    containerQuantity: "1",
-    containerType: "20 FT Dry Container",
-    stuffingType: "Factory Stuffing",
-    containerPickupRequired: false,
-    containerPickupLocation: "",
-    containerPickupDate: "",
-
-    // 9. DG
-    dangerousGoods: false,
-    unNumber: "",
-    properShippingName: "",
-    imoClass: "",
-    packingGroup: "",
-    flashPoint: "",
-    msdsAvailable: "No",
-
-    // 10. Reefer
-    reeferCargo: false,
-    temperature: "",
-    temperatureUnit: "°C",
-    ventilationRequired: false,
-
-    // 11. OOG / Project Cargo
-    oogCargo: false,
-    cargoLength: "",
-    cargoWidth: "",
-    cargoHeight: "",
-    oogWeight: "",
-    liftingRequirement: "",
-
-    // 12. Customs
-    customsClearanceRequired: "Yes",
-    chaRequired: "Yes",
-    ownCha: false,
-    chaCompany: "",
-    chaContact: "",
-
-    // 13. Freight
-    freightTerms: "Prepaid",
-    quoteRequired: "Yes",
-    preferredCurrency: "USD",
-    preferredShippingLine: "No Preference",
-
-    // 14. Insurance
-    insuranceRequired: "No",
-    cargoValue: "",
-    cargoValueCurrency: "USD",
-
-    // 15. VGM
-    vgmStatus: "Will Provide Later",
-
-    // 16. Documents / Instructions
-    commercialInvoiceAvailable: "No",
-    packingListAvailable: "No",
-    certificateOfOriginAvailable: "No",
-    specialInstructions: "",
+    shipmentType: "Not Sure",
+    weight: "",
+    contactEmail: "",
   });
 
-  const [files, setFiles] = useState({
-    commercialInvoice: null,
-    packingList: null,
-    iecCertificate: null,
-    msds: null,
-    cargoPhotos: null,
-    otherDocument: null,
-  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [shippingOptions, setShippingOptions] = useState([]);
 
-  const [submitting, setSubmitting] = useState(false);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
+    setForm((previous) => ({
+      ...previous,
+      [name]: value,
     }));
   };
 
-  const handleFileChange = (e) => {
-    const { name, files: selectedFiles } = e.target;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    setFiles((prev) => ({
-      ...prev,
-      [name]: selectedFiles?.[0] || null,
-    }));
+    setLoading(true);
+    setError("");
+    setSubmitted(false);
+    setShippingOptions([]);
+
+    try {
+      const payload = {
+        ...form,
+
+        // Compatibility with the existing freight workflow
+        from: form.origin,
+        to: form.destination,
+        loadtype:
+          form.shipmentType === "FCL"
+            ? "container20"
+            : form.shipmentType === "LCL"
+              ? "LCL"
+              : "Not Sure",
+        quantity: 1,
+        mode: form.shipmentType,
+        cargoWeight: Number(form.weight),
+        weight: Number(form.weight),
+        contactEmail: form.contactEmail.trim(),
+        service: "Sea Freight",
+        platform: "Apni Manzil",
+      };
+
+      const response = await fetch(SEA_FREIGHT_WEBHOOK, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Request failed (${response.status}). Please try again.`
+        );
+      }
+
+      const result = await response.json();
+
+      // Supports common n8n response structures
+      let options = [];
+
+      if (Array.isArray(result)) {
+        options = result;
+      } else if (Array.isArray(result?.providers)) {
+        options = result.providers;
+      } else if (Array.isArray(result?.quotes)) {
+        options = result.quotes;
+      } else if (Array.isArray(result?.results)) {
+        options = result.results;
+      } else if (Array.isArray(result?.data)) {
+        options = result.data;
+      } else if (Array.isArray(result?.options)) {
+        options = result.options;
+      } else if (result?.provider || result?.company) {
+        options = [result];
+      } else if (result?.data && typeof result.data === "object") {
+        const data = result.data;
+
+        if (Array.isArray(data.providers)) {
+          options = data.providers;
+        } else if (Array.isArray(data.quotes)) {
+          options = data.quotes;
+        }
+      }
+
+      setShippingOptions(options);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Sea Freight Webhook Error:", err);
+
+      setError(
+        "Shipping options load hot nahit. Webhook URL, n8n workflow ani response settings check kara."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass =
-    "w-full p-4 rounded-2xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#002D5E]/20 focus:border-[#002D5E] transition";
+    "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
-  const labelClass =
-    "block text-sm font-bold text-slate-700 mb-2";
-
-  const sectionClass =
-    "bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-sm";
-
-  const sectionTitle = (icon, number, title, subtitle) => (
-    <div className="flex items-start gap-4 mb-6">
-      <div className="bg-blue-50 text-[#002D5E] p-3 rounded-2xl">
-        {icon}
-      </div>
-
-      <div>
-        <h2 className="text-xl md:text-2xl font-black text-[#002D5E]">
-          {number}. {title}
-        </h2>
-
-        {subtitle && (
-          <p className="text-sm text-slate-500 mt-1">
-            {subtitle}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.companyName || !formData.contactPerson) {
-      alert("Please enter company/name and contact person.");
-      return;
-    }
-
-    if (!formData.mobileNumber || !formData.emailAddress) {
-      alert("Please enter mobile number and email.");
-      return;
-    }
-
-    if (!formData.destinationCountry || !formData.destinationPort) {
-      alert("Please enter destination country and destination port.");
-      return;
-    }
-
-    if (!formData.cargoDescription) {
-      alert("Please enter cargo description.");
-      return;
-    }
-
-    setSubmitting(true);
-
-    const orderId =
-      "SEA-" + Math.floor(100000 + Math.random() * 900000);
-
-    const payload = {
-      action: "Sea_Freight_Booking",
-      service: "Sea Freight",
-      orderId,
-
-      ...formData,
-
-      uploadedDocuments: {
-        commercialInvoice:
-          files.commercialInvoice?.name || "",
-        packingList:
-          files.packingList?.name || "",
-        iecCertificate:
-          files.iecCertificate?.name || "",
-        msds:
-          files.msds?.name || "",
-        cargoPhotos:
-          files.cargoPhotos?.name || "",
-        otherDocument:
-          files.otherDocument?.name || "",
-      },
-
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      await axios.post(n8nUrl, payload);
-
-      sendWhatsAppNotification(
-        formData.whatsappNumber ||
-          formData.mobileNumber ||
-          "7378502356",
-        formData.contactPerson || "Sea Freight Client",
-        "Sea Freight Inquiry",
-        orderId
-      );
-
-      alert(
-        `Sea Freight inquiry successfully submitted!\n\nReference ID: ${orderId}`
-      );
-
-      navigate("/international-logistics");
-    } catch (error) {
-      console.error("Sea Freight n8n Error:", error);
-
-      alert(
-        "Your request could not be submitted right now. Please try again."
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const labelClass = "text-sm font-semibold text-slate-700";
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans py-8 md:py-12 px-4 md:px-6">
+    <main className="min-h-screen bg-slate-50">
+      {/* HERO SECTION */}
+      <section
+        className="relative overflow-hidden bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, rgba(0,24,54,0.94) 0%, rgba(0,35,76,0.78) 52%, rgba(0,24,54,0.38) 100%), url(" +
+            seaFreightShip +
+            ")",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-[#00172f]/50 to-transparent" />
 
-      {/* Main Container */}
-      <div className="max-w-5xl mx-auto">
-
-        {/* Back */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-500 hover:text-[#002D5E] mb-6 font-bold"
-        >
-          <ArrowLeft size={20} />
-          Back
-        </button>
-
-        {/* Header */}
-        <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6 md:p-8 mb-6">
-          <div className="flex flex-col md:flex-row md:items-center gap-5">
-
-            <div className="bg-blue-50 text-[#002D5E] p-4 rounded-2xl w-fit">
-              <Ship size={40} />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-2 lg:py-32">
+          <div className="text-white">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+              <Globe2 size={17} className="text-orange-400" />
+              Your Global Shipping Discovery Platform
             </div>
 
-            <div>
-              <div className="flex items-center gap-2 text-sm font-bold text-orange-500 mb-1">
-                <Anchor size={16} />
-                INTERNATIONAL LOGISTICS
-              </div>
-
-              <h1 className="text-3xl md:text-4xl font-black text-[#002D5E]">
-                Sea Freight Inquiry
-              </h1>
-
-              <p className="text-slate-500 mt-2">
-                Tell us about your cargo and shipment requirements.
-                Our logistics team can arrange suitable sea freight options.
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6"
-        >
-
-          {/* 1 Customer */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Globe2 size={24} />,
-              "1",
-              "Customer Details",
-              "Tell us who is requesting the shipment."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div>
-                <label className={labelClass}>
-                  Customer Type
-                </label>
-
-                <select
-                  name="customerType"
-                  value={formData.customerType}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="Business">Business</option>
-                  <option value="Individual">Individual</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Company / Full Name *
-                </label>
-
-                <input
-                  required
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Company or full name"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Contact Person *
-                </label>
-
-                <input
-                  required
-                  name="contactPerson"
-                  value={formData.contactPerson}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Contact person"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Mobile Number *
-                </label>
-
-                <input
-                  required
-                  type="tel"
-                  name="mobileNumber"
-                  value={formData.mobileNumber}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="+91 XXXXX XXXXX"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  WhatsApp Number
-                </label>
-
-                <input
-                  type="tel"
-                  name="whatsappNumber"
-                  value={formData.whatsappNumber}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="WhatsApp number"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Email Address *
-                </label>
-
-                <input
-                  required
-                  type="email"
-                  name="emailAddress"
-                  value={formData.emailAddress}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="company@email.com"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  GSTIN
-                </label>
-
-                <input
-                  name="gstNumber"
-                  value={formData.gstNumber}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="GST Number"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  IEC Number
-                </label>
-
-                <input
-                  name="iecNumber"
-                  value={formData.iecNumber}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Import Export Code"
-                />
-              </div>
-
-            </div>
-          </div>
-
-          {/* 2 Shipment */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Ship size={24} />,
-              "2",
-              "Shipment Details",
-              "Select how your cargo needs to move."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div>
-                <label className={labelClass}>
-                  Shipment Type
-                </label>
-
-                <select
-                  name="shipmentType"
-                  value={formData.shipmentType}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="Export">Export from India</option>
-                  <option value="Import">Import to India</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Service Required
-                </label>
-
-                <select
-                  name="serviceRequired"
-                  value={formData.serviceRequired}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="Port to Port">Port to Port</option>
-                  <option value="Door to Port">Door to Port</option>
-                  <option value="Port to Door">Port to Door</option>
-                  <option value="Door to Door">Door to Door</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Shipment Mode
-                </label>
-
-                <select
-                  name="shipmentMode"
-                  value={formData.shipmentMode}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="FCL">FCL - Full Container Load</option>
-                  <option value="LCL">LCL - Less than Container Load</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Preferred Shipment Date
-                </label>
-
-                <input
-                  type="date"
-                  name="preferredShipmentDate"
-                  value={formData.preferredShipmentDate}
-                  onChange={handleChange}
-                  className={inputClass}
-                />
-              </div>
-
-            </div>
-          </div>
-
-          {/* 3 Shipper */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Package size={24} />,
-              "3",
-              "Shipper / Exporter",
-              "Pickup party or exporter information."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <input
-                name="shipperCompany"
-                value={formData.shipperCompany}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Company Name"
-              />
-
-              <input
-                name="shipperName"
-                value={formData.shipperName}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Contact Person"
-              />
-
-              <input
-                name="shipperPhone"
-                value={formData.shipperPhone}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Phone"
-              />
-
-              <input
-                type="email"
-                name="shipperEmail"
-                value={formData.shipperEmail}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Email"
-              />
-
-              <textarea
-                name="shipperAddress"
-                value={formData.shipperAddress}
-                onChange={handleChange}
-                className={`${inputClass} md:col-span-2`}
-                rows="3"
-                placeholder="Complete address"
-              />
-
-              <input
-                name="shipperCity"
-                value={formData.shipperCity}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="City"
-              />
-
-              <input
-                name="shipperState"
-                value={formData.shipperState}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="State"
-              />
-
-              <input
-                name="shipperCountry"
-                value={formData.shipperCountry}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Country"
-              />
-
-              <input
-                name="shipperZip"
-                value={formData.shipperZip}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Postal Code"
-              />
-
-            </div>
-          </div>
-
-          {/* 4 Consignee */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Globe2 size={24} />,
-              "4",
-              "Consignee / Importer",
-              "Destination party information."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <input
-                name="consigneeCompany"
-                value={formData.consigneeCompany}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Company Name"
-              />
-
-              <input
-                name="consigneeName"
-                value={formData.consigneeName}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Contact Person"
-              />
-
-              <input
-                name="consigneePhone"
-                value={formData.consigneePhone}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Phone"
-              />
-
-              <input
-                type="email"
-                name="consigneeEmail"
-                value={formData.consigneeEmail}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Email"
-              />
-
-              <textarea
-                name="consigneeAddress"
-                value={formData.consigneeAddress}
-                onChange={handleChange}
-                className={`${inputClass} md:col-span-2`}
-                rows="3"
-                placeholder="Complete destination address"
-              />
-
-              <input
-                name="consigneeCity"
-                value={formData.consigneeCity}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="City"
-              />
-
-              <input
-                name="consigneeState"
-                value={formData.consigneeState}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="State / Province"
-              />
-
-              <input
-                name="consigneeCountry"
-                value={formData.consigneeCountry}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Country"
-              />
-
-              <input
-                name="consigneeZip"
-                value={formData.consigneeZip}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Postal Code"
-              />
-
-            </div>
-          </div>
-
-          {/* 5 Notify Party */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <FileCheck size={24} />,
-              "5",
-              "Notify Party",
-              "Who should be notified about the shipment?"
-            )}
-
-            <label className="flex items-center gap-3 font-semibold text-slate-700 mb-5 cursor-pointer">
-              <input
-                type="checkbox"
-                name="notifySameAsConsignee"
-                checked={formData.notifySameAsConsignee}
-                onChange={handleChange}
-                className="w-5 h-5 accent-[#002D5E]"
-              />
-              Same as Consignee
-            </label>
-
-            {!formData.notifySameAsConsignee && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                <input
-                  name="notifyCompany"
-                  value={formData.notifyCompany}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Company"
-                />
-
-                <input
-                  name="notifyName"
-                  value={formData.notifyName}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Contact Person"
-                />
-
-                <input
-                  name="notifyPhone"
-                  value={formData.notifyPhone}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Phone"
-                />
-
-                <input
-                  name="notifyEmail"
-                  value={formData.notifyEmail}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Email"
-                />
-
-                <textarea
-                  name="notifyAddress"
-                  value={formData.notifyAddress}
-                  onChange={handleChange}
-                  className={`${inputClass} md:col-span-2`}
-                  rows="3"
-                  placeholder="Address"
-                />
-
-                <input
-                  name="notifyCountry"
-                  value={formData.notifyCountry}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Country"
-                />
-
-              </div>
-            )}
-          </div>
-
-          {/* 6 Ports */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Anchor size={24} />,
-              "6",
-              "Origin & Destination",
-              "Tell us where the cargo starts and where it needs to go."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div>
-                <label className={labelClass}>
-                  Place of Receipt
-                </label>
-
-                <input
-                  name="placeOfReceipt"
-                  value={formData.placeOfReceipt}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="City / pickup point"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Port of Loading *
-                </label>
-
-                <select
-                  required
-                  name="originPort"
-                  value={formData.originPort}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="Mumbai (JNPT)">
-                    Mumbai - JNPT
-                  </option>
-                  <option value="Mundra">
-                    Mundra
-                  </option>
-                  <option value="Chennai">
-                    Chennai
-                  </option>
-                  <option value="Kolkata">
-                    Kolkata
-                  </option>
-                  <option value="Cochin">
-                    Cochin
-                  </option>
-                  <option value="Other">
-                    Other
-                  </option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Destination Country *
-                </label>
-
-                <input
-                  required
-                  name="destinationCountry"
-                  value={formData.destinationCountry}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Destination country"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Port of Discharge *
-                </label>
-
-                <input
-                  required
-                  name="destinationPort"
-                  value={formData.destinationPort}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Destination port"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Final Destination
-                </label>
-
-                <input
-                  name="finalDestination"
-                  value={formData.finalDestination}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="City / final delivery point"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Delivery Address
-                </label>
-
-                <input
-                  name="deliveryAddress"
-                  value={formData.deliveryAddress}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Final delivery address"
-                />
-              </div>
-
-              <textarea
-                name="pickupAddress"
-                value={formData.pickupAddress}
-                onChange={handleChange}
-                className={`${inputClass} md:col-span-2`}
-                rows="2"
-                placeholder="Pickup address"
-              />
-
-            </div>
-          </div>
-
-          {/* 7 Cargo */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Package size={24} />,
-              "7",
-              "Cargo Details",
-              "Provide accurate cargo information for quotation and booking."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div>
-                <label className={labelClass}>
-                  Cargo Type
-                </label>
-
-                <select
-                  name="cargoType"
-                  value={formData.cargoType}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>General Cargo</option>
-                  <option>Machinery</option>
-                  <option>Electronics</option>
-                  <option>Textile</option>
-                  <option>Food Products</option>
-                  <option>Furniture</option>
-                  <option>Automobile Parts</option>
-                  <option>Chemicals</option>
-                  <option>Pharmaceuticals</option>
-                  <option>Agricultural Products</option>
-                  <option>Metal</option>
-                  <option>Project Cargo</option>
-                  <option>Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  HS Code
-                </label>
-
-                <input
-                  name="hsCode"
-                  value={formData.hsCode}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="HS Code"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className={labelClass}>
-                  Detailed Cargo Description *
-                </label>
-
-                <textarea
-                  required
-                  name="cargoDescription"
-                  value={formData.cargoDescription}
-                  onChange={handleChange}
-                  className={inputClass}
-                  rows="3"
-                  placeholder="Example: Cotton Men's Shirts, 100% cotton..."
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Number of Packages
-                </label>
-
-                <input
-                  type="number"
-                  min="1"
-                  name="numberOfPackages"
-                  value={formData.numberOfPackages}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="100"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Package Type
-                </label>
-
-                <select
-                  name="packageType"
-                  value={formData.packageType}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>Cartons</option>
-                  <option>Boxes</option>
-                  <option>Pallets</option>
-                  <option>Bags</option>
-                  <option>Drums</option>
-                  <option>Crates</option>
-                  <option>Pieces</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Gross Weight (KG)
-                </label>
-
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  name="grossWeight"
-                  value={formData.grossWeight}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Gross weight"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Net Weight (KG)
-                </label>
-
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  name="netWeight"
-                  value={formData.netWeight}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Net weight"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Volume / CBM
-                </label>
-
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  name="cbm"
-                  value={formData.cbm}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="CBM"
-                />
-              </div>
-
-            </div>
-          </div>
-
-          {/* 8 Container */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Ship size={24} />,
-              "8",
-              "Container Details",
-              "Container information for FCL or LCL movement."
-            )}
-
-            {formData.shipmentMode === "FCL" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                <div>
-                  <label className={labelClass}>
-                    Container Quantity
-                  </label>
-
-                  <input
-                    type="number"
-                    min="1"
-                    name="containerQuantity"
-                    value={formData.containerQuantity}
-                    onChange={handleChange}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelClass}>
-                    Container Type
-                  </label>
-
-                  <select
-                    name="containerType"
-                    value={formData.containerType}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    <option>20 FT Dry Container</option>
-                    <option>40 FT Dry Container</option>
-                    <option>40 HC Container</option>
-                    <option>20 FT Reefer</option>
-                    <option>40 FT Reefer</option>
-                    <option>Open Top Container</option>
-                    <option>Flat Rack Container</option>
-                    <option>ISO Tank Container</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className={labelClass}>
-                    Stuffing Type
-                  </label>
-
-                  <select
-                    name="stuffingType"
-                    value={formData.stuffingType}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    <option>Factory Stuffing</option>
-                    <option>CFS Stuffing</option>
-                    <option>Port Stuffing</option>
-                  </select>
-                </div>
-
-                <label className="flex items-center gap-3 font-semibold text-slate-700 cursor-pointer mt-4">
-                  <input
-                    type="checkbox"
-                    name="containerPickupRequired"
-                    checked={formData.containerPickupRequired}
-                    onChange={handleChange}
-                    className="w-5 h-5 accent-[#002D5E]"
-                  />
-                  Container pickup required
-                </label>
-
-                {formData.containerPickupRequired && (
-                  <>
-                    <input
-                      name="containerPickupLocation"
-                      value={formData.containerPickupLocation}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Container pickup location"
-                    />
-
-                    <input
-                      type="date"
-                      name="containerPickupDate"
-                      value={formData.containerPickupDate}
-                      onChange={handleChange}
-                      className={inputClass}
-                    />
-                  </>
-                )}
-
-              </div>
-            ) : (
-              <div className="bg-blue-50 rounded-2xl p-5 text-sm text-blue-900">
-                LCL selected. Package count, weight and CBM from the Cargo
-                Details section will be used for the quotation request.
-              </div>
-            )}
-          </div>
-
-          {/* 9 Special Cargo */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <AlertTriangle size={24} />,
-              "9",
-              "Special Cargo",
-              "Select only if applicable."
-            )}
-
-            <div className="space-y-6">
-
-              {/* DG */}
-              <div className="border border-slate-200 rounded-2xl p-5">
-
-                <label className="flex items-center gap-3 font-bold text-slate-800 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="dangerousGoods"
-                    checked={formData.dangerousGoods}
-                    onChange={handleChange}
-                    className="w-5 h-5 accent-red-600"
-                  />
-                  Dangerous Goods (DG)
-                </label>
-
-                {formData.dangerousGoods && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-
-                    <input
-                      name="unNumber"
-                      value={formData.unNumber}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="UN Number"
-                    />
-
-                    <input
-                      name="properShippingName"
-                      value={formData.properShippingName}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Proper Shipping Name"
-                    />
-
-                    <input
-                      name="imoClass"
-                      value={formData.imoClass}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="IMO Class"
-                    />
-
-                    <input
-                      name="packingGroup"
-                      value={formData.packingGroup}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Packing Group"
-                    />
-
-                    <input
-                      name="flashPoint"
-                      value={formData.flashPoint}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Flash Point, if applicable"
-                    />
-
-                    <select
-                      name="msdsAvailable"
-                      value={formData.msdsAvailable}
-                      onChange={handleChange}
-                      className={inputClass}
-                    >
-                      <option value="Yes">MSDS Available</option>
-                      <option value="No">MSDS Not Available</option>
-                    </select>
-
-                  </div>
-                )}
-              </div>
-
-              {/* Reefer */}
-              <div className="border border-slate-200 rounded-2xl p-5">
-
-                <label className="flex items-center gap-3 font-bold text-slate-800 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="reeferCargo"
-                    checked={formData.reeferCargo}
-                    onChange={handleChange}
-                    className="w-5 h-5 accent-[#002D5E]"
-                  />
-                  <Thermometer size={20} />
-                  Temperature Controlled / Reefer Cargo
-                </label>
-
-                {formData.reeferCargo && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-
-                    <input
-                      type="number"
-                      name="temperature"
-                      value={formData.temperature}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Required temperature"
-                    />
-
-                    <select
-                      name="temperatureUnit"
-                      value={formData.temperatureUnit}
-                      onChange={handleChange}
-                      className={inputClass}
-                    >
-                      <option>°C</option>
-                      <option>°F</option>
-                    </select>
-
-                    <label className="flex items-center gap-3 font-semibold text-slate-700">
-                      <input
-                        type="checkbox"
-                        name="ventilationRequired"
-                        checked={formData.ventilationRequired}
-                        onChange={handleChange}
-                        className="w-5 h-5 accent-[#002D5E]"
-                      />
-                      Ventilation Required
-                    </label>
-
-                  </div>
-                )}
-              </div>
-
-              {/* OOG */}
-              <div className="border border-slate-200 rounded-2xl p-5">
-
-                <label className="flex items-center gap-3 font-bold text-slate-800 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="oogCargo"
-                    checked={formData.oogCargo}
-                    onChange={handleChange}
-                    className="w-5 h-5 accent-orange-500"
-                  />
-                  <Ruler size={20} />
-                  OOG / Project Cargo
-                </label>
-
-                {formData.oogCargo && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-
-                    <input
-                      type="number"
-                      name="cargoLength"
-                      value={formData.cargoLength}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Length"
-                    />
-
-                    <input
-                      type="number"
-                      name="cargoWidth"
-                      value={formData.cargoWidth}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Width"
-                    />
-
-                    <input
-                      type="number"
-                      name="cargoHeight"
-                      value={formData.cargoHeight}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Height"
-                    />
-
-                    <input
-                      type="number"
-                      name="oogWeight"
-                      value={formData.oogWeight}
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Cargo Weight (KG)"
-                    />
-
-                    <textarea
-                      name="liftingRequirement"
-                      value={formData.liftingRequirement}
-                      onChange={handleChange}
-                      className={`${inputClass} md:col-span-2`}
-                      rows="2"
-                      placeholder="Lifting / handling requirements"
-                    />
-
-                  </div>
-                )}
-              </div>
-
-            </div>
-          </div>
-
-          {/* 10 Customs */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <FileCheck size={24} />,
-              "10",
-              "Customs & Clearance",
-              "Tell us whether customs assistance is required."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div>
-                <label className={labelClass}>
-                  Customs Clearance
-                </label>
-
-                <select
-                  name="customsClearanceRequired"
-                  value={formData.customsClearanceRequired}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>Yes</option>
-                  <option>No</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  CHA Required
-                </label>
-
-                <select
-                  name="chaRequired"
-                  value={formData.chaRequired}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>Yes</option>
-                  <option>No</option>
-                </select>
-              </div>
-
-              {formData.chaRequired === "Yes" && (
-                <>
-                  <label className="flex items-center gap-3 font-semibold text-slate-700">
-                    <input
-                      type="checkbox"
-                      name="ownCha"
-                      checked={formData.ownCha}
-                      onChange={handleChange}
-                      className="w-5 h-5 accent-[#002D5E]"
-                    />
-                    We already have our own CHA
-                  </label>
-
-                  {!formData.ownCha && (
-                    <div className="bg-orange-50 rounded-2xl p-4 text-sm text-orange-900">
-                      Apni Manzil customs clearance assistance can be requested.
-                    </div>
-                  )}
-
-                  {formData.ownCha && (
-                    <>
-                      <input
-                        name="chaCompany"
-                        value={formData.chaCompany}
-                        onChange={handleChange}
-                        className={inputClass}
-                        placeholder="CHA Company"
-                      />
-
-                      <input
-                        name="chaContact"
-                        value={formData.chaContact}
-                        onChange={handleChange}
-                        className={inputClass}
-                        placeholder="CHA Contact"
-                      />
-                    </>
-                  )}
-                </>
-              )}
-
-            </div>
-          </div>
-
-          {/* 11 Freight */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Globe2 size={24} />,
-              "11",
-              "Freight & Quote",
-              "Information needed to prepare the freight quotation."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div>
-                <label className={labelClass}>
-                  Freight Terms
-                </label>
-
-                <select
-                  name="freightTerms"
-                  value={formData.freightTerms}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>Prepaid</option>
-                  <option>Collect</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Preferred Currency
-                </label>
-
-                <select
-                  name="preferredCurrency"
-                  value={formData.preferredCurrency}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>USD</option>
-                  <option>INR</option>
-                  <option>EUR</option>
-                  <option>GBP</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Preferred Shipping Line
-                </label>
-
-                <select
-                  name="preferredShippingLine"
-                  value={formData.preferredShippingLine}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>No Preference</option>
-                  <option>Maersk</option>
-                  <option>MSC</option>
-                  <option>Hapag-Lloyd</option>
-                  <option>CMA CGM</option>
-                  <option>ONE</option>
-                  <option>COSCO</option>
-                  <option>Evergreen</option>
-                  <option>Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Quote Required
-                </label>
-
-                <select
-                  name="quoteRequired"
-                  value={formData.quoteRequired}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>Yes</option>
-                  <option>No</option>
-                </select>
-              </div>
-
-            </div>
-          </div>
-
-          {/* 12 Insurance & VGM */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <ShieldCheck size={24} />,
-              "12",
-              "Insurance & VGM",
-              "Optional protection and container verification information."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div>
-                <label className={labelClass}>
-                  Cargo Insurance
-                </label>
-
-                <select
-                  name="insuranceRequired"
-                  value={formData.insuranceRequired}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>No</option>
-                  <option>Yes</option>
-                </select>
-              </div>
-
-              {formData.insuranceRequired === "Yes" && (
-                <>
-                  <input
-                    type="number"
-                    name="cargoValue"
-                    value={formData.cargoValue}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Cargo Value"
-                  />
-
-                  <select
-                    name="cargoValueCurrency"
-                    value={formData.cargoValueCurrency}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    <option>USD</option>
-                    <option>INR</option>
-                    <option>EUR</option>
-                    <option>GBP</option>
-                  </select>
-                </>
-              )}
-
-              <div>
-                <label className={labelClass}>
-                  VGM Status
-                </label>
-
-                <select
-                  name="vgmStatus"
-                  value={formData.vgmStatus}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option>Will Provide Later</option>
-                  <option>Available</option>
-                  <option>Need Assistance</option>
-                </select>
-              </div>
-
-            </div>
-          </div>
-
-          {/* 13 Documents */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <Upload size={24} />,
-              "13",
-              "Documents",
-              "Upload documents if they are already available. You can also provide them later."
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-              <div>
-                <label className={labelClass}>
-                  Commercial Invoice
-                </label>
-
-                <input
-                  type="file"
-                  name="commercialInvoice"
-                  onChange={handleFileChange}
-                  className={inputClass}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  Packing List
-                </label>
-
-                <input
-                  type="file"
-                  name="packingList"
-                  onChange={handleFileChange}
-                  className={inputClass}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>
-                  IEC Certificate
-                </label>
-
-                <input
-                  type="file"
-                  name="iecCertificate"
-                  onChange={handleFileChange}
-                  className={inputClass}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-              </div>
-
-              {formData.dangerousGoods && (
-                <div>
-                  <label className={labelClass}>
-                    MSDS / DG Document
-                  </label>
-
-                  <input
-                    type="file"
-                    name="msds"
-                    onChange={handleFileChange}
-                    className={inputClass}
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                </div>
-              )}
-
-              {formData.oogCargo && (
-                <div>
-                  <label className={labelClass}>
-                    Cargo Photos
-                  </label>
-
-                  <input
-                    type="file"
-                    name="cargoPhotos"
-                    onChange={handleFileChange}
-                    className={inputClass}
-                    accept=".jpg,.jpeg,.png,.pdf"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className={labelClass}>
-                  Other Document
-                </label>
-
-                <input
-                  type="file"
-                  name="otherDocument"
-                  onChange={handleFileChange}
-                  className={inputClass}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-              </div>
-
-            </div>
-          </div>
-
-          {/* 14 Instructions */}
-          <div className={sectionClass}>
-            {sectionTitle(
-              <FileCheck size={24} />,
-              "14",
-              "Additional Requirements",
-              "Anything else our logistics team should know."
-            )}
-
-            <textarea
-              name="specialInstructions"
-              value={formData.specialInstructions}
-              onChange={handleChange}
-              className={inputClass}
-              rows="5"
-              placeholder="Special handling, preferred sailing, delivery requirements, packing requirements, etc."
-            />
-          </div>
-
-          {/* Terms */}
-          <div className="bg-blue-50 border border-blue-100 rounded-3xl p-5">
-            <label className="flex items-start gap-3 text-sm text-slate-700 cursor-pointer">
-              <input
-                type="checkbox"
-                required
-                className="mt-1 w-5 h-5 accent-[#002D5E]"
-              />
-
-              <span>
-                I confirm that the shipment information provided by me is
-                accurate to the best of my knowledge and understand that final
-                freight rates, schedules, space availability and carrier
-                acceptance are subject to confirmation.
+            <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+              Global Sea Freight
+              <span className="mt-2 block text-orange-400">
+                Solutions
               </span>
-            </label>
-          </div>
+            </h1>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-[#002D5E] hover:bg-[#001f42] disabled:opacity-60 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition shadow-xl flex items-center justify-center gap-3"
-          >
-            {submitting
-              ? "Submitting..."
-              : "Request Sea Freight Quote"}
-
-            {!submitting && <ChevronRight size={20} />}
-          </button>
-
-        </form>
-
-        {/* LANDSCAPE SHIP IMAGE */}
-        <div className="mt-8 overflow-hidden rounded-[2rem] shadow-xl border border-slate-100 bg-white">
-
-          <img
-            src={seaFreightShip}
-            alt="Apni Manzil Sea Freight"
-            className="w-full h-[220px] md:h-[360px] object-cover"
-          />
-
-          <div className="bg-[#002D5E] text-white p-6 md:p-8">
-
-            <div className="flex items-center gap-3 mb-2">
-              <Ship size={24} />
-              <h3 className="text-xl font-black">
-                Global Sea Freight Solutions
-              </h3>
-            </div>
-
-            <p className="text-blue-100 text-sm md:text-base">
-              FCL • LCL • Port-to-Port • Door-to-Door • Import • Export
+            <p className="mt-6 max-w-xl text-base leading-8 text-slate-200 sm:text-lg">
+              Find the Right Shipping Partner for Your Cargo — All in One
+              Place.
             </p>
 
+            <div className="mt-8 flex flex-wrap gap-4 text-sm text-slate-100">
+              <span className="flex items-center gap-2">
+                <CheckCircle2 size={18} className="text-orange-400" />
+                Global Shipping Partners
+              </span>
+
+              <span className="flex items-center gap-2">
+                <CheckCircle2 size={18} className="text-orange-400" />
+                FCL & LCL Options
+              </span>
+            </div>
+
+            <a
+              href="#sea-freight-search"
+              className="mt-9 inline-flex items-center gap-3 rounded-xl bg-orange-500 px-7 py-4 font-bold text-white shadow-lg transition hover:bg-orange-600"
+            >
+              Find Shipping Partners
+              <ArrowRight size={20} />
+            </a>
+          </div>
+
+          <div className="hidden justify-center lg:flex">
+            <div className="rounded-3xl border border-white/20 bg-white/10 p-8 text-white shadow-2xl backdrop-blur-md">
+              <Ship size={58} className="mb-5 text-orange-400" />
+
+              <h2 className="text-2xl font-bold">
+                Ship Beyond Borders
+              </h2>
+
+              <p className="mt-3 max-w-xs leading-7 text-slate-200">
+                Discover international shipping partners for your import
+                and export requirements.
+              </p>
+
+              <div className="mt-7 flex items-center gap-3 border-t border-white/20 pt-5">
+                <Anchor className="text-orange-400" size={22} />
+
+                <div>
+                  <p className="font-semibold">Apni Manzil</p>
+                  <p className="text-sm text-slate-300">
+                    Your Cargo. Your Choice.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-      </div>
-    </div>
+      {/* SEARCH FORM */}
+      <section
+        id="sea-freight-search"
+        className="scroll-mt-8 px-4 py-14 sm:px-6 sm:py-20"
+      >
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-8 text-center">
+            <span className="text-sm font-bold uppercase tracking-[0.2em] text-orange-600">
+              Start Your Search
+            </span>
+
+            <h2 className="mt-3 text-3xl font-extrabold text-[#002D5E] sm:text-4xl">
+              Find Your Shipping Partner
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-2xl leading-7 text-slate-600">
+              Enter your shipment details to explore suitable sea freight
+              options.
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+            <div className="flex items-center gap-3 bg-[#002D5E] px-6 py-5 text-white sm:px-9">
+              <div className="rounded-xl bg-white/10 p-3">
+                <Container size={25} />
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold">
+                  Shipment Details
+                </h3>
+                <p className="text-sm text-blue-100">
+                  Tell us about your cargo
+                </p>
+              </div>
+            </div>
+
+            <form
+              onSubmit={handleSubmit}
+              className="grid gap-6 p-5 sm:grid-cols-2 sm:p-9"
+            >
+              {/* FROM */}
+              <div>
+                <label htmlFor="origin" className={labelClass}>
+                  From <span className="text-red-500">*</span>
+                </label>
+
+                <div className="relative">
+                  <MapPin
+                    size={19}
+                    className="absolute left-4 top-[26px] text-orange-500"
+                  />
+
+                  <input
+                    id="origin"
+                    name="origin"
+                    value={form.origin}
+                    onChange={handleChange}
+                    placeholder="e.g. Nhava Sheva, India"
+                    required
+                    maxLength={150}
+                    autoComplete="shipping origin"
+                    className={`${inputClass} pl-11`}
+                  />
+                </div>
+              </div>
+
+              {/* TO */}
+              <div>
+                <label htmlFor="destination" className={labelClass}>
+                  To <span className="text-red-500">*</span>
+                </label>
+
+                <div className="relative">
+                  <MapPin
+                    size={19}
+                    className="absolute left-4 top-[26px] text-green-600"
+                  />
+
+                  <input
+                    id="destination"
+                    name="destination"
+                    value={form.destination}
+                    onChange={handleChange}
+                    placeholder="e.g. Rotterdam, Netherlands"
+                    required
+                    maxLength={150}
+                    autoComplete="shipping destination"
+                    className={`${inputClass} pl-11`}
+                  />
+                </div>
+              </div>
+
+              {/* CARGO TYPE */}
+              <div>
+                <label htmlFor="cargoType" className={labelClass}>
+                  Cargo Type <span className="text-red-500">*</span>
+                </label>
+
+                <div className="relative">
+                  <Package
+                    size={19}
+                    className="absolute left-4 top-[26px] text-orange-500"
+                  />
+
+                  <select
+                    id="cargoType"
+                    name="cargoType"
+                    value={form.cargoType}
+                    onChange={handleChange}
+                    required
+                    className={`${inputClass} pl-11`}
+                  >
+                    <option>General Cargo</option>
+                    <option>Textiles</option>
+                    <option>Machinery</option>
+                    <option>Industrial Goods</option>
+                    <option>Food Products</option>
+                    <option>Electronics</option>
+                    <option>Furniture</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* SHIPMENT TYPE */}
+              <div>
+                <label htmlFor="shipmentType" className={labelClass}>
+                  Shipment Type <span className="text-red-500">*</span>
+                </label>
+
+                <select
+                  id="shipmentType"
+                  name="shipmentType"
+                  value={form.shipmentType}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                >
+                  <option value="Not Sure">Not Sure</option>
+                  <option value="FCL">FCL — Full Container Load</option>
+                  <option value="LCL">LCL — Less than Container Load</option>
+                </select>
+              </div>
+
+              {/* WEIGHT */}
+              <div>
+                <label htmlFor="weight" className={labelClass}>
+                  Cargo Weight (KG){" "}
+                  <span className="text-red-500">*</span>
+                </label>
+
+                <div className="relative">
+                  <Weight
+                    size={19}
+                    className="absolute left-4 top-[26px] text-orange-500"
+                  />
+
+                  <input
+                    id="weight"
+                    name="weight"
+                    type="number"
+                    min="0.01"
+                    max="100000000"
+                    step="any"
+                    value={form.weight}
+                    onChange={handleChange}
+                    placeholder="e.g. 15000"
+                    required
+                    className={`${inputClass} pl-11`}
+                  />
+                </div>
+              </div>
+
+              {/* EMAIL */}
+              <div>
+                <label htmlFor="contactEmail" className={labelClass}>
+                  Contact Email{" "}
+                  <span className="font-normal text-slate-400">
+                    (Optional)
+                  </span>
+                </label>
+
+                <div className="relative">
+                  <Mail
+                    size={19}
+                    className="absolute left-4 top-[26px] text-orange-500"
+                  />
+
+                  <input
+                    id="contactEmail"
+                    name="contactEmail"
+                    type="email"
+                    value={form.contactEmail}
+                    onChange={handleChange}
+                    placeholder="you@company.com"
+                    maxLength={254}
+                    autoComplete="email"
+                    className={`${inputClass} pl-11`}
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div
+                  role="alert"
+                  className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-700 sm:col-span-2"
+                >
+                  {error}
+                </div>
+              )}
+
+              <div className="sm:col-span-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-orange-500 px-5 py-4 font-bold text-white shadow-md transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {loading ? (
+                    <>
+                      <LoaderCircle className="animate-spin" size={21} />
+                      Finding Shipping Options...
+                    </>
+                  ) : (
+                    <>
+                      <Search size={21} />
+                      Find Suitable Shipping Options
+                      <ArrowRight size={20} />
+                    </>
+                  )}
+                </button>
+
+                <p className="mt-4 text-center text-xs leading-6 text-slate-500">
+                  No booking or payment is collected on this page. Final
+                  availability, rates and terms must be confirmed with the
+                  shipping company.
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* WEBHOOK RESULTS */}
+      {submitted && (
+        <section className="px-4 pb-16 sm:px-6">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-7 flex items-start gap-3">
+              <CheckCircle2
+                size={28}
+                className="mt-1 shrink-0 text-green-600"
+              />
+
+              <div>
+                <h2 className="text-2xl font-extrabold text-[#002D5E]">
+                  Shipping Options
+                </h2>
+
+                <p className="mt-2 leading-7 text-slate-600">
+                  Route: {form.origin} → {form.destination}
+                </p>
+              </div>
+            </div>
+
+            {shippingOptions.length > 0 ? (
+              <div className="grid gap-5 md:grid-cols-2">
+                {shippingOptions.map((item, index) => {
+                  const companyName =
+                    item.companyName ||
+                    item.company ||
+                    item.provider ||
+                    item.name ||
+                    "Shipping Provider";
+
+                  const companyUrl =
+                    item.officialWebsite ||
+                    item.website ||
+                    item.url ||
+                    item.link;
+
+                  const quoteUrl =
+                    item.quoteUrl ||
+                    item.quoteLink ||
+                    item.bookingUrl;
+
+                  const validUrl = (value) => {
+                    try {
+                      const parsed = new URL(value);
+                      return ["https:", "http:"].includes(parsed.protocol)
+                        ? parsed.href
+                        : null;
+                    } catch {
+                      return null;
+                    }
+                  };
+
+                  const safeCompanyUrl = validUrl(companyUrl);
+                  const safeQuoteUrl = validUrl(quoteUrl);
+
+                  return (
+                    <article
+                      key={`${companyName}-${index}`}
+                      className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="rounded-xl bg-blue-50 p-3 text-[#002D5E]">
+                          <Ship size={27} />
+                        </div>
+
+                        <div className="min-w-0">
+                          <h3 className="text-xl font-bold text-[#002D5E]">
+                            {companyName}
+                          </h3>
+
+                          <p className="mt-2 break-words text-sm leading-6 text-slate-600">
+                            {item.description ||
+                              item.service ||
+                              "Review the provider's official information for your shipment."}
+                          </p>
+                        </div>
+                      </div>
+
+                      {(item.rate || item.price) && (
+                        <p className="mt-4 font-semibold text-green-700">
+                          Rate: {item.currency || ""}{" "}
+                          {item.rate || item.price}
+                        </p>
+                      )}
+
+                      {safeCompanyUrl && (
+                        <a
+                          href={safeCompanyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#002D5E] px-4 py-3 text-sm font-semibold text-white hover:bg-blue-900"
+                        >
+                          Official Website
+                          <ExternalLink size={16} />
+                        </a>
+                      )}
+
+                      {safeQuoteUrl && (
+                        <a
+                          href={safeQuoteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-3 mt-5 inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700"
+                        >
+                          Request Quote
+                          <ExternalLink size={16} />
+                        </a>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+                <p className="leading-7 text-slate-600">
+                  Your search was submitted successfully, but the webhook
+                  did not return a list of shipping companies in a recognized
+                  format. You can visit these providers' official websites
+                  to investigate your shipment route.
+                </p>
+
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  {providers.map((provider) => (
+                    <a
+                      key={provider.name}
+                      href={provider.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-5 transition hover:border-orange-400 hover:bg-orange-50"
+                    >
+                      <div>
+                        <h3 className="font-bold text-[#002D5E]">
+                          {provider.name}
+                        </h3>
+
+                        <p className="mt-1 text-sm leading-6 text-slate-600">
+                          {provider.description}
+                        </p>
+                      </div>
+
+                      <ExternalLink
+                        size={19}
+                        className="shrink-0 text-orange-500"
+                      />
+                    </a>
+                  ))}
+                </div>
+
+                <p className="mt-5 text-xs leading-6 text-slate-500">
+                  These are general provider links, not confirmation that
+                  the selected route is available. Confirm route coverage,
+                  rates and terms directly with each provider.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* FOOTER NOTE */}
+      <section className="border-t border-slate-200 bg-white px-5 py-8">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="font-bold text-[#002D5E]">
+              Apni Manzil — Global Sea Freight Solutions
+            </p>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Discover shipping partners for your cargo.
+            </p>
+          </div>
+
+          <a
+            href="https://www.maersk.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#002D5E] hover:text-orange-600"
+          >
+            Explore Global Shipping
+            <ExternalLink size={16} />
+          </a>
+        </div>
+      </section>
+    </main>
   );
-};
-
-export default SeaFreightForm;
+}
