@@ -1,0 +1,613 @@
+.india-post-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+  color: #17304d;
+  font-family: inherit;
+}
+
+.india-post-page * {
+  box-sizing: border-box;
+}
+
+.india-post-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 440px;
+  background:
+    linear-gradient(110deg, #071e3d 0%, #073d73 55%, #e85b28 150%);
+}
+
+.india-post-hero-overlay {
+  padding: 75px 24px 80px;
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgb(255 255 255 / 12%),
+      transparent 30%
+    );
+}
+
+.india-post-hero-content {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.india-post-brand {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 38px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.india-post-logo {
+  width: 52px;
+  height: 45px;
+  object-fit: contain;
+  padding: 5px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.india-post-brand-divider {
+  color: #ff8b50;
+  font-size: 20px;
+}
+
+.india-post-eyebrow {
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #ffb38e;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+}
+
+.india-post-hero h1 {
+  max-width: 760px;
+  margin: 0 0 20px;
+  color: #fff;
+  font-size: clamp(36px, 5vw, 62px);
+  font-weight: 850;
+  line-height: 1.12;
+  letter-spacing: -1.5px;
+}
+
+.india-post-hero-content > p {
+  max-width: 650px;
+  margin: 0;
+  color: #e1ebf8;
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.india-post-hero-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 25px;
+  margin-top: 28px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.india-post-hero-features span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.india-post-hero-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px;
+  padding: 15px 23px;
+  border-radius: 10px;
+  background: #ff792f;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.india-post-hero-button:hover {
+  transform: translateY(-2px);
+  background: #ed6220;
+  color: #fff;
+}
+
+.india-post-benefits {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  width: calc(100% - 40px);
+  max-width: 1180px;
+  margin: -32px auto 0;
+  padding: 25px;
+  border: 1px solid #e8edf4;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 18px 50px rgb(12 39 72 / 9%);
+}
+
+.india-post-benefit {
+  padding: 8px 15px;
+}
+
+.india-post-benefit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #edf4ff;
+  font-size: 22px;
+}
+
+.india-post-benefit h3 {
+  margin: 15px 0 7px;
+  color: #12345b;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.india-post-benefit p {
+  margin: 0;
+  color: #6c7c91;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.india-post-booking-section {
+  width: calc(100% - 40px);
+  max-width: 1000px;
+  margin: 75px auto;
+}
+
+.india-post-section-heading {
+  margin-bottom: 35px;
+  text-align: center;
+}
+
+.india-post-section-heading > span {
+  color: #e9632a;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 2px;
+}
+
+.india-post-section-heading h2 {
+  margin: 12px 0;
+  color: #0b2b50;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 850;
+  letter-spacing: -0.8px;
+}
+
+.india-post-section-heading p {
+  max-width: 600px;
+  margin: 0 auto;
+  color: #718197;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.india-post-form {
+  padding: 38px;
+  border: 1px solid #e5ebf3;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgb(12 39 72 / 7%);
+}
+
+.india-post-form-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #e9eef5;
+}
+
+.india-post-form-label {
+  color: #e9632a;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 1.7px;
+}
+
+.india-post-form-top h3 {
+  margin: 8px 0 0;
+  color: #0c2c50;
+  font-size: 25px;
+  font-weight: 850;
+}
+
+.india-post-request-badge {
+  padding: 9px 13px;
+  border: 1px solid #cce0ff;
+  border-radius: 30px;
+  background: #eef5ff;
+  color: #174f91;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.india-post-form-section {
+  padding: 32px 0;
+  border-bottom: 1px solid #e9eef5;
+}
+
+.india-post-form-section-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.india-post-form-section-title > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #edf4ff;
+  color: #174f91;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.india-post-form-section-title h3 {
+  margin: 0 0 5px;
+  color: #133353;
+  font-size: 19px;
+  font-weight: 850;
+}
+
+.india-post-form-section-title p {
+  margin: 0;
+  color: #8290a2;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.india-post-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.india-post-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.india-post-full-width {
+  grid-column: 1 / -1;
+}
+
+.india-post-field label {
+  color: #263e59;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.india-post-field input,
+.india-post-field select,
+.india-post-field textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #dce4ef;
+  border-radius: 9px;
+  outline: none;
+  background: #fbfcfe;
+  color: #17304d;
+  font-family: inherit;
+  font-size: 14px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.india-post-field input,
+.india-post-field select {
+  min-height: 48px;
+}
+
+.india-post-field textarea {
+  min-height: 95px;
+  resize: vertical;
+}
+
+.india-post-field input:focus,
+.india-post-field select:focus,
+.india-post-field textarea:focus {
+  border-color: #3175c6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgb(49 117 198 / 10%);
+}
+
+.india-post-field input::placeholder,
+.india-post-field textarea::placeholder {
+  color: #a0aaba;
+}
+
+.india-post-field small {
+  color: #7a899c;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.india-post-info-notice {
+  margin-top: 25px;
+  padding: 18px;
+  border: 1px solid #dbe8fa;
+  border-radius: 12px;
+  background: #f2f7ff;
+}
+
+.india-post-info-notice strong {
+  color: #184b83;
+  font-size: 13px;
+}
+
+.india-post-info-notice p {
+  margin: 8px 0 0;
+  color: #5d7087;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.india-post-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border: 1px solid #dce7f5;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.india-post-payment-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #e7f0ff;
+  font-size: 23px;
+}
+
+.india-post-payment-option > div {
+  flex: 1;
+}
+
+.india-post-payment-option strong {
+  color: #153b65;
+  font-size: 14px;
+}
+
+.india-post-payment-option p {
+  margin: 6px 0 0;
+  color: #74859a;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.india-post-payment-badge {
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: #e0f5e9;
+  color: #187648;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.india-post-payment-warning {
+  margin: 12px 0 0;
+  color: #7c6a46;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.india-post-declaration {
+  padding: 25px 0;
+}
+
+.india-post-declaration label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #52647a;
+  font-size: 12px;
+  line-height: 1.8;
+  cursor: pointer;
+}
+
+.india-post-declaration input {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  margin-top: 3px;
+  accent-color: #174f91;
+}
+
+.india-post-message {
+  margin-bottom: 20px;
+  padding: 15px 17px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.india-post-message.success {
+  border: 1px solid #b9e8cd;
+  background: #effbf4;
+  color: #17683d;
+}
+
+.india-post-message.error {
+  border: 1px solid #f2c8c8;
+  background: #fff3f3;
+  color: #a62d2d;
+}
+
+.india-post-submit {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 11px;
+  background: #e9632a;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 850;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.india-post-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #d95019;
+}
+
+.india-post-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.india-post-form-disclaimer {
+  max-width: 650px;
+  margin: 16px auto 0;
+  color: #8995a5;
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .india-post-hero-overlay {
+    padding: 48px 22px 65px;
+  }
+
+  .india-post-brand {
+    gap: 9px;
+    margin-bottom: 30px;
+    font-size: 11px;
+  }
+
+  .india-post-logo {
+    width: 43px;
+    height: 40px;
+  }
+
+  .india-post-hero h1 {
+    font-size: 38px;
+    letter-spacing: -0.8px;
+  }
+
+  .india-post-hero-content > p {
+    font-size: 14px;
+  }
+
+  .india-post-hero-features {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .india-post-benefits {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: calc(100% - 30px);
+    padding: 20px;
+  }
+
+  .india-post-benefit {
+    padding: 8px;
+  }
+
+  .india-post-benefit h3 {
+    margin-top: 10px;
+  }
+
+  .india-post-booking-section {
+    width: calc(100% - 28px);
+    margin: 55px auto;
+  }
+
+  .india-post-form {
+    padding: 23px 17px;
+    border-radius: 16px;
+  }
+
+  .india-post-grid {
+    grid-template-columns: 1fr;
+    gap: 19px;
+  }
+
+  .india-post-full-width {
+    grid-column: auto;
+  }
+
+  .india-post-form-section {
+    padding: 26px 0;
+  }
+
+  .india-post-form-section-title h3 {
+    font-size: 17px;
+  }
+
+  .india-post-form-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .india-post-payment-option {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 15px;
+  }
+
+  .india-post-payment-option > div {
+    min-width: 0;
+  }
+
+  .india-post-payment-badge {
+    margin-left: 63px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .india-post-page *,
+  .india-post-page *::before,
+  .india-post-page *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

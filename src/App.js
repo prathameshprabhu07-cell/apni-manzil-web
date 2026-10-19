@@ -28,6 +28,10 @@ import BookingPage from './pages/BookingPage';
 import HyperlocalService from './pages/HyperlocalService';
 import TruckTransportService from './pages/TruckTransportService';
 import Tracking from './pages/Tracking';
+
+// --- INDIA POST ---
+import IndiaPost from './pages/IndiaPost';
+
 import AdminDashboard from './components/AdminDashboard';
 import HelpCenter from './pages/HelpCenter';
 import PartnerRegistration from './pages/PartnerRegistration';
@@ -185,19 +189,12 @@ function App() {
         }
 
         try {
-          // Check users/{Firebase UID}
           const userDocRef = doc(db, 'users', user.uid);
           const userDocSnap = await getDoc(userDocRef);
 
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
-
-            // Only role === admin gets admin access
-            if (userData.role === 'admin') {
-              setIsAdmin(true);
-            } else {
-              setIsAdmin(false);
-            }
+            setIsAdmin(userData.role === 'admin');
           } else {
             setIsAdmin(false);
           }
@@ -257,7 +254,6 @@ function App() {
             element={<About />}
           />
 
-          {/* CONTACT US PAGE */}
           <Route
             path="/contact-us"
             element={<ContactUs />}
@@ -299,6 +295,15 @@ function App() {
           <Route
             path="/customer-dashboard"
             element={<CustomerDashboard />}
+          />
+
+          {/* ==========================================
+              INDIA POST
+          ========================================== */}
+
+          <Route
+            path="/india-post"
+            element={<IndiaPost />}
           />
 
           {/* ==========================================
@@ -659,14 +664,13 @@ function App() {
 
           <Route
             path="*"
-            element={<Navigate to="/" />}
+            element={<Navigate to="/" replace />}
           />
 
         </Routes>
       </Layout>
 
       <ChatBot />
-
     </Router>
   );
 }
