@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./IndiaPost.css";
 
 const WEBHOOK_URL =
-  "https://YOUR-N8N-DOMAIN/webhook/india-post-booking-request";
+  "https://sega-cos-daisy-signing.trycloudflare.com/webhook/india-post-booking-request";
 
 const initialForm = {
   serviceType: "India Post Parcel",

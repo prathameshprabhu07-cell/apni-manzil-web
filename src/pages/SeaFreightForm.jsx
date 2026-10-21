@@ -19,7 +19,7 @@ import seaFreightShip from "../assets/sea-freight-ship.jpg";
 
 // Apni Manzil Sea Freight Webhook
 const SEA_FREIGHT_WEBHOOK =
-  "https://pizza-yes-thomas-collectible.trycloudflare.com/webhook/apni-manzil-logistics";
+  "https://sega-cos-daisy-signing.trycloudflare.com/webhook/Sea-Freight";
 
 const providers = [
   {
