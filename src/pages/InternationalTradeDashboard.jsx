@@ -282,7 +282,7 @@ export default function InternationalTradeDashboard() {
               <img
                 src="/international-trade.jpg"
                 alt="Apni Manzil International Trade and Global Logistics"
-                className="h-[300px] w-full rounded-[1.35rem] object-cover sm:h-[400px] lg:h-[480px]"
+                className="h-auto min-h-[300px] w-full rounded-[1.35rem] object-contain sm:min-h-[400px] lg:min-h-[480px]"
                 onError={(event) => {
                   event.currentTarget.style.display = 'none';
                 }}
