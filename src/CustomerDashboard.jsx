@@ -48,7 +48,7 @@ import {
 ===================================================== */
 
 const CANCEL_WEBHOOK_URL =
-  "https://sega-cos-daisy-signing.trycloudflare.com/webhook/courier-Cancel-Order";
+  "https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/courier-Cancel-Order";
 
 
 const CustomerDashboard = () => {

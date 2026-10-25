@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 const WEBHOOK_URL =
-  "https://sega-cos-daisy-signing.trycloudflare.com/webhook/Air-Cargo";
+  "https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/Air-Cargo";
 
 const initialForm = {
   originCountry: "India",

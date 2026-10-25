@@ -25,7 +25,7 @@ const SameDayDelivery = () => {
   const [selectedRate, setSelectedRate] = useState(null);
 
   const n8nUrl =
-    "https://sega-cos-daisy-signing.trycloudflare.com/webhook/apni-manzil-hyperlocal";
+    "https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/apni-manzil-hyperlocal";
 
   const [formData, setFormData] = useState({
     senderName: '',
