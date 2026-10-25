@@ -281,23 +281,23 @@ const Home = () => {
             animation: "tickerMove 28s linear infinite",
           }}
         >
-          <span className="mx-12 font-black text-xs tracking-wider md:text-sm">
+          <span className="mx-12 text-xs font-black tracking-wider md:text-sm">
             🚚 Fast, Reliable Logistics Across India
           </span>
 
-          <span className="mx-12 font-black text-xs tracking-wider md:text-sm">
+          <span className="mx-12 text-xs font-black tracking-wider md:text-sm">
             🤖 AI-Powered Logistics Assistance
           </span>
 
-          <span className="mx-12 font-black text-xs tracking-wider md:text-sm">
+          <span className="mx-12 text-xs font-black tracking-wider md:text-sm">
             📦 Courier • Transport • Packers & Movers • Warehouse
           </span>
 
-          <span className="mx-12 font-black text-xs tracking-wider md:text-sm">
+          <span className="mx-12 text-xs font-black tracking-wider md:text-sm">
             🌍 Domestic & International Logistics
           </span>
 
-          <span className="mx-12 font-black text-xs tracking-wider md:text-sm">
+          <span className="mx-12 text-xs font-black tracking-wider md:text-sm">
             🇮🇳 India Post • Speed Post • Postal Services
           </span>
         </div>
@@ -397,7 +397,7 @@ const Home = () => {
             </div>
 
             {/* HERO AI CARD */}
-            <div className="hidden lg:col-span-5 md:block">
+            <div className="hidden md:block lg:col-span-5">
               <div className="home-ai-preview rounded-[32px] border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-xl md:p-8">
                 <div className="mb-7 flex items-center gap-4">
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 shadow-lg">
@@ -538,7 +538,9 @@ const Home = () => {
                   {service.title}
                 </h3>
 
-                <p className="mt-1 text-sm text-slate-500">{service.text}</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {service.text}
+                </p>
               </div>
             </button>
           ))}
@@ -552,6 +554,208 @@ const Home = () => {
           >
             View all logistics services →
           </button>
+        </div>
+      </section>
+
+      {/* INTERNATIONAL TRADE HUB */}
+      <section className="relative overflow-hidden bg-slate-50 px-5 py-12 md:px-8 md:py-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative overflow-hidden rounded-[30px] border border-slate-200 bg-[#002D5E] shadow-2xl md:rounded-[40px]">
+            {/* Background Decoration */}
+            <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl" />
+
+            <div className="relative z-10 grid items-center gap-10 p-6 sm:p-10 md:p-14 lg:grid-cols-12 lg:gap-12">
+              {/* LEFT CONTENT */}
+              <div className="min-w-0 lg:col-span-7">
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2">
+                  <Globe size={16} className="text-orange-400" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-300 sm:text-xs">
+                    Apni Manzil Global
+                  </span>
+                </div>
+
+                <h2 className="text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
+                  INTERNATIONAL
+                  <span className="block text-orange-500">
+                    TRADE HUB
+                  </span>
+                </h2>
+
+                <p className="mt-5 max-w-2xl text-lg font-bold leading-relaxed text-white sm:text-xl md:text-2xl">
+                  Take Your Business
+                  <span className="text-orange-400"> Beyond Borders.</span>
+                </p>
+
+                <p className="mt-4 max-w-xl text-sm leading-7 text-white/70 sm:text-base">
+                  Exploring international markets? Discover global logistics
+                  options, import-export guidance and international shipping
+                  assistance — all through one platform.
+                </p>
+
+                {/* TRADE SERVICE HIGHLIGHTS */}
+                <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-400">
+                      <Globe size={21} />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-black text-white">
+                        Global Logistics
+                      </p>
+                      <p className="mt-1 text-xs text-white/50">
+                        Explore international shipping
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-400">
+                      <Package size={21} />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-black text-white">
+                        Import & Export
+                      </p>
+                      <p className="mt-1 text-xs text-white/50">
+                        Explore trade assistance
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-400">
+                      <Truck size={21} />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-black text-white">
+                        Sea Freight
+                      </p>
+                      <p className="mt-1 text-xs text-white/50">
+                        Discover cargo options
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-400">
+                      <Zap size={21} />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-black text-white">
+                        AI Trade Assistance
+                      </p>
+                      <p className="mt-1 text-xs text-white/50">
+                        Get guidance for your needs
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* TRADE BUTTONS */}
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/international-trade")}
+                    className="group flex items-center justify-center gap-3 rounded-2xl bg-orange-500 px-6 py-4 text-sm font-black text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-orange-600 hover:shadow-orange-500/20"
+                  >
+                    Explore International Trade
+                    <ArrowRight
+                      size={19}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => navigate("/ai-smart-logistics")}
+                    className="flex items-center justify-center gap-3 rounded-2xl border border-white/25 bg-white/10 px-6 py-4 text-sm font-black text-white transition-all duration-300 hover:bg-white hover:text-[#002D5E]"
+                  >
+                    <Bot size={19} />
+                    Ask AI Assistant
+                  </button>
+                </div>
+
+                <p className="mt-4 text-xs leading-relaxed text-white/40">
+                  Explore international trade and logistics possibilities
+                  with Apni Manzil.
+                </p>
+              </div>
+
+              {/* RIGHT VISUAL CARD */}
+              <div className="min-w-0 lg:col-span-5">
+                <div className="relative overflow-hidden rounded-[28px] border border-white/15 bg-gradient-to-br from-white/15 to-white/5 p-5 shadow-xl backdrop-blur-sm sm:p-7">
+                  <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full border border-white/10" />
+                  <div className="absolute -right-5 -top-5 h-28 w-28 rounded-full border border-white/10" />
+
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-orange-400">
+                          Think Global
+                        </p>
+
+                        <h3 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+                          Go Worldwide.
+                        </h3>
+                      </div>
+
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-500 shadow-lg shadow-orange-500/20">
+                        <Globe size={30} className="text-white" />
+                      </div>
+                    </div>
+
+                    {/* GLOBAL TRADE GRAPHIC */}
+                    <div className="my-8 flex items-center justify-center">
+                      <div className="relative flex h-44 w-44 items-center justify-center rounded-full border border-white/20 bg-white/5 sm:h-52 sm:w-52">
+                        <div className="absolute inset-3 rounded-full border border-dashed border-orange-400/50" />
+
+                        <div className="absolute left-2 top-8 flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-[#002D5E] text-orange-400 shadow-lg">
+                          <Package size={24} />
+                        </div>
+
+                        <div className="absolute right-1 top-14 flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-[#002D5E] text-orange-400 shadow-lg">
+                          <Truck size={24} />
+                        </div>
+
+                        <div className="absolute bottom-4 left-10 flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-[#002D5E] text-orange-400 shadow-lg">
+                          <Building2 size={24} />
+                        </div>
+
+                        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-orange-500 shadow-xl shadow-orange-500/20 sm:h-28 sm:w-28">
+                          <Globe size={54} className="text-white" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* BOTTOM INFORMATION */}
+                    <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-400/10 text-green-400">
+                          <Sparkles size={21} />
+                        </div>
+
+                        <div>
+                          <p className="text-sm font-black text-white">
+                            Your Global Trade Journey
+                          </p>
+
+                          <p className="mt-1 text-xs leading-relaxed text-white/50">
+                            Discover services, explore opportunities and find
+                            guidance for your next step.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -745,10 +949,7 @@ const Home = () => {
       </section>
 
       {/* SHIPMENT TRACKING */}
-      <section
-        id="track"
-        className="mx-auto max-w-7xl px-5 py-8 md:px-8"
-      >
+      <section id="track" className="mx-auto max-w-7xl px-5 py-8 md:px-8">
         <div className="home-track-panel w-full min-w-0 rounded-[24px] border border-slate-100 bg-white p-5 shadow-xl md:rounded-[35px] md:p-12">
           <div className="grid w-full min-w-0 grid-cols-1 items-center gap-10 lg:grid-cols-5">
             <div className="flex justify-center lg:col-span-2">

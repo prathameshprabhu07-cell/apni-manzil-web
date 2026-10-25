@@ -23,6 +23,10 @@ import Home from './pages/Home';
 import About from './pages/About';
 import ContactUs from './pages/ContactUs';
 import ImportExportDetail from './pages/ImportExportDetail';
+
+// INTERNATIONAL TRADE DASHBOARD
+import InternationalTradeDashboard from './pages/InternationalTradeDashboard';
+
 import CourierServiceDetail from './pages/CourierServiceDetail';
 import BookingPage from './pages/BookingPage';
 import HyperlocalService from './pages/HyperlocalService';
@@ -38,7 +42,7 @@ import PartnerRegistration from './pages/PartnerRegistration';
 import MSMERegistration from './pages/MSMERegistration';
 import ChatBot from './components/ChatBot';
 
-// --- नवीन पेजेस ---
+// --- SERVICE PAGES ---
 import PackersAndMovers from './pages/PackersAndMovers';
 import WarehouseStorage from './pages/WarehouseStorage';
 import InternationalLogistics from './pages/InternationalLogistics';
@@ -48,23 +52,23 @@ import AISmartLogistics from './pages/AISmartLogistics';
 import LogisticsAI from './pages/LogisticsAI';
 import VendorDashboard from './pages/VendorDashboard';
 
-// --- Partner Forms ---
+// --- PARTNER FORMS ---
 import PackersMoversRegister from './pages/PackersMoversRegister';
 import WarehouseRegister from './pages/WarehouseRegister';
 import TruckOwnerRegister from './pages/TruckOwnerRegister';
 import TransporterRegister from './pages/TransporterRegister';
 import InternationalDelivery from './pages/InternationalDelivery';
 
-// --- Customer Dashboard ---
+// --- CUSTOMER DASHBOARD ---
 import CustomerDashboard from './CustomerDashboard';
 
-// --- Shipping ---
+// --- SHIPPING ---
 import MarketplaceShipping from './pages/MarketplaceShipping';
 import CODShipping from './pages/CODShipping';
 import StockManagement from './pages/StockManagement';
 import OrderFulfillmentForm from './pages/OrderFulfillmentForm';
 
-// --- Warehouse Forms ---
+// --- WAREHOUSE FORMS ---
 import HomeShifting from './pages/HomeShifting';
 import OfficeShiftingForm from './components/OfficeShiftingForm';
 import FurnitureShiftingForm from './components/FurnitureShiftingForm';
@@ -81,11 +85,11 @@ import ColdStorageForm from './pages/ColdStorageForm';
 import InventoryManagementForm from './pages/InventoryManagementForm';
 import BulkPalletStorageForm from './pages/BulkPalletStorageForm';
 
-// --- Cold Chain ---
+// --- COLD CHAIN ---
 import ColdChainForm from './pages/ColdChainForm';
 import PharmaColdChainForm from './pages/PharmaColdChainForm';
 
-// --- Special Logistics ---
+// --- SPECIAL LOGISTICS ---
 import FragileItemShippingForm from './pages/FragileItemShippingForm';
 import HeavyMachineryTransportForm from './pages/HeavyMachineryTransportForm';
 import DangerousGoodsTransportForm from './pages/DangerousGoodsTransportForm';
@@ -95,12 +99,13 @@ import CustomsClearanceForm from './pages/CustomsClearanceForm';
 
 import Auth from './Auth';
 
-// --- Rating ---
+// --- RATING ---
 import RatingComponent from './components/RatingComponent';
 
 // ==========================================
 // 3. SERVICE PLACEHOLDER COMPONENTS
 // ==========================================
+
 const AirFreight = () => (
   <div
     style={{
@@ -167,6 +172,7 @@ const TradeFinance = () => (
 // ==========================================
 // 4. MAIN APP
 // ==========================================
+
 function App() {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
@@ -175,6 +181,7 @@ function App() {
   // ==========================================
   // FIREBASE AUTH + ADMIN ROLE CHECK
   // ==========================================
+
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(
       auth,
@@ -215,6 +222,7 @@ function App() {
   // ==========================================
   // LOADING SCREEN
   // ==========================================
+
   if (loading) {
     return (
       <div
@@ -238,6 +246,10 @@ function App() {
     );
   }
 
+  // ==========================================
+  // ROUTES
+  // ==========================================
+
   return (
     <Router>
       <Layout user={currentUser}>
@@ -247,7 +259,10 @@ function App() {
               MAIN
           ========================================== */}
 
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
           <Route
             path="/about-us"
@@ -467,6 +482,12 @@ function App() {
           <Route
             path="/importexport"
             element={<ImportExportDetail />}
+          />
+
+          {/* NEW INTERNATIONAL TRADE DASHBOARD */}
+          <Route
+            path="/international-trade"
+            element={<InternationalTradeDashboard />}
           />
 
           <Route
