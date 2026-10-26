@@ -24,6 +24,10 @@ import {
   CreditCard,
   MapPin,
   CheckCircle2,
+  ArrowRight,
+  ExternalLink,
+  Wallet,
+  MessageCircle,
 } from "lucide-react";
 
 import { auth, db } from "./firebaseConfig";
@@ -67,6 +71,10 @@ const CustomerDashboard = () => {
 
   const [cancellingBookingId, setCancellingBookingId] =
     useState(null);
+  const [profileName, setProfileName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState("");
 
   /* =====================================================
      AUTH + PROFILE + BOOKINGS
@@ -107,6 +115,8 @@ const CustomerDashboard = () => {
             ...data,
             uid: firebaseUser.uid,
           });
+          setProfileName(data.fullName || "");
+          setProfilePhone(data.phone || "");
 
           setLoading(false);
           setBookingsLoading(true);
@@ -798,6 +808,145 @@ const CustomerDashboard = () => {
     return true;
   };
 
+  const handleSaveProfile = async (event) => {
+    event.preventDefault();
+    if (!auth.currentUser) {
+      setProfileMessage("Please sign in again to update your profile.");
+      return;
+    }
+    setSavingProfile(true);
+    setProfileMessage("");
+    try {
+      await updateDoc(doc(db, "users", auth.currentUser.uid), {
+        fullName: profileName.trim(),
+        phone: profilePhone.trim(),
+      });
+      setUserData((previous) => ({
+        ...previous,
+        fullName: profileName.trim(),
+        phone: profilePhone.trim(),
+      }));
+      setProfileMessage("Profile updated successfully.");
+    } catch (saveError) {
+      console.error("Profile update error:", saveError);
+      setProfileMessage("Could not save changes. Check your connection and Firebase permissions.");
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const renderSection = () => {
+    const serviceCards = {
+      courier: {
+        title: "Courier & Parcel Services",
+        description: "Check courier options and continue to the courier booking page.",
+        links: [{ label: "Open Courier Services", href: "/courier-service" }, { label: "Track a Shipment", href: "/tracking" }],
+      },
+      home: {
+        title: "Home & Personal Transport",
+        description: "Explore local and hyperlocal delivery options for personal shipments.",
+        links: [{ label: "Open Hyperlocal Services", href: "/hyperlocal-service" }, { label: "Track a Shipment", href: "/tracking" }],
+      },
+      industrial: {
+        title: "Industrial / Factory Transport",
+        description: "Continue to truck transport options for larger consignments and business cargo.",
+        links: [{ label: "Open Truck Transport", href: "/truck-transport" }],
+      },
+      global: {
+        title: "International / Import-Export",
+        description: "Explore international logistics and import-export information.",
+        links: [{ label: "International Logistics", href: "/international-logistics" }, { label: "Import-Export Dashboard", href: "/international-trade" }],
+      },
+      specialized: {
+        title: "Specialized Transport",
+        description: "Find the relevant special-logistics service for sensitive or non-standard cargo.",
+        links: [{ label: "Open Specialized Logistics", href: "/special-logistics" }, { label: "Cold Chain", href: "/cold-chain" }, { label: "Pharma Logistics", href: "/pharma-logistics" }],
+      },
+    };
+
+    if (serviceCards[activeTab]) {
+      const section = serviceCards[activeTab];
+      return (
+        <section className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+            <p className="text-xs font-black uppercase tracking-wider text-[#FF5E00] mb-2">Apni Manzil Services</p>
+            <h2 className="text-2xl md:text-3xl font-black text-[#001D3D]">{section.title}</h2>
+            <p className="text-sm text-slate-500 mt-3 max-w-2xl">{section.description}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {section.links.map((link) => (
+              <a key={link.href} href={link.href} className="group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:border-[#FF5E00] hover:shadow-md transition flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-black text-[#001D3D]">{link.label}</h3>
+                  <p className="text-xs text-slate-500 mt-2">Open this service on Apni Manzil</p>
+                </div>
+                <ArrowRight className="text-[#FF5E00] shrink-0 group-hover:translate-x-1 transition" />
+              </a>
+            ))}
+          </div>
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-900">
+            Live rates and booking confirmation depend on the relevant service/API being configured and available.
+          </div>
+        </section>
+      );
+    }
+
+    if (activeTab === "settings") {
+      return (
+        <section className="max-w-3xl space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h2 className="text-2xl font-black text-[#001D3D]">Account Settings</h2>
+            <p className="text-sm text-slate-500 mt-2">Update your name and mobile number saved in your Apni Manzil profile.</p>
+            <form onSubmit={handleSaveProfile} className="mt-6 space-y-4">
+              <label className="block"><span className="text-xs font-bold text-slate-600">Full name</span><input value={profileName} onChange={(e) => setProfileName(e.target.value)} required className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#001D3D]" /></label>
+              <label className="block"><span className="text-xs font-bold text-slate-600">Mobile number</span><input value={profilePhone} onChange={(e) => setProfilePhone(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#001D3D]" /></label>
+              <div className="text-xs text-slate-500">Email: {userData?.email || "Not available"} (managed through your sign-in provider)</div>
+              <button disabled={savingProfile} className="rounded-xl bg-[#001D3D] px-5 py-3 text-sm font-black text-white disabled:opacity-50">{savingProfile ? "Saving..." : "Save Profile"}</button>
+              {profileMessage && <p role="status" className="text-sm font-semibold text-slate-700">{profileMessage}</p>}
+            </form>
+          </div>
+        </section>
+      );
+    }
+
+    if (activeTab === "reports") {
+      return (
+        <section className="space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"><h2 className="text-2xl font-black text-[#001D3D]">Shipment Reports</h2><p className="text-sm text-slate-500 mt-2">A live summary of bookings currently available in your account.</p></div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[{label:"Total bookings", value: bookings.length},{label:"In transit", value: inTransitCount},{label:"Delivered", value: deliveredCount}].map((item) => <div key={item.label} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"><p className="text-xs uppercase font-bold text-slate-400">{item.label}</p><p className="text-3xl font-black text-[#001D3D] mt-2">{bookingsLoading ? "..." : item.value}</p></div>)}
+          </div>
+          <a href="/tracking" className="inline-flex items-center gap-2 rounded-xl bg-[#001D3D] px-5 py-3 text-sm font-bold text-white">Track a Shipment <ArrowRight size={16}/></a>
+        </section>
+      );
+    }
+
+    if (activeTab === "payments") {
+      const paidBookings = bookings.filter((b) => b.paymentStatus || b.payment_status || b.paymentMethod || b.payment_method || b.amount != null || b.price != null);
+      return (
+        <section className="space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"><div className="flex items-center gap-3"><Wallet className="text-[#FF5E00]" size={28}/><div><h2 className="text-2xl font-black text-[#001D3D]">Payment History</h2><p className="text-sm text-slate-500 mt-1">Payment details recorded against your bookings.</p></div></div></div>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto"><table className="w-full text-left text-sm"><thead className="bg-slate-50 text-xs uppercase text-slate-500"><tr><th className="p-4">Booking ID</th><th className="p-4">Amount</th><th className="p-4">Payment status</th><th className="p-4">Date</th></tr></thead><tbody className="divide-y divide-slate-100">{paidBookings.map((b) => <tr key={b.id}><td className="p-4 font-semibold text-[#001D3D]">{b.orderNumber || b.order_number || b.id}</td><td className="p-4">{b.amount != null || b.price != null ? `₹${b.amount ?? b.price}` : "Not recorded"}</td><td className="p-4">{b.paymentStatus || b.payment_status || "Not specified"}</td><td className="p-4">{formatDate(b.createdAt)}</td></tr>)}{!bookingsLoading && paidBookings.length === 0 && <tr><td colSpan="4" className="p-8 text-center text-slate-500">No payment records are available yet.</td></tr>}</tbody></table></div>
+          <p className="text-xs text-slate-500">Only payment fields stored with your bookings can be displayed here; this page does not process payments.</p>
+        </section>
+      );
+    }
+
+    if (activeTab === "support") {
+      return (
+        <section className="space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"><div className="flex items-center gap-3"><Headphones className="text-[#FF5E00]" size={30}/><div><h2 className="text-2xl font-black text-[#001D3D]">Support & Help</h2><p className="text-sm text-slate-500 mt-1">Need help with a booking or shipment? Choose a support option below.</p></div></div></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="https://wa.me/917218852356" target="_blank" rel="noreferrer" className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-emerald-400 transition"><MessageCircle className="text-emerald-600 mb-4" size={28}/><h3 className="font-black text-[#001D3D]">WhatsApp Support</h3><p className="text-sm text-slate-500 mt-2">Chat with Apni Manzil support.</p><span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-emerald-700">Open WhatsApp <ExternalLink size={14}/></span></a>
+            <a href="/help-center" className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-[#FF5E00] transition"><Headphones className="text-[#FF5E00] mb-4" size={28}/><h3 className="font-black text-[#001D3D]">Help Centre</h3><p className="text-sm text-slate-500 mt-2">Open the help centre for common questions and assistance.</p><span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#001D3D]">Open Help Centre <ArrowRight size={14}/></span></a>
+          </div>
+        </section>
+      );
+    }
+
+    return <div className="bg-white rounded-2xl border border-slate-200 p-8"><h2 className="text-2xl font-black text-[#001D3D]">{activeTab}</h2><p className="text-sm text-slate-500 mt-2">Choose an option from the sidebar to continue.</p></div>;
+  };
+
   /* =====================================================
      LOADING
   ===================================================== */
@@ -1349,7 +1498,8 @@ const CustomerDashboard = () => {
         {/* BODY */}
 
         <main className="p-6 space-y-6 flex-1">
-
+          {activeTab === "dashboard" ? (
+            <>
           {/* WELCOME */}
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
@@ -1778,7 +1928,8 @@ const CustomerDashboard = () => {
 
             </div>
           </div>
-
+            </>
+          ) : renderSection()}
         </main>
       </div>
     </div>
