@@ -85,7 +85,7 @@ const LogisticsAI = () => {
 
     try {
       const response = await fetch(
-        "https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/Ai-Booking",
+        "https://ringtone-connected-shore-das.trycloudflare.com/webhook/Ai-Booking",
         {
           method: "POST",
           headers: {

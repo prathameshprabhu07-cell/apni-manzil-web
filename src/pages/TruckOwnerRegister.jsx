@@ -31,7 +31,7 @@ const TruckOwnerRegister = () => {
   // n8n WEBHOOK
   // =========================================================
   const N8N_WEBHOOK_URL =
-    "https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/Truck-Owner";
+    "https://ringtone-connected-shore-das.trycloudflare.com/webhook/Truck-Owner";
 
   // =========================================================
   // VEHICLES

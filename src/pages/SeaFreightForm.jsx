@@ -19,7 +19,7 @@ import seaFreightShip from "../assets/sea-freight-ship.jpg";
 
 // Apni Manzil Sea Freight Webhook
 const SEA_FREIGHT_WEBHOOK =
-  "https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/Sea-Freight";
+  "https://ringtone-connected-shore-das.trycloudflare.com/webhook/Sea-Freight";
 
 const providers = [
   {

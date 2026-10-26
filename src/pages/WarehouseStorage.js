@@ -11,7 +11,7 @@ const WarehouseStorage = () => {
   const navigate = useNavigate(); 
   
   // n8n production URL
-  const webhookUrl = "https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/warehouse";
+  const webhookUrl = "https://ringtone-connected-shore-das.trycloudflare.com/webhook/warehouse";
 
   // Warehouse booking / inquiry handler
   const handleWarehouseBooking = async (serviceTitle) => {

@@ -142,7 +142,7 @@ const WarehousePartnerRegister = () => {
 
     try {
       // Sending all form data to your webhook endpoint
-      const response = await fetch('https://cooked-adrian-grill-tommy.trycloudflare.com/webhook/Warehouse_Partner', {
+      const response = await fetch('https://ringtone-connected-shore-das.trycloudflare.com/webhook/Warehouse_Partner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
