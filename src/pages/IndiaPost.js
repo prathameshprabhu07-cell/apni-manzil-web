@@ -165,7 +165,20 @@ function IndiaPost() {
       });
 
       if (!response.ok) {
-        throw new Error("The booking request could not be submitted.");
+        const responseText = await response.text().catch(() => "");
+
+        console.error("India Post webhook response:", {
+          status: response.status,
+          statusText: response.statusText,
+          body: responseText,
+          url: WEBHOOK_URL,
+        });
+
+        throw new Error(
+          response.status === 404
+            ? "Webhook returned 404. Check that the n8n workflow is Active and its Production Webhook path is exactly india-post-booking-request."
+            : `Webhook request failed (${response.status} ${response.statusText}).`
+        );
       }
 
       setMessage(
@@ -178,7 +191,8 @@ function IndiaPost() {
       console.error("India Post form submission error:", error);
 
       setMessage(
-        "Unable to submit your request. Please check your internet connection and webhook configuration, then try again."
+        error?.message ||
+          "Unable to submit your request. Please check your internet connection and webhook configuration, then try again."
       );
 
       setMessageType("error");
@@ -295,15 +309,9 @@ function IndiaPost() {
                 onChange={updateField}
                 required
               >
-                <option value="India Post Parcel">
-                  India Post Parcel
-                </option>
-                <option value="Speed Post">
-                  Speed Post
-                </option>
-                <option value="Business Parcel">
-                  Business Parcel
-                </option>
+                <option value="India Post Parcel">India Post Parcel</option>
+                <option value="Speed Post">Speed Post</option>
+                <option value="Business Parcel">Business Parcel</option>
               </select>
 
               <small>
@@ -721,6 +729,140 @@ function IndiaPost() {
             payment, pickup, or shipment booking.
           </p>
         </form>
+      </section>
+
+      {/* Three-photo gallery below the booking form */}
+      <section
+        className="india-post-photo-gallery"
+        aria-labelledby="india-post-gallery-title"
+      >
+        <style>{`
+          .india-post-photo-gallery {
+            padding: 52px 20px 60px;
+            background: #f5f8fc;
+          }
+
+          .india-post-photo-gallery-inner {
+            max-width: 1150px;
+            margin: 0 auto;
+          }
+
+          .india-post-photo-gallery-heading {
+            text-align: center;
+            margin: 0 auto 28px;
+          }
+
+          .india-post-photo-gallery-heading span {
+            display: inline-block;
+            color: #f47721;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.8px;
+            margin-bottom: 8px;
+          }
+
+          .india-post-photo-gallery-heading h2 {
+            color: #002d5e;
+            font-size: clamp(24px, 3vw, 34px);
+            font-weight: 800;
+            margin: 0 0 10px;
+          }
+
+          .india-post-photo-gallery-heading p {
+            color: #5b6472;
+            margin: 0;
+          }
+
+          .india-post-photo-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+          }
+
+          .india-post-photo-card {
+            overflow: hidden;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 45, 94, 0.1);
+          }
+
+          .india-post-photo-card img {
+            width: 100%;
+            height: 250px;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+          }
+
+          .india-post-photo-card:hover img {
+            transform: scale(1.04);
+          }
+
+          .india-post-photo-caption {
+            padding: 15px 17px;
+            color: #002d5e;
+            font-weight: 700;
+          }
+
+          @media (max-width: 768px) {
+            .india-post-photo-gallery-grid {
+              grid-template-columns: 1fr;
+            }
+
+            .india-post-photo-card img {
+              height: 230px;
+            }
+
+            .india-post-photo-gallery {
+              padding: 38px 16px;
+            }
+          }
+        `}</style>
+
+        <div className="india-post-photo-gallery-inner">
+          <div className="india-post-photo-gallery-heading">
+            <span>POSTAL &amp; PARCEL SERVICES</span>
+            <h2 id="india-post-gallery-title">India Post in Pictures</h2>
+            <p>
+              Parcel services and delivery — brought together by Apni Manzil.
+            </p>
+          </div>
+
+          <div className="india-post-photo-gallery-grid">
+            <article className="india-post-photo-card">
+              <img
+                src="/images/india-post/photo1.jpg"
+                alt="India Post parcel service"
+                loading="lazy"
+              />
+              <div className="india-post-photo-caption">
+                Parcel Services
+              </div>
+            </article>
+
+            <article className="india-post-photo-card">
+              <img
+                src="/images/india-post/photo2.jpg"
+                alt="Parcel packaging and dispatch"
+                loading="lazy"
+              />
+              <div className="india-post-photo-caption">
+                Packaging &amp; Dispatch
+              </div>
+            </article>
+
+            <article className="india-post-photo-card">
+              <img
+                src="/images/india-post/photo3.jpg"
+                alt="Postal delivery and logistics"
+                loading="lazy"
+              />
+              <div className="india-post-photo-caption">
+                Delivery Network
+              </div>
+            </article>
+          </div>
+        </div>
       </section>
     </main>
   );
