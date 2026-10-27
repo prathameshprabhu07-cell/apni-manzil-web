@@ -4,8 +4,11 @@ import "./IndiaPost.css";
 const WEBHOOK_URL =
   "https://copper-focus-leading-thereby.trycloudflare.com/webhook/india-post-booking-request";
 
+// इथे तुझ्या सक्रिय India Post Rate workflow ची n8n Webhook URL टाक.
+const RATE_WEBHOOK_URL = "PASTE_YOUR_ACTIVE_N8N_RATE_WEBHOOK_URL_HERE";
+
 const initialForm = {
-  serviceType: "India Post Parcel",
+  serviceType: "Domestic Parcel",
   senderName: "",
   senderMobile: "",
   senderEmail: "",
@@ -37,6 +40,11 @@ function IndiaPost() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
+  const [rateLoading, setRateLoading] = useState(false);
+  const [rateResult, setRateResult] = useState(null);
+  const [rateMessage, setRateMessage] = useState("");
+  const [rateMessageType, setRateMessageType] = useState("");
+
   const updateField = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -44,8 +52,230 @@ function IndiaPost() {
       ...previous,
       [name]: type === "checkbox" ? checked : value,
     }));
+
+    // Shipment details बदलल्यास आधीचा rate अमान्य कर.
+    const rateFields = [
+      "pickupPincode",
+      "deliveryPincode",
+      "parcelWeight",
+      "serviceType",
+      "parcelLength",
+      "parcelWidth",
+      "parcelHeight",
+    ];
+
+    if (rateFields.includes(name)) {
+      setRateResult(null);
+      setRateMessage("");
+      setRateMessageType("");
+    }
   };
 
+  // API response मधून मिळालेली प्रत्यक्ष किंमत शोध.
+  const getRateAmount = (data) => {
+    const candidates = [
+      data?.amount,
+      data?.rate,
+      data?.price,
+      data?.totalAmount,
+      data?.postage,
+      data?.postageAmount,
+      data?.total,
+
+      data?.data?.amount,
+      data?.data?.rate,
+      data?.data?.price,
+      data?.data?.totalAmount,
+      data?.data?.postage,
+      data?.data?.postageAmount,
+      data?.data?.total,
+
+      data?.result?.amount,
+      data?.result?.rate,
+      data?.result?.price,
+      data?.result?.totalAmount,
+    ];
+
+    for (const candidate of candidates) {
+      const amount = Number(candidate);
+
+      if (
+        candidate !== null &&
+        candidate !== undefined &&
+        candidate !== "" &&
+        Number.isFinite(amount) &&
+        amount >= 0
+      ) {
+        return amount;
+      }
+    }
+
+    return null;
+  };
+
+  // ==========================================
+  // CHECK LIVE PARCEL RATE
+  // ==========================================
+  const handleCheckRate = async () => {
+    setRateResult(null);
+    setRateMessage("");
+    setRateMessageType("");
+
+    const pinRegex = /^[1-9][0-9]{5}$/;
+    const weight = Number(form.parcelWeight);
+
+    if (
+      !pinRegex.test(form.pickupPincode) ||
+      !pinRegex.test(form.deliveryPincode)
+    ) {
+      setRateMessage(
+        "Please enter valid 6-digit pickup and delivery PIN codes."
+      );
+      setRateMessageType("error");
+      return;
+    }
+
+    if (
+      !Number.isFinite(weight) ||
+      weight < 0.501 ||
+      weight > 35
+    ) {
+      setRateMessage(
+        "Enter a parcel weight between 0.501 kg and 35 kg."
+      );
+      setRateMessageType("error");
+      return;
+    }
+
+    if (
+      RATE_WEBHOOK_URL.includes(
+        "PASTE_YOUR_ACTIVE_N8N_RATE_WEBHOOK_URL_HERE"
+      )
+    ) {
+      setRateMessage(
+        "Live rate service is not connected. Add your active n8n Rate webhook URL in IndiaPost.js."
+      );
+      setRateMessageType("error");
+      return;
+    }
+
+    setRateLoading(true);
+
+    try {
+      const ratePayload = {
+        requestId: `AM-IP-RATE-${Date.now()}`,
+        platform: "Apni Manzil",
+        requestType: "Parcel Rate Check",
+        service: "India Post",
+        serviceType: form.serviceType,
+
+        originPincode: form.pickupPincode,
+        destinationPincode: form.deliveryPincode,
+
+        weightKg: weight,
+        weightGrams: Math.round(weight * 1000),
+
+        dimensionsCm: {
+          length: Number(form.parcelLength || 0),
+          width: Number(form.parcelWidth || 0),
+          height: Number(form.parcelHeight || 0),
+        },
+
+        sender: {
+          pincode: form.pickupPincode,
+        },
+
+        receiver: {
+          pincode: form.deliveryPincode,
+        },
+
+        parcel: {
+          serviceType: form.serviceType,
+          weightKg: weight,
+          lengthCm: Number(form.parcelLength || 0),
+          widthCm: Number(form.parcelWidth || 0),
+          heightCm: Number(form.parcelHeight || 0),
+        },
+      };
+
+      const response = await fetch(RATE_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ratePayload),
+      });
+
+      const rawText = await response.text();
+
+      let data;
+
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch {
+        data = {
+          message: rawText,
+        };
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message ||
+            data?.error ||
+            `Rate service returned HTTP ${response.status}.`
+        );
+      }
+
+      if (
+        data?.success === false ||
+        data?.available === false ||
+        data?.error
+      ) {
+        throw new Error(
+          data?.message ||
+            data?.error ||
+            "A rate is not available for these parcel details."
+        );
+      }
+
+      const amount = getRateAmount(data);
+
+      if (amount === null) {
+        throw new Error(
+          "The rate service did not return a price. Check the n8n response format."
+        );
+      }
+
+      setRateResult({
+        amount,
+        currency: data?.currency || data?.data?.currency || "INR",
+        raw: data,
+      });
+
+      setRateMessage(
+        `Rate received: ₹${amount.toFixed(
+          2
+        )}. This is a quote only and does not confirm booking.`
+      );
+
+      setRateMessageType("success");
+    } catch (error) {
+      console.error("India Post rate check failed:", error);
+
+      setRateMessage(
+        error?.message ||
+          "Unable to fetch the rate. Check the connection and try again."
+      );
+
+      setRateMessageType("error");
+    } finally {
+      setRateLoading(false);
+    }
+  };
+
+  // ==========================================
+  // FORM VALIDATION
+  // ==========================================
   const validateForm = () => {
     const pinRegex = /^[1-9][0-9]{5}$/;
     const mobileRegex = /^[6-9][0-9]{9}$/;
@@ -66,8 +296,14 @@ function IndiaPost() {
       return "Please enter a valid 6-digit delivery PIN code.";
     }
 
-    if (Number(form.parcelWeight) <= 0) {
-      return "Parcel weight must be greater than zero.";
+    const weight = Number(form.parcelWeight);
+
+    if (
+      !Number.isFinite(weight) ||
+      weight < 0.501 ||
+      weight > 35
+    ) {
+      return "Parcel weight must be between 0.501 kg and 35 kg.";
     }
 
     if (
@@ -85,24 +321,28 @@ function IndiaPost() {
     return "";
   };
 
+  // ==========================================
+  // SUBMIT PARCEL BOOKING REQUEST
+  // ==========================================
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     setMessage("");
     setMessageType("");
 
-    const validationError = validateForm();
-
-    if (validationError) {
-      setMessage(validationError);
+    // Rate मिळाल्याशिवाय request submit होणार नाही.
+    if (!rateResult) {
+      setMessage(
+        "Please check and receive a valid parcel rate before submitting the request."
+      );
       setMessageType("error");
       return;
     }
 
-    if (WEBHOOK_URL.includes("YOUR-N8N-DOMAIN")) {
-      setMessage(
-        "Please configure your active n8n webhook URL before submitting."
-      );
+    const validationError = validateForm();
+
+    if (validationError) {
+      setMessage(validationError);
       setMessageType("error");
       return;
     }
@@ -116,8 +356,13 @@ function IndiaPost() {
       platform: "Apni Manzil",
       service: "India Post",
       requestType: "Parcel Booking Request",
+
+      quotedRateINR: rateResult.amount,
+      rateCurrency: rateResult.currency,
+
       paymentMethod: "Online Payment",
       codEnabled: false,
+
       status: "booking_request_received",
       submittedAt: new Date().toISOString(),
 
@@ -176,23 +421,26 @@ function IndiaPost() {
 
         throw new Error(
           response.status === 404
-            ? "Webhook returned 404. Check that the n8n workflow is Active and its Production Webhook path is exactly india-post-booking-request."
+            ? "Webhook returned 404. Check that the n8n workflow is active and its Production Webhook path is india-post-booking-request."
             : `Webhook request failed (${response.status} ${response.statusText}).`
         );
       }
 
       setMessage(
-        `Your parcel request has been submitted successfully. Reference ID: ${requestId}. This is a request confirmation, not an India Post booking confirmation.`
+        `Your parcel request has been submitted. Reference ID: ${requestId}. This is a request confirmation, not an official India Post booking confirmation.`
       );
 
       setMessageType("success");
       setForm(initialForm);
+      setRateResult(null);
+      setRateMessage("");
+      setRateMessageType("");
     } catch (error) {
       console.error("India Post form submission error:", error);
 
       setMessage(
         error?.message ||
-          "Unable to submit your request. Please check your internet connection and webhook configuration, then try again."
+          "Unable to submit your request. Check your internet connection and webhook configuration, then try again."
       );
 
       setMessageType("error");
@@ -201,6 +449,9 @@ function IndiaPost() {
     }
   };
 
+  // ==========================================
+  // PAGE UI
+  // ==========================================
   return (
     <main className="india-post-page">
       <section className="india-post-hero">
@@ -238,13 +489,17 @@ function IndiaPost() {
               <span>✓ No Cash on Delivery</span>
             </div>
 
-            <a href="#india-post-booking" className="india-post-hero-button">
+            <a
+              href="#india-post-booking"
+              className="india-post-hero-button"
+            >
               Create Parcel Request →
             </a>
           </div>
         </div>
       </section>
 
+      {/* BENEFITS */}
       <section className="india-post-benefits">
         <div className="india-post-benefit">
           <span className="india-post-benefit-icon">📦</span>
@@ -265,6 +520,7 @@ function IndiaPost() {
         </div>
       </section>
 
+      {/* BOOKING FORM */}
       <section
         className="india-post-booking-section"
         id="india-post-booking"
@@ -281,7 +537,9 @@ function IndiaPost() {
         <form className="india-post-form" onSubmit={handleSubmit}>
           <div className="india-post-form-top">
             <div>
-              <span className="india-post-form-label">SERVICE PROVIDER</span>
+              <span className="india-post-form-label">
+                SERVICE PROVIDER
+              </span>
               <h3>India Post</h3>
             </div>
 
@@ -290,6 +548,7 @@ function IndiaPost() {
             </div>
           </div>
 
+          {/* SERVICE TYPE */}
           <div className="india-post-form-section">
             <div className="india-post-form-section-title">
               <span>01</span>
@@ -309,7 +568,7 @@ function IndiaPost() {
                 onChange={updateField}
                 required
               >
-                <option value="India Post Parcel">India Post Parcel</option>
+                <option value="Domestic Parcel">Domestic Parcel</option>
                 <option value="Speed Post">Speed Post</option>
                 <option value="Business Parcel">Business Parcel</option>
               </select>
@@ -321,6 +580,7 @@ function IndiaPost() {
             </div>
           </div>
 
+          {/* SENDER INFORMATION */}
           <div className="india-post-form-section">
             <div className="india-post-form-section-title">
               <span>02</span>
@@ -428,6 +688,7 @@ function IndiaPost() {
             </div>
           </div>
 
+          {/* RECEIVER INFORMATION */}
           <div className="india-post-form-section">
             <div className="india-post-form-section-title">
               <span>03</span>
@@ -532,6 +793,7 @@ function IndiaPost() {
             </div>
           </div>
 
+          {/* PARCEL INFORMATION */}
           <div className="india-post-form-section">
             <div className="india-post-form-section-title">
               <span>04</span>
@@ -548,11 +810,12 @@ function IndiaPost() {
                   id="parcelWeight"
                   name="parcelWeight"
                   type="number"
-                  min="0.01"
-                  step="0.01"
+                  min="0.501"
+                  max="35"
+                  step="0.001"
                   value={form.parcelWeight}
                   onChange={updateField}
-                  placeholder="e.g. 0.50"
+                  placeholder="e.g. 1.000"
                   required
                 />
               </div>
@@ -644,6 +907,56 @@ function IndiaPost() {
               </div>
             </div>
 
+            {/* RATE CHECK PANEL */}
+            <div
+              className="india-post-rate-check-panel"
+              style={{
+                marginTop: "20px",
+                padding: "16px",
+                border: "1px solid #d5dfeb",
+                borderRadius: "12px",
+                background: "#f7faff",
+              }}
+            >
+              <h3 style={{ marginTop: 0 }}>Check Parcel Rate</h3>
+
+              <p>
+                Check the connected rate service before submitting your
+                parcel request. No estimated or made-up price will be shown.
+              </p>
+
+              <button
+                type="button"
+                className="india-post-submit"
+                onClick={handleCheckRate}
+                disabled={rateLoading || loading}
+              >
+                {rateLoading
+                  ? "Checking Live Rate..."
+                  : rateResult
+                  ? "Check Rate Again ↻"
+                  : "Check Live Parcel Rate →"}
+              </button>
+
+              {rateMessage && (
+                <div
+                  className={`india-post-message ${rateMessageType}`}
+                  role="status"
+                  aria-live="polite"
+                  style={{ marginTop: "12px" }}
+                >
+                  {rateMessage}
+                </div>
+              )}
+
+              {rateResult && (
+                <div style={{ marginTop: "12px", fontWeight: 700 }}>
+                  Rate quote: ₹{rateResult.amount.toFixed(2)}{" "}
+                  {rateResult.currency}
+                </div>
+              )}
+            </div>
+
             <div className="india-post-info-notice">
               <strong>Parcel declaration</strong>
               <p>
@@ -655,6 +968,7 @@ function IndiaPost() {
             </div>
           </div>
 
+          {/* PAYMENT PREFERENCE */}
           <div className="india-post-form-section">
             <div className="india-post-form-section-title">
               <span>05</span>
@@ -685,6 +999,7 @@ function IndiaPost() {
             </p>
           </div>
 
+          {/* DECLARATION */}
           <div className="india-post-declaration">
             <label>
               <input
@@ -703,6 +1018,7 @@ function IndiaPost() {
             </label>
           </div>
 
+          {/* STATUS MESSAGE */}
           {message && (
             <div
               className={`india-post-message ${messageType}`}
@@ -724,14 +1040,15 @@ function IndiaPost() {
           </button>
 
           <p className="india-post-form-disclaimer">
-            Apni Manzil is collecting a parcel booking request. This
-            submission does not confirm India Post acceptance, postage
+            A live rate must be received before this request can be
+            submitted. Apni Manzil is collecting a parcel booking request.
+            This submission does not confirm India Post acceptance, postage
             payment, pickup, or shipment booking.
           </p>
         </form>
       </section>
 
-      {/* Three-photo gallery below the booking form */}
+      {/* THREE-PHOTO GALLERY */}
       <section
         className="india-post-photo-gallery"
         aria-labelledby="india-post-gallery-title"
