@@ -4,9 +4,6 @@ import "./IndiaPost.css";
 const WEBHOOK_URL =
   "https://copper-focus-leading-thereby.trycloudflare.com/webhook/india-post-booking-request";
 
-// इथे तुझ्या सक्रिय India Post Rate workflow ची n8n Webhook URL टाक.
-const RATE_WEBHOOK_URL = "PASTE_YOUR_ACTIVE_N8N_RATE_WEBHOOK_URL_HERE";
-
 const initialForm = {
   serviceType: "Domestic Parcel",
   senderName: "",
@@ -53,7 +50,6 @@ function IndiaPost() {
       [name]: type === "checkbox" ? checked : value,
     }));
 
-    // Shipment details बदलल्यास आधीचा rate अमान्य कर.
     const rateFields = [
       "pickupPincode",
       "deliveryPincode",
@@ -71,7 +67,7 @@ function IndiaPost() {
     }
   };
 
-  // API response मधून मिळालेली प्रत्यक्ष किंमत शोध.
+  // Extract the actual amount from the n8n response.
   const getRateAmount = (data) => {
     const candidates = [
       data?.amount,
@@ -114,7 +110,7 @@ function IndiaPost() {
   };
 
   // ==========================================
-  // CHECK LIVE PARCEL RATE
+  // CHECK PARCEL RATE - SAME WEBHOOK
   // ==========================================
   const handleCheckRate = async () => {
     setRateResult(null);
@@ -147,58 +143,50 @@ function IndiaPost() {
       return;
     }
 
-    if (
-      RATE_WEBHOOK_URL.includes(
-        "PASTE_YOUR_ACTIVE_N8N_RATE_WEBHOOK_URL_HERE"
-      )
-    ) {
-      setRateMessage(
-        "Live rate service is not connected. Add your active n8n Rate webhook URL in IndiaPost.js."
-      );
-      setRateMessageType("error");
-      return;
-    }
-
     setRateLoading(true);
 
-    try {
-      const ratePayload = {
-        requestId: `AM-IP-RATE-${Date.now()}`,
-        platform: "Apni Manzil",
-        requestType: "Parcel Rate Check",
-        service: "India Post",
+    const ratePayload = {
+      requestId: `AM-IP-RATE-${Date.now()}`,
+      platform: "Apni Manzil",
+
+      // IF node in n8n will use this field.
+      requestType: "Parcel Rate Check",
+
+      service: "India Post",
+      serviceType: form.serviceType,
+
+      originPincode: form.pickupPincode,
+      destinationPincode: form.deliveryPincode,
+
+      weightKg: weight,
+      weightGrams: Math.round(weight * 1000),
+
+      dimensionsCm: {
+        length: Number(form.parcelLength || 0),
+        width: Number(form.parcelWidth || 0),
+        height: Number(form.parcelHeight || 0),
+      },
+
+      sender: {
+        pincode: form.pickupPincode,
+      },
+
+      receiver: {
+        pincode: form.deliveryPincode,
+      },
+
+      parcel: {
         serviceType: form.serviceType,
-
-        originPincode: form.pickupPincode,
-        destinationPincode: form.deliveryPincode,
-
         weightKg: weight,
-        weightGrams: Math.round(weight * 1000),
+        lengthCm: Number(form.parcelLength || 0),
+        widthCm: Number(form.parcelWidth || 0),
+        heightCm: Number(form.parcelHeight || 0),
+      },
+    };
 
-        dimensionsCm: {
-          length: Number(form.parcelLength || 0),
-          width: Number(form.parcelWidth || 0),
-          height: Number(form.parcelHeight || 0),
-        },
-
-        sender: {
-          pincode: form.pickupPincode,
-        },
-
-        receiver: {
-          pincode: form.deliveryPincode,
-        },
-
-        parcel: {
-          serviceType: form.serviceType,
-          weightKg: weight,
-          lengthCm: Number(form.parcelLength || 0),
-          widthCm: Number(form.parcelWidth || 0),
-          heightCm: Number(form.parcelHeight || 0),
-        },
-      };
-
-      const response = await fetch(RATE_WEBHOOK_URL, {
+    try {
+      // Rate Check uses the same webhook as Booking.
+      const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -330,7 +318,6 @@ function IndiaPost() {
     setMessage("");
     setMessageType("");
 
-    // Rate मिळाल्याशिवाय request submit होणार नाही.
     if (!rateResult) {
       setMessage(
         "Please check and receive a valid parcel rate before submitting the request."
@@ -355,6 +342,8 @@ function IndiaPost() {
       requestId,
       platform: "Apni Manzil",
       service: "India Post",
+
+      // IF node in n8n will route this to the Booking branch.
       requestType: "Parcel Booking Request",
 
       quotedRateINR: rateResult.amount,
@@ -401,6 +390,7 @@ function IndiaPost() {
     };
 
     try {
+      // Booking uses the same webhook as Rate Check.
       const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
