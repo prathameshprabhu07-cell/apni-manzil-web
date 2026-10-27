@@ -181,7 +181,7 @@ const PackersMoversRegister = () => {
 
     try {
       await fetch(
-        'https://ringtone-connected-shore-das.trycloudflare.com/webhook/Packer_Partner',
+        'https://copper-focus-leading-thereby.trycloudflare.com/webhook/Packer_Partner',
         {
           method: 'POST',
           headers: {

@@ -17,7 +17,7 @@ const Tracking = () => {
     }
 
     try {
-      const response = await fetch("https://ringtone-connected-shore-das.trycloudflare.com/webhook/Traking", {
+      const response = await fetch("https://copper-focus-leading-thereby.trycloudflare.com/webhook/Traking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

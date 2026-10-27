@@ -18,7 +18,7 @@ const ChatBot = () => {
 
   // Apni Manzil AI n8n Webhook
   const AI_WEBHOOK_URL =
-    "https://ringtone-connected-shore-das.trycloudflare.com/webhook/apni-manzil-ai";
+    "https://copper-focus-leading-thereby.trycloudflare.com/webhook/apni-manzil-ai";
 
   // Auto scroll
   useEffect(() => {

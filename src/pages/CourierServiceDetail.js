@@ -22,7 +22,7 @@ import {
 // ============================================================
 
 const BACKEND_BASE_URL =
-  'https://ringtone-connected-shore-das.trycloudflare.com/webhook/apni-manzil-logistics';
+  'https://copper-focus-leading-thereby.trycloudflare.com/webhook/apni-manzil-logistics';
 
 const CourierServiceDetail = () => {
   const navigate = useNavigate();

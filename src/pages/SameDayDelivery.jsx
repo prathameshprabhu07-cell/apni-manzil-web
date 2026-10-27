@@ -25,7 +25,7 @@ const SameDayDelivery = () => {
   const [selectedRate, setSelectedRate] = useState(null);
 
   const n8nUrl =
-    "https://ringtone-connected-shore-das.trycloudflare.com/webhook/apni-manzil-hyperlocal";
+    "https://copper-focus-leading-thereby.trycloudflare.com/webhook/apni-manzil-hyperlocal";
 
   const [formData, setFormData] = useState({
     senderName: '',
